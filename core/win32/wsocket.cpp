@@ -56,7 +56,7 @@ bool ClientSocket::getHostname(char *str,size_t size,unsigned int ip) //JP-MOD
 	if(size == 0)
 		return false;
 
-	HOSTENT *he;
+	addrinfo *he;
 
 	ip = htonl(ip);
 

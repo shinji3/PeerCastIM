@@ -145,7 +145,9 @@ ServMgr::ServMgr()
 
 	// retrieve newest version number from DNS
 	// for windows ONLY. Linux or other OS is NOT supported.
-#ifdef WIN32
+//#ifdef WIN32
+	// IPv6 is NOT supported yet.
+#if 0 addrinfo
 	{
 		struct hostent *he;
 
