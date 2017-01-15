@@ -95,6 +95,8 @@ public:
 		T_WMA,
 		T_WMV,
 
+		T_FLV,
+
 		T_PLS,
 		T_ASX
 	};
