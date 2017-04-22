@@ -96,6 +96,9 @@ public:
 		T_WMV,
 
 		T_FLV,
+		T_MKV,
+		T_WEBM,
+		T_TS,
 
 		T_PLS,
 		T_ASX

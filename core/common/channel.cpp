@@ -3990,21 +3990,24 @@ const char *ChanInfo::getTypeStr(TYPE t)
 {
 	switch (t)
 	{
-		case T_RAW: return "RAW";
+		case T_RAW:  return "RAW";
 
-		case T_MP3: return "MP3";
-		case T_OGG: return "OGG";
-		case T_OGM: return "OGM";
-		case T_WMA: return "WMA";
+		case T_MP3:  return "MP3";
+		case T_OGG:  return "OGG";
+		case T_OGM:  return "OGM";
+		case T_WMA:  return "WMA";
 
-		case T_MOV: return "MOV";
-		case T_MPG: return "MPG";
-		case T_NSV: return "NSV";
-		case T_WMV: return "WMV";
-		case T_FLV: return "FLV";
+		case T_MOV:  return "MOV";
+		case T_MPG:  return "MPG";
+		case T_NSV:  return "NSV";
+		case T_WMV:  return "WMV";
+		case T_FLV:  return "FLV";
+		case T_MKV:  return "MKV";
+		case T_WEBM: return "WEBM";
+		case T_TS:   return "TS";
 
-		case T_PLS: return "PLS";
-		case T_ASX: return "ASX";
+		case T_PLS:  return "PLS";
+		case T_ASX:  return "ASX";
 
 		default: return "UNKNOWN";
 	}
@@ -4059,6 +4062,12 @@ const char *ChanInfo::getTypeExt(TYPE t)
 			return ".wma";
 		case ChanInfo::T_FLV:
 			return ".flv";
+		case ChanInfo::T_MKV:
+			return ".mkv";
+		case ChanInfo::T_WEBM:
+			return ".webm";
+		case ChanInfo::T_TS:
+			return ".ts";
 		default:
 			return "";
 	}
@@ -4088,6 +4097,12 @@ const char *ChanInfo::getMIMEType(TYPE t)
 			return MIME_WMV;
 		case ChanInfo::T_FLV:
 			return MIME_FLV;
+		case ChanInfo::T_MKV:
+			return MIME_MKV;
+		case ChanInfo::T_WEBM:
+			return MIME_WEBM;
+		case ChanInfo::T_TS:
+			return MIME_TS;
 		default:
 			return "application/octet-stream";
 	}
@@ -4111,6 +4126,12 @@ ChanInfo::TYPE ChanInfo::getTypeFromStr(const char *str)
 		return T_WMV;
 	else if (stricmp(str,"FLV")==0)
 		return T_FLV;
+	else if (stricmp(str,"MKV")==0)
+		return T_MKV;
+	else if (stricmp(str,"WEBM")==0)
+		return T_WEBM;
+	else if (stricmp(str,"TS")==0)
+		return T_TS;
 	else if (stricmp(str,"PLS")==0)
 		return T_PLS;
 	else if (stricmp(str,"M3U")==0)
