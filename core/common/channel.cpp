@@ -4001,7 +4001,7 @@ const char *ChanInfo::getTypeStr(TYPE t)
 		case T_MPG: return "MPG";
 		case T_NSV: return "NSV";
 		case T_WMV: return "WMV";
-		case T_FLV:	return "FLV";
+		case T_FLV: return "FLV";
 
 		case T_PLS: return "PLS";
 		case T_ASX: return "ASX";
@@ -4086,6 +4086,8 @@ const char *ChanInfo::getMIMEType(TYPE t)
 			return MIME_WMA;
 		case ChanInfo::T_WMV:
 			return MIME_WMV;
+		case ChanInfo::T_FLV:
+			return MIME_FLV;
 		default:
 			return "application/octet-stream";
 	}
