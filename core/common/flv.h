@@ -3,8 +3,6 @@
 // Date: 14-jan-2017
 // Author: niwakazoider
 //
-// Modified by Eru @2017.1.15 for compilation error at VS2008
-//
 // (c) 2002-3 peercast.org
 // ------------------------------------------------
 // This program is free software; you can redistribute it and/or modify
@@ -21,37 +19,31 @@
 #ifndef _FLV_H
 #define _FLV_H
 
-#include "channel.h"
 #include "stdio.h"
+#include <stdexcept>
 
-
-const int TAG_SCRIPTDATA = 18;
-const int TAG_AUDIO = 8;
-const int TAG_VIDEO = 9;
+#include "channel.h"
 
 // -----------------------------------
 class FLVFileHeader
 {
 public:
-	FLVFileHeader() : size(0), data(NULL)
-	{
-	}
+    FLVFileHeader() : size(0) {}
 
-	void read(Stream &in)
-	{
-		size = 13;
-		data = (char *)malloc(size);
-		in.read(data, size);
+    void read(Stream &in)
+    {
+        size = 13;
+        in.read(data, 13);
 
-		if (data[0] == 0x46 && //F
-			data[1] == 0x4c && //L
-			data[2] == 0x56) { //V
-			version = data[3];
-		}
-	}
-	int version;
-	int size;
-	char *data;
+        if (data[0] == 0x46 && //F
+            data[1] == 0x4c && //L
+            data[2] == 0x56) { //V
+            version = data[3];
+        }
+    }
+    int size;
+    int version;
+    unsigned char data[13];
 };
 
 
@@ -59,219 +51,291 @@ public:
 class FLVTag
 {
 public:
-	enum TYPE
-	{
-		T_UNKNOWN,
-		T_SCRIPT,
-		T_AUDIO,
-		T_VIDEO
-	};
+    enum TYPE
+    {
+        T_UNKNOWN,
+        T_SCRIPT    = 18,
+        T_AUDIO     = 8,
+        T_VIDEO     = 9
+    };
 
-	FLVTag()
-	{
-		size = 0;
-		type = T_UNKNOWN;
-		data = NULL;
-		packet = NULL;
-	}
+    FLVTag()
+    {
+        size = 0;
+        packetSize = 0;
+        type = T_UNKNOWN;
+        data = NULL;
+        packet = NULL;
+    }
 
-	void read(Stream &in)
-	{
-		if (data != NULL) free(data);
-		if (packet != NULL) free(packet);
+    ~FLVTag()
+    {
+        if (packet)
+            delete [] packet;
+    }
 
-		unsigned char binary[11];
-		in.read(binary, 11);
+    FLVTag& operator=(const FLVTag& other)
+    {
+        size = other.size;
+        packetSize = other.packetSize;
+        type = other.type;
 
-		type = binary[0];
-		size = (binary[1] << 16) | (binary[2] << 8) | (binary[3]);
-		//int timestamp = (binary[7] << 24) | (binary[4] << 16) | (binary[5] << 8) | (binary[6]);
-		//int streamID = (binary[8] << 16) | (binary[9] << 8) | (binary[10]);
-		data = (char *)malloc(size);
-		in.read(data, size);
+        if (packet)
+            delete [] packet;
+        if (other.packet) {
+            packet = new unsigned char[other.packetSize];
+            memcpy(packet, other.packet, other.packetSize);
+        } else
+            packet = NULL;
 
-		unsigned char prevsize[4];
-		in.read(prevsize, 4);
+        if (packet)
+            data = packet + 11;
 
-		packet = (char *)malloc(11+size+4);
-		memcpy(packet, binary, 11);
-		memcpy(packet+11, data, size);
-		memcpy(packet+11+size, prevsize, 4);
-		packetSize = 11 + size + 4;
-	}
+        return *this;
+    }
 
-	const char *getTagType()
-	{
-		switch (type)
-		{
-		case TAG_SCRIPTDATA:
-			return "Script";
-		case TAG_VIDEO:
-			return "Video";
-		case TAG_AUDIO:
-			return "Audio";
-		}
-		return "Unknown";
-	}
+    FLVTag(const FLVTag& other)
+    {
+        size = other.size;
+        packetSize = other.packetSize;
+        type = other.type;
 
-	int size;
-	int packetSize;
-	char type;
-	char *data;
-	char *packet;
+        if (other.packet) {
+            packet = new unsigned char[other.packetSize];
+            memcpy(packet, other.packet, other.packetSize);
+        } else
+            packet = NULL;
+
+        if (packet)
+            data = packet + 11;
+    }
+
+    void read(Stream &in)
+    {
+        if (packet != NULL)
+            delete [] packet;
+
+        unsigned char binary[11];
+        in.read(binary, 11);
+
+        type = static_cast<TYPE>(binary[0]);
+        size = (binary[1] << 16) | (binary[2] << 8) | (binary[3]);
+        //int timestamp = (binary[7] << 24) | (binary[4] << 16) | (binary[5] << 8) | (binary[6]);
+        //int streamID = (binary[8] << 16) | (binary[9] << 8) | (binary[10]);
+
+        packet = new unsigned char[11 + size + 4];
+        memcpy(packet, binary, 11);
+        in.read(packet + 11, size + 4);
+
+        data = packet + 11;
+        packetSize = 11 + size + 4;
+    }
+
+    int32_t getTimestamp() const
+    {
+        if (packetSize < 8)
+            throw std::runtime_error("no timestamp data");
+
+        return (packet[7] << 24) | (packet[4] << 16) | (packet[5] << 8) | (packet[6]);
+    }
+
+    void setTimestamp(int32_t timestamp)
+    {
+        if (packetSize < 8)
+            throw std::runtime_error("no timestamp data");
+
+        packet[7] = (timestamp >> 24) && 0xff;
+        packet[4] = (timestamp >> 16) && 0xff;
+        packet[5] = (timestamp >> 8) && 0xff;
+        packet[6] = (timestamp >> 0) && 0xff;
+    }
+
+    const char *getTagType()
+    {
+        switch (type)
+        {
+        case T_SCRIPT:
+            return "Script";
+        case T_VIDEO:
+            return "Video";
+        case T_AUDIO:
+            return "Audio";
+        }
+        return "Unknown";
+    }
+
+    int size;
+    int packetSize;
+    TYPE type;
+    unsigned char *data;
+    unsigned char *packet;
 };
 
+// ----------------------------------------------
+class FLVTagBuffer
+{
+public:
+    static const int MAX_OUTGOING_PACKET_SIZE = 15 * 1024;
+    static const int FLUSH_THRESHOLD          =  4 * 1024;
 
+    FLVTagBuffer() : m_mem(ChanPacket::MAX_DATALEN) {}
+    ~FLVTagBuffer()
+    {
+    }
+
+    bool put(FLVTag& tag, Channel* ch);
+    void flush(Channel* ch);
+
+    MemoryStream m_mem;
+
+private:
+    void sendImmediately(FLVTag& tag, Channel* ch);
+};
 
 // ----------------------------------------------
 class FLVStream : public ChannelStream
 {
 public:
-	int bitrate;
-	FLVFileHeader fileHeader;
-	FLVTag metaData;
-	FLVTag aacHeader;
-	FLVTag avcHeader;
-	FLVStream()
-	{
-		fileHeader = FLVFileHeader();
-		metaData = FLVTag();
-		aacHeader = FLVTag();
-		avcHeader = FLVTag();
-		bitrate = 0;
-	}
-	virtual void readHeader(Stream &, Channel *);
-	virtual int	 readPacket(Stream &, Channel *);
-	virtual void readEnd(Stream &, Channel *);
+    int metaBitrate;
+    FLVFileHeader fileHeader;
+    FLVTag metaData;
+    FLVTag aacHeader;
+    FLVTag avcHeader;
+    FLVStream() : metaBitrate(0)
+    {
+    }
+    void readHeader(Stream &, Channel *) override;
+    int  readPacket(Stream &, Channel *) override;
+    void readEnd(Stream &, Channel *) override;
+
+    FLVTagBuffer m_buffer;
 };
 
 class AMFObject
 {
 public:
-	AMFObject() : bitrate(0)
-	{
-		// nothing to do
-	}
+    static const int AMF_NUMBER      = 0x00;
+    static const int AMF_BOOL        = 0x01;
+    static const int AMF_STRING      = 0x02;
+    static const int AMF_OBJECT      = 0x03;
+    static const int AMF_MOVIECLIP   = 0x04;
+    static const int AMF_NULL        = 0x05;
+    static const int AMF_UNDEFINED   = 0x06;
+    static const int AMF_REFERENCE   = 0x07;
+    static const int AMF_ARRAY       = 0x08;
+    static const int AMF_OBJECT_END  = 0x09;
+    static const int AMF_STRICTARRAY = 0x0a;
+    static const int AMF_DATE        = 0x0b;
+    static const int AMF_LONG_STRING = 0x0c;
 
-	static const int AMF_NUMBER      = 0x00;
-	static const int AMF_BOOL        = 0x01;
-	static const int AMF_STRING      = 0x02;
-	static const int AMF_OBJECT      = 0x03;
-	static const int AMF_MOVIECLIP   = 0x04;
-	static const int AMF_NULL        = 0x05;
-	static const int AMF_UNDEFINED   = 0x06;
-	static const int AMF_REFERENCE   = 0x07;
-	static const int AMF_ARRAY       = 0x08;
-	static const int AMF_OBJECT_END  = 0x09;
-	static const int AMF_STRICTARRAY = 0x0a;
-	static const int AMF_DATE        = 0x0b;
-	static const int AMF_LONG_STRING = 0x0c;
+    AMFObject() : bitrate(0) {}
 
-	bool readBool(Stream &in)
-	{
-		return in.readChar() != 0;
-	}
+    bool readBool(Stream &in)
+    {
+        return in.readChar() != 0;
+    }
 
-	int readInt(Stream &in)
-	{
-		return (in.readChar() << 24) | (in.readChar() << 16) | (in.readChar() << 8) | (in.readChar());
-	}
+    int readInt(Stream &in)
+    {
+        return (in.readChar() << 24) | (in.readChar() << 16) | (in.readChar() << 8) | (in.readChar());
+    }
 
-	char* readString(Stream &in)
-	{
-		int len = (in.readChar() << 8) | (in.readChar());
-		if (len == 0) {
-			return NULL;
-		}
-		else {
-			char* data = (char *)malloc(len+1);
-			*(data+len) = '\0';
-			in.read(data, len);
-			return data;
-		}
-	};
+    char* readString(Stream &in)
+    {
+        int len = (in.readChar() << 8) | (in.readChar());
+        if (len == 0) {
+            return NULL;
+        }
+        else {
+            char* data = new char[len+1];
+            *(data+len) = '\0';
+            in.read(data, len);
+            return data;
+        }
+    };
 
-	double readDouble(Stream &in)
-	{
-		char* data = (char *)malloc(sizeof(double));
-		for (int i = 8; i > 0; i--) {
-			char c = in.readChar();
-			*(data + i - 1) = c;
-		}
-		double number = *reinterpret_cast<double*>(data);
-		return number;
-	};
+    double readDouble(Stream &in)
+    {
+        double number;
+        char* data = reinterpret_cast<char*>(&number);
+        for (int i = 8; i > 0; i--) {
+            char c = in.readChar();
+            *(data + i - 1) = c;
+        }
+        return number;
+    };
 
-	void readObject(Stream &in)
-	{
-		while (true) {
-			char* key = readString(in);
-			if (key == NULL) {
-				break;
-			}
-			else {
-				if (strcmp(key, "audiodatarate") == 0) {
-					in.readChar();
-					bitrate += static_cast<int>(readDouble(in));
-				}
-				else if (strcmp(key, "videodatarate") == 0) {
-					in.readChar();
-					bitrate += static_cast<int>(readDouble(in));
-				}
-				else {
-					read(in);
-				}
-			}
-		}
-		in.readChar();
-	}
+    void readObject(Stream &in)
+    {
+        while (true) {
+            char* key = readString(in);
+            if (key == NULL) {
+                break;
+            }
+            else {
+                if (strcmp(key, "audiodatarate") == 0) {
+                    in.readChar();
+                    bitrate += readDouble(in);
+                }
+                else if (strcmp(key, "videodatarate") == 0) {
+                    in.readChar();
+                    bitrate += readDouble(in);
+                }
+                else {
+                    read(in);
+                }
+            }
+            delete [] key;
+        }
+        in.readChar();
+    }
 
-	bool readMetaData(Stream &in)
-	{
-		char type = in.readChar();
-		if (type == AMF_STRING) {
-			char* name = readString(in);
-			if (strcmp(name, "onMetaData") == 0) {
-				bitrate = 0;
-				read(in);
-			}
-		}
-		return bitrate > 0;
-	}
+    bool readMetaData(Stream &in)
+    {
+        char type = in.readChar();
+        if (type == AMF_STRING) {
+            char* name = readString(in);
+            if (strcmp(name, "onMetaData") == 0) {
+                bitrate = 0;
+                read(in);
+            }
+            delete [] name;
+        }
+        return bitrate > 0;
+    }
 
-	void read(Stream &in)
-	{
-		char type = in.readChar();
-		if (type == AMF_NUMBER) {
-			readDouble(in);
-		}
-		else if (type == AMF_BOOL) {
-			readBool(in);
-		}
-		else if (type == AMF_STRING) {
-			readString(in);
-		}
-		else if (type == AMF_OBJECT) {
-			readObject(in);
-		}
-		else if (type == AMF_OBJECT_END) {
-		}
-		else if (type == AMF_ARRAY) {
-			int len = readInt(in);
-			readObject(in);
-		}
-		else if (type == AMF_STRICTARRAY) {
-			int len = readInt(in);
-			for (int i = 0; i < len; i++) {
-				read(in);
-			}
-		}
-		else if (type == AMF_DATE) {
-			in.skip(10);
-		}
-	}
-	int bitrate;
+    void read(Stream &in)
+    {
+        char type = in.readChar();
+        if (type == AMF_NUMBER) {
+            readDouble(in);
+        }
+        else if (type == AMF_BOOL) {
+            readBool(in);
+        }
+        else if (type == AMF_STRING) {
+            delete [] readString(in);
+        }
+        else if (type == AMF_OBJECT) {
+            readObject(in);
+        }
+        else if (type == AMF_OBJECT_END) {
+        }
+        else if (type == AMF_ARRAY) {
+            readInt(in); // length
+            readObject(in);
+        }
+        else if (type == AMF_STRICTARRAY) {
+            int len = readInt(in);
+            for (int i = 0; i < len; i++) {
+                read(in);
+            }
+        }
+        else if (type == AMF_DATE) {
+            in.skip(10);
+        }
+    }
+    int bitrate;
 };
-
 
 #endif
