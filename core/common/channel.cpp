@@ -4451,21 +4451,26 @@ void ChanInfo::readInfoAtoms(AtomStream &atom,int numc)
 // -----------------------------------
 void ChanInfo::writeInfoAtoms(AtomStream &atom)
 {
-	atom.writeParent(PCP_CHAN_INFO,7 + (ppFlags ? 1:0/*JP-MOD*/));
-		atom.writeString(PCP_CHAN_INFO_NAME,name.cstr());
-		atom.writeInt(PCP_CHAN_INFO_BITRATE,bitrate);
-		atom.writeString(PCP_CHAN_INFO_GENRE,genre.cstr());
-		atom.writeString(PCP_CHAN_INFO_URL,url.cstr());
-		atom.writeString(PCP_CHAN_INFO_DESC,desc.cstr());
-		atom.writeString(PCP_CHAN_INFO_COMMENT,comment.cstr());
-		atom.writeString(PCP_CHAN_INFO_TYPE,getTypeStr());
-		if (!streamType.isEmpty())
-			atom.writeString(PCP_CHAN_INFO_STREAMTYPE,streamType.cstr());
-	if (!streamExt.isEmpty())
-			atom.writeString(PCP_CHAN_INFO_STREAMEXT,streamExt.cstr());
-		if(ppFlags)
-			atom.writeInt(PCP_CHAN_INFO_PPFLAGS,ppFlags); //JP-MOD
+	int natoms = 7;
 
+	natoms += !streamType.isEmpty();
+	natoms += !streamExt.isEmpty();
+	natoms += !!ppFlags; //JP-MOD
+
+	atom.writeParent(PCP_CHAN_INFO, natoms);
+		atom.writeString(PCP_CHAN_INFO_NAME, name.cstr());
+		atom.writeInt(PCP_CHAN_INFO_BITRATE, bitrate);
+		atom.writeString(PCP_CHAN_INFO_GENRE, genre.cstr());
+		atom.writeString(PCP_CHAN_INFO_URL, url.cstr());
+		atom.writeString(PCP_CHAN_INFO_DESC, desc.cstr());
+		atom.writeString(PCP_CHAN_INFO_COMMENT, comment.cstr());
+		atom.writeString(PCP_CHAN_INFO_TYPE, getTypeStr());
+		if (!streamType.isEmpty())
+			atom.writeString(PCP_CHAN_INFO_STREAMTYPE, streamType.cstr());
+		if (!streamExt.isEmpty())
+			atom.writeString(PCP_CHAN_INFO_STREAMEXT, streamExt.cstr());
+		if (ppFlags)
+			atom.writeInt(PCP_CHAN_INFO_PPFLAGS, ppFlags); //JP-MOD
 }
 // -----------------------------------
 void ChanInfo::writeTrackAtoms(AtomStream &atom)
