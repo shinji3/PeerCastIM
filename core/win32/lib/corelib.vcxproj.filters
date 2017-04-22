@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core Source">
+      <UniqueIdentifier>{f89b0020-df49-4918-a815-a48f77966975}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core Includes">
+      <UniqueIdentifier>{6fe49263-50ef-4727-83bf-2d478397ba9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Win32 Source">
+      <UniqueIdentifier>{2f8bb439-ebbc-42a2-8596-4e9520dfc493}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Win32 Includes">
+      <UniqueIdentifier>{d3a30390-5981-46d0-8351-def5f134ad5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unix Includes">
+      <UniqueIdentifier>{618db834-286d-452d-816d-c1e02100c4d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unix Source">
+      <UniqueIdentifier>{bc45d243-2c6f-4802-a612-416858e72975}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\common\channel.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\flv.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\gnutella.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\html.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\http.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\icy.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\inifile.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\jis.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\mms.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\mp3.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\nsv.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\ogg.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\pcp.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\peercast.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\rtsp.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\servent.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\servhs.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\servmgr.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\socket.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\stats.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\stream.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\sys.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\url.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\xml.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\seh.cpp">
+      <Filter>Win32 Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wsocket.cpp">
+      <Filter>Win32 Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wsys.cpp">
+      <Filter>Win32 Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\common\addrCont.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\asf.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\atom.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\channel.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\common.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\cstream.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\flv.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\gnutella.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\html-xml.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\html.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\http.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\icy.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\id.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\inifile.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\jis.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\mms.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\mp3.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\nsv.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\ogg.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\pcp.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\peercast.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\rtsp.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\servent.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\servmgr.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\socket.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\stats.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\stream.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\sys.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\ts_vector.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\url.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\version2.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\xml.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\seh.h">
+      <Filter>Win32 Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ts_vector.h">
+      <Filter>Win32 Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wsocket.h">
+      <Filter>Win32 Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wsys.h">
+      <Filter>Win32 Includes</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

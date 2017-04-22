@@ -1,18 +1,22 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
-MinimumVisualStudioVersion = 10.0.40219.1
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{00D364AE-DB2F-4109-A925-31B4F129D613}"
 	ProjectSection(SolutionItems) = preProject
 		memo.txt = memo.txt
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "corelib", "core\win32\lib\corelib.vcxproj", "{7BCFE65B-8757-45F3-8DFB-1E7D683950D1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "corelib", "core\win32\lib\corelib.vcproj", "{7BCFE65B-8757-45F3-8DFB-1E7D683950D1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Simple", "ui\win32\simple\Simple.vcxproj", "{7D4833CE-1286-4587-9470-52E098B29C12}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Simple", "ui\win32\simple\Simple.vcproj", "{7D4833CE-1286-4587-9470-52E098B29C12}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7BCFE65B-8757-45F3-8DFB-1E7D683950D1} = {7BCFE65B-8757-45F3-8DFB-1E7D683950D1}
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Simple_vp", "ui\win32\Simple_vp\Simple_vp.vcxproj", "{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Simple_vp", "ui\win32\Simple_vp\Simple_vp.vcproj", "{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7BCFE65B-8757-45F3-8DFB-1E7D683950D1} = {7BCFE65B-8757-45F3-8DFB-1E7D683950D1}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
