@@ -244,7 +244,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>Debug/PeerCast.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -253,14 +253,17 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>../../../core\win32\lib\corelib___Win32_Private_Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>.\Simple___Win32_Private_Debug/Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Message>Copy exe to program files</Message>
-      <Command>copy           debug\peercast.exe           "c:\program files\peercast"</Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Private Debug|x64'">
@@ -308,8 +311,10 @@
       <OutputFile>.\Simple___Win32_Private_Debug/Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Message>Copy exe to program files</Message>
-      <Command>copy           debug\peercast.exe           "c:\program files\peercast"</Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
