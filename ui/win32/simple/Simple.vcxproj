@@ -173,13 +173,13 @@
     <OutDir>.\Release\</OutDir>
     <IntDir>.\Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Private Release|Win32'">
     <OutDir>.\Simple___Win32_Private_Release\</OutDir>
@@ -200,19 +200,19 @@
     <OutDir>$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(SSE2)|Win32'">
     <OutDir>$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(SSE2)|x64'">
     <OutDir>$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Private Debug|Win32'">
     <Midl>
@@ -373,9 +373,10 @@
       <OutputFile>.\Release/Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Message>Copy exe to pimp</Message>
-      <Command>copy                   release\peercast.exe                   ..\pimp\
-</Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -432,9 +433,10 @@
       <OutputFile>.\Release/Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Message>Copy exe to pimp</Message>
-      <Command>copy                   release\peercast.exe                   ..\pimp\
-</Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Private Release|Win32'">
@@ -636,8 +638,10 @@
       <OutputFile>.\Debug/Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Message>Copy exe to program files</Message>
-      <Command>copy           debug\peercast.exe           "c:\program files\peercast"</Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release(SSE2)|Win32'">
@@ -695,9 +699,10 @@
       <OutputFile>.\Release/Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Message>Copy exe to pimp</Message>
-      <Command>copy                   release\peercast.exe                   ..\pimp\
-</Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release(SSE2)|x64'">
@@ -754,9 +759,10 @@
       <OutputFile>.\Release/Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Message>Copy exe to pimp</Message>
-      <Command>copy                   release\peercast.exe                   ..\pimp\
-</Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
