@@ -401,7 +401,7 @@ copy                   release\peercast.exe                   ..\pimp\
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;odbc32.lib;odbccp32.lib;uuid.lib;ole32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>PrivRelease/PeerCast.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>.\Simple___Win32_Private_Release/PeerCast.pdb</ProgramDatabaseFile>
@@ -415,10 +415,10 @@ copy                   release\peercast.exe                   ..\pimp\
       <OutputFile>.\Simple___Win32_Private_Release/Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Message>Copy exe to pimp &amp; program files</Message>
-      <Command>copy                   release\peercast.exe                   "c:\program files\peercast"
-copy                   release\peercast.exe                   ..\pimp\
-</Command>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Private Release|x64'">
