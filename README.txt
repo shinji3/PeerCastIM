@@ -48,6 +48,12 @@ based on PeerCast IM7651 by Trill, Original: (c) 2005-2007 giles/peercast.org
 
 
 = 改訂履歴
+  - IM0051-3 (170430)
+    + ストリームタイプ拡張アトムのついた配信を正常にリレーできないバグを修正
+    + PeerCast YTからFLV配信のコードをマージしたのでFLV配信をした時にメモリリークするバグはたぶん解決
+    + FLV配信とMKV配信とWEBM配信とTS配信のMIMETypeを内蔵したのでマイナーなフォーマットの配信でも再生できる確率が上がった
+    + 付属のhtmlをVP版をベースにしました
+
   - IM0051 (170115)
     + FLVの配信に対応。
       RTMPの受け入れ機能は無いのでFlazrDumper等、HTTPで流せるツールが必要です。
