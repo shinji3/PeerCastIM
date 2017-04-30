@@ -39,9 +39,7 @@
                       <td>
 					  {@if servMgr.upgradeURL} 
 	  				    <div align="center" class="normal">
-                        <a href="{$servMgr.upgradeURL}" target="_blank"><strong><font color="#FF0000">Please 
-                          upgrade your client, click here to download the latest 
-                          version. </font></strong></a>
+                        <a href="{$servMgr.upgradeURL}" target="_blank"><strong><font color="#FF0000"> 新バージョンがダウンロードできるようになりました。!!!  </font></strong></a>
 						</div>
 					  {@else}
 	  				    <div align="center" class="normal-small">
@@ -58,13 +56,14 @@
           <div align="center"></div>
           <table width="100%" border="1" cellpadding="1" cellspacing="0">
             <tr class="normal"> 
-              <td><div align="center"><a href="index.html">インフォメーション</a></div></td>
-              <td><div align="center"><a href="http://yp.peercast.org/?host={$servMgr.serverLocalIP}:{$servMgr.serverPort1}" target="_blank">イエローページ</a></div></td>
+              <td><div align="center"><a href="index.html">情報</a></div></td>
+              <td><div align="center"><a href="http://yp.peercast.org/?host={$servMgr.serverLocalIP}:{$servMgr.serverPort1}" target="_blank">Yellow 
+                  Pages</a></div></td>
               <td><div align="center"><a href="relays.html">リレー</a></div></td>
-              <td><div align="center"><a href="broadcast.html">ブロードキャスト</a></div></td>
+              <td><div align="center"><a href="broadcast.html">配信</a></div></td>
               <td><div align="center"><a href="connections.html">コネクション</a></div></td>
-              <td><div align="center"><a href="settings.html">セッティング</a></div></td>
-              <td><div align="center"><a href="viewlog.html">ログ</a></div></td>
+              <td><div align="center"><a href="settings.html">設定</a></div></td>
+              <td><div align="center"><a href="viewlog.html">ログ表示</a></div></td>
               <td><div align="center"><a href="logout.html">ログアウト</a></div></td>
             </tr>
           </table>
@@ -76,12 +75,12 @@
               <TR align=middle bgColor=#cccccc class="normal">
                 <TD width="1">&nbsp;</TD>
                 <TD width="59%"><B>チャネル</B></TD>
-                <TD width="9%"><B>Bitrate (kb/s)</B></TD>
-                <TD width="6%"><B>Stream</B></TD>
-                <TD width="6%"><B>Total Relays</B></TD>
-                <TD width="8%"><B>Local Relays</B></TD>
-                <TD width="6%"><B>Status</B></TD>
-                <TD width="6%"><B>Keep</B></TD>
+                <TD width="9%"><B>ビットレート (kb/s)</B></TD>
+                <TD width="6%"><B>ストリーム</B></TD>
+                <TD width="6%"><B>リレー合計</B></TD>
+                <TD width="8%"><B>ローカルリレー</B></TD>
+                <TD width="6%"><B>ステータス</B></TD>
+                <TD width="6%"><B>キープ</B></TD>
               </TR>
             {@loop chanMgr.numChannels} 
 			<tr class="normal" bgcolor={@if loop.indexEven}#eeeeee{@else}#dddddd{@end}>
@@ -91,16 +90,17 @@
                 <span class="normal-small">{$loop.channel.track.artist} - {$loop.channel.track.title} 
                 </span> <br>
                 <span class="normal">
-				 <b><a href="relayinfo.html?id={$loop.channel.id}">Info</a></b> 
-                {@if loop.channel.contactURL} - <b><a href="{$loop.channel.contactURL}">WWW</a></b> 
+				 <b><a href="relayinfo.html?id={$loop.channel.id}">情報</a></b> 
+				 - <b><a href="tree.html?id={$loop.channel.id}">リレーツリー</a></b> 
+                {@if loop.channel.contactURL} - <b><a href="{$loop.channel.contactURL}">URL</a></b> 
                 {@end}
-				 - <b><a href="/admin?cmd=keep&id={$loop.channel.id}">Keep</a></b> 
-				 - <b><a href="/admin?cmd=bump&id={$loop.channel.id}">Bump</a></b> 
-				 - <b><a href="/admin?cmd=stop&id={$loop.channel.id}">Stop</a></b> 
+				 - <b><a href="/admin?cmd=keep&id={$loop.channel.id}">キープ</a></b> 
+				 - <b><a href="/admin?cmd=bump&id={$loop.channel.id}">再接続</a></b> 
+				 - <b><a href="/admin?cmd=stop&id={$loop.channel.id}">停止</a></b> 
 				</span></font> 
 			   </TD>
               <TD class="normal">{$loop.channel.bitrate}</TD>
-              <TD class="normal"><a href="/stream/{$loop.channel.id}{$loop.channel.ext}">{$loop.channel.type}</a></TD>
+              <TD class="normal"><a href="{$loop.channel.proto}{$servMgr.serverLocalIP}:{$servMgr.serverPort1}/stream/{$loop.channel.id}{$loop.channel.ext}">{$loop.channel.type}</a></TD>
               <TD class="normal">{$loop.channel.totalListeners} / {$loop.channel.totalRelays}</TD>
               <TD class="normal">{$loop.channel.localListeners} / {$loop.channel.localRelays}</TD>
               <TD class="normal">{$loop.channel.status}</TD>
