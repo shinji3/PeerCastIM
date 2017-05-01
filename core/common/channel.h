@@ -167,7 +167,7 @@ public:
 	GnuID	id,bcID;
 	int		bitrate;
 	TYPE	contentType;
-	::String	contentTypeStr,streamType,streamExt;
+	::String	contentTypeStr,MIMEType,streamExt;
 	PROTOCOL	srcProtocol;
 	unsigned int lastPlayStart,lastPlayEnd;
 	unsigned int numSkips;
