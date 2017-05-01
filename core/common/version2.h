@@ -21,23 +21,23 @@
 
 // ------------------------------------------------
 #ifdef PRIVATE_BROADCASTER
-static const char PCP_BROADCAST_FLAGS	= 0x01;	
-static bool	PCP_FORCE_YP				= true;
+static const char PCP_BROADCAST_FLAGS   = 0x01;
+#define PCP_FORCE_YP true
 #else
-static const char PCP_BROADCAST_FLAGS	= 0x00;
-static bool	PCP_FORCE_YP				= false;
+static const char PCP_BROADCAST_FLAGS   = 0x00;
+#define PCP_FORCE_YP false
 #endif
 // ------------------------------------------------
-static const int PCP_CLIENT_VERSION		= 1218;
-static const int PCP_CLIENT_VERSION_VP	= 27;
-static const int PCP_ROOT_VERSION		= 1218;
+static const int PCP_CLIENT_VERSION     = 1218;
+static const int PCP_CLIENT_VERSION_VP  = 27;
+static const int PCP_ROOT_VERSION       = 1218;
 
-static const int PCP_CLIENT_MINVERSION	= 1200;
+static const int PCP_CLIENT_MINVERSION  = 1200;
 
-static const char *PCX_AGENT 		= "PeerCast/0.1218";	
-static const char *PCX_AGENTJP 		= "PeerCast/0.1218-J";
-static const char *PCX_AGENTVP		= "PeerCast/0.1218(VP0027)";
-static const char *PCX_VERSTRING	= "v0.1218(VP0027)";
+static const char *PCX_AGENT            = "PeerCast/0.1218";   
+static const char *PCX_AGENTJP          = "PeerCast/0.1218-J";
+static const char *PCX_AGENTVP          = "PeerCast/0.1218(VP0027)";
+static const char *PCX_VERSTRING        = "v0.1218(VP0027)";
 
 extern int version_ex; // VERSION_EX—LŒø‰»ƒtƒ‰ƒO
 
@@ -51,8 +51,6 @@ static const char *PCX_VERSTRING_EX = "v0.1218(IM0051)";
 static const char *PCP_CLIENT_DIST_URL = "http://pecaim.net/";
 static const char *PCP_CLIENT_VERSION_URL = "version.pecaim.net";
 #endif
-
 // ------------------------------------------------
-
 
 #endif
