@@ -26,10 +26,10 @@
 class MP3Stream : public ChannelStream
 {
 public:
-	virtual void readHeader(Stream &,Channel *);
-	virtual int	 readPacket(Stream &,Channel *);
-	virtual void readEnd(Stream &,Channel *);
+    void    readHeader(Stream &, Channel *) override;
+    int     readPacket(Stream &, Channel *) override;
+    void    readEnd(Stream &, Channel *) override;
 };
 
 
-#endif 
+#endif
