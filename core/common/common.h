@@ -32,21 +32,21 @@
 class GeneralException
 {
 public:
-    GeneralException(const char *m, int e = 0) 
-	{
-		strcpy(msg,m);
-		err=e;
-	}
+    GeneralException(const char *m, int e = 0)
+    {
+        strcpy(msg, m);
+        err=e;
+    }
     char msg[128];
-	int err;
+    int err;
 };
 
 // -------------------------------------
 class StreamException : public GeneralException
 {
 public:
-	StreamException(const char *m) : GeneralException(m) {}
-	StreamException(const char *m,int e) : GeneralException(m,e) {}
+    StreamException(const char *m) : GeneralException(m) {}
+    StreamException(const char *m, int e) : GeneralException(m, e) {}
 };
 
 // ----------------------------------
@@ -54,14 +54,15 @@ class SockException : public StreamException
 {
 public:
     SockException(const char *m="Socket") : StreamException(m) {}
-    SockException(const char *m, int e) : StreamException(m,e) {}
+    SockException(const char *m, int e) : StreamException(m, e) {}
 };
+
 // ----------------------------------
 class EOFException : public StreamException
 {
 public:
     EOFException(const char *m="EOF") : StreamException(m) {}
-    EOFException(const char *m, int e) : StreamException(m,e) {}
+    EOFException(const char *m, int e) : StreamException(m, e) {}
 };
 
 // ----------------------------------
@@ -69,9 +70,8 @@ class CryptException : public StreamException
 {
 public:
     CryptException(const char *m="Crypt") : StreamException(m) {}
-    CryptException(const char *m, int e) : StreamException(m,e) {}
+    CryptException(const char *m, int e) : StreamException(m, e) {}
 };
-
 
 // ----------------------------------
 class TimeoutException : public StreamException
@@ -79,60 +79,61 @@ class TimeoutException : public StreamException
 public:
     TimeoutException(const char *m="Timeout") : StreamException(m) {}
 };
+
 // --------------------------------
 class GnuID
 {
 public:
-	bool	isSame(GnuID &gid)
-	{
-		for(int i=0; i<16; i++)
-			if (gid.id[i] != id[i])
-				return false;
-		return true;
-	}
+    bool    isSame(GnuID &gid)
+    {
+        for(int i=0; i<16; i++)
+            if (gid.id[i] != id[i])
+                return false;
+        return true;
+    }
 
 
-	bool	isSet()
-	{
-		for(int i=0; i<16; i++)
-			if (id[i] != 0)
-				return true;
-		return false;
-	}
+    bool    isSet()
+    {
+        for(int i=0; i<16; i++)
+            if (id[i] != 0)
+                return true;
+        return false;
+    }
 
-	void	clear()
-	{
-		for(int i=0; i<16; i++)
-			id[i] = 0;
-		storeTime = 0;
-	}
+    void    clear()
+    {
+        for(int i=0; i<16; i++)
+            id[i] = 0;
+        storeTime = 0;
+    }
 
 
-	void	generate(unsigned char = 0);
-	void	encode(class Host *, const char *,const char *,unsigned char);
+    void    generate(unsigned char = 0);
+    void    encode(class Host *, const char *,const char *,unsigned char);
 
-	void	toStr(char *);
-	void	fromStr(const char *);
+    void    toStr(char *);
+    void    fromStr(const char *);
 
-	unsigned char 	getFlags();
+    unsigned char     getFlags();
 
-	unsigned char id[16];
-	unsigned int storeTime;
+    unsigned char id[16];
+    unsigned int storeTime;
 };
 // --------------------------------
 class GnuIDList 
 {
 public:
-	GnuIDList(int);
-	~GnuIDList();
-	void	clear();
-	void	add(GnuID &);
-	bool	contains(GnuID &);
-	int		numUsed();
-	unsigned int getOldest();
+    GnuIDList(int);
+    ~GnuIDList();
+    void    clear();
+    void    add(GnuID &);
+    bool    contains(GnuID &);
+    int        numUsed();
+    unsigned int getOldest();
 
-	GnuID	*ids;
-	int		maxID;
+    GnuID    *ids;
+    int        maxID;
 };
 
 
@@ -157,98 +158,98 @@ class Host
     }
 
 public:
-	Host(){init();}
-	Host(unsigned int i, unsigned short p)
-	{
-		ip = i;
-		port = p;
-		value = 0;
-	}
+    Host(){init();}
+    Host(unsigned int i, unsigned short p)
+    {
+        ip = i;
+        port = p;
+        value = 0;
+    }
 
-	void	init()
-	{
-		ip = 0;
-		port = 0;
-		value = 0;
-	}
-
-
-	bool	isMemberOf(Host &);
-
-	bool	isSame(Host &h)
-	{
-		return (h.ip == ip) && (h.port == port);
-	}
-
-	bool classType() {return globalIP();}
-
-	bool	globalIP()
-	{
-		// local host
-		if ((ip3() == 127) && (ip2() == 0) && (ip1() == 0) && (ip0() == 1))
-			return false;
-
-		// class A
-		if (ip3() == 10)
-			return false;
-
-		// class B
-		if ((ip3() == 172) && (ip2() >= 16) && (ip2() <= 31))
-			return false;
-
-		// class C
-		if ((ip3() == 192) && (ip2() == 168))
-			return false;
-
-		return true;
-	}
-	bool	localIP()
-	{
-		return !globalIP();
-	}
-
-	bool	loopbackIP()
-	{
-//		return ((ipByte[3] == 127) && (ipByte[2] == 0) && (ipByte[1] == 0) && (ipByte[0] == 1));
-		return ((ip3() == 127) && (ip2() == 0) && (ip1() == 0) && (ip0() == 1));
-	}
-
-	bool	isValid()
-	{
-		return (ip != 0);
-	}
+    void    init()
+    {
+        ip = 0;
+        port = 0;
+        value = 0;
+    }
 
 
-	bool	isSameType(Host &h)
-	{
-			return ( (globalIP() && h.globalIP()) ||
-			         (!globalIP() && !h.globalIP()) ); 
-	}
+    bool    isMemberOf(Host &);
 
-	void	IPtoStr(char *str)
-	{
-		sprintf(str,"%d.%d.%d.%d",(ip>>24)&0xff,(ip>>16)&0xff,(ip>>8)&0xff,(ip)&0xff);
-	}
+    bool    isSame(Host &h)
+    {
+        return (h.ip == ip) && (h.port == port);
+    }
 
-	void	toStr(char *str)
-	{
-		sprintf(str,"%d.%d.%d.%d:%d",(ip>>24)&0xff,(ip>>16)&0xff,(ip>>8)&0xff,(ip)&0xff,port);
-	}
+    bool classType() {return globalIP();}
 
-	void	fromStrIP(const char *,int);
-	void	fromStrName(const char *,int);
+    bool    globalIP()
+    {
+        // local host
+        if ((ip3() == 127) && (ip2() == 0) && (ip1() == 0) && (ip0() == 1))
+            return false;
 
-	bool	isLocalhost();
+        // class A
+        if (ip3() == 10)
+            return false;
+
+        // class B
+        if ((ip3() == 172) && (ip2() >= 16) && (ip2() <= 31))
+            return false;
+
+        // class C
+        if ((ip3() == 192) && (ip2() == 168))
+            return false;
+
+        return true;
+    }
+    bool    localIP()
+    {
+        return !globalIP();
+    }
+
+    bool    loopbackIP()
+    {
+//        return ((ipByte[3] == 127) && (ipByte[2] == 0) && (ipByte[1] == 0) && (ipByte[0] == 1));
+        return ((ip3() == 127) && (ip2() == 0) && (ip1() == 0) && (ip0() == 1));
+    }
+
+    bool    isValid()
+    {
+        return (ip != 0);
+    }
 
 
-	union
-	{
-		unsigned int ip;
-//		unsigned char ipByte[4];
-	};
+    bool    isSameType(Host &h)
+    {
+            return ( (globalIP() && h.globalIP()) ||
+                     (!globalIP() && !h.globalIP()) ); 
+    }
+
+    void    IPtoStr(char *str)
+    {
+        sprintf(str,"%d.%d.%d.%d",(ip>>24)&0xff,(ip>>16)&0xff,(ip>>8)&0xff,(ip)&0xff);
+    }
+
+    void    toStr(char *str)
+    {
+        sprintf(str,"%d.%d.%d.%d:%d",(ip>>24)&0xff,(ip>>16)&0xff,(ip>>8)&0xff,(ip)&0xff,port);
+    }
+
+    void    fromStrIP(const char *,int);
+    void    fromStrName(const char *,int);
+
+    bool    isLocalhost();
+
+
+    union
+    {
+        unsigned int ip;
+//        unsigned char ipByte[4];
+    };
 
     unsigned short port;
-	unsigned int value;
+    unsigned int value;
 };
 // ----------------------------------
 #define SWAP2(v) ( ((v&0xff)<<8) | ((v&0xff00)>>8) )
@@ -261,14 +262,14 @@ public:
 // ----------------------------------
 inline bool isWhiteSpace(char c)
 {
-	return (c == ' ') || (c == '\r') || (c == '\n') || (c == '\t');
+    return (c == ' ') || (c == '\r') || (c == '\n') || (c == '\t');
 }
 
 // ----------------------------------
 inline int strToID(char *str)
 {
-	union {
-    	int i;
+    union {
+        int i;
         char s[8];
     };
     strncpy(s,str,4);
@@ -276,18 +277,16 @@ inline int strToID(char *str)
 }
 
 // -----------------------------------
-char *getCGIarg(const char *str, const char *arg);
-bool cmpCGIarg(char *str, char *arg, char *value);
-bool hasCGIarg(char *str, char *arg);
+const char  *getCGIarg(const char *str, const char *arg);
+bool        cmpCGIarg(const char *str, const char *arg, const char *value);
+bool        hasCGIarg(const char *str, const char *arg);
 
 // ----------------------------------
-extern void LOG(const char *fmt,...);
-
-extern void LOG_ERROR(const char *fmt,...);
-extern void LOG_DEBUG(const char *fmt,...);
-extern void LOG_NETWORK(const char *fmt,...);
-extern void LOG_CHANNEL(const char *fmt,...);
-
+extern void LOG(const char *fmt, ...);
+extern void LOG_ERROR(const char *fmt, ...);
+extern void LOG_DEBUG(const char *fmt, ...);
+extern void LOG_NETWORK(const char *fmt, ...);
+extern void LOG_CHANNEL(const char *fmt, ...);
 
 #endif
 
