@@ -32,46 +32,46 @@ class ChanHitSearch;
 // --------------------------------------------------
 struct MP3Header
 {
-	int lay;
-	int version;
-	int error_protection;
-	int bitrate_index;
-	int sampling_frequency;
-	int padding;
-	int extension;
-	int mode;
-	int mode_ext;
-	int copyright;
-	int original;
-	int emphasis;
-	int stereo;
+    int lay;
+    int version;
+    int error_protection;
+    int bitrate_index;
+    int sampling_frequency;
+    int padding;
+    int extension;
+    int mode;
+    int mode_ext;
+    int copyright;
+    int original;
+    int emphasis;
+    int stereo;
 };
 
 // ----------------------------------
 class TrackInfo
 {
 public:
-	void	clear()
-	{
-		contact.clear();
-		title.clear();
-		artist.clear();
-		album.clear();
-		genre.clear();
-	}
+    void    clear()
+    {
+        contact.clear();
+        title.clear();
+        artist.clear();
+        album.clear();
+        genre.clear();
+    }
 
-	void	convertTo(String::TYPE t)
-	{
-		contact.convertTo(t);
-		title.convertTo(t);
-		artist.convertTo(t);
-		album.convertTo(t);
-		genre.convertTo(t);
-	}
+    void    convertTo(String::TYPE t)
+    {
+        contact.convertTo(t);
+        title.convertTo(t);
+        artist.convertTo(t);
+        album.convertTo(t);
+        genre.convertTo(t);
+    }
 
-	bool	update(TrackInfo &);
+    bool    update(TrackInfo &);
 
-	::String	contact,title,artist,album,genre;
+    ::String    contact,title,artist,album,genre;
 };
 
 
@@ -80,105 +80,105 @@ public:
 class ChanInfo
 {
 public:
-	enum TYPE
-	{
-		T_UNKNOWN,
+    enum TYPE
+    {
+        T_UNKNOWN,
 
-		T_RAW,
-		T_MP3,
-		T_OGG,
-		T_OGM,
-		T_MOV,
-		T_MPG,
-		T_NSV,
+        T_RAW,
+        T_MP3,
+        T_OGG,
+        T_OGM,
+        T_MOV,
+        T_MPG,
+        T_NSV,
 
-		T_WMA,
-		T_WMV,
+        T_WMA,
+        T_WMV,
 
-		T_FLV,
-		T_MKV,
-		T_WEBM,
-		T_TS,
+        T_FLV,
+        T_MKV,
+        T_WEBM,
+        T_TS,
 
-		T_PLS,
-		T_ASX
-	};
-
-
-	enum PROTOCOL
-	{
-		SP_UNKNOWN,
-		SP_PEERCAST,
-		SP_HTTP,
-		SP_FILE,
-		SP_MMS,
-		SP_PCP
-	};
+        T_PLS,
+        T_ASX
+    };
 
 
-	enum STATUS
-	{
-		S_UNKNOWN,
-		S_PLAY
-	};
+    enum PROTOCOL
+    {
+        SP_UNKNOWN,
+        SP_PEERCAST,
+        SP_HTTP,
+        SP_FILE,
+        SP_MMS,
+        SP_PCP
+    };
 
-	ChanInfo() {init();}
 
-	void	init();
-	void	init(const char *);
-	void	init(const char *, GnuID &, TYPE, int);
-	void	init(XML::Node *);
-	void	initNameID(const char *);
+    enum STATUS
+    {
+        S_UNKNOWN,
+        S_PLAY
+    };
 
-	void	updateFromXML(XML::Node *);
+    ChanInfo() {init();}
 
-	void	readTrackXML(XML::Node *);
-	void	readServentXML(XML::Node *);
-	bool	update(ChanInfo &);
-	XML::Node *createQueryXML();
-	XML::Node *createChannelXML();
-	XML::Node *createRelayChannelXML();
-	XML::Node *createTrackXML();
-	bool	match(XML::Node *);
-	bool	match(ChanInfo &);
-	bool	matchNameID(ChanInfo &);
+    void    init();
+    void    init(const char *);
+    void    init(const char *, GnuID &, TYPE, int);
+    void    init(XML::Node *);
+    void    initNameID(const char *);
 
-	void	writeInfoAtoms(AtomStream &atom);
-	void	writeTrackAtoms(AtomStream &atom);
+    void    updateFromXML(XML::Node *);
 
-	void	readInfoAtoms(AtomStream &,int);
-	void	readTrackAtoms(AtomStream &,int);
+    void    readTrackXML(XML::Node *);
+    void    readServentXML(XML::Node *);
+    bool    update(ChanInfo &);
+    XML::Node *createQueryXML();
+    XML::Node *createChannelXML();
+    XML::Node *createRelayChannelXML();
+    XML::Node *createTrackXML();
+    bool    match(XML::Node *);
+    bool    match(ChanInfo &);
+    bool    matchNameID(ChanInfo &);
 
-	unsigned int getUptime();
-	unsigned int getAge();
-	bool	isActive() {return id.isSet();}
-	bool	isPrivate() {return bcID.getFlags() & 1;}
-	const	char *getTypeStr();
-	const	char *getTypeExt();
-	const	char *getMIMEType();
-	static	const	char *getTypeStr(TYPE);
-	static	const	char *getProtocolStr(PROTOCOL);
-	static	const	char *getTypeExt(TYPE);
-	static	const	char *getMIMEType(TYPE);
-	static	TYPE		getTypeFromStr(const char *str);
-	static	PROTOCOL	getProtocolFromStr(const char *str);
+    void    writeInfoAtoms(AtomStream &atom);
+    void    writeTrackAtoms(AtomStream &atom);
 
-	::String	name;
-	GnuID	id,bcID;
-	int		bitrate;
-	TYPE	contentType;
-	::String	contentTypeStr,MIMEType,streamExt;
-	PROTOCOL	srcProtocol;
-	unsigned int lastPlayStart,lastPlayEnd;
-	unsigned int numSkips;
-	unsigned int createdTime;
+    void    readInfoAtoms(AtomStream &,int);
+    void    readTrackAtoms(AtomStream &,int);
 
-	STATUS  status;
+    unsigned int getUptime();
+    unsigned int getAge();
+    bool    isActive() {return id.isSet();}
+    bool    isPrivate() {return bcID.getFlags() & 1;}
+    const    char *getTypeStr();
+    const    char *getTypeExt();
+    const    char *getMIMEType();
+    static    const    char *getTypeStr(TYPE);
+    static    const    char *getProtocolStr(PROTOCOL);
+    static    const    char *getTypeExt(TYPE);
+    static    const    char *getMIMEType(TYPE);
+    static    TYPE        getTypeFromStr(const char *str);
+    static    PROTOCOL    getProtocolFromStr(const char *str);
 
-	TrackInfo	track;
-	::String	desc,genre,url,comment;
+    ::String    name;
+    GnuID    id,bcID;
+    int        bitrate;
+    TYPE    contentType;
+    ::String    contentTypeStr,MIMEType,streamExt;
+    PROTOCOL    srcProtocol;
+    unsigned int lastPlayStart,lastPlayEnd;
+    unsigned int numSkips;
+    unsigned int createdTime;
 
-	unsigned int ppFlags; //JP-MOD
+    STATUS  status;
+
+    TrackInfo    track;
+    ::String    desc,genre,url,comment;
+
+    unsigned int ppFlags; //JP-MOD
 };
 
 
@@ -186,566 +186,552 @@ public:
 class ChanHit
 {
 public:
-	void	init();
-	void	initLocal(int numl,int numr,int nums,int uptm,bool,bool,unsigned int,Channel*,unsigned int,unsigned int);
-	void	initLocal_pp(bool isStealth, int numClaps); //JP-MOD
-	XML::Node *createXML();
+    void    init();
+    void    initLocal(int numl,int numr,int nums,int uptm,bool,bool,unsigned int,Channel*,unsigned int,unsigned int);
+    void    initLocal_pp(bool isStealth, int numClaps); //JP-MOD
+    XML::Node *createXML();
 
-	void	writeAtoms(AtomStream &,GnuID &);
-	bool	writeVariable(Stream &, const String &);
+    void    writeAtoms(AtomStream &,GnuID &);
+    bool    writeVariable(Stream &, const String &);
 
-	void	pickNearestIP(Host &);
+    void    pickNearestIP(Host &);
 
-	Host				host;
-	Host				rhost[2];
-	unsigned int		numListeners,numRelays,numHops;
-	int					clap_pp;	//JP-MOD
-	unsigned int		time,upTime,lastContact;
-	unsigned int		hitID;
-	GnuID				sessionID,chanID;
-	unsigned int		version;
-	unsigned int		version_vp;
+    Host                host;
+    Host                rhost[2];
+    unsigned int        numListeners,numRelays,numHops;
+    int                    clap_pp;    //JP-MOD
+    unsigned int        time,upTime,lastContact;
+    unsigned int        hitID;
+    GnuID                sessionID,chanID;
+    unsigned int        version;
+    unsigned int        version_vp;
 
-	bool	firewalled:1,stable:1,tracker:1,recv:1,yp:1,dead:1,direct:1,relay:1,cin:1;
-	bool	relayfull:1,chfull:1,ratefull:1;
+    bool    firewalled:1,stable:1,tracker:1,recv:1,yp:1,dead:1,direct:1,relay:1,cin:1;
+    bool    relayfull:1,chfull:1,ratefull:1;
 
-	ChanHit *next;
+    ChanHit *next;
 
-	int status;
-	int servent_id;
+    int status;
+    int servent_id;
 
-	unsigned int		oldestPos,newestPos;
-	Host uphost;
-	unsigned int		uphostHops;
+    unsigned int        oldestPos,newestPos;
+    Host uphost;
+    unsigned int        uphostHops;
 
-	char				version_ex_prefix[2];
-	unsigned int		version_ex_number;
+    char                version_ex_prefix[2];
+    unsigned int        version_ex_number;
 
-	unsigned int lastSendSeq;
+    unsigned int lastSendSeq;
 };
 // ----------------------------------
 class ChanHitList
 {
 public:
-	ChanHitList();
-	~ChanHitList();
+    ChanHitList();
+    ~ChanHitList();
 
-	int		contactTrackers(bool,int,int,int);
+    int        contactTrackers(bool,int,int,int);
 
-	ChanHit	*addHit(ChanHit &);
-	void	delHit(ChanHit &);
-	void	deadHit(ChanHit &);
-	void	clearHits(bool);
-	int		numHits();
-	int		numListeners();
-	int		numClaps();	//JP-MOD
-	int		numRelays();
-	int		numFirewalled();
-	int		numTrackers();
-	int		closestHit();
-	int		furthestHit();
-	unsigned int		newestHit();
+    ChanHit    *addHit(ChanHit &);
+    void    delHit(ChanHit &);
+    void    deadHit(ChanHit &);
+    void    clearHits(bool);
+    int        numHits();
+    int        numListeners();
+    int        numClaps();    //JP-MOD
+    int        numRelays();
+    int        numFirewalled();
+    int        numTrackers();
+    int        closestHit();
+    int        furthestHit();
+    unsigned int        newestHit();
 
-	int			pickHits(ChanHitSearch &);
-	int			pickSourceHits(ChanHitSearch &);
+    int            pickHits(ChanHitSearch &);
+    int            pickSourceHits(ChanHitSearch &);
 
-	bool	isUsed() {return used;}
-	int		clearDeadHits(unsigned int,bool);
-	XML::Node *createXML(bool addHits = true);
+    bool    isUsed() {return used;}
+    int        clearDeadHits(unsigned int,bool);
+    XML::Node *createXML(bool addHits = true);
 
-	ChanHit *deleteHit(ChanHit *);
+    ChanHit *deleteHit(ChanHit *);
 
-	int		getTotalListeners();
-	int		getTotalRelays();
-	int		getTotalFirewalled();
+    int        getTotalListeners();
+    int        getTotalRelays();
+    int        getTotalFirewalled();
 
-	unsigned int getSeq();
+    unsigned int getSeq();
 
-	bool	used;
-	ChanInfo	info;
-	ChanHit	*hit;
-	unsigned int lastHitTime;
-	ChanHitList *next;
+    bool    used;
+    ChanInfo    info;
+    ChanHit    *hit;
+    unsigned int lastHitTime;
+    ChanHitList *next;
 
-	WLock seqLock;
-	unsigned int riSequence;
+    WLock seqLock;
+    unsigned int riSequence;
 };
 // ----------------------------------
 class ChanHitSearch
 {
 public:
-	enum
-	{
-		MAX_RESULTS = 8
-	};
+    enum
+    {
+        MAX_RESULTS = 8
+    };
 
-	ChanHitSearch() { init(); }
-	void init();
+    ChanHitSearch() { init(); }
+    void init();
 
-	ChanHit	best[MAX_RESULTS];
-	Host	matchHost;
-	unsigned int waitDelay;
-	bool	useFirewalled;
-	bool	trackersOnly;
-	bool	useBusyRelays,useBusyControls;
-	GnuID	excludeID;
-	int		numResults;
-	unsigned int seed;
+    ChanHit    best[MAX_RESULTS];
+    Host    matchHost;
+    unsigned int waitDelay;
+    bool    useFirewalled;
+    bool    trackersOnly;
+    bool    useBusyRelays,useBusyControls;
+    GnuID    excludeID;
+    int        numResults;
+    unsigned int seed;
 
-	int getRelayHost(Host host1, Host host2, GnuID exID, ChanHitList *chl);
+    int getRelayHost(Host host1, Host host2, GnuID exID, ChanHitList *chl);
 };
 
 // ----------------------------------
 class ChanMeta
 {
 public:
-	enum {
-		MAX_DATALEN = 65536
-	};
+    enum
+    {
+        MAX_DATALEN = 65536
+    };
 
-	void	init()
-	{
-		len = 0;
-		cnt = 0;
-		startPos = 0;
-	}
+    void    init()
+    {
+        len = 0;
+        cnt = 0;
+        startPos = 0;
+    }
 
-	void	fromXML(XML &);
-	void	fromMem(void *,int);
-	void	addMem(void *,int);
+    void    fromXML(XML &);
+    void    fromMem(void *, int);
+    void    addMem(void *, int);
 
-	unsigned int len,cnt,startPos;
-	char	data[MAX_DATALEN];
+    unsigned int    len, cnt, startPos;
+    char            data[MAX_DATALEN];
 };
-
-
 
 // ------------------------------------------
 class RawStream : public ChannelStream
 {
 public:
-	virtual void readHeader(Stream &,Channel *);
-	virtual int readPacket(Stream &,Channel *);
-	virtual void readEnd(Stream &,Channel *);
-
+    void readHeader(Stream &, Channel *) override;
+    int  readPacket(Stream &, Channel *) override;
+    void readEnd(Stream &, Channel *) override;
 };
 
 // ------------------------------------------
 class PeercastStream : public ChannelStream
 {
 public:
-	virtual void readHeader(Stream &,Channel *);
-	virtual int  readPacket(Stream &,Channel *);
-	virtual void readEnd(Stream &,Channel *);
+    void readHeader(Stream &, Channel *) override;
+    int  readPacket(Stream &, Channel *) override;
+    void readEnd(Stream &, Channel *) override;
 };
 
 // ------------------------------------------
 class ChannelSource
 {
 public:
-	virtual ~ChannelSource() {}
-	virtual void stream(Channel *) = 0;
+    virtual ~ChannelSource() {}
 
-	virtual int getSourceRate() {return 0;}
-
+    virtual void stream(Channel *) = 0;
+    virtual int getSourceRate() { return 0; }
 };
+
 // ------------------------------------------
 class PeercastSource : public ChannelSource
 {
 public:
 
-
-	virtual void stream(Channel *);
-
+    void    stream(Channel *) override;
 };
-
 
 // ----------------------------------
 class Channel
 {
 public:
-	
-	enum STATUS
-	{
-		S_NONE,
-		S_WAIT,
-		S_CONNECTING,
-		S_REQUESTING,
-		S_CLOSING,
-		S_RECEIVING,
-		S_BROADCASTING,
-		S_ABORT,
-		S_SEARCHING,
-		S_NOHOSTS,
-		S_IDLE,
-		S_ERROR,
-		S_NOTFOUND
-	};
 
-	enum TYPE
-	{
-		T_NONE,
-		T_ALLOCATED,
-		T_BROADCAST,
-		T_RELAY
-	};
+    enum STATUS
+    {
+        S_NONE,
+        S_WAIT,
+        S_CONNECTING,
+        S_REQUESTING,
+        S_CLOSING,
+        S_RECEIVING,
+        S_BROADCASTING,
+        S_ABORT,
+        S_SEARCHING,
+        S_NOHOSTS,
+        S_IDLE,
+        S_ERROR,
+        S_NOTFOUND
+    };
 
-	enum SRC_TYPE
-	{
-		SRC_NONE,
-		SRC_PEERCAST,
-		SRC_SHOUTCAST,
-		SRC_ICECAST,
-		SRC_URL
-	};
+    enum TYPE
+    {
+        T_NONE,
+        T_ALLOCATED,
+        T_BROADCAST,
+        T_RELAY
+    };
 
+    enum SRC_TYPE
+    {
+        SRC_NONE,
+        SRC_PEERCAST,
+        SRC_SHOUTCAST,
+        SRC_ICECAST,
+        SRC_URL
+    };
 
-	Channel();
-	void	reset();
-	void	endThread(bool flg);
+    Channel();
+    void    reset();
+    void    endThread(bool flg);
 
-	void	startMP3File(char *);
-	void	startGet();
-	void	startICY(ClientSocket *,SRC_TYPE);
-	void	startURL(const char *);
+    void    startMP3File(char *);
+    void    startGet();
+    void    startICY(ClientSocket *, SRC_TYPE);
+    void    startURL(const char *);
 
+    ChannelStream   *createSource();
 
-	ChannelStream	*createSource();
+    void    resetPlayTime();
 
-	void	resetPlayTime();
+    bool    notFound()
+    {
+        return (status == S_NOTFOUND);
+    }
 
-	bool	notFound()
-	{
-		return (status == S_NOTFOUND);
-	}
+    bool    isPlaying()
+    {
+        return (status == S_RECEIVING) || (status == S_BROADCASTING);
+    }
 
-	bool	isPlaying()
-	{
-		return (status == S_RECEIVING) || (status == S_BROADCASTING);
-	}
+    bool    isReceiving()
+    {
+        return (status == S_RECEIVING);
+    }
 
-	bool	isReceiving()
-	{
-		return (status == S_RECEIVING);
-	}
+    bool    isBroadcasting()
+    {
+        return (status == S_BROADCASTING);
+    }
 
-	bool	isBroadcasting()
-	{
-		return (status == S_BROADCASTING);
-	}
+    bool    isFull();
 
-	bool	isFull();
+    bool    checkBump();
 
-	bool	checkBump();
+    bool    checkIdle();
+    void    sleepUntil(double);
 
-	bool	checkIdle();
-	void	sleepUntil(double);
-
-	bool	isActive()
-	{
-		return type != T_NONE;
-	}
+    bool    isActive()
+    {
+        return type != T_NONE;
+    }
 
 
-	void	connectFetch();
-	int		handshakeFetch();
+    void    connectFetch();
+    int     handshakeFetch();
 
-	bool	isIdle() {return isActive() && (status==S_IDLE);}
+    bool    isIdle() { return isActive() && (status==S_IDLE); }
 
-	static THREAD_PROC	stream(ThreadInfo *);
-	static THREAD_PROC streamMain(ThreadInfo *);
+    static THREAD_PROC stream(ThreadInfo *);
+    static THREAD_PROC streamMain(ThreadInfo *);
 
-	static THREAD_PROC  waitFinish(ThreadInfo *);
-	static THREAD_PROC waitFinishMain(ThreadInfo *);
+    static THREAD_PROC waitFinish(ThreadInfo *);
+    static THREAD_PROC waitFinishMain(ThreadInfo *);
 
-	void	setStatus(STATUS s);
-	const char  *getSrcTypeStr() {return srcTypes[srcType];}
-	const char	*getStatusStr() {return statusMsgs[status];}
-	const char	*getName() {return info.name.cstr();}
-	GnuID	getID() {return info.id;}
-	int		getBitrate() {return info.bitrate; }
-	void	getIDStr(char *s) {info.id.toStr(s);}
-	void	getStreamPath(char *);
+    void         setStatus(STATUS s);
+    const char   *getSrcTypeStr() { return srcTypes[srcType]; }
+    const char   *getStatusStr() { return statusMsgs[status]; }
+    const char   *getName() { return info.name.cstr(); }
+    GnuID        getID() { return info.id; }
+    int          getBitrate() { return info.bitrate; }
+    void         getIDStr(char *s) { info.id.toStr(s); }
+    void         getStreamPath(char *);
 
-	void	broadcastTrackerUpdate(GnuID &,bool = false);
-	bool	sendPacketUp(ChanPacket &,GnuID &,GnuID &,GnuID &);
+    void         broadcastTrackerUpdate(GnuID &, bool = false);
+    bool         sendPacketUp(ChanPacket &, GnuID &, GnuID &, GnuID &);
 
-	bool	writeVariable(Stream &, const String &,int);
+    bool         writeVariable(Stream &, const String &, int);
+    bool         acceptGIV(ClientSocket *);
+    void         updateInfo(const ChanInfo &);
+    int          readStream(Stream &, ChannelStream *);
+    void         checkReadDelay(unsigned int);
+    void         processMp3Metadata(char *);
+    void         readHeader();
+    void         startStream();
 
-	bool	acceptGIV(ClientSocket *);
+    XML::Node    *createRelayXML(bool);
 
-	void	updateInfo(ChanInfo &);
+    void         newPacket(ChanPacket &);
 
-	int		readStream(Stream &,ChannelStream *);
-	
-	void	checkReadDelay(unsigned int);
+    int          localListeners();
+    int          localRelays();
 
-	void	processMp3Metadata(char *);
+    int          totalClaps();    //JP-MOD
+    int          totalListeners();
+    int          totalRelays();
 
-	void	readHeader();
+    ::String            mount;
+    ChanMeta            insertMeta;
+    ChanPacket          headPack;
 
-	void	startStream();
+    ChanPacketBuffer    rawData;
 
-	XML::Node *createRelayXML(bool);
-
-	void	newPacket(ChanPacket &);
-
-	int		localListeners();
-	int		localRelays();
-
-	int		totalClaps();	//JP-MOD
-	int		totalListeners();
-	int		totalRelays();
-
-	::String mount;
-	ChanMeta	insertMeta;
-	ChanPacket	headPack;
-
-	ChanPacketBuffer	rawData;
-
-	ChannelStream *sourceStream;
-	unsigned int streamIndex;
-	
-
-	ChanInfo	info;
-	ChanHit		sourceHost;
-
-	GnuID		remoteID;
+    ChannelStream       *sourceStream;
+    unsigned int        streamIndex;
 
 
-	::String  sourceURL;
+    ChanInfo            info;
+    ChanHit             sourceHost;
 
-	bool	bump,stayConnected;
-	bool	stealth; //JP-MOD
-	int		icyMetaInterval;
-	unsigned int streamPos;
-	unsigned int skipCount; //JP-EX
-	bool	readDelay;
-	int		overrideMaxRelaysPerChannel; //JP-MOD
-	bool	bClap; //JP-MOD
+    GnuID               remoteID;
 
-	TYPE	type;
-	ChannelSource *sourceData;
 
-	SRC_TYPE	srcType;
+    ::String            sourceURL;
 
-	MP3Header mp3Head;
-	ThreadInfo	thread;
-	ThreadInfo  *finthread;
+    bool                bump, stayConnected;
+    bool                stealth; //JP-MOD
+    int                 icyMetaInterval;
+    unsigned int        streamPos;
+    unsigned int        skipCount; //JP-EX
+    bool                readDelay;
+    int                 overrideMaxRelaysPerChannel; //JP-MOD
+    bool                bClap; //JP-MOD
 
-	unsigned int lastIdleTime;
-	int		status;
-	static	char *statusMsgs[],*srcTypes[];
+    TYPE                type;
+    ChannelSource       *sourceData;
 
-	ClientSocket	*sock;
-	ClientSocket	*pushSock;
+    SRC_TYPE            srcType;
 
-	unsigned int lastTrackerUpdate;
-	unsigned int lastMetaUpdate;
+    MP3Header           mp3Head;
+    ThreadInfo          thread;
+    ThreadInfo          *finthread;
 
-	double	startTime,syncTime;
+    unsigned int        lastIdleTime;
+    int                 status;
+    static const char   *statusMsgs[], *srcTypes[];
 
-	WEvent	syncEvent;
+    ClientSocket        *sock;
+    ClientSocket        *pushSock;
 
-	Channel *next;
+    unsigned int        lastTrackerUpdate;
+    unsigned int        lastMetaUpdate;
 
-	int channel_id;
-	ChanHit chDisp;
-	ChanHit trackerHit;
-	bool bumped;
-	unsigned int lastSkipTime;
-	unsigned int lastStopTime;
+    double              startTime, syncTime;
 
-	int maxRelays; // チャンネル固有のリレー最大数(コンストラクタで初期化)
+    WEvent              syncEvent;
+
+    Channel             *next;
+
+    int                 channel_id;
+    ChanHit             chDisp;
+    ChanHit             trackerHit;
+    bool                bumped;
+    unsigned int        lastSkipTime;
+    unsigned int        lastStopTime;
+
+    int                 maxRelays; // チャンネル固有のリレー最大数(コンストラクタで初期化)
 };
 
 // ----------------------------------
 class ChanMgr
 {
 public:
-	enum {
-		MAX_IDLE_CHANNELS = 8,		// max. number of channels that can be left idle
-		MAX_METAINT = 8192			// must be at least smaller than ChanPacket data len (ie. about half)
-		
-	};
+    enum {
+        MAX_IDLE_CHANNELS = 8,        // max. number of channels that can be left idle
+        MAX_METAINT = 8192            // must be at least smaller than ChanPacket data len (ie. about half)
+        
+    };
 
 
-	ChanMgr();
+    ChanMgr();
 
-	Channel	*deleteChannel(Channel *);
+    Channel    *deleteChannel(Channel *);
 
-	Channel	*createChannel(ChanInfo &,const char *);
-	Channel *findChannelByName(const char *);
-	Channel *findChannelByIndex(int);
-	Channel *findChannelByMount(const char *);
-	Channel *findChannelByID(GnuID &);
-	Channel	*findChannelByNameID(ChanInfo &);
-	Channel *findPushChannel(int);
-	Channel	*findChannelByChannelID(int id);
+    Channel    *createChannel(ChanInfo &,const char *);
+    Channel *findChannelByName(const char *);
+    Channel *findChannelByIndex(int);
+    Channel *findChannelByMount(const char *);
+    Channel *findChannelByID(GnuID &);
+    Channel    *findChannelByNameID(ChanInfo &);
+    Channel *findPushChannel(int);
+    Channel    *findChannelByChannelID(int id);
 
-	void	broadcastTrackerSettings();
-	void	setUpdateInterval(unsigned int v);
-	void	broadcastRelays(Servent *,int,int);
+    void    broadcastTrackerSettings();
+    void    setUpdateInterval(unsigned int v);
+    void    broadcastRelays(Servent *,int,int);
 
-	int		broadcastPacketUp(ChanPacket &,GnuID &,GnuID &,GnuID &);
-	void	broadcastTrackerUpdate(GnuID &,bool = false);
+    int        broadcastPacketUp(ChanPacket &,GnuID &,GnuID &,GnuID &);
+    void    broadcastTrackerUpdate(GnuID &,bool = false);
 
-	bool	writeVariable(Stream &, const String &,int);
+    bool    writeVariable(Stream &, const String &,int);
 
-	int		findChannels(ChanInfo &,Channel **,int);
-	int		findChannelsByStatus(Channel **,int,Channel::STATUS);
-	
-	int		numIdleChannels();
-	int		numChannels();
+    int        findChannels(ChanInfo &,Channel **,int);
+    int        findChannelsByStatus(Channel **,int,Channel::STATUS);
+    
+    int        numIdleChannels();
+    int        numChannels();
 
-	void	closeOldestIdle();
-	void	closeAll();
-	void	quit();
+    void    closeOldestIdle();
+    void    closeAll();
+    void    quit();
 
-	void	addHit(Host &,GnuID &,bool);
-	ChanHit	*addHit(ChanHit &);
-	void	delHit(ChanHit &);
-	void	deadHit(ChanHit &);
-	void	setFirewalled(Host &);
+    void    addHit(Host &,GnuID &,bool);
+    ChanHit    *addHit(ChanHit &);
+    void    delHit(ChanHit &);
+    void    deadHit(ChanHit &);
+    void    setFirewalled(Host &);
 
-	ChanHitList *findHitList(ChanInfo &);
-	ChanHitList *findHitListByID(GnuID &);
-	ChanHitList	*addHitList(ChanInfo &);
+    ChanHitList *findHitList(ChanInfo &);
+    ChanHitList *findHitListByID(GnuID &);
+    ChanHitList    *addHitList(ChanInfo &);
 
-	void		clearHitLists();
-	void		clearDeadHits(bool);
-	int			numHitLists();
+    void        clearHitLists();
+    void        clearDeadHits(bool);
+    int            numHitLists();
 
-	void		setBroadcastMsg(::String &);
+    void        setBroadcastMsg(::String &);
 
-	Channel		*createRelay(ChanInfo &,bool);
-	Channel		*findAndRelay(ChanInfo &);
-	void		startSearch(ChanInfo &);
+    Channel        *createRelay(ChanInfo &,bool);
+    Channel        *findAndRelay(ChanInfo &);
+    void        startSearch(ChanInfo &);
 
-	void		playChannel(ChanInfo &);
-	void		findAndPlayChannel(ChanInfo &,bool);
+    void        playChannel(ChanInfo &);
+    void        findAndPlayChannel(ChanInfo &,bool);
 
-	bool		isBroadcasting(GnuID &);
-	bool		isBroadcasting();
+    bool        isBroadcasting(GnuID &);
+    bool        isBroadcasting();
 
-	int			pickHits(ChanHitSearch &);
+    int            pickHits(ChanHitSearch &);
 
-	bool findParentHit(ChanHit &p);
+    bool findParentHit(ChanHit &p);
 
-	Channel		*channel;
-	ChanHitList	*hitlist;
+    Channel        *channel;
+    ChanHitList    *hitlist;
 
-	GnuID	broadcastID;
+    GnuID    broadcastID;
 
-	ChanInfo	searchInfo;
+    ChanInfo    searchInfo;
 
-	int		numFinds;
-	::String	broadcastMsg;
-	unsigned int		broadcastMsgInterval;
-	unsigned int lastHit,lastQuery;
-	unsigned int maxUptime;
-	bool	searchActive;
-	unsigned int		deadHitAge;
-	int		icyMetaInterval;
-	int		maxRelaysPerChannel;
-	WLock	lock;
-	int		minBroadcastTTL,maxBroadcastTTL;
-	int		pushTimeout,pushTries,maxPushHops;
-	unsigned int		autoQuery;
-	unsigned int	prefetchTime;
-	unsigned int	lastYPConnect;
-	unsigned int	lastYPConnect2;
-	unsigned int	icyIndex;
+    int        numFinds;
+    ::String    broadcastMsg;
+    unsigned int        broadcastMsgInterval;
+    unsigned int lastHit,lastQuery;
+    unsigned int maxUptime;
+    bool    searchActive;
+    unsigned int        deadHitAge;
+    int        icyMetaInterval;
+    int        maxRelaysPerChannel;
+    WLock    lock;
+    int        minBroadcastTTL,maxBroadcastTTL;
+    int        pushTimeout,pushTries,maxPushHops;
+    unsigned int        autoQuery;
+    unsigned int    prefetchTime;
+    unsigned int    lastYPConnect;
+    unsigned int    lastYPConnect2;
+    unsigned int    icyIndex;
 
-	unsigned int	hostUpdateInterval;
-	unsigned int bufferTime;
+    unsigned int    hostUpdateInterval;
+    unsigned int bufferTime;
 
-	GnuID	currFindAndPlayChannel;
+    GnuID    currFindAndPlayChannel;
 
-	WLock channellock;
-	WLock hitlistlock;
+    WLock channellock;
+    WLock hitlistlock;
 };
 // ----------------------------------
 class PlayList
 {
 public:
 
-	enum TYPE
-	{
-		T_NONE,
-		T_SCPLS,
-		T_PLS,
-		T_ASX,
-		T_RAM,
-	};
+    enum TYPE
+    {
+        T_NONE,
+        T_SCPLS,
+        T_PLS,
+        T_ASX,
+        T_RAM,
+    };
 
-	PlayList(TYPE t, int max)
-	{
-		maxURLs = max;
-		numURLs = 0;
-		type = t;
-		urls = new ::String[max];
-		titles = new ::String[max];
-		contacturls = new ::String[max]; //JP-MOD
-	}
+    PlayList(TYPE t, int max)
+    {
+        maxURLs = max;
+        numURLs = 0;
+        type = t;
+        urls = new ::String[max];
+        titles = new ::String[max];
+        contacturls = new ::String[max]; //JP-MOD
+    }
 
-	~PlayList()
-	{
-		delete [] urls;
-		delete [] titles;
-		delete [] contacturls; //JP-MOD
-	}
+    ~PlayList()
+    {
+        delete [] urls;
+        delete [] titles;
+        delete [] contacturls; //JP-MOD
+    }
 
-	void	addURL(const char *url, const char *tit, const char *contacturl/*JP-MOD*/)
-	{
-		if (numURLs < maxURLs)
-		{
-			urls[numURLs].set(url);
-			titles[numURLs].set(tit);
-			contacturls[numURLs].set(contacturl); //JP-MOD
-			numURLs++;
-		}
-	}
-	void	addChannels(const char *,Channel **,int);
-	void	addChannel(const char *,ChanInfo &);
+    void    addURL(const char *url, const char *tit, const char *contacturl/*JP-MOD*/)
+    {
+        if (numURLs < maxURLs)
+        {
+            urls[numURLs].set(url);
+            titles[numURLs].set(tit);
+            contacturls[numURLs].set(contacturl); //JP-MOD
+            numURLs++;
+        }
+    }
+    void    addChannels(const char *,Channel **,int);
+    void    addChannel(const char *,ChanInfo &);
 
-	void	writeSCPLS(Stream &);
-	void	writePLS(Stream &);
-	void	writeASX(Stream &);
-	void	writeRAM(Stream &);
+    void    writeSCPLS(Stream &);
+    void    writePLS(Stream &);
+    void    writeASX(Stream &);
+    void    writeRAM(Stream &);
 
-	void	readSCPLS(Stream &);
-	void	readPLS(Stream &);
-	void	readASX(Stream &);
+    void    readSCPLS(Stream &);
+    void    readPLS(Stream &);
+    void    readASX(Stream &);
 
-	void	read(Stream &s)
-	{
-		try
-		{
-			switch (type)
-			{
-				case T_SCPLS: readSCPLS(s); break;
-				case T_PLS: readPLS(s); break;
-				case T_ASX: readASX(s); break;
-			}
-		}catch(StreamException &) {}	// keep pls regardless of errors (eof isn`t handled properly in sockets)
-	}
+    void    read(Stream &s)
+    {
+        try
+        {
+            switch (type)
+            {
+                case T_SCPLS: readSCPLS(s); break;
+                case T_PLS: readPLS(s); break;
+                case T_ASX: readASX(s); break;
+            }
+        }catch(StreamException &) {}    // keep pls regardless of errors (eof isn`t handled properly in sockets)
+    }
 
-	void	write(Stream &s)
-	{
-		switch (type)
-		{
-			case T_SCPLS: writeSCPLS(s); break;
-			case T_PLS: writePLS(s); break;
-			case T_ASX: writeASX(s); break;
-			case T_RAM: writeRAM(s); break;
-		}
-	}
+    void    write(Stream &s)
+    {
+        switch (type)
+        {
+            case T_SCPLS: writeSCPLS(s); break;
+            case T_PLS: writePLS(s); break;
+            case T_ASX: writeASX(s); break;
+            case T_RAM: writeRAM(s); break;
+        }
+    }
 
-	TYPE	type;
-	int		numURLs,maxURLs;
-	::String	*urls,*titles;
-	::String	*contacturls; //JP-MOD
+    TYPE    type;
+    int        numURLs,maxURLs;
+    ::String    *urls,*titles;
+    ::String    *contacturls; //JP-MOD
 };
 
 // ----------------------------------
