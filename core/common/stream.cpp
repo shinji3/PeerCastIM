@@ -281,10 +281,7 @@ void Stream::writeLineF(const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-
     write(fmt, ap);
-
-    // special thanks: –¼–³‚µ‚Ì’N‚©
     va_end(ap);
 
     if (writeCRLF)
