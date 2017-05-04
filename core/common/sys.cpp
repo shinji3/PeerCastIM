@@ -777,7 +777,7 @@ const char *getCGIarg(const char *str, const char *arg)
     if (!str)
         return NULL;
 
-    const char *s = (char*)strstr(str, arg);
+    const char *s = strstr(str, arg);
 
     if (!s)
         return NULL;
@@ -808,7 +808,7 @@ bool hasCGIarg(const char *str, const char *arg)
     if (!str)
         return false;
 
-    const char *s = strstr(str,arg);
+    const char *s = strstr(str, arg);
 
     if (!s)
         return false;
