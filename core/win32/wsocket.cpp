@@ -343,7 +343,6 @@ void WSAClientSocket::connect()
 int WSAClientSocket::read(void *p, int l)
 {
 	int bytesRead=0;
-
 	while (l)
 	{
 		if (rbDataSize >= l) {
@@ -652,7 +651,7 @@ void WSAClientSocket::close()
 					break;
 		}catch(StreamException &) {}
 
-		if (closesocket (sockNum))
+		if (closesocket(sockNum))
 			LOG_ERROR("closesocket() error");
 
 
