@@ -403,13 +403,12 @@ void HTML::writeTemplate(const char *fileName, const char *args)
 void HTML::writeRawFile(const char *fileName)
 {
     FileStream file;
+
     try
     {
         file.openReadOnly(fileName);
-
-        file.writeTo(*out,file.length());
-
-    }catch(StreamException &)
+        file.writeTo(*out, file.length());
+    }catch (StreamException &)
     {
     }
 
@@ -466,8 +465,7 @@ void HTML::startNode(const char *tag, const char *data)
     const char *p = tag;
     char *o = &currTag[tagLevel][0];
 
-    int i;
-    for(i=0; i<MAX_TAGLEN-1; i++)
+    for (int i=0; i<MAX_TAGLEN-1; i++)
     {
         char c = *p++;
         if ((c==0) || (c==' '))
