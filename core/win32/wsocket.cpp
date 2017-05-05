@@ -674,6 +674,6 @@ bool	WSAClientSocket::readReady()
     FD_ZERO (&read_fds);
     FD_SET (sockNum, &read_fds);
 
-	return select (sockNum+1, &read_fds, NULL, NULL, &timeout) == 1;
+	return select ((int)sockNum+1, &read_fds, NULL, NULL, &timeout) == 1;
 }
 

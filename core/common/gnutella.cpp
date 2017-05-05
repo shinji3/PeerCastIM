@@ -239,7 +239,7 @@ void GnuPacket::initFind(const char *str, XML *xml, int maxTTL)
 
     if (str)
     {
-        size_t slen = strlen(str);
+        int slen = (int)strlen(str);
         mem.write((void *)str, slen+1); // string
     }else
         mem.writeChar(0);       // null string

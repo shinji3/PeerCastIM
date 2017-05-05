@@ -376,14 +376,14 @@ int String::base64WordToChars(char *out,const char *input)
     else
         *out++ = 0;
 
-    return out-start;
+    return (int)(out-start);
 }
 
 // -----------------------------------
 void String::BASE642ASCII(const char *input)
 {
     char *out = data;
-    int len = strlen(input);
+    int len = (int)strlen(input);
 
     while(len >= 4) 
     {

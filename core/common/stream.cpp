@@ -43,7 +43,7 @@ void MemoryStream::convertFromBase64()
         rl -= 4;
     }
     *out = 0;
-    len = out-buf;
+    len = (int)(out-buf);
 }
 // -------------------------------------
 void FileStream::openReadOnly(const char *fn)
@@ -261,7 +261,7 @@ void Stream::write(const char *fmt, va_list ap)
 {
     char tmp[4096];
     vsprintf(tmp, fmt, ap);
-    write(tmp, strlen(tmp));
+    write(tmp, (int)strlen(tmp));
 }
 // -------------------------------------
 void Stream::writeStringF(const char *fmt, ...)
@@ -274,7 +274,7 @@ void Stream::writeStringF(const char *fmt, ...)
 // -------------------------------------
 void Stream::writeString(const char *str)
 {
-    write(str, strlen(str));
+    write(str, (int)strlen(str));
 }
 // -------------------------------------
 void Stream::writeLineF(const char *fmt, ...)
