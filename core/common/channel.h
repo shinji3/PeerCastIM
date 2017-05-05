@@ -69,7 +69,7 @@ public:
         genre.convertTo(t);
     }
 
-    bool    update(TrackInfo &);
+    bool    update(const TrackInfo &);
 
     ::String    contact,title,artist,album,genre;
 };
@@ -134,7 +134,7 @@ public:
 
     void    readTrackXML(XML::Node *);
     void    readServentXML(XML::Node *);
-    bool    update(ChanInfo &);
+    bool    update(const ChanInfo &);
     XML::Node *createQueryXML();
     XML::Node *createChannelXML();
     XML::Node *createRelayChannelXML();

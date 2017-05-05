@@ -76,7 +76,7 @@ unsigned int cache_ip = 0;
 unsigned int cache_time = 0;
 
 // --------------------------------------------------
-unsigned int ClientSocket::getIP(char *name)
+unsigned int ClientSocket::getIP(const char *name)
 {
 	unsigned int ctime = sys->getTime();
 	bool null_flg = (name == NULL);

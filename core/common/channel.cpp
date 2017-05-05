@@ -4191,7 +4191,7 @@ bool    ChanInfo::match(ChanInfo &inf)
     return matchAny;
 }
 // -----------------------------------
-bool TrackInfo::update(TrackInfo &inf)
+bool TrackInfo::update(const TrackInfo &inf)
 {
     bool changed = false;
 
@@ -4231,7 +4231,7 @@ bool TrackInfo::update(TrackInfo &inf)
 
 
 // -----------------------------------
-bool ChanInfo::update(ChanInfo &info)
+bool ChanInfo::update(const ChanInfo &info)
 {
     bool changed = false;
 

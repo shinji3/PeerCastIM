@@ -84,7 +84,7 @@ public:
 class GnuID
 {
 public:
-    bool    isSame(GnuID &gid)
+    bool    isSame(const GnuID &gid) const
     {
         for(int i=0; i<16; i++)
             if (gid.id[i] != id[i])
@@ -93,7 +93,7 @@ public:
     }
 
 
-    bool    isSet()
+    bool    isSet() const
     {
         for(int i=0; i<16; i++)
             if (id[i] != 0)
