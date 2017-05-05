@@ -71,8 +71,8 @@ public:
 	String agent;
 	Host h;
 	unsigned int syncpos;
-	char *typeStr;
-	char *statusStr;
+	const char *typeStr;
+	const char *statusStr;
 	bool infoFlg;
 	bool relay;
 	bool firewalled;
