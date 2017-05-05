@@ -95,7 +95,7 @@ bool	WSys::startThread(ThreadInfo *info)
 
 	unsigned int threadID;
 	info->handle = (unsigned int)_beginthreadex( NULL, 0, (start_address)info->func, info, 0, &threadID );
-
+	
     if(info->handle == 0) 
 		return false;*/
 
@@ -105,7 +105,7 @@ bool	WSys::startThread(ThreadInfo *info)
     if(info->handle == -1) 
 		return false;
 
-  return true;
+	return true;
 
 }
 // ---------------------------------
