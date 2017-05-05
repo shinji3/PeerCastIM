@@ -1656,7 +1656,6 @@ static XML::Node *createChannelXML(ChanHitList *chl)
 // -----------------------------------
 void Servent::handshakeXML()
 {
-    int i;
     XML xml;
 
     XML::Node *rn = new XML::Node("peercast");
@@ -1717,7 +1716,7 @@ void Servent::handshakeXML()
 #endif
 
     XML::Node *hc = new XML::Node("host_cache");
-    for (i=0; i<ServMgr::MAX_HOSTCACHE; i++)
+    for (int i=0; i<ServMgr::MAX_HOSTCACHE; i++)
     {
         ServHost *sh = &servMgr->hostCache[i];
         if (sh->type != ServHost::T_NONE)
@@ -1947,7 +1946,7 @@ void Servent::handshakeRemoteFile(const char *dirName)
     const char *hostName = "www.peercast.org";  // hardwired for "security"
 
     Host host;
-    host.fromStrName(hostName,80);
+    host.fromStrName(hostName, 80);
 
     rsock->open(host);
     rsock->connect();
