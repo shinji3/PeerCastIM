@@ -4466,7 +4466,7 @@ void ChanInfo::writeInfoAtoms(AtomStream &atom)
 
     natoms += !MIMEType.isEmpty();
     natoms += !streamExt.isEmpty();
-    natoms += !!ppFlags; //JP-MOD
+    natoms += ppFlags ? 1 : 0; //JP-MOD
 
     atom.writeParent(PCP_CHAN_INFO, natoms);
         atom.writeString(PCP_CHAN_INFO_NAME, name.cstr());
