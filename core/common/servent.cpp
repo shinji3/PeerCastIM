@@ -1038,8 +1038,7 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
 
                 // search for up to 8 other hits
                 int cnt=0;
-                int i;
-                for (i=0; i<8; i++)
+                for (int i=0; i<8; i++)
                 {
                     best.init();
 
