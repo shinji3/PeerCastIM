@@ -160,7 +160,7 @@ public:
     virtual void    setBlocking(bool) {}
 
 
-    static unsigned int getIP(char *);
+    static unsigned int getIP(const char *);
     static bool         getHostname(char *, size_t, unsigned int); //JP-MOD
 
     bool eof() override
