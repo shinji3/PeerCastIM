@@ -564,7 +564,7 @@ void Servent::handshakeOut()
 
     while (http.nextHeader())
     {
-        LOG_DEBUG(http.cmdLine);
+        LOG_DEBUG("%s", http.cmdLine);
 
         char *arg = http.getArgStr();
         if (!arg)
@@ -2217,6 +2217,7 @@ int Servent::incomingProcMain(ThreadInfo *thread)
     sys->endThread(thread);
     return 0;
 }
+
 // -----------------------------------
 int Servent::incomingProc(ThreadInfo *thread)
 {
@@ -2786,7 +2787,7 @@ void Servent::sendPCPChannel()
                     if (rawPack.pos < streamPos)
                         LOG_DEBUG("pcp: skip back %d", rawPack.pos-streamPos);
 
-                    //LOG_DEBUG("Sending %d-%d (%d,%d,%d)", rawPack.pos, rawPack.pos+rawPack.len, ch->streamPos, ch->rawData.getLatestPos(), ch->rawData.getOldestPos());
+                    //LOG_DEBUG("Sending %d-%d (%d, %d, %d)", rawPack.pos, rawPack.pos+rawPack.len, ch->streamPos, ch->rawData.getLatestPos(), ch->rawData.getOldestPos());
 
                     streamPos = rawPack.pos + rawPack.len;
                 }
