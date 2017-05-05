@@ -91,11 +91,11 @@ void XML::Node::setBinaryContent(void *ptr, int size)
     contData = new char[size*2+1+(size/lineWidth)];
 
     char *bp = (char *)ptr;
-    register char *ap = contData;
+    char *ap = contData;
 
-    for (register int i=0; i<size; i++)
+    for (int i=0; i<size; i++)
     {
-        register char c = bp[i];
+        char c = bp[i];
         *ap++ = hexTable[c&0xf];
         *ap++ = hexTable[(c>>4)&0xf];
         if ((i&lineWidth)==lineWidth)
@@ -255,8 +255,8 @@ char *XML::Node::findAttr(const char *name)
 // ----------------------------------
 void XML::Node::write(Stream &out, int level)
 {
-    int i;
 #if 0
+    int i;
     char tabs[64];
 
     for (i=0; i<level; i++)
@@ -272,7 +272,7 @@ void XML::Node::write(Stream &out, int level)
     out.write("<", 1);
     out.write(name, strlen(name));
 
-    for (i=1; i<numAttr; i++)
+    for (int i=1; i<numAttr; i++)
     {
         out.write(" ", 1);
         char *at = getAttrName(i);
