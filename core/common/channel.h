@@ -26,9 +26,6 @@
 #include "asf.h"
 #include "cstream.h"
 
-class AtomStream;
-class ChanHitSearch;
-
 // --------------------------------------------------
 struct MP3Header
 {
@@ -46,6 +43,10 @@ struct MP3Header
     int emphasis;
     int stereo;
 };
+
+// ----------------------------------
+#include "chaninfo.h"
+#include "chanhit.h"
 
 // ----------------------------------
 class ChanMeta
