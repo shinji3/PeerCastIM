@@ -221,7 +221,6 @@ void Channel::setStatus(STATUS s)
         }
 
         peercastApp->channelUpdate(&info);
-
     }
 }
 
@@ -275,7 +274,6 @@ void Channel::reset()
 
     srcType = SRC_NONE;
 
-
     startTime = 0;
     syncTime = 0;
 
@@ -328,6 +326,7 @@ bool    Channel::isFull()
         return chanMgr->maxRelaysPerChannel ? localRelays() >= chanMgr->maxRelaysPerChannel : false;
     }
 }
+
 // -----------------------------------
 int Channel::localRelays()
 {
@@ -537,6 +536,7 @@ bool Channel::acceptGIV(ClientSocket *givSock)
     }else
         return false;
 }
+
 // -----------------------------------
 void Channel::connectFetch()
 {
@@ -1045,6 +1045,7 @@ static char *nextMetaPart(char *str, char delim)
     }
     return NULL;
 }
+
 // -----------------------------------
 static void copyStr(char *to, char *from, int max)
 {
@@ -1074,7 +1075,6 @@ void Channel::processMp3Metadata(char *str)
         {
             newInfo.track.title.setUnquote(arg, String::T_ASCII);
             newInfo.track.title.convertTo(String::T_UNICODE);
-
         }else if (strcmp(cmd, "StreamUrl")==0)
         {
             newInfo.track.contact.setUnquote(arg, String::T_ASCII);
@@ -1109,7 +1109,6 @@ XML::Node *ChanHit::createXML()
         sys->getTime()-time,
         tracker
         );
-
 }
 
 // -----------------------------------
@@ -1166,12 +1165,14 @@ void ChanMeta::fromXML(XML &xml)
 
     len = tout.pos;
 }
+
 // -----------------------------------
 void ChanMeta::fromMem(void *p, int l)
 {
     len = l;
     memcpy(data, p, len);
 }
+
 // -----------------------------------
 void ChanMeta::addMem(void *p, int l)
 {
@@ -1181,6 +1182,7 @@ void ChanMeta::addMem(void *p, int l)
         len += l;
     }
 }
+
 // -----------------------------------
 void Channel::broadcastTrackerUpdate(GnuID &svID, bool force)
 {
@@ -1206,7 +1208,7 @@ void Channel::broadcastTrackerUpdate(GnuID &svID, bool force)
         unsigned int oldp = rawData.getOldestPos();
         unsigned int newp = rawData.getLatestPos();
 
-        hit.initLocal(numListeners, numRelays, info.numSkips, info.getUptime(), isPlaying(), false, 0, this, oldp,newp);
+        hit.initLocal(numListeners, numRelays, info.numSkips, info.getUptime(), isPlaying(), false, 0, this, oldp, newp);
         hit.tracker = true;
 
         if (version_ex == 0)
@@ -1387,6 +1389,7 @@ ChannelStream *Channel::createSource()
 
     return source;
 }
+
 // -----------------------------------
 bool    Channel::checkBump()
 {
@@ -1473,7 +1476,6 @@ int Channel::readStream(Stream &in, ChannelStream *source)
                             broadcastTrackerUpdate(noID);
                         }
                         wasBroadcasting = true;
-
                     }else
                     {
 /*                        if (status != Channel::S_RECEIVING){
