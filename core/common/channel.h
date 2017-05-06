@@ -630,7 +630,7 @@ public:
 
 // ----------------------------------
 
-extern ChanMgr *chanMgr;
+#include "chanmgr.h"
 
 // for PCRaw start.
 bool isIndexTxt(ChanInfo *info);
