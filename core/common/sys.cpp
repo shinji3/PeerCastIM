@@ -68,7 +68,6 @@ char *trimstr(char *s1)
             s1++;
         else
             break;
-
     }
 
     char *s = s1;

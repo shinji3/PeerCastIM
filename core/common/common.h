@@ -91,7 +91,7 @@ public:
 #define TONIBBLE(c) ((((c) >= 'A')&&((c) <= 'F')) ? (((c)-'A')+10) : ((c)-'0'))
 #define BYTES_TO_KBPS(n) (float)(((((float)n)*8.0f)/1024.0f))
 
-// ----------------------------------
+// -----------------------------------
 const char  *getCGIarg(const char *str, const char *arg);
 bool        cmpCGIarg(const char *str, const char *arg, const char *value);
 bool        hasCGIarg(const char *str, const char *arg);
