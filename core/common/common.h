@@ -24,6 +24,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "gnuid.h"
+#include "host.h"
+
 #ifndef NULL
 #define NULL 0
 #endif
@@ -89,23 +92,6 @@ public:
 #define BYTES_TO_KBPS(n) (float)(((((float)n)*8.0f)/1024.0f))
 
 // ----------------------------------
-inline bool isWhiteSpace(char c)
-{
-    return (c == ' ') || (c == '\r') || (c == '\n') || (c == '\t');
-}
-
-// ----------------------------------
-inline int strToID(char *str)
-{
-    union {
-        int i;
-        char s[8];
-    };
-    strncpy(s,str,4);
-    return i;
-}
-
-// -----------------------------------
 const char  *getCGIarg(const char *str, const char *arg);
 bool        cmpCGIarg(const char *str, const char *arg, const char *value);
 bool        hasCGIarg(const char *str, const char *arg);
