@@ -66,14 +66,13 @@ public:
         T_MOV,
         T_MPG,
         T_NSV,
-
-        T_WMA,
-        T_WMV,
-
         T_FLV,
         T_MKV,
         T_WEBM,
         T_TS,
+
+        T_WMA,
+        T_WMV,
 
         T_PLS,
         T_ASX

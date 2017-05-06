@@ -1357,14 +1357,14 @@ ChannelStream *Channel::createSource()
             case ChanInfo::T_WMV:
                 throw StreamException("Channel is WMA/WMV - but not MMS");
                 break;
+            case ChanInfo::T_FLV:
+                LOG_CHANNEL("Channel is FLV");
+                source = new FLVStream();
+                break;
             case ChanInfo::T_OGG:
             case ChanInfo::T_OGM:
                 LOG_CHANNEL("Channel is OGG");
                 source = new OGGStream();
-                break;
-            case ChanInfo::T_FLV:
-                LOG_CHANNEL("Channel is FLV");
-                source = new FLVStream();
                 break;
             default:
                 LOG_CHANNEL("Channel is Raw");
