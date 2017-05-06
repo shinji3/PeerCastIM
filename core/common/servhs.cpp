@@ -538,14 +538,7 @@ void Servent::handshakeIncoming()
     char sb[64];
     sock->host.toStr(sb);
 
-
-    if (stristr(buf,RTSP_PROTO1))
-    {
-        LOG_DEBUG("RTSP from %s '%.100s'", sb, buf);
-        RTSP rtsp(*sock);
-        rtsp.initRequest(buf);
-        handshakeRTSP(rtsp);
-    }else if (stristr(buf,HTTP_PROTO1))
+    if (stristr(buf, HTTP_PROTO1))
     {
         LOG_DEBUG("HTTP from %s '%.100s'", sb, buf);
         HTTP http(*sock);
@@ -716,25 +709,6 @@ bool Servent::getLocalTypeURL(char *str, ChanInfo::TYPE type)
             sprintf(str,"http://%s",ipStr);    
     }
     return true;
-}
-// -----------------------------------
-// Warning: testing RTSP/RTP stuff below.
-// .. moved over to seperate app now.
-// -----------------------------------
-void Servent::handshakePOST()
-{
-    char tmp[1024];
-    while (sock->readLine(tmp,sizeof(tmp)))
-        LOG_DEBUG("POST: %s",tmp);
-
-    throw HTTPException(HTTP_SC_BADREQUEST,400);
-}
-
-
-// -----------------------------------
-void Servent::handshakeRTSP(RTSP &rtsp)
-{
-    throw HTTPException(HTTP_SC_BADREQUEST,400);
 }
 // -----------------------------------
 bool Servent::handshakeAuth(HTTP &http,const char *args,bool local)
