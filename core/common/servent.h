@@ -180,7 +180,6 @@ public:
 
     void    handshakeICY(Channel::SRC_TYPE, bool);
     void    handshakeIncoming();
-    void    handshakePOST();
     void    handshakeHTTP(HTTP &,bool);
 
     void    handshakeRemoteFile(const char *);
