@@ -80,63 +80,6 @@ public:
     TimeoutException(const char *m="Timeout") : StreamException(m) {}
 };
 
-// --------------------------------
-class GnuID
-{
-public:
-    bool    isSame(const GnuID &gid) const
-    {
-        for(int i=0; i<16; i++)
-            if (gid.id[i] != id[i])
-                return false;
-        return true;
-    }
-
-
-    bool    isSet() const
-    {
-        for(int i=0; i<16; i++)
-            if (id[i] != 0)
-                return true;
-        return false;
-    }
-
-    void    clear()
-    {
-        for(int i=0; i<16; i++)
-            id[i] = 0;
-        storeTime = 0;
-    }
-
-
-    void    generate(unsigned char = 0);
-    void    encode(class Host *, const char *,const char *,unsigned char);
-
-    void    toStr(char *);
-    void    fromStr(const char *);
-
-    unsigned char     getFlags();
-
-    unsigned char id[16];
-    unsigned int storeTime;
-};
-// --------------------------------
-class GnuIDList 
-{
-public:
-    GnuIDList(int);
-    ~GnuIDList();
-    void    clear();
-    void    add(GnuID &);
-    bool    contains(GnuID &);
-    int        numUsed();
-    unsigned int getOldest();
-
-    GnuID    *ids;
-    int        maxID;
-};
-
-
 // ----------------------------------
 class Host
 {
