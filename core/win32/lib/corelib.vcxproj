@@ -525,9 +525,15 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\common\chanhit.cpp" />
+    <ClCompile Include="..\..\common\chaninfo.cpp" />
+    <ClCompile Include="..\..\common\chanmgr.cpp" />
     <ClCompile Include="..\..\common\channel.cpp" />
+    <ClCompile Include="..\..\common\cstream.cpp" />
     <ClCompile Include="..\..\common\flv.cpp" />
+    <ClCompile Include="..\..\common\gnuid.cpp" />
     <ClCompile Include="..\..\common\gnutella.cpp" />
+    <ClCompile Include="..\..\common\host.cpp" />
     <ClCompile Include="..\..\common\html.cpp" />
     <ClCompile Include="..\..\common\http.cpp" />
     <ClCompile Include="..\..\common\icy.cpp" />
@@ -539,6 +545,7 @@
     <ClCompile Include="..\..\common\ogg.cpp" />
     <ClCompile Include="..\..\common\pcp.cpp" />
     <ClCompile Include="..\..\common\peercast.cpp" />
+    <ClCompile Include="..\..\common\playlist.cpp" />
     <ClCompile Include="..\..\common\servent.cpp" />
     <ClCompile Include="..\..\common\servhs.cpp" />
     <ClCompile Include="..\..\common\servmgr.cpp" />
@@ -548,6 +555,7 @@
     <ClCompile Include="..\..\common\sys.cpp" />
     <ClCompile Include="..\..\common\url.cpp" />
     <ClCompile Include="..\..\common\xml.cpp" />
+    <ClCompile Include="..\..\common\_string.cpp" />
     <ClCompile Include="..\seh.cpp" />
     <ClCompile Include="..\wsocket.cpp" />
     <ClCompile Include="..\wsys.cpp" />
@@ -556,11 +564,16 @@
     <ClInclude Include="..\..\common\addrCont.h" />
     <ClInclude Include="..\..\common\asf.h" />
     <ClInclude Include="..\..\common\atom.h" />
+    <ClInclude Include="..\..\common\chanhit.h" />
+    <ClInclude Include="..\..\common\chaninfo.h" />
+    <ClInclude Include="..\..\common\chanmgr.h" />
     <ClInclude Include="..\..\common\channel.h" />
     <ClInclude Include="..\..\common\common.h" />
     <ClInclude Include="..\..\common\cstream.h" />
     <ClInclude Include="..\..\common\flv.h" />
+    <ClInclude Include="..\..\common\gnuid.h" />
     <ClInclude Include="..\..\common\gnutella.h" />
+    <ClInclude Include="..\..\common\host.h" />
     <ClInclude Include="..\..\common\html-xml.h" />
     <ClInclude Include="..\..\common\html.h" />
     <ClInclude Include="..\..\common\http.h" />
@@ -584,6 +597,7 @@
     <ClInclude Include="..\..\common\url.h" />
     <ClInclude Include="..\..\common\version2.h" />
     <ClInclude Include="..\..\common\xml.h" />
+    <ClInclude Include="..\..\common\_string.h" />
     <ClInclude Include="..\seh.h" />
     <ClInclude Include="..\ts_vector.h" />
     <ClInclude Include="..\wsocket.h" />
