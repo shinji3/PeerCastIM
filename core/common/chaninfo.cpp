@@ -22,7 +22,7 @@
 #include "chanmgr.h"
 
 // -----------------------------------
-void readXMLString(String &str, XML::Node *n, const char *arg)
+static void readXMLString(String &str, XML::Node *n, const char *arg)
 {
     char *p;
     p = n->findAttr(arg);
