@@ -539,7 +539,6 @@
     <ClCompile Include="..\..\common\ogg.cpp" />
     <ClCompile Include="..\..\common\pcp.cpp" />
     <ClCompile Include="..\..\common\peercast.cpp" />
-    <ClCompile Include="..\..\common\rtsp.cpp" />
     <ClCompile Include="..\..\common\servent.cpp" />
     <ClCompile Include="..\..\common\servhs.cpp" />
     <ClCompile Include="..\..\common\servmgr.cpp" />
@@ -575,7 +574,6 @@
     <ClInclude Include="..\..\common\ogg.h" />
     <ClInclude Include="..\..\common\pcp.h" />
     <ClInclude Include="..\..\common\peercast.h" />
-    <ClInclude Include="..\..\common\rtsp.h" />
     <ClInclude Include="..\..\common\servent.h" />
     <ClInclude Include="..\..\common\servmgr.h" />
     <ClInclude Include="..\..\common\socket.h" />
