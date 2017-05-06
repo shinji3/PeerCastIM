@@ -22,7 +22,6 @@
 
 #include "common.h"
 #include "sys.h"
-#include "socket.h"
 #include "gnutella.h"
 #include "servmgr.h" //JP-EX
 #ifdef WIN32
@@ -30,7 +29,6 @@
 #endif
 #include <stdlib.h>
 #include <time.h>
-#include "jis.h"
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
@@ -47,59 +45,6 @@ const char *LogBuffer::logTypes[]=
     "CHAN",
 };
 
-// -----------------------------------
-// base64 encode/decode taken from ices2 source.. 
-static char base64table[64] = {
-    'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
-    'Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f',
-    'g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v',
-    'w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/'
-};
-#if 0
-// -----------------------------------
-static char *util_base64_encode(char *data)
-{
-    int len = strlen(data);
-    char *out = malloc(len*4/3 + 4);
-    char *result = out;
-    int chunk;
-
-    while(len > 0) {
-        chunk = (len >3)?3:len;
-        *out++ = base64table[(*data & 0xFC)>>2];
-        *out++ = base64table[((*data & 0x03)<<4) | ((*(data+1) & 0xF0) >> 4)];
-        switch(chunk) {
-            case 3:
-                *out++ = base64table[((*(data+1) & 0x0F)<<2) | ((*(data+2) & 0xC0)>>6)];
-                *out++ = base64table[(*(data+2)) & 0x3F];
-                break;
-            case 2:
-                *out++ = base64table[((*(data+1) & 0x0F)<<2)];
-                *out++ = '=';
-                break;
-            case 1:
-                *out++ = '=';
-                *out++ = '=';
-                break;
-        }
-        data += chunk;
-        len -= chunk;
-    }
-
-    return result;
-}
-#endif
-
-// -----------------------------------
-static char *util_base64_decode(char *input)
-{
-    return NULL;
-}
-
-
-
-
-
 // ------------------------------------------
 Sys::Sys()
 {
@@ -107,6 +52,7 @@ Sys::Sys()
     logBuf = new LogBuffer(1000, 100);
     numThreads=0;
 }
+
 // ------------------------------------------
 void Sys::sleepIdle()
 {
@@ -164,6 +110,7 @@ char *stristr(const char *s1, const char *s2)
     }
     return NULL;
 }
+
 // -----------------------------------
 void LogBuffer::write(const char *str, TYPE t)
 {
@@ -224,13 +171,13 @@ bool cmpCGIarg(const char *str, const char *arg, const char *value)
 
     if (strnicmp(str, arg, strlen(arg)) == 0)
     {
-
         str += strlen(arg);
 
         return strncmp(str, value, strlen(value))==0;
     }else
         return false;
 }
+
 // -----------------------------------
 bool hasCGIarg(const char *str, const char *arg)
 {
@@ -275,6 +222,7 @@ void LogBuffer::dumpHTML(Stream &out)
                 out.writeString(getTypeStr(types[sp]));
                 out.writeString("]</b> ");
             }
+
             str.set(&buf[bp]);
             str.convertTo(String::T_HTML);
 
@@ -287,7 +235,6 @@ void LogBuffer::dumpHTML(Stream &out)
     }
 
     lb.off();
-
 }
 
 // ---------------------------

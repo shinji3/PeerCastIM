@@ -30,6 +30,8 @@ extern char *trimstr(char *s);
 
 #define MAX_CGI_LEN 1024
 
+#include "_string.h"
+
 // ------------------------------------
 namespace peercast {
 class Random {
