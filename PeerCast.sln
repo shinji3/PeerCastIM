@@ -71,18 +71,23 @@ Global
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Debug|Win32.ActiveCfg = Debug|Win32
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Debug|Win32.Build.0 = Debug|Win32
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Debug|x64.ActiveCfg = Debug|x64
+		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Debug|x64.Build.0 = Debug|x64
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Private Debug|Win32.ActiveCfg = Private Debug|Win32
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Private Debug|Win32.Build.0 = Private Debug|Win32
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Private Debug|x64.ActiveCfg = Private Debug|x64
+		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Private Debug|x64.Build.0 = Private Debug|x64
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Private Release|Win32.ActiveCfg = Private Release|Win32
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Private Release|Win32.Build.0 = Private Release|Win32
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Private Release|x64.ActiveCfg = Private Release|x64
+		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Private Release|x64.Build.0 = Private Release|x64
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Release(SSE2)|Win32.ActiveCfg = Release(SSE2)|Win32
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Release(SSE2)|Win32.Build.0 = Release(SSE2)|Win32
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Release(SSE2)|x64.ActiveCfg = Release(SSE2)|x64
+		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Release(SSE2)|x64.Build.0 = Release(SSE2)|x64
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Release|Win32.ActiveCfg = Release|Win32
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Release|Win32.Build.0 = Release|Win32
 		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Release|x64.ActiveCfg = Release|x64
+		{E60173A7-1FC8-444B-BBAB-BB3D663D5C05}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
