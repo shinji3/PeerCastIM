@@ -276,7 +276,7 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
             strcat(buf,buf2);
 
             char h_name[128];
-            if (ClientSocket::getHostname(h_name,sizeof(h_name),rhost[0].ip)) // BOFÂØæÁ≠ñ„Å£„ÅΩ„ÅÑ
+            if (ClientSocket::getHostname(h_name,sizeof(h_name),rhost[0].ip)) // BOFëŒçÙÇ¡Ç€Ç¢
             {
                 strcat(buf,"[");
                 strcat(buf,h_name);
