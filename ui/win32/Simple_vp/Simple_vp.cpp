@@ -293,7 +293,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 				{
 					COPYDATASTRUCT copy;
 					copy.dwData = WM_PLAYCHANNEL;
-					copy.cbData = strlen(chanURL)+1;			// plus null term
+					copy.cbData = (DWORD)strlen(chanURL)+1;			// plus null term
 					copy.lpData = chanURL;
 					SendMessage(oldWin,WM_COPYDATA,NULL,(LPARAM)&copy);
 				}else{
@@ -371,7 +371,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	peercastInst->saveSettings();
 	peercastInst->quit();
 
-	return msg.wParam;
+	return (int)msg.wParam;
 }
 
 
@@ -793,7 +793,7 @@ void addAllChannelsMenu(HMENU cm)
 		InsertMenu(yMenu,0,MF_BYPOSITION,ID_POPUP_YELLOWPAGES1,servMgr->rootHost);
 	}
 
-	InsertMenu(cm,0,MF_BYPOSITION|MF_POPUP,(UINT)yMenu,"イエローページ");
+	InsertMenu(cm,0,MF_BYPOSITION|MF_POPUP,(UINT_PTR)yMenu,"イエローページ");
 	InsertMenu(cm,0,MF_BYPOSITION|MF_SEPARATOR,NULL,NULL);
 	// add channels to menu
 	int numActive=0;
@@ -823,7 +823,7 @@ void addAllChannelsMenu(HMENU cm)
 		if (ch)
 			fl |= (ch->isPlaying()?MF_CHECKED:0);
 
-		InsertMenu(cm,0,fl,(UINT)opMenu,str);
+		InsertMenu(cm,0,fl,(UINT_PTR)opMenu,str);
 		
 		numActive++;
 
@@ -1192,7 +1192,7 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENTEX); // x64対応
 			} else
 			{
-				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LONG)PCX_AGENTVP);
+				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENTVP);
 			}
 
 			return TRUE;
@@ -1243,18 +1243,18 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 				genre.convertTo(String::T_SJIS); //JP-Patch
 				
 				//SendDlgItemMessage(hDlg,IDC_EDIT_NAME,WM_SETTEXT,0,(LONG)chanInfo.name.cstr());
-				SendDlgItemMessage(hDlg,IDC_EDIT_NAME,WM_SETTEXT,0,(LONG)name.cstr()); //JP-Patch
+				SendDlgItemMessage(hDlg,IDC_EDIT_NAME,WM_SETTEXT,0,(LPARAM)name.cstr()); //JP-Patch
 				//SendDlgItemMessage(hDlg,IDC_EDIT_PLAYING,WM_SETTEXT,0,(LONG)str);
-				SendDlgItemMessage(hDlg,IDC_EDIT_PLAYING,WM_SETTEXT,0,(LONG)track.cstr()); //JP-Patch
+				SendDlgItemMessage(hDlg,IDC_EDIT_PLAYING,WM_SETTEXT,0,(LPARAM)track.cstr()); //JP-Patch
 				//SendDlgItemMessage(hDlg,IDC_EDIT_MESSAGE,WM_SETTEXT,0,(LONG)chanInfo.comment.cstr());
-				SendDlgItemMessage(hDlg,IDC_EDIT_MESSAGE,WM_SETTEXT,0,(LONG)comment.cstr()); //JP-Patch
+				SendDlgItemMessage(hDlg,IDC_EDIT_MESSAGE,WM_SETTEXT,0,(LPARAM)comment.cstr()); //JP-Patch
 				//SendDlgItemMessage(hDlg,IDC_EDIT_DESC,WM_SETTEXT,0,(LONG)chanInfo.desc.cstr());
-				SendDlgItemMessage(hDlg,IDC_EDIT_DESC,WM_SETTEXT,0,(LONG)desc.cstr()); //JP-Patch
+				SendDlgItemMessage(hDlg,IDC_EDIT_DESC,WM_SETTEXT,0,(LPARAM)desc.cstr()); //JP-Patch
 				//SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LONG)chanInfo.genre.cstr());
-				SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LONG)genre.cstr()); //JP-Patch
+				SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LPARAM)genre.cstr()); //JP-Patch
 
 				sprintf(str,"%d kb/s %s",chanInfo.bitrate,ChanInfo::getTypeStr(chanInfo.contentType));
-				SendDlgItemMessage(hDlg,IDC_FORMAT,WM_SETTEXT,0,(LONG)str);
+				SendDlgItemMessage(hDlg,IDC_FORMAT,WM_SETTEXT,0,(LPARAM)str);
 
 
 				if (!chanInfo.url.isValidURL())
@@ -1263,11 +1263,11 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 				Channel *ch = chanMgr->findChannelByID(chanInfo.id);
 				if (ch)
 				{
-					SendDlgItemMessage(hDlg,IDC_EDIT_STATUS,WM_SETTEXT,0,(LONG)ch->getStatusStr());
+					SendDlgItemMessage(hDlg,IDC_EDIT_STATUS,WM_SETTEXT,0,(LPARAM)ch->getStatusStr());
 					SendDlgItemMessage(hDlg, IDC_KEEP,BM_SETCHECK, ch->stayConnected, 0);
 				}else
 				{
-					SendDlgItemMessage(hDlg,IDC_EDIT_STATUS,WM_SETTEXT,0,(LONG)"OK");
+					SendDlgItemMessage(hDlg,IDC_EDIT_STATUS,WM_SETTEXT,0,(LPARAM)"OK");
 					EnableWindow(GetDlgItem(hDlg,IDC_KEEP),false);
 				}
 
