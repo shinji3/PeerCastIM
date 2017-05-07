@@ -160,8 +160,8 @@
     <_ProjectFileVersion>15.0.26323.1</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Private Debug|Win32'">
-    <OutDir>.\Simple___Win32_Private_Debug\</OutDir>
-    <IntDir>.\Simple___Win32_Private_Debug\</IntDir>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Private Debug|x64'">
@@ -170,8 +170,8 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>.\Release\</OutDir>
-    <IntDir>.\Release\</IntDir>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
@@ -182,8 +182,8 @@
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Private Release|Win32'">
-    <OutDir>.\Simple___Win32_Private_Release\</OutDir>
-    <IntDir>.\Simple___Win32_Private_Release\</IntDir>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Private Release|x64'">
@@ -192,8 +192,8 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>.\Debug\</OutDir>
-    <IntDir>.\Debug\</IntDir>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -230,10 +230,10 @@
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeaderOutputFile>.\Simple___Win32_Private_Debug/Simple.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Simple___Win32_Private_Debug/</AssemblerListingLocation>
-      <ObjectFileName>.\Simple___Win32_Private_Debug/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Simple___Win32_Private_Debug/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(OutDir)Simple.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ObjectFileName>$(OutDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -248,16 +248,17 @@
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Simple___Win32_Private_Debug/PeerCast.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)PeerCast.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
+      <StripPrivateSymbols>$(OutDir)PeerCast-dist.pdb</StripPrivateSymbols>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Simple___Win32_Private_Debug/Simple.bsc</OutputFile>
+      <OutputFile>$(OutDir)Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
       <Message>
@@ -282,10 +283,10 @@
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeaderOutputFile>.\Simple___Win32_Private_Debug/Simple.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Simple___Win32_Private_Debug/</AssemblerListingLocation>
-      <ObjectFileName>.\Simple___Win32_Private_Debug/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Simple___Win32_Private_Debug/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(OutDir)Simple.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ObjectFileName>$(OutDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -300,16 +301,17 @@
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Simple___Win32_Private_Debug/PeerCast.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)PeerCast.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
+      <StripPrivateSymbols>$(OutDir)PeerCast-dist.pdb</StripPrivateSymbols>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Simple___Win32_Private_Debug/Simple.bsc</OutputFile>
+      <OutputFile>$(OutDir)Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
       <Message>
@@ -340,10 +342,10 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
-      <PrecompiledHeaderOutputFile>.\Release/Simple.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
-      <ObjectFileName>.\Release/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(OutDir)Simple.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ObjectFileName>$(OutDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -359,8 +361,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Release/PeerCast.pdb</ProgramDatabaseFile>
-      <StripPrivateSymbols>PeerCast-dist.pdb</StripPrivateSymbols>
+      <ProgramDatabaseFile>$(OutDir)PeerCast.pdb</ProgramDatabaseFile>
+      <StripPrivateSymbols>$(OutDir)PeerCast-dist.pdb</StripPrivateSymbols>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -370,7 +372,7 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Release/Simple.bsc</OutputFile>
+      <OutputFile>$(OutDir)Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
       <Message>
@@ -401,10 +403,10 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <PrecompiledHeaderOutputFile>.\Release/Simple.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
-      <ObjectFileName>.\Release/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(OutDir)Simple.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ObjectFileName>$(OutDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -420,8 +422,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Release/PeerCast.pdb</ProgramDatabaseFile>
-      <StripPrivateSymbols>PeerCast-dist.pdb</StripPrivateSymbols>
+      <ProgramDatabaseFile>$(OutDir)PeerCast.pdb</ProgramDatabaseFile>
+      <StripPrivateSymbols>$(OutDir)PeerCast-dist.pdb</StripPrivateSymbols>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -430,7 +432,7 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Release/Simple.bsc</OutputFile>
+      <OutputFile>$(OutDir)Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
       <Message>
@@ -456,10 +458,10 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeaderOutputFile>.\Simple___Win32_Private_Release/Simple.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Simple___Win32_Private_Release/</AssemblerListingLocation>
-      <ObjectFileName>.\Simple___Win32_Private_Release/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Simple___Win32_Private_Release/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(OutDir)Simple.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ObjectFileName>$(OutDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -472,16 +474,17 @@
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <ProgramDatabaseFile>.\Simple___Win32_Private_Release/PeerCast.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)PeerCast.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
+      <StripPrivateSymbols>$(OutDir)PeerCast-dist.pdb</StripPrivateSymbols>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Simple___Win32_Private_Release/Simple.bsc</OutputFile>
+      <OutputFile>$(OutDir)Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
       <Message>
@@ -507,10 +510,10 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeaderOutputFile>.\Simple___Win32_Private_Release/Simple.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Simple___Win32_Private_Release/</AssemblerListingLocation>
-      <ObjectFileName>.\Simple___Win32_Private_Release/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Simple___Win32_Private_Release/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(OutDir)Simple.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ObjectFileName>$(OutDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -523,16 +526,17 @@
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <ProgramDatabaseFile>.\Simple___Win32_Private_Release/PeerCast.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)PeerCast.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
+      <StripPrivateSymbols>$(OutDir)PeerCast-dist.pdb</StripPrivateSymbols>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Simple___Win32_Private_Release/Simple.bsc</OutputFile>
+      <OutputFile>$(OutDir)Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
       <Message>
@@ -557,10 +561,10 @@
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeaderOutputFile>.\Debug/Simple.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
-      <ObjectFileName>.\Debug/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(OutDir)Simple.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ObjectFileName>$(OutDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -576,16 +580,17 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug/PeerCast.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)PeerCast.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>4194304</HeapReserveSize>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
+      <StripPrivateSymbols>$(OutDir)PeerCast-dist.pdb</StripPrivateSymbols>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Debug/Simple.bsc</OutputFile>
+      <OutputFile>$(OutDir)Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
       <Command />
@@ -607,10 +612,10 @@
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeaderOutputFile>.\Debug/Simple.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
-      <ObjectFileName>.\Debug/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(OutDir)Simple.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ObjectFileName>$(OutDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -626,16 +631,17 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug/PeerCast.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)PeerCast.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>4194304</HeapReserveSize>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX64</TargetMachine>
+      <StripPrivateSymbols>$(OutDir)PeerCast-dist.pdb</StripPrivateSymbols>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Debug/Simple.bsc</OutputFile>
+      <OutputFile>$(OutDir)Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
       <Message>
@@ -666,10 +672,10 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <PrecompiledHeaderOutputFile>.\Release/Simple.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
-      <ObjectFileName>.\Release/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(OutDir)Simple.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ObjectFileName>$(OutDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -685,8 +691,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Release/PeerCast.pdb</ProgramDatabaseFile>
-      <StripPrivateSymbols>PeerCast-dist.pdb</StripPrivateSymbols>
+      <ProgramDatabaseFile>$(OutDir)PeerCast.pdb</ProgramDatabaseFile>
+      <StripPrivateSymbols>$(OutDir)PeerCast-dist.pdb</StripPrivateSymbols>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -696,7 +702,7 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Release/Simple.bsc</OutputFile>
+      <OutputFile>$(OutDir)Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
       <Message>
@@ -727,10 +733,10 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <PrecompiledHeaderOutputFile>.\Release/Simple.pch</PrecompiledHeaderOutputFile>
-      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
-      <ObjectFileName>.\Release/</ObjectFileName>
-      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <PrecompiledHeaderOutputFile>$(OutDir)Simple.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ObjectFileName>$(OutDir)</ObjectFileName>
+      <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -746,8 +752,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Release/PeerCast.pdb</ProgramDatabaseFile>
-      <StripPrivateSymbols>PeerCast-dist.pdb</StripPrivateSymbols>
+      <ProgramDatabaseFile>$(OutDir)PeerCast.pdb</ProgramDatabaseFile>
+      <StripPrivateSymbols>$(OutDir)PeerCast-dist.pdb</StripPrivateSymbols>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -756,7 +762,7 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Release/Simple.bsc</OutputFile>
+      <OutputFile>$(OutDir)Simple.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
       <Message>
