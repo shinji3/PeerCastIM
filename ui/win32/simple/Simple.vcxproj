@@ -245,7 +245,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>Debug/PeerCast.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Simple___Win32_Private_Debug/PeerCast.pdb</ProgramDatabaseFile>
@@ -253,7 +253,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>../../../core\win32\lib\corelib___Win32_Private_Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -297,7 +297,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>Debug/PeerCast.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Simple___Win32_Private_Debug/PeerCast.pdb</ProgramDatabaseFile>
@@ -305,7 +305,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>../../../core\win32\lib\corelib___Win32_Private_Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -355,9 +355,9 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>Release/PeerCast.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>../../../core\win32\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Release/PeerCast.pdb</ProgramDatabaseFile>
       <StripPrivateSymbols>PeerCast-dist.pdb</StripPrivateSymbols>
@@ -416,9 +416,9 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>Release/PeerCast.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>../../../core/win32/lib/release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Release/PeerCast.pdb</ProgramDatabaseFile>
       <StripPrivateSymbols>PeerCast-dist.pdb</StripPrivateSymbols>
@@ -470,14 +470,14 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>PrivRelease/PeerCast.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>.\Simple___Win32_Private_Release/PeerCast.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>../../../core\win32\lib\corelib___Win32_Private_Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -521,14 +521,14 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>PrivRelease/PeerCast.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>.\Simple___Win32_Private_Release/PeerCast.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>../../../core\win32\lib\corelib___Win32_Private_Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -572,9 +572,9 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>Debug/PeerCast.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>../../../core\win32\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/PeerCast.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -622,9 +622,9 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>Debug/PeerCast.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>../../../core\win32\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/PeerCast.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -681,9 +681,9 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>Release/PeerCast.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>../../../core\win32\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Release/PeerCast.pdb</ProgramDatabaseFile>
       <StripPrivateSymbols>PeerCast-dist.pdb</StripPrivateSymbols>
@@ -742,9 +742,9 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>Release/PeerCast.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>../../../core\win32\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\core\win32\lib\$(OutDir)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Release/PeerCast.pdb</ProgramDatabaseFile>
       <StripPrivateSymbols>PeerCast-dist.pdb</StripPrivateSymbols>
