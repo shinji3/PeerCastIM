@@ -1642,7 +1642,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 							);
 					} else {
 						if (sd->status == Servent::S_CONNECTED){
-							sprintf(buf, "%s-%s-%ds  -  %s  -  %d/%d",
+							sprintf(buf, "%s-%s-%ds  -  %s  -  %d/%s",
 								sd->typeStr, sd->statusStr, sd->tnum,
 								hostName,
 								sd->syncpos, sd->agent.cstr()

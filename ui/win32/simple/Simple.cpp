@@ -1807,7 +1807,7 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 				}
 
 				if (i == 1)
-					sprintf_s<bufsize>(szUp, "%d%s", totalUp, suffix[0]);
+					sprintf_s<bufsize>(szUp, "%llu%s", totalUp, suffix[0]);
 			}
 
 			// down
@@ -1820,7 +1820,7 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 				}
 
 				if (i == 1)
-					sprintf_s<bufsize>(szDown, "%d%s", totalDown, suffix[0]);
+					sprintf_s<bufsize>(szDown, "%llu%s", totalDown, suffix[0]);
 			}
 
 			SetDlgItemText(hDlg, IDC_STATIC_UP, szUp);
