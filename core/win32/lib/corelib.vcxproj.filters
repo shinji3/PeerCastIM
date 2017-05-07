@@ -248,5 +248,8 @@
     <ClInclude Include="..\..\common\_string.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\common\playlist.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

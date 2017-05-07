@@ -587,6 +587,7 @@
     <ClInclude Include="..\..\common\ogg.h" />
     <ClInclude Include="..\..\common\pcp.h" />
     <ClInclude Include="..\..\common\peercast.h" />
+    <ClInclude Include="..\..\common\playlist.h" />
     <ClInclude Include="..\..\common\servent.h" />
     <ClInclude Include="..\..\common\servmgr.h" />
     <ClInclude Include="..\..\common\socket.h" />
