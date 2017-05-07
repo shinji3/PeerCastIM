@@ -20,6 +20,7 @@
 #include "chaninfo.h"
 #include "pcp.h"
 #include "chanmgr.h"
+#include "servmgr.h"
 
 // -----------------------------------
 static void readXMLString(String &str, XML::Node *n, const char *arg)

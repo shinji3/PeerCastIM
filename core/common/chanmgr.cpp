@@ -3,6 +3,7 @@
 #include "playlist.h"
 #include "peercast.h"
 #include "version2.h" // PCP_BROADCAST_FLAGS
+#include "win32/seh.h"
 
 // -----------------------------------
 void ChanMgr::startSearch(ChanInfo &info)

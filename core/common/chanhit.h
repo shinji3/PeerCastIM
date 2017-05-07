@@ -23,6 +23,7 @@
 
 #include "chaninfo.h"
 #include "xml.h"
+#include "cstream.h"
 
 class AtomStream;
 class ChanHitSearch;

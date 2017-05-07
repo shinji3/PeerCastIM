@@ -18,6 +18,45 @@
 // ------------------------------------------------
 
 #include "playlist.h"
+#include "servmgr.h"
+
+// -----------------------------------
+#define isHTMLSPECIAL(a) ((a == '&') || (a == '\"') || (a == '\'') || (a == '<') || (a == '>'))
+static void SJIStoSJISSAFE(char *string, size_t size)
+{
+    size_t pos;
+    for(pos = 0;
+        (string[pos] != '\0') && (pos < size);
+        ++pos)
+    {
+        if(isHTMLSPECIAL(string[pos]))
+            string[pos] = ' ';
+    }
+}
+
+// -----------------------------------
+static void WriteASXInfo(Stream &out, String &title, String &contacturl, String::TYPE tEncoding = String::T_UNICODESAFE) //JP-MOD
+{
+    if(!title.isEmpty())
+    {
+        String titleEncode;
+        titleEncode = title;
+        titleEncode.convertTo(tEncoding);
+        if(tEncoding == String::T_SJIS)
+            SJIStoSJISSAFE(titleEncode.cstr(), String::MAX_LEN);
+        out.writeLineF("<TITLE>%s</TITLE>", titleEncode.cstr());
+    }
+
+    if(!contacturl.isEmpty())
+    {
+        String contacturlEncode;
+        contacturlEncode = contacturl;
+        contacturlEncode.convertTo(tEncoding);
+        if(tEncoding == String::T_SJIS)
+            SJIStoSJISSAFE(contacturlEncode.cstr(), String::MAX_LEN);
+        out.writeLineF("<MOREINFO HREF = \"%s\" />", contacturlEncode.cstr());
+    }
+}
 
 // -----------------------------------
 void PlayList::readASX(Stream &in)
