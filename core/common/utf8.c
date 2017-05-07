@@ -145,7 +145,7 @@ int utf8_encode(const char *from, char **to)
 
 
 	wchars = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, from,
-			strlen(from), NULL, 0);
+			(int)strlen(from), NULL, 0);
 
 	if(wchars == 0)
 	{
@@ -160,7 +160,7 @@ int utf8_encode(const char *from, char **to)
 		return -1;
 	}
 
-	err = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, from, strlen(from), unicode, wchars);
+	err = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, from, (int)strlen(from), unicode, wchars);
 	if (err != wchars)
 	{
 		free(unicode);

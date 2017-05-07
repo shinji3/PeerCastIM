@@ -219,7 +219,7 @@ void WINAPI ServiceMain(DWORD argc, LPSTR *argv)
 		{
 			exit(-1);
 		}
-		for (int i=_tcslen(buf); i>0; --i)
+		for (int i=(int)_tcslen(buf); i>0; --i)
 		{
 			if (buf[i] == '\\')
 			{
@@ -399,7 +399,7 @@ int WinMainDummy(HINSTANCE hInstance,
 				{
 					COPYDATASTRUCT copy;
 					copy.dwData = WM_PLAYCHANNEL;
-					copy.cbData = strlen(chanURL)+1;			// plus null term
+					copy.cbData = (DWORD)strlen(chanURL)+1;			// plus null term
 					copy.lpData = chanURL;
 					SendMessage(oldWin,WM_COPYDATA,NULL,(LPARAM)&copy);
 				}else{
@@ -484,7 +484,7 @@ int WinMainDummy(HINSTANCE hInstance,
 
 	Gdiplus::GdiplusShutdown(gdiplusToken);
 
-	return msg.wParam;
+	return (int)msg.wParam;
 }
 
 
@@ -1029,7 +1029,7 @@ void addAllChannelsMenu(HMENU cm)
 		InsertMenu(yMenu,0,MF_BYPOSITION,ID_POPUP_YELLOWPAGES1,servMgr->rootHost);
 	}
 
-	InsertMenu(cm,0,MF_BYPOSITION|MF_POPUP,(UINT)yMenu,"イエローページ");
+	InsertMenu(cm,0,MF_BYPOSITION|MF_POPUP,(UINT_PTR)yMenu,"イエローページ");
 	InsertMenu(cm,0,MF_BYPOSITION|MF_SEPARATOR,NULL,NULL);
 	// add channels to menu
 	int numActive=0;
@@ -1059,7 +1059,7 @@ void addAllChannelsMenu(HMENU cm)
 		if (ch)
 			fl |= (ch->isPlaying()?MF_CHECKED:0);
 
-		InsertMenu(cm,0,fl,(UINT)opMenu,str);
+		InsertMenu(cm,0,fl,(UINT_PTR)opMenu,str);
 		
 		numActive++;
 
@@ -1538,7 +1538,7 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENTEX); // x64対応
 			} else
 			{
-				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LONG)PCX_AGENTVP);
+				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENTVP);
 			}
 
 			return TRUE;
