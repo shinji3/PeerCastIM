@@ -18,7 +18,6 @@
 // GNU General Public License for more details.
 // ------------------------------------------------
 
-
 #include <stdarg.h>
 #include <stdlib.h>
 #include "html.h"
@@ -278,7 +277,6 @@ void    HTML::readLoop(Stream &in,Stream *outp,int loop)
             var.append(c);
         }
     }
-
 }
 
 // --------------------------------------

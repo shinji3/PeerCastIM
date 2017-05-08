@@ -26,7 +26,6 @@ class ChanPacket;
 class ChanPacketv;
 class Stream;
 
-
 // ----------------------------------
 class ChanPacket
 {

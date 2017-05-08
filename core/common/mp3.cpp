@@ -24,7 +24,6 @@
 #define new DEBUG_NEW
 #endif
 
-
 // ------------------------------------------
 void MP3Stream::readEnd(Stream &, Channel *)
 {
@@ -34,6 +33,7 @@ void MP3Stream::readEnd(Stream &, Channel *)
 void MP3Stream::readHeader(Stream &, Channel *)
 {
 }
+
 // ------------------------------------------
 int MP3Stream::readPacket(Stream &in, Channel *ch)
 {
@@ -41,7 +41,6 @@ int MP3Stream::readPacket(Stream &in, Channel *ch)
 
     if (ch->icyMetaInterval)
     {
-
         int rlen = ch->icyMetaInterval;
 
         while (rlen)
@@ -68,9 +67,7 @@ int MP3Stream::readPacket(Stream &in, Channel *ch)
             in.read(buf, len*16);
             ch->processMp3Metadata(buf);
         }
-
     }else{
-
         pack.init(ChanPacket::T_DATA, pack.data, ChanMgr::MAX_METAINT, ch->streamPos);
         in.read(pack.data, pack.len);
         ch->newPacket(pack);

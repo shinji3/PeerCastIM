@@ -187,6 +187,7 @@ unsigned int    ChanPacketBuffer::getFirstDataPos()
     }
     return 0;
 }
+
 // ------------------------------------------------------------------
 unsigned int    ChanPacketBuffer::getOldestPos()
 {
@@ -251,7 +252,6 @@ bool ChanPacketBuffer::writePacket(ChanPacket &pack, bool updateReadPos)
         packets[writePos%MAX_PACKETS].init(pack);
 
 //        LOG_DEBUG("packet.len = %d",pack.len);
-
 
         lastPos = writePos;
         writePos++;

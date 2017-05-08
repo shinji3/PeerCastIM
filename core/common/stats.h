@@ -55,7 +55,6 @@ public:
         PACKETDATAOUT,
         PACKETSEND,
 
-
         BYTESIN,
         BYTESOUT,
         LOCALBYTESIN,
@@ -82,7 +81,6 @@ public:
 };
 
 extern Stats stats;
-
 
 #endif
 

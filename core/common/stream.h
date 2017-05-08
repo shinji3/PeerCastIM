@@ -87,7 +87,6 @@ public:
 
     virtual int     getPosition() { return 0; }
 
-
     // binary
     char    readChar()
     {
@@ -127,8 +126,6 @@ public:
         return v;
     }
 
-
-
     long readTag()
     {
         long v = readLong();
@@ -152,7 +149,6 @@ public:
 
     virtual bool    readReady() { return true; }
     virtual int numPending() { return 0; }
-
 
     void writeID4(ID4 id)
     {
@@ -206,7 +202,6 @@ public:
 
     void    updateTotals(unsigned int, unsigned int);
 
-
     unsigned char   bitsBuffer;
     unsigned int    bitsPos;
 
@@ -218,7 +213,6 @@ public:
     unsigned int bytesOutPerSec;
     unsigned int lastUpdate;
 };
-
 
 // -------------------------------------
 class FileStream : public Stream
@@ -244,6 +238,7 @@ public:
 
     FILE *file;
 };
+
 // -------------------------------------
 class MemoryStream : public Stream
 {
@@ -568,6 +563,5 @@ public:
     // dummy functions
     int read(void *, int) { return 0; }
 };
-
 #endif
 

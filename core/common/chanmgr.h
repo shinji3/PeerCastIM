@@ -31,7 +31,6 @@ public:
         MAX_METAINT = 8192          // must be at least smaller than ChanPacket data len (ie. about half)
     };
 
-
     ChanMgr();
 
     Channel *deleteChannel(Channel *);
@@ -91,8 +90,6 @@ public:
     bool        isBroadcasting();
 
     int         pickHits(ChanHitSearch &);
-
-
 
     bool            findParentHit(ChanHit &p);
 

@@ -78,7 +78,6 @@ public:
         T_ASX
     };
 
-
     enum PROTOCOL
     {
         SP_UNKNOWN,
@@ -88,7 +87,6 @@ public:
         SP_MMS,
         SP_PCP
     };
-
 
     enum STATUS
     {

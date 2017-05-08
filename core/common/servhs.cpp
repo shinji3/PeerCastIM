@@ -664,7 +664,6 @@ bool Servent::getLocalURL(char *str)
     if (!sock)
         throw StreamException("Not connected");
 
-
     char ipStr[64];
 
     Host h;
@@ -688,7 +687,6 @@ bool Servent::getLocalTypeURL(char *str, ChanInfo::TYPE type)
     if (!sock)
         throw StreamException("Not connected");
 
-
     char ipStr[64];
 
     Host h;
@@ -711,6 +709,7 @@ bool Servent::getLocalTypeURL(char *str, ChanInfo::TYPE type)
     }
     return true;
 }
+
 // -----------------------------------
 bool Servent::handshakeAuth(HTTP &http,const char *args,bool local)
 {
@@ -761,7 +760,6 @@ bool Servent::handshakeAuth(HTTP &http,const char *args,bool local)
                             cookie = gotCookie;
                             break;
                         }
-
                     }
                 }
                 break;
@@ -1321,10 +1319,6 @@ void Servent::handshakeCMD(char *cmd)
                     sprintf(jumpStr,"/admin?cmd=redirect&url=%s",servMgr->downloadURL);
                     jumpArg = jumpStr;
                 }
-
-
-
-
             }else if (cmpCGIarg(cmd,"cmd=","connect"))
             {            
                     
@@ -1594,7 +1588,6 @@ void Servent::handshakeCMD(char *cmd)
         LOG_ERROR("html: %s",e.msg);
     }
 
-
     if (retHTML)
     {
         if (jumpArg)
@@ -1604,8 +1597,6 @@ void Servent::handshakeCMD(char *cmd)
             html.locateTo(jmp.cstr());
         }
     }
-
-
 }
 
 // -----------------------------------
@@ -1700,11 +1691,9 @@ void Servent::handshakeXML()
             sh->host.toStr(ipstr);
 
             hc->add(new XML::Node("host ip=\"%s\" type=\"%s\" time=\"%d\"", ipstr, ServHost::getTypeStr(sh->type), sh->time));
-
         }
     }
     rn->add(hc);
-
 
     // calculate content-length
     DummyStream ds;
@@ -1739,7 +1728,6 @@ void Servent::readICYHeader(HTTP &http, ChanInfo &info, char *pwd, size_t szPwd)
     {
         info.name.set(arg, String::T_ASCII);
         info.name.convertTo(String::T_UNICODE);
-
     }else if (http.isHeader("x-audiocast-url") || http.isHeader("icy-url") || http.isHeader("ice-url"))
         info.url.set(arg, String::T_ASCII);
     else if (http.isHeader("x-audiocast-bitrate") || (http.isHeader("icy-br")) || http.isHeader("ice-bitrate") || http.isHeader("icy-bitrate"))
@@ -1748,7 +1736,6 @@ void Servent::readICYHeader(HTTP &http, ChanInfo &info, char *pwd, size_t szPwd)
     {
         info.genre.set(arg, String::T_ASCII);
         info.genre.convertTo(String::T_UNICODE);
-
     }else if (http.isHeader("x-audiocast-description") || http.isHeader("ice-description"))
     {
         info.desc.set(arg, String::T_ASCII);
@@ -1842,7 +1829,7 @@ void Servent::handshakeICY(Channel::SRC_TYPE type, bool isHTTP)
     info.id = chanMgr->broadcastID;
     info.id.encode(NULL, info.name.cstr(), loginMount.cstr(), info.bitrate);
 
-    LOG_DEBUG("Incoming source: %s : %s", info.name.cstr(),info.getTypeStr());
+    LOG_DEBUG("Incoming source: %s : %s", info.name.cstr(), info.getTypeStr());
     if (isHTTP)
         sock->writeStringF("%s\n\n", HTTP_SC_OK);
     else
@@ -1956,7 +1943,6 @@ void Servent::handshakeRemoteFile(const char *dirName)
             break;
         else
             mem.write(buf, len);
-
     }
     rsock->close();
 

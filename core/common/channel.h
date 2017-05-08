@@ -192,7 +192,6 @@ public:
         return type != T_NONE;
     }
 
-
     void    connectFetch();
     int     handshakeFetch();
 
@@ -245,12 +244,10 @@ public:
     ChannelStream       *sourceStream;
     unsigned int        streamIndex;
 
-
     ChanInfo            info;
     ChanHit             sourceHost;
 
     GnuID               remoteID;
-
 
     ::String            sourceURL;
 

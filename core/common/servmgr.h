@@ -82,6 +82,7 @@ public:
     Host            host;
     unsigned int    time;
 };
+
 // ----------------------------------
 class ServFilter
 {
@@ -245,7 +246,6 @@ public:
     }
 
     bool    seenPacket(GnuPacket &);
-
 
     bool    needHosts()
     {

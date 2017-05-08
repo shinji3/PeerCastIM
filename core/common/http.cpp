@@ -18,7 +18,6 @@
 // GNU General Public License for more details.
 // ------------------------------------------------
 
-
 #include <stdlib.h>
 #include "http.h"
 #include "sys.h"
@@ -83,23 +82,26 @@ bool    HTTP::nextHeader()
         arg = NULL;
         return false;
     }
-
 }
+
 //-----------------------------------------
 bool    HTTP::isHeader(const char *hs)
 {
     return stristr(cmdLine, hs) != NULL;
 }
+
 //-----------------------------------------
 bool    HTTP::isRequest(const char *rq)
 {
     return strncmp(cmdLine, rq, strlen(rq)) == 0;
 }
+
 //-----------------------------------------
 char *HTTP::getArgStr()
 {
     return arg;
 }
+
 //-----------------------------------------
 int HTTP::getArgInt()
 {
@@ -108,6 +110,7 @@ int HTTP::getArgInt()
     else
         return 0;
 }
+
 //-----------------------------------------
 void HTTP::getAuthUserPass(char *user, char *pass, size_t ulen, size_t plen)
 {
@@ -138,6 +141,7 @@ void HTTP::getAuthUserPass(char *user, char *pass, size_t ulen, size_t plen)
         }
     }
 }
+
 // -----------------------------------
 void    CookieList::init()
 {
@@ -157,6 +161,7 @@ bool    CookieList::contains(Cookie &c)
 
     return false;
 }
+
 // -----------------------------------
 void    Cookie::logDebug(const char *str, int ind)
 {
@@ -189,6 +194,7 @@ bool    CookieList::add(Cookie &c)
     list[oldestIndex]=c;
     return true;
 }
+
 // -----------------------------------
 void    CookieList::remove(Cookie &c)
 {

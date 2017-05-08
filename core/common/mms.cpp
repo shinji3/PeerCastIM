@@ -28,7 +28,6 @@
 // ------------------------------------------
 ASFInfo parseASFHeader(Stream &in);
 
-
 // ------------------------------------------
 void MMSStream::readEnd(Stream &, Channel *)
 {
@@ -38,6 +37,7 @@ void MMSStream::readEnd(Stream &, Channel *)
 void MMSStream::readHeader(Stream &, Channel *)
 {
 }
+
 // ------------------------------------------
 void MMSStream::processChunk(Stream &in, Channel *ch, ASFChunk& chunk)
 {
@@ -121,15 +121,12 @@ ASFInfo parseASFHeader(Stream &in)
         LOG_CHANNEL("ASF Headers: %d", numHeaders);
         for (int i=0; i<numHeaders; i++)
         {
-
             ASFObject obj;
 
             unsigned int l = obj.readHead(in);
             obj.readData(in, l);
 
-
             MemoryStream data(obj.data, obj.lenLo);
-
 
             switch (obj.type)
             {
@@ -178,7 +175,6 @@ ASFInfo parseASFHeader(Stream &in)
                     break;
                 }
             }
-
         }
     }catch (StreamException &e)
     {
@@ -187,5 +183,3 @@ ASFInfo parseASFHeader(Stream &in)
 
     return asf;
 }
-
-

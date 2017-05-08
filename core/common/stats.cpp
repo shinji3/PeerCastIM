@@ -18,7 +18,6 @@
 // GNU General Public License for more details.
 // ------------------------------------------------
 
-
 #include "stats.h"
 #include "common.h"
 #include "sys.h"
@@ -30,6 +29,7 @@
 #endif
 
 Stats stats;
+
 // ------------------------------------
 void Stats::clear()
 {
@@ -41,6 +41,7 @@ void Stats::clear()
     }
     lastUpdate = 0;
 }
+
 // ------------------------------------
 void    Stats::update()
 {
@@ -49,7 +50,6 @@ void    Stats::update()
     unsigned int diff = ctime - lastUpdate;
     if (diff >= /* 5 */ 1)
     {
-
         for (int i=0; i<Stats::MAX; i++)
         {
             perSec[i] = (unsigned)(current[i]-last[i])/diff;
@@ -58,8 +58,8 @@ void    Stats::update()
 
         lastUpdate = ctime;
     }
-
 }
+
 // ------------------------------------
 bool Stats::writeVariable(Stream &out, const String &var)
 {
@@ -97,6 +97,3 @@ bool Stats::writeVariable(Stream &out, const String &var)
 
     return true;
 }
-
-
-

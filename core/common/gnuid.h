@@ -51,7 +51,7 @@ public:
     void    generate(unsigned char = 0);
     void    encode(class Host *, const char *, const char *, unsigned char);
 
-    void    toStr(char *);
+    void    toStr(char *) const;
     void    fromStr(const char *);
 
     unsigned char   getFlags();

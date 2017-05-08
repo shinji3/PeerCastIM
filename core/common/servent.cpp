@@ -42,7 +42,6 @@
 
 #include "win32/seh.h"
 
-
 const int DIRECT_WRITE_TIMEOUT = 60;
 
 // -----------------------------------
@@ -229,7 +228,6 @@ void Servent::reset()
 
     loginPassword.clear();
     loginMount.clear();
-
 
     bytesPerSecond = 0;
     priorityConnect = false;
@@ -1273,7 +1271,6 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
                         sock->writeLine("Connection: Keep-Alive");
                     }
                 }
-
             } else if (outputProtocol == ChanInfo::SP_PCP)
             {
                 sock->writeLineF("%s %d", PCX_HS_POS, streamPos);
@@ -1549,7 +1546,6 @@ void Servent::processRoot()
                     Host h(ip, port);
                     if ((ip) && (port) && (h.globalIP()))
                     {
-
                         LOG_NETWORK("added pong: %d.%d.%d.%d:%d", ip>>24&0xff, ip>>16&0xff, ip>>8&0xff, ip&0xff, port);
                         servMgr->addHost(h, ServHost::T_SERVENT, sys->getTime());
                     }
@@ -1583,7 +1579,6 @@ int Servent::givProcMain(ThreadInfo *thread)
     {
         sv->handshakeGiv(sv->givID);
         sv->handshakeIncoming();
-
     }catch (StreamException &e)
     {
         LOG_ERROR("GIV: %s", e.msg);
@@ -1749,7 +1744,6 @@ void Servent::handshakeIncomingPCP(AtomStream &atom, Host &rhost, GnuID &rid, St
 
     for (int i=0; i<numc; i++)
     {
-
         int c, dlen;
         ID4 id = atom.read(c, dlen);
 
@@ -1887,7 +1881,6 @@ void Servent::processIncomingPCP(bool suggestOthers)
 
         if (suggestOthers)
         {
-
             ChanHit best;
             ChanHitSearch chs;
 
@@ -2306,7 +2299,6 @@ void Servent::processStream(bool doneHandshake, ChanInfo &chanInfo)
             LOG_DEBUG("send %d", cnt++);
             file.read(buf, sizeof(buf));
             sock->write(buf, sizeof(buf));
-
         }
         file.close();
         LOG_DEBUG("raw file sent");
@@ -2380,7 +2372,7 @@ void Servent::sendRawChannel(bool sendHead, bool sendData)
                     {
                         if (syncPos != rawPack.sync)
                             LOG_ERROR("Send skip: %d", rawPack.sync-syncPos);
-                        syncPos = rawPack.sync+1;
+                        syncPos = rawPack.sync + 1;
 
                         if ((rawPack.type == ChanPacket::T_DATA) || (rawPack.type == ChanPacket::T_HEAD))
                         {
@@ -2389,7 +2381,7 @@ void Servent::sendRawChannel(bool sendHead, bool sendData)
                         }
 
                         if (rawPack.pos < streamPos)
-                            LOG_DEBUG("raw: skip back %d", rawPack.pos-streamPos);
+                            LOG_DEBUG("raw: skip back %d", rawPack.pos - streamPos);
                         streamPos = rawPack.pos+rawPack.len;
                     } else if (sock->readReady()) {
                         char c;
@@ -2441,7 +2433,6 @@ void Servent::sendRawMultiChannel(bool sendHead, bool sendData)
                     chanStreamPos[i] = ch->headPack.pos + ch->headPack.len;
                     chanStreamIndex[i] = ch->streamIndex;
                     LOG_DEBUG("Sent %d bytes header", ch->headPack.len);
-
                 }
             }
         }
@@ -2842,7 +2833,6 @@ void Servent::sendPCPChannel()
 int Servent::serverProcMain(ThreadInfo *thread)
 {
 //    thread->lock();
-
 
     Servent *sv = (Servent*)thread->data;
 

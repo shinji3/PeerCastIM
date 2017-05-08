@@ -87,7 +87,6 @@ public:
         data[i]=0;
     }
 
-
     // set from null terminated string, remove first/last chars
     void setUnquote(const char *p, TYPE t=T_ASCII)
     {

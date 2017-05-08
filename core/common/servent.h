@@ -17,7 +17,6 @@
 // GNU General Public License for more details.
 // ------------------------------------------------
 
-
 #ifndef _SERVENT_H
 #define _SERVENT_H
 
@@ -122,9 +121,6 @@ public:
 
     void    checkFree();
 
-
-
-
     //  funcs for handling status/type
     void                setStatus(STATUS);
     static const char   *getTypeStr(Servent::TYPE t) { return typeMsgs[t]; }
@@ -141,8 +137,6 @@ public:
         }else
             return true;
     }
-
-
 
     // static funcs that do the actual work in the servent thread
     static THREAD_PROC  serverProc(ThreadInfo *);
@@ -180,7 +174,7 @@ public:
 
     void    handshakeICY(Channel::SRC_TYPE, bool);
     void    handshakeIncoming();
-    void    handshakeHTTP(HTTP &,bool);
+    void    handshakeHTTP(HTTP &, bool);
 
     void    handshakeRemoteFile(const char *);
     void    handshakeLocalFile(const char *);
@@ -194,7 +188,6 @@ public:
     ChanInfo findChannel(char *str, ChanInfo &);
 
     bool    writeVariable(Stream &, const String &);
-
 
     // the "mainloop" of servents
     void    processGnutella();
@@ -232,14 +225,12 @@ public:
     bool    isPrivate();
     bool    isLocal();
 
-
     Host    getHost();
 
     bool    outputPacket(GnuPacket &, bool);
     bool    hasSeenPacket(GnuPacket &p) { return seenIDs.contains(p.id); }
     bool    acceptGIV(ClientSocket *);
     bool    sendPacket(ChanPacket &, GnuID &, GnuID &, GnuID &, Servent::TYPE);
-
 
     TYPE                type;
     STATUS              status;
@@ -299,7 +290,6 @@ public:
 };
 
 extern char *nextCGIarg(char *cp, char *cmd, char *arg);
-
 
 #endif
 
