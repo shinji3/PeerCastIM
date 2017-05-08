@@ -540,8 +540,10 @@
     <ClCompile Include="..\..\common\inifile.cpp" />
     <ClCompile Include="..\..\common\jis.cpp" />
     <ClCompile Include="..\..\common\LUrlParser.cpp" />
+    <ClCompile Include="..\..\common\md5.cpp" />
     <ClCompile Include="..\..\common\mms.cpp" />
     <ClCompile Include="..\..\common\mp3.cpp" />
+    <ClCompile Include="..\..\common\notif.cpp" />
     <ClCompile Include="..\..\common\nsv.cpp" />
     <ClCompile Include="..\..\common\ogg.cpp" />
     <ClCompile Include="..\..\common\pcp.cpp" />
@@ -587,8 +589,10 @@
     <ClInclude Include="..\..\common\inifile.h" />
     <ClInclude Include="..\..\common\jis.h" />
     <ClInclude Include="..\..\common\LUrlParser.h" />
+    <ClInclude Include="..\..\common\md5.h" />
     <ClInclude Include="..\..\common\mms.h" />
     <ClInclude Include="..\..\common\mp3.h" />
+    <ClInclude Include="..\..\common\notif.h" />
     <ClInclude Include="..\..\common\nsv.h" />
     <ClInclude Include="..\..\common\ogg.h" />
     <ClInclude Include="..\..\common\pcp.h" />
