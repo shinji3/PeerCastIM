@@ -72,9 +72,6 @@
     <ClCompile Include="..\..\common\servmgr.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\socket.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\common\stats.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
