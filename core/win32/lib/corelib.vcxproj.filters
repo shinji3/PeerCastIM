@@ -132,6 +132,9 @@
     <ClCompile Include="..\..\common\uri.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\common\dechunker.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\addrCont.h">
@@ -273,6 +276,9 @@
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\critsec.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\dechunker.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
   </ItemGroup>
