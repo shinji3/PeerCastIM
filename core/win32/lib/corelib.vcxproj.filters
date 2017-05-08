@@ -120,6 +120,12 @@
     <ClCompile Include="..\..\common\_string.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\common\cgi.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\str.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\addrCont.h">
@@ -246,6 +252,12 @@
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\playlist.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\cgi.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\str.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
   </ItemGroup>

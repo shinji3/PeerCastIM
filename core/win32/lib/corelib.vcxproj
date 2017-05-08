@@ -523,6 +523,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\common\cgi.cpp" />
     <ClCompile Include="..\..\common\chanhit.cpp" />
     <ClCompile Include="..\..\common\chaninfo.cpp" />
     <ClCompile Include="..\..\common\chanmgr.cpp" />
@@ -548,6 +549,7 @@
     <ClCompile Include="..\..\common\servhs.cpp" />
     <ClCompile Include="..\..\common\servmgr.cpp" />
     <ClCompile Include="..\..\common\stats.cpp" />
+    <ClCompile Include="..\..\common\str.cpp" />
     <ClCompile Include="..\..\common\stream.cpp" />
     <ClCompile Include="..\..\common\sys.cpp" />
     <ClCompile Include="..\..\common\url.cpp" />
@@ -561,6 +563,7 @@
     <ClInclude Include="..\..\common\addrCont.h" />
     <ClInclude Include="..\..\common\asf.h" />
     <ClInclude Include="..\..\common\atom.h" />
+    <ClInclude Include="..\..\common\cgi.h" />
     <ClInclude Include="..\..\common\chanhit.h" />
     <ClInclude Include="..\..\common\chaninfo.h" />
     <ClInclude Include="..\..\common\chanmgr.h" />
@@ -589,6 +592,7 @@
     <ClInclude Include="..\..\common\servmgr.h" />
     <ClInclude Include="..\..\common\socket.h" />
     <ClInclude Include="..\..\common\stats.h" />
+    <ClInclude Include="..\..\common\str.h" />
     <ClInclude Include="..\..\common\stream.h" />
     <ClInclude Include="..\..\common\sys.h" />
     <ClInclude Include="..\..\common\ts_vector.h" />
