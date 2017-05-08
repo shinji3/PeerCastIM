@@ -516,3 +516,16 @@ void String::convertTo(TYPE t)
         type = t;
     }
 }
+
+// -----------------------------------
+String String::format(const char* fmt, ...)
+{
+    va_list ap;
+    String result;
+
+    va_start(ap, fmt);
+    vsnprintf(result.data, ::String::MAX_LEN - 1, fmt, ap);
+    va_end(ap);
+
+    return result;
+}
