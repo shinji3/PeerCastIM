@@ -1,4 +1,9 @@
 #include "win32/seh.h"
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
 
 void SEHdump(_EXCEPTION_POINTERS *lpExcept)
 {

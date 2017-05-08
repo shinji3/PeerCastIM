@@ -21,6 +21,11 @@
 #include "pcp.h"
 #include "chanmgr.h"
 #include "servmgr.h"
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
 
 // -----------------------------------
 static void readXMLString(String &str, XML::Node *n, const char *arg)

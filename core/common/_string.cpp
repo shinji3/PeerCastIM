@@ -24,6 +24,11 @@
 #include "utf8.h" //JP-Patch
 #endif
 #include <time.h>
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
 
 // -----------------------------------
 #define isSJIS(a, b) ((a >= 0x81 && a <= 0x9f || a >= 0xe0 && a <= 0xfc) && (b >= 0x40 && b <= 0x7e || b >= 0x80 && b <= 0xfc))

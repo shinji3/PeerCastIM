@@ -14,6 +14,11 @@
 #include <ctype.h>
 #include <string.h>
 #include "identify_encoding.h"
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
 
 enum encoding_id
 {

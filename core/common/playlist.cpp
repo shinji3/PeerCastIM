@@ -19,6 +19,11 @@
 
 #include "playlist.h"
 #include "servmgr.h"
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
 
 // -----------------------------------
 #define isHTMLSPECIAL(a) ((a == '&') || (a == '\"') || (a == '\'') || (a == '<') || (a == '>'))
