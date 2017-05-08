@@ -141,6 +141,9 @@
     <ClCompile Include="..\..\common\notif.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\common\wmhttp.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\addrCont.h">
@@ -291,6 +294,9 @@
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\notif.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\wmhttp.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
   </ItemGroup>

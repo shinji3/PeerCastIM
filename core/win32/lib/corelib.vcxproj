@@ -558,6 +558,7 @@
     <ClCompile Include="..\..\common\sys.cpp" />
     <ClCompile Include="..\..\common\uri.cpp" />
     <ClCompile Include="..\..\common\url.cpp" />
+    <ClCompile Include="..\..\common\wmhttp.cpp" />
     <ClCompile Include="..\..\common\xml.cpp" />
     <ClCompile Include="..\..\common\_string.cpp" />
     <ClCompile Include="..\seh.cpp" />
@@ -609,6 +610,7 @@
     <ClInclude Include="..\..\common\uri.h" />
     <ClInclude Include="..\..\common\url.h" />
     <ClInclude Include="..\..\common\version2.h" />
+    <ClInclude Include="..\..\common\wmhttp.h" />
     <ClInclude Include="..\..\common\xml.h" />
     <ClInclude Include="..\..\common\_string.h" />
     <ClInclude Include="..\seh.h" />
