@@ -146,7 +146,6 @@ public:
 };
 
 // ------------------------------------
-typedef int (WINAPI *THREAD_FUNC)(ThreadInfo *);
 typedef uintptr_t THREAD_HANDLE;
 #define THREAD_PROC int WINAPI
 #define vsnprintf _vsnprintf
@@ -188,7 +187,6 @@ public:
 
 typedef long long int64_t;
 
-typedef int (*THREAD_FUNC)(ThreadInfo *);
 #define THREAD_PROC int
 typedef pthread_t THREAD_HANDLE;
 
@@ -289,7 +287,11 @@ public:
 class ThreadInfo
 {
 public:
-    //typedef int  (__stdcall *THREAD_FUNC)(ThreadInfo *);
+#if defined WIN32
+    typedef int (WINAPI *THREAD_FUNC)(ThreadInfo *);
+#else defined _UNIX
+    typedef int (*THREAD_FUNC)(ThreadInfo *);
+#endif
 
     ThreadInfo()
     {
