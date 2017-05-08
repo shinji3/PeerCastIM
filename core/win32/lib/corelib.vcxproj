@@ -538,6 +538,7 @@
     <ClCompile Include="..\..\common\icy.cpp" />
     <ClCompile Include="..\..\common\inifile.cpp" />
     <ClCompile Include="..\..\common\jis.cpp" />
+    <ClCompile Include="..\..\common\LUrlParser.cpp" />
     <ClCompile Include="..\..\common\mms.cpp" />
     <ClCompile Include="..\..\common\mp3.cpp" />
     <ClCompile Include="..\..\common\nsv.cpp" />
@@ -552,6 +553,7 @@
     <ClCompile Include="..\..\common\str.cpp" />
     <ClCompile Include="..\..\common\stream.cpp" />
     <ClCompile Include="..\..\common\sys.cpp" />
+    <ClCompile Include="..\..\common\uri.cpp" />
     <ClCompile Include="..\..\common\url.cpp" />
     <ClCompile Include="..\..\common\xml.cpp" />
     <ClCompile Include="..\..\common\_string.cpp" />
@@ -569,6 +571,7 @@
     <ClInclude Include="..\..\common\chanmgr.h" />
     <ClInclude Include="..\..\common\channel.h" />
     <ClInclude Include="..\..\common\common.h" />
+    <ClInclude Include="..\..\common\critsec.h" />
     <ClInclude Include="..\..\common\cstream.h" />
     <ClInclude Include="..\..\common\flv.h" />
     <ClInclude Include="..\..\common\gnuid.h" />
@@ -581,6 +584,7 @@
     <ClInclude Include="..\..\common\id.h" />
     <ClInclude Include="..\..\common\inifile.h" />
     <ClInclude Include="..\..\common\jis.h" />
+    <ClInclude Include="..\..\common\LUrlParser.h" />
     <ClInclude Include="..\..\common\mms.h" />
     <ClInclude Include="..\..\common\mp3.h" />
     <ClInclude Include="..\..\common\nsv.h" />
@@ -596,6 +600,7 @@
     <ClInclude Include="..\..\common\stream.h" />
     <ClInclude Include="..\..\common\sys.h" />
     <ClInclude Include="..\..\common\ts_vector.h" />
+    <ClInclude Include="..\..\common\uri.h" />
     <ClInclude Include="..\..\common\url.h" />
     <ClInclude Include="..\..\common\version2.h" />
     <ClInclude Include="..\..\common\xml.h" />
