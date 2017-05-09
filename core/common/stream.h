@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+#include <algorithm>
 #include "common.h"
 #include "sys.h"
 #include "id.h"
@@ -145,6 +146,22 @@ public:
                 break;
         }
         return cnt;
+    }
+
+    std::string read(int remaining)
+    {
+        std::string res;
+
+        uint8_t buffer[4096];
+
+        while (remaining > 0)
+        {
+            int readSize = (std::min)(remaining, 4096);
+            int r = read(buffer, readSize);
+            res += std::string(buffer, buffer + r);
+            remaining -= r;
+        }
+        return res;
     }
 
     virtual bool    readReady() { return true; }

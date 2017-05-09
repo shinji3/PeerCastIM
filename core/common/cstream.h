@@ -56,6 +56,7 @@ public:
         len  = 0;
         pos  = 0;
         sync = 0;
+        cont = false;
         skip = false;
         priority = 0;
     }
@@ -70,6 +71,7 @@ public:
     unsigned int    len;
     unsigned int    pos;
     unsigned int    sync;
+    bool            cont; // true if this is a continuation packet
     char            data[MAX_DATALEN];
     bool            skip;
 

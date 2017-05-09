@@ -545,6 +545,7 @@
     <ClCompile Include="..\..\common\LUrlParser.cpp" />
     <ClCompile Include="..\..\common\mapper.cpp" />
     <ClCompile Include="..\..\common\md5.cpp" />
+    <ClCompile Include="..\..\common\mkv.cpp" />
     <ClCompile Include="..\..\common\mms.cpp" />
     <ClCompile Include="..\..\common\mp3.cpp" />
     <ClCompile Include="..\..\common\notif.cpp" />
@@ -601,6 +602,7 @@
     <ClInclude Include="..\..\common\mapper.h" />
     <ClInclude Include="..\..\common\matroska.h" />
     <ClInclude Include="..\..\common\md5.h" />
+    <ClInclude Include="..\..\common\mkv.h" />
     <ClInclude Include="..\..\common\mms.h" />
     <ClInclude Include="..\..\common\mp3.h" />
     <ClInclude Include="..\..\common\notif.h" />

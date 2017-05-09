@@ -156,6 +156,9 @@
     <ClCompile Include="..\..\common\chandir.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\common\mkv.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\addrCont.h">
@@ -327,6 +330,9 @@
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\chandir.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\mkv.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
   </ItemGroup>
