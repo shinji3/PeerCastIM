@@ -25,6 +25,23 @@
 class GnuID
 {
 public:
+    GnuID()
+    {
+        clear();
+    }
+
+    GnuID(const std::string& str)
+    {
+        clear();
+        fromStr(str.c_str());
+    }
+
+    GnuID(const char* str)
+    {
+        clear();
+        fromStr(str);
+    }
+
     bool    isSame(const GnuID &gid) const
     {
         for(int i=0; i<16; i++)
@@ -32,7 +49,6 @@ public:
                 return false;
         return true;
     }
-
 
     bool    isSet() const
     {

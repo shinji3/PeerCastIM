@@ -524,6 +524,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\common\cgi.cpp" />
+    <ClCompile Include="..\..\common\chandir.cpp" />
     <ClCompile Include="..\..\common\chanhit.cpp" />
     <ClCompile Include="..\..\common\chaninfo.cpp" />
     <ClCompile Include="..\..\common\chanmgr.cpp" />
@@ -573,6 +574,7 @@
     <ClInclude Include="..\..\common\asf.h" />
     <ClInclude Include="..\..\common\atom.h" />
     <ClInclude Include="..\..\common\cgi.h" />
+    <ClInclude Include="..\..\common\chandir.h" />
     <ClInclude Include="..\..\common\chanhit.h" />
     <ClInclude Include="..\..\common\chaninfo.h" />
     <ClInclude Include="..\..\common\chanmgr.h" />
