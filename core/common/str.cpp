@@ -86,7 +86,7 @@ std::string group_digits(const std::string& in, const std::string& separator)
     if (end != string::npos)
         tail = in.substr(end);
     else
-        end = in.size();
+        end = (int)in.size();
 
     std::string res;
     std::string integer = in.substr(0, end);
