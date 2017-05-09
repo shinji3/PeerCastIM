@@ -34,7 +34,7 @@ int  Dechunker::read(void *buf, int size)
 
     while (true)
     {
-        if (m_buffer.size() >= size)
+        if ((int)m_buffer.size() >= size)
         {
             while (size > 0)
             {

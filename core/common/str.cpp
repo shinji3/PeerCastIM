@@ -14,7 +14,7 @@ std::string hexdump(const std::string& in)
 {
     std::string res;
 
-    for (int i = 0; i < in.size(); i++) {
+    for (int i = 0; i < (int)in.size(); i++) {
         if (i != 0)
             res += ' ';
         char buf[3];
@@ -82,7 +82,7 @@ std::string group_digits(const std::string& in, const std::string& separator)
 {
     std::string tail;
 
-    auto end = in.find('.'); // end of integral part
+    auto end = (int)in.find('.'); // end of integral part
     if (end != string::npos)
         tail = in.substr(end);
     else

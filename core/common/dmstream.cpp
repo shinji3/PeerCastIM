@@ -9,8 +9,8 @@ DynamicMemoryStream::DynamicMemoryStream()
 
 void  DynamicMemoryStream::checkSize(int size)
 {
-    if (size > m_buffer.size())
-        while (m_buffer.size() < size)
+    if (size > (int)m_buffer.size())
+        while ((int)m_buffer.size() < size)
             m_buffer.push_back(0);
 }
 
