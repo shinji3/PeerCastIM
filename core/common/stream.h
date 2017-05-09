@@ -318,6 +318,7 @@ public:
     FileStream() { file=NULL; }
 
     void    openReadOnly(const char *);
+    void    openReadOnly(const std::string& fn) { openReadOnly(fn.c_str()); }
     void    openWriteReplace(const char *);
     void    openWriteAppend(const char *);
     bool    isOpen() { return file!=NULL; }

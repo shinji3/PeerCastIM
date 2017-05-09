@@ -94,6 +94,7 @@ public:
 #define MIME_JPEG            "image/jpeg"
 #define MIME_GIF             "image/gif"
 #define MIME_PNG             "image/png"
+#define MIME_JS              "application/javascript"
 
 // --------------------------------------------
 class Cookie

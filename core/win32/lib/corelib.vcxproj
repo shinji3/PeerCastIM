@@ -555,6 +555,7 @@
     <ClCompile Include="..\..\common\pcp.cpp" />
     <ClCompile Include="..\..\common\peercast.cpp" />
     <ClCompile Include="..\..\common\playlist.cpp" />
+    <ClCompile Include="..\..\common\public.cpp" />
     <ClCompile Include="..\..\common\servent.cpp" />
     <ClCompile Include="..\..\common\servhs.cpp" />
     <ClCompile Include="..\..\common\servmgr.cpp" />
@@ -614,6 +615,7 @@
     <ClInclude Include="..\..\common\pcp.h" />
     <ClInclude Include="..\..\common\peercast.h" />
     <ClInclude Include="..\..\common\playlist.h" />
+    <ClInclude Include="..\..\common\public.h" />
     <ClInclude Include="..\..\common\servent.h" />
     <ClInclude Include="..\..\common\servmgr.h" />
     <ClInclude Include="..\..\common\socket.h" />
