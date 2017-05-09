@@ -530,6 +530,7 @@
     <ClCompile Include="..\..\common\channel.cpp" />
     <ClCompile Include="..\..\common\cstream.cpp" />
     <ClCompile Include="..\..\common\dechunker.cpp" />
+    <ClCompile Include="..\..\common\dmstream.cpp" />
     <ClCompile Include="..\..\common\flv.cpp" />
     <ClCompile Include="..\..\common\gnuid.cpp" />
     <ClCompile Include="..\..\common\gnutella.cpp" />
@@ -580,6 +581,7 @@
     <ClInclude Include="..\..\common\critsec.h" />
     <ClInclude Include="..\..\common\cstream.h" />
     <ClInclude Include="..\..\common\dechunker.h" />
+    <ClInclude Include="..\..\common\dmstream.h" />
     <ClInclude Include="..\..\common\flv.h" />
     <ClInclude Include="..\..\common\gnuid.h" />
     <ClInclude Include="..\..\common\gnutella.h" />

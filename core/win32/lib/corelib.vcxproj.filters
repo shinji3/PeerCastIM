@@ -150,6 +150,9 @@
     <ClCompile Include="..\..\common\httppush.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\common\dmstream.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\addrCont.h">
@@ -315,6 +318,9 @@
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\httppush.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\dmstream.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
   </ItemGroup>
