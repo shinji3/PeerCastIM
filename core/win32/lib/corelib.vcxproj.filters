@@ -305,5 +305,11 @@
     <ClInclude Include="..\..\common\mapper.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\common\json.hpp">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\matroska.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

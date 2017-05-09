@@ -590,8 +590,10 @@
     <ClInclude Include="..\..\common\id.h" />
     <ClInclude Include="..\..\common\inifile.h" />
     <ClInclude Include="..\..\common\jis.h" />
+    <ClInclude Include="..\..\common\json.hpp" />
     <ClInclude Include="..\..\common\LUrlParser.h" />
     <ClInclude Include="..\..\common\mapper.h" />
+    <ClInclude Include="..\..\common\matroska.h" />
     <ClInclude Include="..\..\common\md5.h" />
     <ClInclude Include="..\..\common\mms.h" />
     <ClInclude Include="..\..\common\mp3.h" />
