@@ -562,6 +562,7 @@
     <ClCompile Include="..\..\common\str.cpp" />
     <ClCompile Include="..\..\common\stream.cpp" />
     <ClCompile Include="..\..\common\sys.cpp" />
+    <ClCompile Include="..\..\common\template.cpp" />
     <ClCompile Include="..\..\common\uri.cpp" />
     <ClCompile Include="..\..\common\url.cpp" />
     <ClCompile Include="..\..\common\wmhttp.cpp" />
@@ -620,6 +621,7 @@
     <ClInclude Include="..\..\common\str.h" />
     <ClInclude Include="..\..\common\stream.h" />
     <ClInclude Include="..\..\common\sys.h" />
+    <ClInclude Include="..\..\common\template.h" />
     <ClInclude Include="..\..\common\ts_vector.h" />
     <ClInclude Include="..\..\common\uri.h" />
     <ClInclude Include="..\..\common\url.h" />

@@ -211,6 +211,14 @@ public:
     void    writeLine(const char *);
     void    writeLineF(const char *, ...);
     void    writeString(const char *);
+    void    writeString(const std::string& s)
+    {
+        write(s.data(), (int)s.size());
+    }
+    void    writeString(const String& s)
+    {
+        write(s.c_str(), (int)s.size());
+    }
     void    writeStringF(const char *, ...);
 
     bool    writeCRLF;

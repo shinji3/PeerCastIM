@@ -20,7 +20,10 @@
 #ifndef _HTTP_H
 #define _HTTP_H
 
+#include <map>
+
 #include "stream.h"
+#include "str.h"
 
 // -------------------------------------
 class HTTPException : public StreamException
@@ -145,6 +148,81 @@ public:
 
     Cookie  list[MAX_COOKIES];
     bool    neverExpire;
+};
+
+// --------------------------------------------
+class HTTPRequest
+{
+public:
+    HTTPRequest(const std::string& aMethod, const std::string& aUrl, const std::string& aProtocolVersion,
+        std::map<std::string,std::string>& aHeaders)
+        : method(aMethod)
+        , url(aUrl)
+        , protocolVersion(aProtocolVersion)
+        , headers(aHeaders)
+    {
+        auto vec = str::split(url, "?");
+        if (vec.size() >= 2)
+        {
+            path = vec[0];
+            queryString = vec[1];
+        }else
+            path = url;
+    }
+
+    std::string getHeader(const std::string& name) const
+    {
+        auto it = headers.find(str::upcase(name));
+        if (it == headers.end())
+            return "";
+        else
+            return it->second;
+    }
+
+    std::string method;
+    std::string url;
+    std::string path;
+    std::string queryString;
+    std::string protocolVersion;
+    std::map<std::string,std::string> headers;
+};
+
+// --------------------------------------------
+class HTTPResponse
+{
+public:
+
+    HTTPResponse(int aStatusCode, const std::map<std::string,std::string>& aHeaders)
+        : statusCode(aStatusCode)
+        , headers(aHeaders)
+        , stream(NULL)
+    {
+    }
+
+    static HTTPResponse ok(const std::map<std::string,std::string>& aHeaders, const std::string& body)
+    {
+        HTTPResponse res(200, aHeaders);
+        res.body = body;
+        return res;
+    }
+
+    static HTTPResponse notFound()
+    {
+        HTTPResponse res(400, {{"Content-Type", "text/html"}});
+        res.body = "File not found";
+        return res;
+    }
+
+    static HTTPResponse redirectTo(const std::string& url)
+    {
+        HTTPResponse res(302, {{"Location",url}});
+        return res;
+    }
+
+    std::string body;
+    int statusCode;
+    std::map<std::string,std::string> headers;
+    Stream* stream;
 };
 
 // --------------------------------------------

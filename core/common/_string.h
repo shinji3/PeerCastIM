@@ -155,6 +155,8 @@ public:
 
     static ::String format(const char* fmt, ...);
 
+    operator std::string () const { return data; }
+
     bool operator == (const char *s) const { return isSame(s); }
     bool operator != (const char *s) const { return !isSame(s); }
 
@@ -163,8 +165,12 @@ public:
     void convertTo(TYPE t);
 
     char    *cstr() { return data; }
+    const char* c_str() const { return data; }
+    std::string str() const { return data; }
 
     static bool isWhitespace(char c) { return c==' ' || c=='\t'; }
+
+    size_t size() const { return strlen(data); }
 
     TYPE    type;
     char    data[MAX_LEN];
