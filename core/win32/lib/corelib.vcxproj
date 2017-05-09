@@ -536,6 +536,7 @@
     <ClCompile Include="..\..\common\host.cpp" />
     <ClCompile Include="..\..\common\html.cpp" />
     <ClCompile Include="..\..\common\http.cpp" />
+    <ClCompile Include="..\..\common\httppush.cpp" />
     <ClCompile Include="..\..\common\icy.cpp" />
     <ClCompile Include="..\..\common\inifile.cpp" />
     <ClCompile Include="..\..\common\jis.cpp" />
@@ -586,6 +587,7 @@
     <ClInclude Include="..\..\common\html-xml.h" />
     <ClInclude Include="..\..\common\html.h" />
     <ClInclude Include="..\..\common\http.h" />
+    <ClInclude Include="..\..\common\httppush.h" />
     <ClInclude Include="..\..\common\icy.h" />
     <ClInclude Include="..\..\common\id.h" />
     <ClInclude Include="..\..\common\inifile.h" />

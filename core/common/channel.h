@@ -98,6 +98,7 @@ public:
 
     virtual void stream(Channel *) = 0;
     virtual int getSourceRate() { return 0; }
+    virtual int getSourceRateAvg() { return this->getSourceRate(); }
 };
 
 // ------------------------------------------

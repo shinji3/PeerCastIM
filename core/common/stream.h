@@ -103,7 +103,7 @@ public:
     }
     long    readLong()
     {
-        long v;
+        long v = 0;
         read(&v, 4);
         CHECK_ENDIAN4(v);
         return v;
@@ -212,6 +212,78 @@ public:
     unsigned int bytesInPerSec;
     unsigned int bytesOutPerSec;
     unsigned int lastUpdate;
+
+    class Stat
+    {
+    public:
+        const double Exp = 9.0/10.0;
+
+        Stat ()
+            : m_totalBytesIn(0)
+            , m_totalBytesOut(0)
+            , m_lastBytesIn(0)
+            , m_lastBytesOut(0)
+            , m_bytesInPerSec(0)
+            , m_bytesOutPerSec(0)
+            , m_bytesInPerSecAvg(0)
+            , m_bytesOutPerSecAvg(0)
+            , m_lastUpdate(0)
+            , m_startTime(0)
+        {}
+
+        void update(unsigned int in, unsigned int out)
+        {
+            double now = sys->getDTime();
+
+            if (m_lastUpdate == 0.0)
+            {
+                m_startTime = now;
+                m_lastUpdate = now;
+            }
+
+            m_totalBytesIn  += in;
+            m_totalBytesOut += out;
+
+            double tdiff = now - m_lastUpdate;
+            if (tdiff >= 1.0)
+            {
+                m_bytesInPerSec     = (unsigned)((m_totalBytesIn - m_lastBytesIn) / tdiff);
+                m_bytesOutPerSec    = (unsigned)((m_totalBytesOut - m_lastBytesOut) / tdiff);
+
+                m_bytesInPerSecAvg  = Exp * m_bytesInPerSecAvg + (1-Exp) * m_bytesInPerSec;
+                m_bytesOutPerSecAvg = Exp * m_bytesOutPerSecAvg + (1-Exp) * m_bytesOutPerSec;
+
+                m_lastBytesIn       = m_totalBytesIn;
+                m_lastBytesOut      = m_totalBytesOut;
+
+                m_lastUpdate        = now;
+            }
+        }
+
+        void update() { update(0, 0); }
+
+        unsigned int    totalBytesIn() { update(); return m_totalBytesIn; }
+        unsigned int    totalBytesOut() { update(); return m_totalBytesOut; }
+        unsigned int    lastBytesIn() { update(); return m_lastBytesIn; }
+        unsigned int    lastBytesOut() { update(); return m_lastBytesOut; }
+        unsigned int    bytesInPerSec() { update(); return m_bytesInPerSec; }
+        unsigned int    bytesOutPerSec() { update(); return m_bytesOutPerSec; }
+
+        unsigned int    bytesInPerSecAvg() { update(); return (unsigned)m_bytesInPerSecAvg; }
+        unsigned int    bytesOutPerSecAvg() { update(); return (unsigned)m_bytesOutPerSecAvg; }
+
+        unsigned int    m_totalBytesIn, m_totalBytesOut;
+        unsigned int    m_lastBytesIn, m_lastBytesOut;
+        unsigned int    m_bytesInPerSec, m_bytesOutPerSec;
+
+        double          m_bytesInPerSecAvg;
+        double          m_bytesOutPerSecAvg;
+
+        double          m_lastUpdate;
+        double          m_startTime;
+    };
+
+    Stat stat;
 };
 
 // -------------------------------------
