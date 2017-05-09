@@ -271,7 +271,7 @@ public:
     ThreadInfo          *finthread;
 
     unsigned int        lastIdleTime;
-    int                 status;
+    STATUS              status;
     static const char   *statusMsgs[], *srcTypes[];
 
     ClientSocket        *sock;

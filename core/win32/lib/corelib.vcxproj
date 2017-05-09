@@ -542,6 +542,7 @@
     <ClCompile Include="..\..\common\icy.cpp" />
     <ClCompile Include="..\..\common\inifile.cpp" />
     <ClCompile Include="..\..\common\jis.cpp" />
+    <ClCompile Include="..\..\common\jrpc.cpp" />
     <ClCompile Include="..\..\common\LUrlParser.cpp" />
     <ClCompile Include="..\..\common\mapper.cpp" />
     <ClCompile Include="..\..\common\md5.cpp" />
@@ -597,6 +598,7 @@
     <ClInclude Include="..\..\common\id.h" />
     <ClInclude Include="..\..\common\inifile.h" />
     <ClInclude Include="..\..\common\jis.h" />
+    <ClInclude Include="..\..\common\jrpc.h" />
     <ClInclude Include="..\..\common\json.hpp" />
     <ClInclude Include="..\..\common\LUrlParser.h" />
     <ClInclude Include="..\..\common\mapper.h" />

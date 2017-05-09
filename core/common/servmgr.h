@@ -21,6 +21,7 @@
 #define _SERVMGR_H
 
 #include "servent.h"
+#include "chandir.h"
 
 // ----------------------------------
 
@@ -384,6 +385,8 @@ public:
     int                 serventNum;
 
     String              chanLog;
+
+    ChannelDirectory    channelDirectory;
 
     char modulePath[256]; //JP-EX
     int enableGetName; //JP-EX

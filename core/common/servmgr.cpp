@@ -110,7 +110,6 @@ ServMgr::ServMgr()
     downloadURL[0] = 0;
     rootMsg.clear();
 
-
     restartServer=false;
 
     setFilterDefaults();
