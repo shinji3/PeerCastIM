@@ -26,13 +26,6 @@
 
 #include "utf8.h"
 #include "identify_encoding.h"
-
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
-
 #ifdef _WIN32
 
 /* Thanks to Peter Harris <peter.harris@hummingbird.com> for this win32
