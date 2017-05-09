@@ -1,5 +1,11 @@
 #include "wmhttp.h"
 
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+
 extern ASFInfo parseASFHeader(Stream &in); // from mms.cpp
 
 void WMHTTPStream::readEnd(Stream &, Channel *)

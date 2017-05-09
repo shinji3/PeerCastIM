@@ -6,6 +6,12 @@
 #include "matroska.h"
 #include "dmstream.h"
 
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+
 using namespace matroska;
 
 // data を type パケットとして送信する

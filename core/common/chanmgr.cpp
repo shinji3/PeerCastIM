@@ -4,6 +4,7 @@
 #include "peercast.h"
 #include "version2.h" // PCP_BROADCAST_FLAGS
 #include "win32/seh.h"
+
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)

@@ -5,6 +5,12 @@
 #include <vector>
 #include <cctype>
 
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+
 namespace str
 {
 

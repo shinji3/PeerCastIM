@@ -1,4 +1,5 @@
 #include "win32/seh.h"
+
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)

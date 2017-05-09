@@ -4,6 +4,12 @@
 #include "template.h"
 #include "jrpc.h"
 
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+
 using namespace std;
 
 // ------------------------------------------------------------

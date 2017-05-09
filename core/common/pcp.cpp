@@ -20,12 +20,13 @@
 #include "pcp.h"
 #include "peercast.h"
 #include "version2.h"
+#include <ctime>
+
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
-#include <ctime>
 
 // ------------------------------------------
 void PCPStream::init(GnuID &rid)

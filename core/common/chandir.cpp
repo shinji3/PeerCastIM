@@ -12,6 +12,12 @@
 #include "servmgr.h"
 #include "str.h"
 
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+
 using namespace std;
 
 std::vector<ChannelEntry>

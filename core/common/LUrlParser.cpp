@@ -31,6 +31,12 @@
 #include <cstring>
 #include <stdlib.h>
 
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+
 // check if the scheme name is valid
 static bool IsSchemeValid( const std::string& SchemeName )
 {

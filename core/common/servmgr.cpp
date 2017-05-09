@@ -27,6 +27,7 @@
 #include "pcp.h"
 #include "atom.h"
 #include "version2.h"
+
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)

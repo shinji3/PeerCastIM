@@ -2,13 +2,13 @@
 #include "peercast.h"
 #include "channel.h"
 #include "servmgr.h"
+#include "version2.h"
+
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
-
-#include "version2.h"
 
 // ---------------------------------
 // globals

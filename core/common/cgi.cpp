@@ -3,6 +3,12 @@
 #include "cgi.h"
 #include "str.h"
 
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+
 namespace cgi {
 
 // URLエスケープする。
@@ -103,7 +109,6 @@ std::string rfc1123Time(time_t t)
     char fmt[30], buf[30];
 
     gmtime_s(&tm, &t);
-
     strftime(fmt, sizeof(fmt), "%%s, %d %%s %Y %H:%M:%S GMT", &tm);
     std::snprintf(buf, sizeof(buf), fmt, daysOfWeek[tm.tm_wday], monthNames[tm.tm_mon]);
 

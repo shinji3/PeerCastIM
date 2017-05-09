@@ -29,6 +29,12 @@
 #include "str.h"
 #include "jrpc.h"
 
+#ifdef _DEBUG
+#include "chkMemoryLeak.h"
+#define DEBUG_NEW new(__FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+
 using json = nlohmann::json;
 using namespace std;
 

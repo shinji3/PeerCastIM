@@ -34,13 +34,13 @@
 #include "atom.h"
 #include "pcp.h"
 #include "version2.h"
+#include "win32/seh.h"
+
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
-
-#include "win32/seh.h"
 
 const int DIRECT_WRITE_TIMEOUT = 60;
 
