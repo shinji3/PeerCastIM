@@ -102,6 +102,44 @@ void ChanHit::init()
 }
 
 // -----------------------------------
+void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, unsigned int oldp, unsigned int newp, const Host& sourceHost)
+{
+    init();
+
+    firewalled = (servMgr->getFirewall() != ServMgr::FW_OFF);
+    numListeners = numl;
+    numRelays = numr;
+    upTime = uptm;
+    stable = servMgr->totalStreams>0;
+    sessionID = servMgr->sessionID;
+    recv = connected;
+
+    direct = !servMgr->directFull();
+    relay = !servMgr->relaysFull();
+    cin = !servMgr->controlInFull();
+
+    host = servMgr->serverHost;
+
+    version = PCP_CLIENT_VERSION;
+    version_vp = PCP_CLIENT_VERSION_VP;
+    strncpy(version_ex_prefix, PCP_CLIENT_VERSION_EX_PREFIX, 2);
+    version_ex_number = PCP_CLIENT_VERSION_EX_NUMBER;
+
+    rhost[0] = Host(host.ip, host.port);
+    rhost[1] = Host(ClientSocket::getIP(NULL), host.port);
+
+    if (firewalled)
+        rhost[0].port = 0;
+
+    oldestPos = oldp;
+    newestPos = newp;
+
+    uphost.ip   = sourceHost.ip;
+    uphost.port = sourceHost.port;
+    uphostHops  = 1;
+}
+
+// -----------------------------------
 void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, bool isFull, unsigned int bitrate, Channel* ch, unsigned int oldp, unsigned int newp)
 {
     init();

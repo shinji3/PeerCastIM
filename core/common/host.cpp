@@ -55,6 +55,14 @@ void Host::fromStrName(const char *str, int p)
 }
 
 // ------------------------------------------
+::String Host::IPtoStr()
+{
+    ::String result;
+    this->IPtoStr(result.data);
+    return result;
+}
+
+// ------------------------------------------
 void Host::fromStrIP(const char *str, int p)
 {
     unsigned int ipb[4];

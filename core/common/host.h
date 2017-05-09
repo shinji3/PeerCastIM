@@ -18,6 +18,8 @@
 #ifndef _HOST_H
 #define _HOST_H
 
+#include <string>
+
 class String;
 
 // ----------------------------------
@@ -112,9 +114,39 @@ public:
         sprintf(str, "%d.%d.%d.%d", (ip>>24)&0xff, (ip>>16)&0xff, (ip>>8)&0xff, (ip)&0xff);
     }
 
+    ::String IPtoStr();
+
     void    toStr(char *str)
     {
         sprintf(str, "%d.%d.%d.%d:%d", (ip>>24)&0xff, (ip>>16)&0xff, (ip>>8)&0xff, (ip)&0xff, port);
+    }
+
+    std::string str(bool withPort = true)
+    {
+        char buf[22];
+        if (withPort)
+            toStr(buf);
+        else
+            IPtoStr(buf);
+        return buf;
+    }
+
+    operator std::string ()
+    {
+        return str();
+    }
+
+    bool operator < (const Host& other) const
+    {
+        if (ip == other.ip)
+            return port < other.port;
+        else
+            return ip < other.ip;
+    }
+
+    bool operator == (const Host& other) const
+    {
+        return const_cast<Host*>(this)->isSame(const_cast<Host&>(other));
     }
 
     void    fromStrIP(const char *, int);

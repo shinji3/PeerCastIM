@@ -33,6 +33,7 @@ class ChanHit
 {
 public:
     void    init();
+    void    initLocal(int numl, int numr, int nums, int uptm, bool, unsigned int, unsigned int, const Host& = Host());
     void    initLocal(int numl, int numr, int nums, int uptm, bool, bool, unsigned int, Channel*, unsigned int, unsigned int);
     void    initLocal_pp(bool isStealth, int numClaps); //JP-MOD
     XML::Node *createXML();
@@ -50,7 +51,6 @@ public:
     unsigned int    hitID;
     GnuID           sessionID, chanID;
     unsigned int    version;
-    unsigned int    version_vp;
 
     bool            firewalled:1, stable:1, tracker:1, recv:1, yp:1, dead:1, direct:1, relay:1, cin:1;
     bool            relayfull:1, chfull:1, ratefull:1;
@@ -64,6 +64,7 @@ public:
     Host            uphost;
     unsigned int    uphostHops;
 
+    unsigned int    version_vp;
     char            version_ex_prefix[2];
     unsigned int    version_ex_number;
 

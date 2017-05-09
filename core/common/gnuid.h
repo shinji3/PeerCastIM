@@ -18,6 +18,7 @@
 #ifndef _GNUID_H
 #define _GNUID_H
 
+#include <string>
 #include "common.h"
 
 // --------------------------------
@@ -46,6 +47,18 @@ public:
         for (int i=0; i<16; i++)
             id[i] = 0;
         storeTime = 0;
+    }
+
+    operator std::string () const
+    {
+        return this->str();
+    }
+
+    std::string str() const
+    {
+        char buf[33];
+        toStr(buf);
+        return buf;
     }
 
     void    generate(unsigned char = 0);
