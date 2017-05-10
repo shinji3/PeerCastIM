@@ -111,6 +111,7 @@ const char *ChanInfo::getProtocolStr(PROTOCOL t)
         case SP_FILE: return "FILE";
         case SP_MMS: return "MMS";
         case SP_PCP: return "PCP";
+        case SP_WMHTTP: return "WMHTTP";
         default: return "UNKNOWN";
     }
 }
@@ -128,6 +129,8 @@ ChanInfo::PROTOCOL ChanInfo::getProtocolFromStr(const char *str)
         return SP_MMS;
     else if (stricmp(str, "PCP")==0)
         return SP_PCP;
+    else if (stricmp(str, "WMHTTP")==0)
+        return SP_WMHTTP;
     else
         return SP_UNKNOWN;
 }
@@ -746,6 +749,15 @@ void ChanInfo::init(const char *fn)
 }
 
 // -----------------------------------
+void ChanInfo::setContentType(TYPE type)
+{
+    this->contentType    = type;
+    this->contentTypeStr = getTypeStr(type);
+    this->MIMEType       = getMIMEType(type);
+    this->streamExt      = getTypeExt(type);
+}
+
+// -----------------------------------
 bool TrackInfo::update(const TrackInfo &inf)
 {
     bool changed = false;
@@ -781,4 +793,18 @@ bool TrackInfo::update(const TrackInfo &inf)
     }
 
     return changed;
+}
+
+// -----------------------------------
+const char* ChanInfo::getPlayListExt()
+{
+    switch (PlayList::getPlayListType(contentType))
+    {
+    case PlayList::T_ASX:
+        return ".asx";
+    case PlayList::T_RAM:
+        return ".ram";
+    case PlayList::T_PLS:
+        return ".m3u"; // or could be .pls ...
+    }
 }

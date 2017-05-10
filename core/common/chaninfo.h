@@ -85,7 +85,8 @@ public:
         SP_HTTP,
         SP_FILE,
         SP_MMS,
-        SP_PCP
+        SP_PCP,
+        SP_WMHTTP
     };
 
     enum STATUS
@@ -134,12 +135,22 @@ public:
     static const char   *getMIMEType(TYPE);
     static TYPE         getTypeFromStr(const char *str);
     static PROTOCOL     getProtocolFromStr(const char *str);
+    const char*         getPlayListExt();
+
+    void setContentType(TYPE type);
 
     ::String        name;
     GnuID           id, bcID;
     int             bitrate;
+
+    // TYPE はクローズドだから一般性がなく、プロトコル上は文字列でやり
+    // とりするので、冗長な気がする。
+
     TYPE            contentType;
-    ::String        contentTypeStr, MIMEType, streamExt;
+    ::String        contentTypeStr; // getTypeStr(contentType) "WMV" など
+    ::String        MIMEType;       // MIME タイプ
+    String          streamExt;      // "." で始まる拡張子
+
     PROTOCOL        srcProtocol;
     unsigned int    lastPlayStart, lastPlayEnd;
     unsigned int    numSkips;
