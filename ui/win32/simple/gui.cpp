@@ -669,10 +669,10 @@ void ServentData::setData(Servent *s, ChanHit *hit, unsigned int listeners, unsi
 	chanHit.relay = hit->relay;
 	chanHit.firewalled = hit->firewalled;
 	chanHit.version = hit->version;
-	chanHit.version_vp = hit->version_vp;
-	chanHit.version_ex_number = hit->version_ex_number;
-	chanHit.version_ex_prefix[0] = hit->version_ex_prefix[0];
-	chanHit.version_ex_prefix[1] = hit->version_ex_prefix[1];
+	chanHit.versionVP = hit->versionVP;
+	chanHit.versionExNumber = hit->versionExNumber;
+	chanHit.versionExPrefix[0] = hit->versionExPrefix[0];
+	chanHit.versionExPrefix[1] = hit->versionExPrefix[1];
 
 	totalListeners = listeners;
 	totalRelays = relays;
@@ -726,20 +726,20 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y){
 	host.toStr(host1);
 
 	if (infoFlg){
-		if (chanHit.version_ex_number){
+		if (chanHit.versionExNumber){
 			// 拡張バージョン
 			sprintf(tmp, "%c%c%04d - %d/%d - %s(%s)", 
-				chanHit.version_ex_prefix[0],
-				chanHit.version_ex_prefix[1],
-				chanHit.version_ex_number,
+				chanHit.versionExPrefix[0],
+				chanHit.versionExPrefix[1],
+				chanHit.versionExNumber,
 				totalListeners,
 				totalRelays,
 				host1,
 				hostname.cstr()
 				);
-		} else if (chanHit.version_vp){
+		} else if (chanHit.versionVP){
 			sprintf(tmp, "VP%04d - %d/%d - %s(%s)", 
-				chanHit.version_vp,
+				chanHit.versionVP,
 				totalListeners,
 				totalRelays,
 				host1,
@@ -1061,10 +1061,10 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread){
 								hitData.relay = hit->relay;
 								hitData.firewalled = hit->firewalled;
 								hitData.numRelays = hit->numRelays;
-								hitData.version_vp = hit->version_vp;
-								hitData.version_ex_prefix[0] = hit->version_ex_prefix[0];
-								hitData.version_ex_prefix[1] = hit->version_ex_prefix[1];
-								hitData.version_ex_number = hit->version_ex_number;
+								hitData.versionVP = hit->versionVP;
+								hitData.versionExPrefix[0] = hit->versionExPrefix[0];
+								hitData.versionExPrefix[1] = hit->versionExPrefix[1];
+								hitData.versionExNumber = hit->versionExNumber;
 							}
 						}
 						// 次をチェック

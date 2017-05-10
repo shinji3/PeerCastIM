@@ -84,11 +84,11 @@ void ChanHit::init()
     lastContact = 0;
 
     version = 0;
-    version_vp = 0;
+    versionVP = 0;
 
-    version_ex_prefix[0] = ' ';
-    version_ex_prefix[1] = ' ';
-    version_ex_number = 0;
+    versionExPrefix[0] = ' ';
+    versionExPrefix[1] = ' ';
+    versionExNumber = 0;
 
     status = 0;
     servent_id = 0;
@@ -122,9 +122,9 @@ void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, unsig
     host = servMgr->serverHost;
 
     version = PCP_CLIENT_VERSION;
-    version_vp = PCP_CLIENT_VERSION_VP;
-    strncpy(version_ex_prefix, PCP_CLIENT_VERSION_EX_PREFIX, 2);
-    version_ex_number = PCP_CLIENT_VERSION_EX_NUMBER;
+    versionVP = PCP_CLIENT_VERSION_VP;
+    strncpy(versionExPrefix, PCP_CLIENT_VERSION_EX_PREFIX, 2);
+    versionExNumber = PCP_CLIENT_VERSION_EX_NUMBER;
 
     rhost[0] = Host(host.ip, host.port);
     rhost[1] = Host(ClientSocket::getIP(NULL), host.port);
@@ -207,16 +207,16 @@ void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, bool 
     host = servMgr->serverHost;
 
     version = PCP_CLIENT_VERSION;
-    version_vp = PCP_CLIENT_VERSION_VP;
+    versionVP = PCP_CLIENT_VERSION_VP;
     if (version_ex)
     {
-        strncpy(version_ex_prefix, PCP_CLIENT_VERSION_EX_PREFIX,2);
-        version_ex_number = PCP_CLIENT_VERSION_EX_NUMBER;
+        strncpy(versionExPrefix, PCP_CLIENT_VERSION_EX_PREFIX,2);
+        versionExNumber = PCP_CLIENT_VERSION_EX_NUMBER;
     } else
     {
-        version_ex_prefix[0] = ' ';
-        version_ex_prefix[1] = ' ';
-        version_ex_number = 0;
+        versionExPrefix[0] = ' ';
+        versionExPrefix[1] = ' ';
+        versionExNumber = 0;
     }
 
     status = ch->status;
@@ -243,6 +243,19 @@ void ChanHit::initLocal_pp(bool isStealth, int numClaps) //JP-MOD
 }
 
 // -----------------------------------
+static int flags1(ChanHit* hit)
+{
+    int fl1 = 0;
+    if (hit->recv)       fl1 |= PCP_HOST_FLAGS1_RECV;
+    if (hit->relay)      fl1 |= PCP_HOST_FLAGS1_RELAY;
+    if (hit->direct)     fl1 |= PCP_HOST_FLAGS1_DIRECT;
+    if (hit->cin)        fl1 |= PCP_HOST_FLAGS1_CIN;
+    if (hit->tracker)    fl1 |= PCP_HOST_FLAGS1_TRACKER;
+    if (hit->firewalled) fl1 |= PCP_HOST_FLAGS1_PUSH;
+    return fl1;
+}
+
+// -----------------------------------
 void ChanHit::writeAtoms(AtomStream &atom, GnuID &chanID)
 {
     bool addChan=chanID.isSet();
@@ -256,7 +269,7 @@ void ChanHit::writeAtoms(AtomStream &atom, GnuID &chanID)
     if (tracker) fl1 |= PCP_HOST_FLAGS1_TRACKER;
     if (firewalled) fl1 |= PCP_HOST_FLAGS1_PUSH;
 
-    atom.writeParent(PCP_HOST,13  + (addChan?1:0) + (uphostdata?3:0) + (version_ex_number?2:0) + (clap_pp?1:0/*JP-MOD*/));
+    atom.writeParent(PCP_HOST,13  + (addChan?1:0) + (uphostdata?3:0) + (versionExNumber?2:0) + (clap_pp?1:0/*JP-MOD*/));
 
     if (addChan)
         atom.writeBytes(PCP_HOST_CHANID,chanID.id,16);
@@ -269,10 +282,10 @@ void ChanHit::writeAtoms(AtomStream &atom, GnuID &chanID)
     atom.writeInt(PCP_HOST_NUMR,numRelays);
     atom.writeInt(PCP_HOST_UPTIME,upTime);
     atom.writeInt(PCP_HOST_VERSION,version);
-    atom.writeInt(PCP_HOST_VERSION_VP,version_vp);
-    if (version_ex_number){
-        atom.writeBytes(PCP_HOST_VERSION_EX_PREFIX,version_ex_prefix,2);
-        atom.writeShort(PCP_HOST_VERSION_EX_NUMBER,version_ex_number);
+    atom.writeInt(PCP_HOST_VERSION_VP,versionVP);
+    if (versionExNumber){
+        atom.writeBytes(PCP_HOST_VERSION_EX_PREFIX,versionExPrefix,2);
+        atom.writeShort(PCP_HOST_VERSION_EX_NUMBER,versionExNumber);
     }
     atom.writeChar(PCP_HOST_FLAGS1,fl1);
     atom.writeInt(PCP_HOST_OLDPOS,oldestPos);
@@ -358,10 +371,10 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
         sprintf(buf, "%d", version);
     }else if (var == "agent"){
         if (version){
-            if (version_ex_number){
-                sprintf(buf, "v0.%d(%c%c%04d)", version, version_ex_prefix[0], version_ex_prefix[1], version_ex_number);
-            } else if (version_vp){
-                sprintf(buf,"v0.%d(VP%04d)", version, version_vp);
+            if (versionExNumber){
+                sprintf(buf, "v0.%d(%c%c%04d)", version, versionExPrefix[0], versionExPrefix[1], versionExNumber);
+            } else if (versionVP){
+                sprintf(buf,"v0.%d(VP%04d)", version, versionVP);
             } else {
                 sprintf(buf,"v0.%d", version);
             }
@@ -388,6 +401,31 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
 
     out.writeString(buf);
     return true;
+}
+
+// -----------------------------------
+std::string ChanHit::versionString()
+{
+    using namespace std;
+    if (!version)
+        return "";
+    else if (!versionVP)
+        return to_string(version);
+    else if (!versionExNumber)
+        return "VP" + to_string(versionVP);
+    else
+        return string() + versionExPrefix[0] + versionExPrefix[1] + to_string(versionExNumber);
+}
+
+// -----------------------------------
+// 選択されたホストの情報を簡潔に文字列化する。
+std::string ChanHit::str(bool withPort)
+{
+    auto res = host.str(withPort);
+
+    if (!versionString().empty())
+        res += " (" + versionString() + ")";
+    return res;
 }
 
 // -----------------------------------

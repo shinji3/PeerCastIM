@@ -47,7 +47,7 @@ public:
     Host            rhost[2];
     unsigned int    numListeners, numRelays, numHops;
     int             clap_pp;    //JP-MOD
-    unsigned int    time,upTime, lastContact;
+    unsigned int    time, upTime, lastContact;
     unsigned int    hitID;
     GnuID           sessionID, chanID;
     unsigned int    version;
@@ -55,18 +55,21 @@ public:
     bool            firewalled:1, stable:1, tracker:1, recv:1, yp:1, dead:1, direct:1, relay:1, cin:1;
     bool            relayfull:1, chfull:1, ratefull:1;
 
-    ChanHit         *next;
-
     int             status;
     int             servent_id;
 
-    unsigned int    oldestPos,newestPos;
+    unsigned int    oldestPos, newestPos;
     Host            uphost;
     unsigned int    uphostHops;
 
-    unsigned int    version_vp;
-    char            version_ex_prefix[2];
-    unsigned int    version_ex_number;
+    unsigned int    versionVP;
+    char            versionExPrefix[2];
+    unsigned int    versionExNumber;
+
+    std::string versionString();
+    std::string str(bool withPort = false);
+
+    ChanHit *next;
 
     unsigned int    lastSendSeq;
 };

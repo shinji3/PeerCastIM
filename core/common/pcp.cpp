@@ -467,11 +467,11 @@ void PCPStream::readHostAtoms(AtomStream &atom, int numc, BroadcastState &bcs, C
         else if (id == PCP_HOST_VERSION)
             hit.version = atom.readInt();
         else if (id == PCP_HOST_VERSION_VP)
-            hit.version_vp = atom.readInt();
+            hit.versionVP = atom.readInt();
         else if (id == PCP_HOST_VERSION_EX_PREFIX)
-            atom.readBytes(hit.version_ex_prefix, 2);
+            atom.readBytes(hit.versionExPrefix, 2);
         else if (id == PCP_HOST_VERSION_EX_NUMBER){
-            hit.version_ex_number = atom.readShort();
+            hit.versionExNumber = atom.readShort();
         }
         else if (id == PCP_HOST_FLAGS1)
         {
@@ -891,7 +891,7 @@ int PCPStream::procAtom(AtomStream &atom, ID4 id, int numc, int dlen, BroadcastS
                 LOG_DEBUG("host that can't relay is disconnect: %s", tmp);
                 rBan = PCP_ERROR_BANNED;
             }
-            if (servMgr->allowOnlyVP && (hit.numHops == 1) && !hit.version_vp){
+            if (servMgr->allowOnlyVP && (hit.numHops == 1) && !hit.versionVP){
                 char tmp[32];
                 hit.host.IPtoStr(tmp);
                 LOG_DEBUG("host that is not VP is disconnect: %s", tmp);

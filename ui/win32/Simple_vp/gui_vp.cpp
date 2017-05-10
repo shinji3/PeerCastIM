@@ -570,10 +570,10 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 								relay = hit->relay;
 								firewalled = hit->firewalled;
 								numRelays = hit->numRelays;
-								vp_ver = hit->version_vp;
-								ver_ex_prefix[0] = hit->version_ex_prefix[0];
-								ver_ex_prefix[1] = hit->version_ex_prefix[1];
-								ver_ex_number = hit->version_ex_number;
+								vp_ver = hit->versionVP;
+								ver_ex_prefix[0] = hit->versionExPrefix[0];
+								ver_ex_prefix[1] = hit->versionExPrefix[1];
+								ver_ex_number = hit->versionExNumber;
 							}
 							totalRelays += hit->numRelays;
 							totalListeners += hit->numListeners;
