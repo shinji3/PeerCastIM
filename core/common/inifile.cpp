@@ -95,7 +95,7 @@ bool    IniFile::readNext()
 // -----------------------------------------
 bool IniFile::isName(const char *str)
 {
-    return stricmp(getName(), str)==0;
+    return _stricmp(getName(), str)==0;
 }
 
 // -----------------------------------------
@@ -128,9 +128,9 @@ bool    IniFile::getBoolValue()
     if (!valueStr)
         return false;
 
-    if ( (stricmp(valueStr, "yes")==0) ||
-         (stricmp(valueStr, "y")==0) ||
-         (stricmp(valueStr, "1")==0) )
+    if ( (_stricmp(valueStr, "yes")==0) ||
+         (_stricmp(valueStr, "y")==0) ||
+         (_stricmp(valueStr, "1")==0) )
         return true;
 
     return false;

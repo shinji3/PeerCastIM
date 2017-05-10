@@ -42,7 +42,7 @@ void Host::fromStrName(const char *str, int p)
     }
 
     char name[128];
-    strncpy(name, str, sizeof(name)-1);
+    strncpy_s(name, sizeof(name)-1, str, _TRUNCATE);
     name[127] = '\0';
     port = p;
     char *pp = strstr(name, ":");
@@ -71,7 +71,7 @@ void Host::fromStrIP(const char *str, int p)
 
     if (strstr(str, ":"))
     {
-        if (sscanf(str, "%03d.%03d.%03d.%03d:%d", &ipb[0], &ipb[1], &ipb[2], &ipb[3], &ipp) == 5)
+        if (sscanf_s(str, "%03d.%03d.%03d.%03d:%d", &ipb[0], &ipb[1], &ipb[2], &ipb[3], &ipp) == 5)
         {
             ip = ((ipb[0]&0xff) << 24) | ((ipb[1]&0xff) << 16) | ((ipb[2]&0xff) << 8) | ((ipb[3]&0xff));
             port = ipp;
@@ -82,7 +82,7 @@ void Host::fromStrIP(const char *str, int p)
         }
     }else{
         port = p;
-        if (sscanf(str, "%03d.%03d.%03d.%03d", &ipb[0], &ipb[1], &ipb[2], &ipb[3]) == 4)
+        if (sscanf_s(str, "%03d.%03d.%03d.%03d", &ipb[0], &ipb[1], &ipb[2], &ipb[3]) == 4)
             ip = ((ipb[0]&0xff) << 24) | ((ipb[1]&0xff) << 16) | ((ipb[2]&0xff) << 8) | ((ipb[3]&0xff));
         else
             ip = 0;

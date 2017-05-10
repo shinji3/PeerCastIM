@@ -82,8 +82,8 @@ ServMgr::ServMgr()
 
     forceIP.clear();
 
-    strcpy(connectHost, "connect1.peercast.org");
-    strcpy(htmlPath, "html/ja");
+    strcpy_s(connectHost, sizeof(connectHost), "connect1.peercast.org");
+    strcpy_s(htmlPath, sizeof(htmlPath), "html/ja");
 
     rootHost = "yp.peercast.org";
     rootHost2 = "";
@@ -1335,7 +1335,7 @@ void ServMgr::loadSettings(const char *fn)
             else if (iniFile.isName("autoConnect"))
                 servMgr->autoConnect = iniFile.getBoolValue();
             else if (iniFile.isName("icyPassword"))     // depreciated
-                strcpy(servMgr->password, iniFile.getStrValue());
+                strcpy_s(servMgr->password, sizeof(servMgr->password), iniFile.getStrValue());
             else if (iniFile.isName("forceIP"))
                 servMgr->forceIP = iniFile.getStrValue();
             else if (iniFile.isName("isRoot"))
@@ -1345,7 +1345,7 @@ void ServMgr::loadSettings(const char *fn)
                 chanMgr->broadcastID.fromStr(iniFile.getStrValue());
                 chanMgr->broadcastID.id[0] = PCP_BROADCAST_FLAGS;           // hacky, but we need to fix old clients
             }else if (iniFile.isName("htmlPath"))
-                strcpy(servMgr->htmlPath, iniFile.getStrValue());
+                strcpy_s(servMgr->htmlPath, sizeof(servMgr->htmlPath), iniFile.getStrValue());
             else if (iniFile.isName("maxPGNUIncoming"))
                 servMgr->maxGnuIncoming = iniFile.getIntValue();
             else if (iniFile.isName("minPGNUIncoming"))
@@ -1393,22 +1393,22 @@ void ServMgr::loadSettings(const char *fn)
             else if (iniFile.isName("authType"))
             {
                 const char *t = iniFile.getStrValue();
-                if (stricmp(t, "cookie")==0)
+                if (_stricmp(t, "cookie")==0)
                     servMgr->authType = ServMgr::AUTH_COOKIE;
-                else if (stricmp(t, "http-basic")==0)
+                else if (_stricmp(t, "http-basic")==0)
                     servMgr->authType = ServMgr::AUTH_HTTPBASIC;
             }else if (iniFile.isName("cookiesExpire"))
             {
                 const char *t = iniFile.getStrValue();
-                if (stricmp(t, "never")==0)
+                if (_stricmp(t, "never")==0)
                     servMgr->cookieList.neverExpire = true;
-                else if (stricmp(t, "session")==0)
+                else if (_stricmp(t, "session")==0)
                     servMgr->cookieList.neverExpire = false;
             }
 
             // privacy settings
             else if (iniFile.isName("password"))
-                strcpy(servMgr->password, iniFile.getStrValue());
+                strcpy_s(servMgr->password, sizeof(servMgr->password), iniFile.getStrValue());
             else if (iniFile.isName("maxUptime"))
                 chanMgr->maxUptime = iniFile.getIntValue();
 
@@ -2372,15 +2372,15 @@ const char *ServHost::getTypeStr(TYPE t)
 // --------------------------------------------------
 ServHost::TYPE ServHost::getTypeFromStr(const char *s)
 {
-    if (stricmp(s, "NONE")==0)
+    if (_stricmp(s, "NONE")==0)
         return T_NONE;
-    else if (stricmp(s, "SERVENT")==0)
+    else if (_stricmp(s, "SERVENT")==0)
         return T_SERVENT;
-    else if (stricmp(s, "STREAM")==0)
+    else if (_stricmp(s, "STREAM")==0)
         return T_STREAM;
-    else if (stricmp(s, "CHANNEL")==0)
+    else if (_stricmp(s, "CHANNEL")==0)
         return T_CHANNEL;
-    else if (stricmp(s, "TRACKER")==0)
+    else if (_stricmp(s, "TRACKER")==0)
         return T_TRACKER;
 
     return T_NONE;
@@ -2392,13 +2392,13 @@ bool    ServFilter::writeVariable(Stream &out, const String &var)
     char buf[1024] = "";
 
     if (var == "network")
-        strcpy(buf, (flags & F_NETWORK)?"1":"0");
+        strcpy_s(buf, sizeof(buf), (flags & F_NETWORK)?"1":"0");
     else if (var == "private")
-        strcpy(buf, (flags & F_PRIVATE)?"1":"0");
+        strcpy_s(buf, sizeof(buf), (flags & F_PRIVATE)?"1":"0");
     else if (var == "direct")
-        strcpy(buf, (flags & F_DIRECT)?"1":"0");
+        strcpy_s(buf, sizeof(buf), (flags & F_DIRECT)?"1":"0");
     else if (var == "banned")
-        strcpy(buf, (flags & F_BAN)?"1":"0");
+        strcpy_s(buf, sizeof(buf), (flags & F_BAN)?"1":"0");
     else if (var == "ip")
         host.IPtoStr(buf);
     else
@@ -2416,13 +2416,13 @@ bool    BCID::writeVariable(Stream &out, const String &var)
     if (var == "id")
         id.toStr(buf);
     else if (var == "name")
-        strcpy(buf, name.cstr());
+        strcpy_s(buf, sizeof(buf), name.cstr());
     else if (var == "email")
-        strcpy(buf, email.cstr());
+        strcpy_s(buf, sizeof(buf), email.cstr());
     else if (var == "url")
-        strcpy(buf, url.cstr());
+        strcpy_s(buf, sizeof(buf), url.cstr());
     else if (var == "valid")
-        strcpy(buf, valid?"Yes":"No");
+        strcpy_s(buf, sizeof(buf), valid?"Yes":"No");
     else
         return false;
 
@@ -2439,16 +2439,16 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
     if (var == "version")
         if (version_ex)
         {
-            strcpy(buf,PCX_VERSTRING_EX);
+            strcpy_s(buf, sizeof(buf),PCX_VERSTRING_EX);
         } else
         {
-            strcpy(buf,PCX_VERSTRING);
+            strcpy_s(buf, sizeof(buf),PCX_VERSTRING);
         }
     else if (var == "uptime")
     {
         str.setFromStopwatch(getUptime());
         str.convertTo(String::T_HTML);
-        strcpy(buf, str.cstr());
+        strcpy_s(buf, sizeof(buf), str.cstr());
     }else if (var == "numRelays")
         sprintf_s(buf, sizeof(buf), "%d", numStreams(Servent::T_RELAY, true));
     else if (var == "numDirect")
@@ -2464,15 +2464,15 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
     else if (var == "serverIP")
         serverHost.IPtoStr(buf);
     else if (var == "ypAddress")
-        strcpy(buf, rootHost.cstr());
+        strcpy_s(buf, sizeof(buf), rootHost.cstr());
     else if (var == "password")
-        strcpy(buf, password);
+        strcpy_s(buf, sizeof(buf), password);
     else if (var == "isFirewalled")
         sprintf_s(buf, sizeof(buf), "%d", getFirewall()==FW_ON?1:0);
     else if (var == "firewallKnown")
         sprintf_s(buf, sizeof(buf), "%d", getFirewall()==FW_UNKNOWN?0:1);
     else if (var == "rootMsg")
-        strcpy(buf, rootMsg);
+        strcpy_s(buf, sizeof(buf), rootMsg);
     else if (var == "isRoot"){
         LOG_DEBUG("isRoot = %d", isRoot);
         sprintf_s(buf, sizeof(buf), "%d", isRoot?1:0);
@@ -2531,11 +2531,11 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
     // JP-EX
     else if (var.startsWith("autoRelayKeep")) {
         if (var == "autoRelayKeep.0")
-            strcpy(buf, (autoRelayKeep == 0) ? "1":"0");
+            strcpy_s(buf, sizeof(buf), (autoRelayKeep == 0) ? "1":"0");
         else if (var == "autoRelayKeep.1")
-            strcpy(buf, (autoRelayKeep == 1) ? "1":"0");
+            strcpy_s(buf, sizeof(buf), (autoRelayKeep == 1) ? "1":"0");
         else if (var == "autoRelayKeep.2")
-            strcpy(buf, (autoRelayKeep == 2) ? "1":"0");
+            strcpy_s(buf, sizeof(buf), (autoRelayKeep == 2) ? "1":"0");
     } else if (var == "autoMaxRelaySetting")
         sprintf_s(buf, sizeof(buf),"%d",autoMaxRelaySetting);
     else if (var == "autoBumpSkipCount")
@@ -2545,37 +2545,37 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
     else if (var == "kickPushInterval")
         sprintf_s(buf, sizeof(buf),"%d",kickPushInterval);
     else if (var == "allowConnectPCST")
-        strcpy(buf, (allowConnectPCST == 1) ? "1":"0");
+        strcpy_s(buf, sizeof(buf), (allowConnectPCST == 1) ? "1":"0");
     else if (var == "enableGetName")
-        strcpy(buf, (enableGetName == 1)? "1":"0");
+        strcpy_s(buf, sizeof(buf), (enableGetName == 1)? "1":"0");
 
     //JP-MOD
     else if (var == "disableAutoBumpIfDirect")
-        strcpy(buf, (disableAutoBumpIfDirect == 1) ? "1":"0");
+        strcpy_s(buf, sizeof(buf), (disableAutoBumpIfDirect == 1) ? "1":"0");
     else if (var.startsWith("asxDetailedMode"))
     {
         if (var == "asxDetailedMode.0")
-            strcpy(buf, (asxDetailedMode == 0) ? "1":"0");
+            strcpy_s(buf, sizeof(buf), (asxDetailedMode == 0) ? "1":"0");
         else if (var == "asxDetailedMode.1")
-            strcpy(buf, (asxDetailedMode == 1) ? "1":"0");
+            strcpy_s(buf, sizeof(buf), (asxDetailedMode == 1) ? "1":"0");
         else if (var == "asxDetailedMode.2")
-            strcpy(buf, (asxDetailedMode == 2) ? "1":"0");
+            strcpy_s(buf, sizeof(buf), (asxDetailedMode == 2) ? "1":"0");
     }
 
     // VP-EX
     else if (var == "ypAddress2")
-        strcpy(buf,rootHost2.cstr());
+        strcpy_s(buf, sizeof(buf),rootHost2.cstr());
     else if (var.startsWith("autoPort0Kick")) {
         if (var == "autoPort0Kick.0")
-            strcpy(buf, (autoPort0Kick == 0) ? "1":"0");
+            strcpy_s(buf, sizeof(buf), (autoPort0Kick == 0) ? "1":"0");
         else if (var == "autoPort0Kick.1")
-            strcpy(buf, (autoPort0Kick == 1) ? "1":"0");
+            strcpy_s(buf, sizeof(buf), (autoPort0Kick == 1) ? "1":"0");
     }
     else if (var.startsWith("allowOnlyVP")) {
         if (var == "allowOnlyVP.0")
-            strcpy(buf, (allowOnlyVP == 0) ? "1":"0");
+            strcpy_s(buf, sizeof(buf), (allowOnlyVP == 0) ? "1":"0");
         else if (var == "allowOnlyVP.1")
-            strcpy(buf, (allowOnlyVP == 1) ? "1":"0");
+            strcpy_s(buf, sizeof(buf), (allowOnlyVP == 1) ? "1":"0");
     }
     else if (var == "kickKeepTime")
         sprintf_s(buf, sizeof(buf), "%d",kickKeepTime);
@@ -2587,43 +2587,43 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
         Host lh(ClientSocket::getIP(NULL), 0);
         char ipStr[64];
         lh.IPtoStr(ipStr);
-        strcpy(buf, ipStr);
+        strcpy_s(buf, sizeof(buf), ipStr);
     }else if (var == "upgradeURL")
-        strcpy(buf, servMgr->downloadURL);
+        strcpy_s(buf, sizeof(buf), servMgr->downloadURL);
     else if (var == "serverPort2")
         sprintf_s(buf, sizeof(buf), "%d", serverHost.port+1);
     else if (var.startsWith("allow."))
     {
         if (var == "allow.HTML1")
-            strcpy(buf, (allowServer1&Servent::ALLOW_HTML)?"1":"0");
+            strcpy_s(buf, sizeof(buf), (allowServer1&Servent::ALLOW_HTML)?"1":"0");
         else if (var == "allow.HTML2")
-            strcpy(buf, (allowServer2&Servent::ALLOW_HTML)?"1":"0");
+            strcpy_s(buf, sizeof(buf), (allowServer2&Servent::ALLOW_HTML)?"1":"0");
         else if (var == "allow.broadcasting1")
-            strcpy(buf, (allowServer1&Servent::ALLOW_BROADCAST)?"1":"0");
+            strcpy_s(buf, sizeof(buf), (allowServer1&Servent::ALLOW_BROADCAST)?"1":"0");
         else if (var == "allow.broadcasting2")
-            strcpy(buf, (allowServer2&Servent::ALLOW_BROADCAST)?"1":"0");
+            strcpy_s(buf, sizeof(buf), (allowServer2&Servent::ALLOW_BROADCAST)?"1":"0");
         else if (var == "allow.network1")
-            strcpy(buf, (allowServer1&Servent::ALLOW_NETWORK)?"1":"0");
+            strcpy_s(buf, sizeof(buf), (allowServer1&Servent::ALLOW_NETWORK)?"1":"0");
         else if (var == "allow.direct1")
-            strcpy(buf, (allowServer1&Servent::ALLOW_DIRECT)?"1":"0");
+            strcpy_s(buf, sizeof(buf), (allowServer1&Servent::ALLOW_DIRECT)?"1":"0");
     }else if (var.startsWith("auth."))
     {
         if (var == "auth.useCookies")
-            strcpy(buf, (authType==AUTH_COOKIE)?"1":"0");
+            strcpy_s(buf, sizeof(buf), (authType==AUTH_COOKIE)?"1":"0");
         else if (var == "auth.useHTTP")
-            strcpy(buf, (authType==AUTH_HTTPBASIC)?"1":"0");
+            strcpy_s(buf, sizeof(buf), (authType==AUTH_HTTPBASIC)?"1":"0");
         else if (var == "auth.useSessionCookies")
-            strcpy(buf, (cookieList.neverExpire==false)?"1":"0");
+            strcpy_s(buf, sizeof(buf), (cookieList.neverExpire==false)?"1":"0");
     }else if (var.startsWith("log."))
     {
         if (var == "log.debug")
-            strcpy(buf, (showLog&(1<<LogBuffer::T_DEBUG))?"1":"0");
+            strcpy_s(buf, sizeof(buf), (showLog&(1<<LogBuffer::T_DEBUG))?"1":"0");
         else if (var == "log.errors")
-            strcpy(buf, (showLog&(1<<LogBuffer::T_ERROR))?"1":"0");
+            strcpy_s(buf, sizeof(buf), (showLog&(1<<LogBuffer::T_ERROR))?"1":"0");
         else if (var == "log.gnet")
-            strcpy(buf, (showLog&(1<<LogBuffer::T_NETWORK))?"1":"0");
+            strcpy_s(buf, sizeof(buf), (showLog&(1<<LogBuffer::T_NETWORK))?"1":"0");
         else if (var == "log.channel")
-            strcpy(buf, (showLog&(1<<LogBuffer::T_CHANNEL))?"1":"0");
+            strcpy_s(buf, sizeof(buf), (showLog&(1<<LogBuffer::T_CHANNEL))?"1":"0");
         else
             return false;
     }else if (var == "test")

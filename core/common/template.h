@@ -53,7 +53,7 @@ public:
         : currentElement(json::object({}))
     {
         if (args)
-            tmplArgs = strdup(args);
+            tmplArgs = _strdup(args);
         else
             tmplArgs = NULL;
     }
@@ -61,7 +61,7 @@ public:
     Template(const std::string& args)
         : currentElement(json::object({}))
     {
-        tmplArgs = strdup(args.c_str());
+        tmplArgs = _strdup(args.c_str());
     }
 
     ~Template()

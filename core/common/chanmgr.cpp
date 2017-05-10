@@ -100,7 +100,7 @@ Channel *ChanMgr::findChannelByName(const char *n)
     while (ch)
     {
         if (ch->isActive())
-            if (stricmp(ch->info.name, n) == 0)
+            if (_stricmp(ch->info.name, n) == 0)
                 return ch;
         ch = ch->next;
     }
@@ -343,7 +343,7 @@ bool ChanMgr::writeVariable(Stream &out, const String &var, int index)
     {
         String utf8 = broadcastMsg;
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy(buf, utf8.cstr());
+        strcpy_s(buf, sizeof(buf), utf8.cstr());
     }
     else if (var == "icyMetaInterval")
         sprintf_s(buf, sizeof(buf), "%d", icyMetaInterval);

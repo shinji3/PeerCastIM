@@ -62,19 +62,19 @@ static int base64chartoval(char input)
 // -----------------------------------
 bool String::isValidURL()
 {
-    return (strnicmp(data,"http://",7)==0) || (strnicmp(data,"mailto:",7)==0);
+    return (_strnicmp(data,"http://",7)==0) || (_strnicmp(data,"mailto:",7)==0);
 }
 
 // -----------------------------------
 void String::setFromTime(unsigned int t)
 {
-//    char *p = ctime((time_t*)&t);
     time_t tmp = t;
-    char *p = ctime(&tmp);
+    char p[26];
+    ctime_s(p, sizeof(p), &tmp);
     if (p)
-        strcpy(data, p);
+        strcpy_s(data, sizeof(data), p);
     else
-        strcpy(data, "-");
+        strcpy_s(data, sizeof(data), "-");
     type = T_ASCII;
 }
 
@@ -444,10 +444,10 @@ void String::ASCII2SJIS(const char *in) //JP-EX
     char *p;
     if (utf8_decode(in,&p)<0)
     {
-        strcpy(op,in);
+        strcpy_s(op, sizeof(op),in);
         return;
     }
-    strcpy(op,p);
+    strcpy_s(op, sizeof(op),p);
     free(p);
 }
 #endif
@@ -484,7 +484,7 @@ void String::convertTo(TYPE t)
         {
             case T_UNKNOWN:
             case T_ASCII:
-                strcpy(data, tmp.data);
+                strcpy_s(data, sizeof(data), tmp.data);
                 break;
             case T_UNICODE:
                 UNKNOWN2UNICODE(tmp.data, false);
@@ -525,7 +525,7 @@ String String::format(const char* fmt, ...)
     String result;
 
     va_start(ap, fmt);
-    vsnprintf(result.data, ::String::MAX_LEN - 1, fmt, ap);
+    vsnprintf_s(result.data, ::String::MAX_LEN - 1, _TRUNCATE, fmt, ap);
     va_end(ap);
 
     return result;

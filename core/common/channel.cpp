@@ -1650,7 +1650,7 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
     {
         utf8 = info.name;
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy(buf, utf8.cstr());
+        strcpy_s(buf, sizeof(buf), utf8.cstr());
     }else if (var == "bitrate")
     {
         sprintf_s(buf, sizeof(buf), "%d", info.bitrate);
@@ -1661,25 +1661,25 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
             unsigned int tot = sourceData->getSourceRate();
             sprintf_s(buf, sizeof(buf), "%.1f", BYTES_TO_KBPS(tot));
         }else
-            strcpy(buf, "0");
+            strcpy_s(buf, sizeof(buf), "0");
     }else if (var == "genre")
     {
         utf8 = info.genre;
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy(buf, utf8.cstr());
+        strcpy_s(buf, sizeof(buf), utf8.cstr());
     }else if (var == "desc")
     {
         utf8 = info.desc;
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy(buf, utf8.cstr());
+        strcpy_s(buf, sizeof(buf), utf8.cstr());
     }else if (var == "comment")
     {
         utf8 = info.comment;
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy(buf, utf8.cstr());
+        strcpy_s(buf, sizeof(buf), utf8.cstr());
     }else if (var == "bcstClap") //JP-MOD
     {
-        strcpy(buf, info.ppFlags & ServMgr::bcstClap ? "1":"0");
+        strcpy_s(buf, sizeof(buf), info.ppFlags & ServMgr::bcstClap ? "1":"0");
     }else if (var == "uptime")
     {
         String uptime;
@@ -1687,7 +1687,7 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
             uptime.setFromStopwatch(sys->getTime()-info.lastPlayStart);
         else
             uptime.set("-");
-        strcpy(buf, uptime.cstr());
+        strcpy_s(buf, sizeof(buf), uptime.cstr());
     }
     else if (var == "type")
         sprintf_s(buf, sizeof(buf), "%s", info.getTypeStr());
@@ -1733,22 +1733,22 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
             utf8 = info.track.contact;
 
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy(buf,utf8.cstr());
+        strcpy_s(buf, sizeof(buf),utf8.cstr());
 
     }else if (var == "contactURL")
         sprintf_s(buf, sizeof(buf), "%s", info.url.cstr());
     else if (var == "streamPos")
         sprintf_s(buf, sizeof(buf), "%d", streamPos);
     else if (var == "sourceType")
-        strcpy(buf, getSrcTypeStr());
+        strcpy_s(buf, sizeof(buf), getSrcTypeStr());
     else if (var == "sourceProtocol")
-        strcpy(buf, ChanInfo::getProtocolStr(info.srcProtocol));
+        strcpy_s(buf, sizeof(buf), ChanInfo::getProtocolStr(info.srcProtocol));
     else if (var == "sourceURL")
     {
         if (sourceURL.isEmpty())
             sourceHost.host.toStr(buf);
         else
-            strcpy(buf, sourceURL.cstr());
+            strcpy_s(buf, sizeof(buf), sourceURL.cstr());
     }
     else if (var == "headPos")
         sprintf_s(buf, sizeof(buf), "%d", headPack.pos);
@@ -1769,7 +1769,7 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
         }
         sprintf_s(buf, sizeof(buf),"%d",numHits);
     } else if (var == "isBroadcast")
-        strcpy(buf, (type == T_BROADCAST) ? "1":"0");
+        strcpy_s(buf, sizeof(buf), (type == T_BROADCAST) ? "1":"0");
     else
         return false;
 

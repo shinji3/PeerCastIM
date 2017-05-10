@@ -54,7 +54,7 @@ double WSys::getDTime()
 {
    struct _timeb timebuffer;
 
-   _ftime( &timebuffer );
+   _ftime_s( &timebuffer );
 
    return (double)timebuffer.time+(((double)timebuffer.millitm)/1000);
 }
@@ -133,7 +133,7 @@ void WSys::callLocalURL(const char *str,int port)
 void WSys::getURL(const char *url)
 {
 	if (mainWindow)
-		if (strnicmp(url,"http://",7) || strnicmp(url,"mailto:",7))
+		if (_strnicmp(url,"http://",7) || _strnicmp(url,"mailto:",7))
 			ShellExecute(mainWindow, NULL, url, NULL, NULL, SW_SHOWNORMAL);
 }
 // ---------------------------------

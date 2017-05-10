@@ -31,7 +31,7 @@ class GeneralException
 public:
     GeneralException(const char *m, int e = 0)
     {
-        strcpy(msg, m);
+        strcpy_s(msg, sizeof(msg), m);
         err=e;
     }
     char msg[128];

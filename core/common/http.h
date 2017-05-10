@@ -114,7 +114,7 @@ public:
 
     void    set(const char *i, unsigned int nip)
     {
-        strncpy(id, i, sizeof(id)-1);
+        strncpy_s(id, sizeof(id)-1, i, _TRUNCATE);
         id[sizeof(id)-1]=0;
         ip = nip;
     }
@@ -237,7 +237,7 @@ public:
 
     void    initRequest(const char *r)
     {
-        strcpy(cmdLine,r);
+        strcpy_s(cmdLine, sizeof(cmdLine),r);
     }
     void    readRequest();
     bool    isRequest(const char *);

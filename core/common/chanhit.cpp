@@ -98,7 +98,7 @@ void ChanHit::init()
     uphostHops = 0;
 
     versionVP = 0;
-    strncpy(versionExPrefix, "  ", 2);
+    strncpy_s(versionExPrefix, 2, "  ", _TRUNCATE);
     versionExNumber = 0;
 }
 
@@ -123,7 +123,7 @@ void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, unsig
 
     version = PCP_CLIENT_VERSION;
     versionVP = PCP_CLIENT_VERSION_VP;
-    strncpy(versionExPrefix, PCP_CLIENT_VERSION_EX_PREFIX, 2);
+    strncpy_s(versionExPrefix, 2, PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
     versionExNumber = PCP_CLIENT_VERSION_EX_NUMBER;
 
     rhost[0] = Host(host.ip, host.port);
@@ -210,7 +210,7 @@ void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, bool 
     versionVP = PCP_CLIENT_VERSION_VP;
     if (version_ex)
     {
-        strncpy(versionExPrefix, PCP_CLIENT_VERSION_EX_PREFIX,2);
+        strncpy_s(versionExPrefix, 2, PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
         versionExNumber = PCP_CLIENT_VERSION_EX_NUMBER;
     } else
     {
@@ -313,33 +313,33 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
             if (firewalled) 
             {
                 if (numRelays==0) 
-                    strcpy(buf,"<font color=red>");
+                    strcpy_s(buf, sizeof(buf),"<font color=red>");
                 else 
-                    strcpy(buf,"<font color=orange>");
+                    strcpy_s(buf, sizeof(buf),"<font color=orange>");
             }
             else {
                 if (!relay){
                     if (numRelays==0){
-                        strcpy(buf,"<font color=purple>");
+                        strcpy_s(buf, sizeof(buf),"<font color=purple>");
                     } else {
-                        strcpy(buf,"<font color=blue>");
+                        strcpy_s(buf, sizeof(buf),"<font color=blue>");
                     }
                 } else {
-                    strcpy(buf,"<font color=green>");
+                    strcpy_s(buf, sizeof(buf),"<font color=green>");
                 }
             }
 
             rhost[0].toStr(buf2);
-            strcat(buf,buf2);
+            strcat_s(buf,buf2);
 
             char h_name[128];
             if (ClientSocket::getHostname(h_name,sizeof(h_name),rhost[0].ip)) // BOFëŒçÙÇ¡Ç€Ç¢
             {
-                strcat(buf,"[");
-                strcat(buf,h_name);
-                strcat(buf,"]");
+                strcat_s(buf,"[");
+                strcat_s(buf,h_name);
+                strcat_s(buf,"]");
             }
-            strcat(buf,"</font>");
+            strcat_s(buf,"</font>");
         } //JP-EX e
         else
             rhost[0].toStr(buf);
@@ -356,7 +356,7 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
     {
         String timeStr;
         timeStr.setFromStopwatch(upTime);
-        strcpy(buf, timeStr.cstr());
+        strcpy_s(buf, sizeof(buf), timeStr.cstr());
     }else if (var == "update")
     {
         String timeStr;
@@ -364,7 +364,7 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
             timeStr.setFromStopwatch(sys->getTime()-time);
         else
             timeStr.set("-");
-        strcpy(buf, timeStr.cstr());
+        strcpy_s(buf, sizeof(buf), timeStr.cstr());
     }else if (var == "isFirewalled"){
         sprintf_s(buf, sizeof(buf), "%d", firewalled?1:0);
     }else if (var == "version"){
@@ -379,16 +379,16 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
                 sprintf_s(buf, sizeof(buf),"v0.%d", version);
             }
         } else {
-            strcpy(buf, "0");
+            strcpy_s(buf, sizeof(buf), "0");
         }
     }
     else if (var == "check")
     {
         char buf2[256];
-        strcpy(buf, "<a href=\"#\" onclick=\"checkip('");
+        strcpy_s(buf, sizeof(buf), "<a href=\"#\" onclick=\"checkip('");
         rhost[0].IPtoStr(buf2);
-        strcat(buf, buf2);
-        strcat(buf, "')\">_</a>");
+        strcat_s(buf, buf2);
+        strcat_s(buf, "')\">_</a>");
     }
     else if (var == "uphost")        // tree
         uphost.toStr(buf);

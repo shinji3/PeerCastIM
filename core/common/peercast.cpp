@@ -157,7 +157,7 @@ int     APICALL PeercastInstance::getServerPort()
 void    APICALL PeercastInstance::setServerPassword(const char *pwd)
 {
     if (servMgr)
-        strcpy(servMgr->password, pwd);
+        strcpy_s(servMgr->password, sizeof(servMgr->password), pwd);
 }
 
 // --------------------------------------------------
@@ -181,7 +181,7 @@ void ADDLOG(const char *fmt, va_list ap, LogBuffer::TYPE type)
         const int MAX_LINELEN = 1024;
 
         char str[MAX_LINELEN+1];
-        vsnprintf(str, MAX_LINELEN-1, fmt, ap);
+        vsnprintf_s(str, MAX_LINELEN-1, _TRUNCATE, fmt, ap);
         str[MAX_LINELEN-1]=0;
 
         if (type != LogBuffer::T_NONE)

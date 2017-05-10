@@ -126,7 +126,7 @@ void LogBuffer::write(const char *str, TYPE t)
 
         int i = currLine % maxLines;
         int bp = i*lineLen;
-        strncpy(&buf[bp], str, rlen);
+        strncpy_s(&buf[bp], rlen, str, _TRUNCATE);
         buf[bp+rlen] = 0;
         if (cnt==0)
         {
@@ -169,7 +169,7 @@ bool cmpCGIarg(const char *str, const char *arg, const char *value)
     if ((!str) || (!strlen(value)))
         return false;
 
-    if (strnicmp(str, arg, strlen(arg)) == 0)
+    if (_strnicmp(str, arg, strlen(arg)) == 0)
     {
         str += strlen(arg);
 

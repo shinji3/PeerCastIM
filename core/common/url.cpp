@@ -86,22 +86,22 @@ int URLSource::getSourceRateAvg()
     try
     {
         // get the source protocol
-        if (strnicmp(fileName, "http://", 7)==0)
+        if (_strnicmp(fileName, "http://", 7)==0)
         {
             ch->info.srcProtocol = ChanInfo::SP_HTTP;
             fileName += 7;
         }
-        else if (strnicmp(fileName, "mms://", 6)==0)
+        else if (_strnicmp(fileName, "mms://", 6)==0)
         {
             ch->info.srcProtocol = ChanInfo::SP_MMS;
             fileName += 6;
         }
-        else if (strnicmp(fileName, "pcp://", 6)==0)
+        else if (_strnicmp(fileName, "pcp://", 6)==0)
         {
             ch->info.srcProtocol = ChanInfo::SP_PCP;
             fileName += 6;
         }
-        else if (strnicmp(fileName, "file://", 7)==0)
+        else if (_strnicmp(fileName, "file://", 7)==0)
         {
             ch->info.srcProtocol = ChanInfo::SP_FILE;
             fileName += 7;

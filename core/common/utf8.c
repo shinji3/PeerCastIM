@@ -264,7 +264,7 @@ void convert_set_charset(const char *charset)
 	free(current_charset);
 	current_charset = 0;
 	if (charset && *charset)
-		current_charset = strdup(charset);
+		current_charset = _strdup(charset);
 }
 
 static int convert_buffer(const char *fromcode, const char *tocode,
@@ -305,7 +305,7 @@ static int convert_string(const char *fromcode, const char *tocode,
 	s = malloc(fromlen + 1);
 	if (!s)
 		return -1;
-	strcpy(s, from);
+	strcpy_s(s, sizeof(s), from);
 	*to = s;
 	for (; *s; s++)
 		if (*s & ~0x7f)

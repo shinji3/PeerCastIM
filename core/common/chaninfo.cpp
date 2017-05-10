@@ -120,17 +120,17 @@ const char *ChanInfo::getProtocolStr(PROTOCOL t)
 // -----------------------------------
 ChanInfo::PROTOCOL ChanInfo::getProtocolFromStr(const char *str)
 {
-    if (stricmp(str, "PEERCAST")==0)
+    if (_stricmp(str, "PEERCAST")==0)
         return SP_PEERCAST;
-    else if (stricmp(str, "HTTP")==0)
+    else if (_stricmp(str, "HTTP")==0)
         return SP_HTTP;
-    else if (stricmp(str, "FILE")==0)
+    else if (_stricmp(str, "FILE")==0)
         return SP_FILE;
-    else if (stricmp(str, "MMS")==0)
+    else if (_stricmp(str, "MMS")==0)
         return SP_MMS;
-    else if (stricmp(str, "PCP")==0)
+    else if (_stricmp(str, "PCP")==0)
         return SP_PCP;
-    else if (stricmp(str, "WMHTTP")==0)
+    else if (_stricmp(str, "WMHTTP")==0)
         return SP_WMHTTP;
     else
         return SP_UNKNOWN;
@@ -206,33 +206,33 @@ const char *ChanInfo::getMIMEType(TYPE t)
 // -----------------------------------
 ChanInfo::TYPE ChanInfo::getTypeFromStr(const char *str)
 {
-    if (stricmp(str, "MP3")==0)
+    if (_stricmp(str, "MP3")==0)
         return T_MP3;
-    else if (stricmp(str, "OGG")==0)
+    else if (_stricmp(str, "OGG")==0)
         return T_OGG;
-    else if (stricmp(str, "OGM")==0)
+    else if (_stricmp(str, "OGM")==0)
         return T_OGM;
-    else if (stricmp(str, "RAW")==0)
+    else if (_stricmp(str, "RAW")==0)
         return T_RAW;
-    else if (stricmp(str, "NSV")==0)
+    else if (_stricmp(str, "NSV")==0)
         return T_NSV;
-    else if (stricmp(str, "WMA")==0)
+    else if (_stricmp(str, "WMA")==0)
         return T_WMA;
-    else if (stricmp(str, "WMV")==0)
+    else if (_stricmp(str, "WMV")==0)
         return T_WMV;
-    else if (stricmp(str, "FLV")==0)
+    else if (_stricmp(str, "FLV")==0)
         return T_FLV;
-    else if (stricmp(str, "MKV")==0)
+    else if (_stricmp(str, "MKV")==0)
         return T_MKV;
-    else if (stricmp(str, "WEBM")==0)
+    else if (_stricmp(str, "WEBM")==0)
         return T_WEBM;
-    else if (stricmp(str, "TS")==0)
+    else if (_stricmp(str, "TS")==0)
         return T_TS;
-    else if (stricmp(str, "PLS")==0)
+    else if (_stricmp(str, "PLS")==0)
         return T_PLS;
-    else if (stricmp(str, "M3U")==0)
+    else if (_stricmp(str, "M3U")==0)
         return T_PLS;
-    else if (stricmp(str, "ASX")==0)
+    else if (_stricmp(str, "ASX")==0)
         return T_ASX;
     else
         return T_UNKNOWN;
@@ -618,24 +618,24 @@ XML::Node *ChanInfo::createQueryXML()
     buf[0]=0;
     if (!nameHTML.isEmpty())
     {
-        strcat(buf, " name=\"");
-        strcat(buf, nameHTML.cstr());
-        strcat(buf, "\"");
+        strcat_s(buf, " name=\"");
+        strcat_s(buf, nameHTML.cstr());
+        strcat_s(buf, "\"");
     }
 
     if (!genreHTML.isEmpty())
     {
-        strcat(buf, " genre=\"");
-        strcat(buf, genreHTML.cstr());
-        strcat(buf, "\"");
+        strcat_s(buf, " genre=\"");
+        strcat_s(buf, genreHTML.cstr());
+        strcat_s(buf, "\"");
     }
 
     if (id.isSet())
     {
         id.toStr(idStr);
-        strcat(buf, " id=\"");
-        strcat(buf, idStr);
-        strcat(buf, "\"");
+        strcat_s(buf, " id=\"");
+        strcat_s(buf, idStr);
+        strcat_s(buf, "\"");
     }
 
     return new XML::Node("channel %s", buf);
