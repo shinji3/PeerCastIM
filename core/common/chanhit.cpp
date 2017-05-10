@@ -84,11 +84,6 @@ void ChanHit::init()
     lastContact = 0;
 
     version = 0;
-    versionVP = 0;
-
-    versionExPrefix[0] = ' ';
-    versionExPrefix[1] = ' ';
-    versionExNumber = 0;
 
     status = 0;
     servent_id = 0;
@@ -100,6 +95,10 @@ void ChanHit::init()
 
     uphost.init();
     uphostHops = 0;
+
+    versionVP = 0;
+    strncpy(versionExPrefix, "  ", 2);
+    versionExNumber = 0;
 }
 
 // -----------------------------------
@@ -809,6 +808,26 @@ unsigned int    ChanHitList::newestHit()
     }
 
     return time;
+}
+
+// -----------------------------------
+void ChanHitList::forEachHit(std::function<void(ChanHit*)> block)
+{
+    ChanHitList* chl = this;
+
+    while (chl)
+    {
+        if (chl->isUsed())
+        {
+            ChanHit* hit = chl->hit;
+            while (hit)
+            {
+                block(hit);
+                hit = hit->next;
+            }
+        }
+        chl = chl->next;
+    }
 }
 
 // -----------------------------------

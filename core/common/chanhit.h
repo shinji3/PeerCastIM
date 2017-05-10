@@ -124,6 +124,8 @@ public:
     int          getTotalRelays();
     int          getTotalFirewalled();
 
+    void         forEachHit(std::function<void(ChanHit*)> block);
+
     unsigned int getSeq();
 
     bool         used;
