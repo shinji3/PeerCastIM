@@ -28,8 +28,6 @@
 #define new DEBUG_NEW
 #endif
 
-    void    openReadOnly(const char *);
-    void    openWriteReplace(const char *);
 // -----------------------------------------
 bool IniFile::openReadOnly(const char *fn)
 {
