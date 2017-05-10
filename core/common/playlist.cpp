@@ -190,7 +190,7 @@ void PlayList::addChannel(const char *path, ChanInfo &info)
     info.id.toStr(idStr);
     char *nid = info.id.isSet()?idStr:info.name.cstr();
 
-    sprintf(url.cstr(), "%s/stream/%s%s", path, nid, info.getTypeExt());
+    sprintf_s(url.cstr(), sizeof(url.cstr()), "%s/stream/%s%s", path, nid, info.getTypeExt());
     addURL(url.cstr(), info.name, info.url);
 }
 

@@ -125,7 +125,7 @@ void WSys::appMsg(long msg, long arg)
 void WSys::callLocalURL(const char *str,int port)
 {
 	char cmd[512];
-	sprintf(cmd,"http://127.0.0.1:%d/%s",port,str);
+	sprintf_s(cmd, sizeof(cmd),"http://127.0.0.1:%d/%s",port,str);
 	ShellExecute(mainWindow, NULL, cmd, NULL, NULL, SW_SHOWNORMAL);
 }
 

@@ -1634,7 +1634,7 @@ void Channel::getStreamPath(char *str)
 
     getIDStr(idStr);
 
-    sprintf(str, "/stream/%s%s", idStr, info.getTypeExt());
+    sprintf_s(str, sizeof(str), "/stream/%s%s", idStr, info.getTypeExt());
 }
 
 // -----------------------------------
@@ -1653,13 +1653,13 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
         strcpy(buf, utf8.cstr());
     }else if (var == "bitrate")
     {
-        sprintf(buf, "%d", info.bitrate);
+        sprintf_s(buf, sizeof(buf), "%d", info.bitrate);
     }else if (var == "srcrate")
     {
         if (sourceData)
         {
             unsigned int tot = sourceData->getSourceRate();
-            sprintf(buf, "%.1f", BYTES_TO_KBPS(tot));
+            sprintf_s(buf, sizeof(buf), "%.1f", BYTES_TO_KBPS(tot));
         }else
             strcpy(buf, "0");
     }else if (var == "genre")
@@ -1690,33 +1690,33 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
         strcpy(buf, uptime.cstr());
     }
     else if (var == "type")
-        sprintf(buf, "%s", info.getTypeStr());
+        sprintf_s(buf, sizeof(buf), "%s", info.getTypeStr());
     else if (var == "ext")
-        sprintf(buf, "%s", info.getTypeExt());
+        sprintf_s(buf, sizeof(buf), "%s", info.getTypeExt());
     else if (var == "proto") {
         switch(info.contentType) {
         case ChanInfo::T_WMA:
         case ChanInfo::T_WMV:
-            sprintf(buf, "mms://");
+            sprintf_s(buf, sizeof(buf), "mms://");
             break;
         default:
-            sprintf(buf, "http://");
+            sprintf_s(buf, sizeof(buf), "http://");
         }
     }
     else if (var == "localRelays")
-        sprintf(buf, "%d", localRelays());
+        sprintf_s(buf, sizeof(buf), "%d", localRelays());
     else if (var == "localListeners")
-        sprintf(buf, "%d", localListeners());
+        sprintf_s(buf, sizeof(buf), "%d", localListeners());
     else if (var == "totalRelays")
-        sprintf(buf, "%d", totalRelays());
+        sprintf_s(buf, sizeof(buf), "%d", totalRelays());
     else if (var == "totalListeners")
-        sprintf(buf, "%d", totalListeners());
+        sprintf_s(buf, sizeof(buf), "%d", totalListeners());
     else if (var == "totalClaps") //JP-MOD
-        sprintf(buf, "%d", totalClaps());
+        sprintf_s(buf, sizeof(buf), "%d", totalClaps());
     else if (var == "status")
-        sprintf(buf, "%s", getStatusStr());
+        sprintf_s(buf, sizeof(buf), "%s", getStatusStr());
     else if (var == "keep")
-        sprintf(buf, "%s", stayConnected?"Yes":"No");
+        sprintf_s(buf, sizeof(buf), "%s", stayConnected?"Yes":"No");
     else if (var == "id")
         info.id.toStr(buf);
     else if (var.startsWith("track."))
@@ -1736,9 +1736,9 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
         strcpy(buf,utf8.cstr());
 
     }else if (var == "contactURL")
-        sprintf(buf, "%s", info.url.cstr());
+        sprintf_s(buf, sizeof(buf), "%s", info.url.cstr());
     else if (var == "streamPos")
-        sprintf(buf, "%d", streamPos);
+        sprintf_s(buf, sizeof(buf), "%d", streamPos);
     else if (var == "sourceType")
         strcpy(buf, getSrcTypeStr());
     else if (var == "sourceProtocol")
@@ -1751,9 +1751,9 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
             strcpy(buf, sourceURL.cstr());
     }
     else if (var == "headPos")
-        sprintf(buf, "%d", headPack.pos);
+        sprintf_s(buf, sizeof(buf), "%d", headPack.pos);
     else if (var == "headLen")
-        sprintf(buf, "%d", headPack.len);
+        sprintf_s(buf, sizeof(buf), "%d", headPack.len);
     else if (var == "numHits")
     {
         ChanHitList *chl = chanMgr->findHitListByID(info.id);
@@ -1767,7 +1767,7 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
                 hit = hit->next;
             }
         }
-        sprintf(buf,"%d",numHits);
+        sprintf_s(buf, sizeof(buf),"%d",numHits);
     } else if (var == "isBroadcast")
         strcpy(buf, (type == T_BROADCAST) ? "1":"0");
     else

@@ -347,11 +347,11 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
     else if (var == "rhost1")
         rhost[1].toStr(buf);
     else if (var == "numHops")
-        sprintf(buf, "%d", numHops);
+        sprintf_s(buf, sizeof(buf), "%d", numHops);
     else if (var == "numListeners")
-        sprintf(buf, "%d", numListeners);
+        sprintf_s(buf, sizeof(buf), "%d", numListeners);
     else if (var == "numRelays")
-        sprintf(buf, "%d", numRelays);
+        sprintf_s(buf, sizeof(buf), "%d", numRelays);
     else if (var == "uptime")
     {
         String timeStr;
@@ -366,17 +366,17 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
             timeStr.set("-");
         strcpy(buf, timeStr.cstr());
     }else if (var == "isFirewalled"){
-        sprintf(buf, "%d", firewalled?1:0);
+        sprintf_s(buf, sizeof(buf), "%d", firewalled?1:0);
     }else if (var == "version"){
-        sprintf(buf, "%d", version);
+        sprintf_s(buf, sizeof(buf), "%d", version);
     }else if (var == "agent"){
         if (version){
             if (versionExNumber){
-                sprintf(buf, "v0.%d(%c%c%04d)", version, versionExPrefix[0], versionExPrefix[1], versionExNumber);
+                sprintf_s(buf, sizeof(buf), "v0.%d(%c%c%04d)", version, versionExPrefix[0], versionExPrefix[1], versionExNumber);
             } else if (versionVP){
-                sprintf(buf,"v0.%d(VP%04d)", version, versionVP);
+                sprintf_s(buf, sizeof(buf),"v0.%d(VP%04d)", version, versionVP);
             } else {
-                sprintf(buf,"v0.%d", version);
+                sprintf_s(buf, sizeof(buf),"v0.%d", version);
             }
         } else {
             strcpy(buf, "0");
@@ -393,9 +393,9 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
     else if (var == "uphost")        // tree
         uphost.toStr(buf);
     else if (var == "uphostHops")    // tree
-        sprintf(buf,"%d",uphostHops);
+        sprintf_s(buf, sizeof(buf),"%d",uphostHops);
     else if (var == "canRelay")        // tree
-        sprintf(buf, "%d",relay);
+        sprintf_s(buf, sizeof(buf), "%d",relay);
     else
         return false;
 
