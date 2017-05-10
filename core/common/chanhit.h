@@ -32,6 +32,8 @@ class ChanHitSearch;
 class ChanHit
 {
 public:
+    ChanHit () { init(); }
+
     void    init();
     void    initLocal(int numl, int numr, int nums, int uptm, bool, unsigned int, unsigned int, const Host& = Host());
     void    initLocal(int numl, int numr, int nums, int uptm, bool, bool, unsigned int, Channel*, unsigned int, unsigned int);
@@ -51,14 +53,26 @@ public:
     unsigned int    hitID;
     GnuID           sessionID, chanID;
     unsigned int    version;
+    unsigned int    oldestPos, newestPos;
 
-    bool            firewalled:1, stable:1, tracker:1, recv:1, yp:1, dead:1, direct:1, relay:1, cin:1;
-    bool            relayfull:1, chfull:1, ratefull:1;
+    bool            firewalled;
+    bool            stable;
+    bool            tracker;
+    bool            recv;
+    bool            yp;
+    bool            dead;
+    bool            direct;
+    bool            relay;
+    bool            cin;
+
+    bool            relayfull;
+    bool            chfull;
+    bool            ratefull;
 
     int             status;
     int             servent_id;
 
-    unsigned int    oldestPos, newestPos;
+    // 上流ホストの情報。
     Host            uphost;
     unsigned int    uphostHops;
 
