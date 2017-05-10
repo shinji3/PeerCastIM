@@ -18,14 +18,21 @@
 
 #include "channel.h"
 #include "flv.h"
-#include "string.h"
-#include "stdio.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
+
+static String timestampToString(uint32_t timestamp)
+{
+    return String::format("%d:%02d:%02d.%03d",
+                          timestamp / 1000 / 3600,
+                          timestamp / 1000 / 60 % 60,
+                          timestamp / 1000 % 60,
+                          timestamp % 1000);
+}
 
 // ------------------------------------------
 void FLVStream::readEnd(Stream &, Channel *)
@@ -46,6 +53,12 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 
     FLVTag flvTag;
     flvTag.read(in);
+
+    // LOG_DEBUG("%s: %s: %d byte %s tag",
+    //           static_cast<std::string>(ch->info.id).c_str(),
+    //           timestampToString(flvTag.getTimestamp()).cstr(),
+    //           flvTag.packetSize,
+    //           flvTag.getTagType());
 
     switch (flvTag.type)
     {
@@ -90,6 +103,18 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
         LOG_ERROR("Invalid FLV tag!");
     }
 
+    // メタ情報からのビットレートが無い場合、ストリームからの実測値が
+    // 現在の公称値を超えていれば公称値を更新する。
+    if (metaBitrate == 0) {
+        ChanInfo info = ch->info;
+
+        int newBitrate = in.stat.bytesInPerSecAvg() / 1000 * 8;
+        if (newBitrate > info.bitrate) {
+            info.bitrate = newBitrate;
+            ch->updateInfo(info);
+        }
+    }
+
     if (headerUpdate && fileHeader.size>0) {
         int len = fileHeader.size;
         if (metaData.type == FLVTag::T_SCRIPT) len += metaData.packetSize;
@@ -101,7 +126,12 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
         if (avcHeader.type == FLVTag::T_VIDEO) mem.write(avcHeader.packet, avcHeader.packetSize);
         if (aacHeader.type == FLVTag::T_AUDIO) mem.write(aacHeader.packet, aacHeader.packetSize);
 
-        ch->info.bitrate = metaBitrate;
+        // メタ情報からのビットレートがあればその値を設定。無ければ、
+        // 前回のエンコードセッションからの値をクリアするために 0 を設
+        // 定する。
+        ChanInfo info = ch->info;
+        info.bitrate = metaBitrate;
+        ch->updateInfo(info);
 
         m_buffer.flush(ch);
 
@@ -126,7 +156,17 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
 
 bool FLVTagBuffer::put(FLVTag& tag, Channel* ch)
 {
-    if (m_mem.pos + tag.packetSize > MAX_OUTGOING_PACKET_SIZE)
+    if (tag.isKeyFrame())
+    {
+        m_hasKeyFrame = true;
+
+        if (m_mem.pos > 0)
+        {
+            flush(ch);
+        }
+        sendImmediately(tag, ch);
+        return true;
+    } else if (m_mem.pos + tag.packetSize > MAX_OUTGOING_PACKET_SIZE)
     {
         if (m_mem.pos > 0)
         {
@@ -156,16 +196,25 @@ void FLVTagBuffer::sendImmediately(FLVTag& tag, Channel* ch)
     MemoryStream mem(tag.packet, tag.packetSize);
 
     int rlen = tag.packetSize;
+    bool firstTimeRound = true;
     while (rlen)
     {
         int rl = rlen;
         if (rl > MAX_OUTGOING_PACKET_SIZE)
+        {
             rl = MAX_OUTGOING_PACKET_SIZE;
+        }
 
         pack.type = ChanPacket::T_DATA;
         pack.pos = ch->streamPos;
         pack.len = rl;
-
+        if (m_hasKeyFrame)
+        {
+            if (firstTimeRound && tag.isKeyFrame())
+                pack.cont = false;
+            else
+                pack.cont = true;
+        }
         mem.read(pack.data, pack.len);
 
         ch->newPacket(pack);
@@ -173,6 +222,7 @@ void FLVTagBuffer::sendImmediately(FLVTag& tag, Channel* ch)
         ch->streamPos += pack.len;
 
         rlen -= rl;
+        firstTimeRound = false;
     }
 }
 
@@ -190,6 +240,9 @@ void FLVTagBuffer::flush(Channel* ch)
     pack.type = ChanPacket::T_DATA;
     pack.pos = ch->streamPos;
     pack.len = length;
+    // キーフレームでないタグだけがバッファリングされる。
+    if (m_hasKeyFrame)
+        pack.cont = true;
     m_mem.read(pack.data, length);
 
     ch->newPacket(pack);

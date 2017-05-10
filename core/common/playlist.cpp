@@ -193,3 +193,14 @@ void PlayList::addChannel(const char *path, ChanInfo &info)
     sprintf(url.cstr(), "%s/stream/%s%s", path, nid, info.getTypeExt());
     addURL(url.cstr(), info.name, info.url);
 }
+
+// -----------------------------------
+PlayList::TYPE PlayList::getPlayListType(ChanInfo::TYPE chanType)
+{
+    if ((chanType == ChanInfo::T_WMA) || (chanType == ChanInfo::T_WMV))
+        return PlayList::T_ASX;
+    else if (chanType == ChanInfo::T_OGM)
+        return PlayList::T_RAM;
+    else
+        return PlayList::T_PLS;
+}

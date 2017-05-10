@@ -21,6 +21,7 @@
 #include "pcp.h"
 #include "chanmgr.h"
 #include "servmgr.h"
+#include "playlist.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
@@ -804,7 +805,8 @@ const char* ChanInfo::getPlayListExt()
         return ".asx";
     case PlayList::T_RAM:
         return ".ram";
-    case PlayList::T_PLS:
+    //case PlayList::T_PLS:
+    default:
         return ".m3u"; // or could be .pls ...
     }
 }
