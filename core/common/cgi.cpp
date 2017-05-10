@@ -506,7 +506,7 @@ std::string escape_javascript(const std::string& input)
             char buf[3];
 
             res += "\\x";
-            sprintf_s(buf, "%02hhX", c);
+            sprintf_s(buf, sizeof(buf), "%02hhX", c);
             res += buf;
         } else
             res += c;
