@@ -63,7 +63,6 @@ bool showGUI=true;
 bool allowMulti=false;
 bool killMe=false;
 bool allowTrayMenu=true;
-static bool winDistinctionNT=false;
 int		seenNewVersionTime=0;
 HICON icon1,icon2;
 ChanInfo chanInfo;
@@ -194,14 +193,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	WIN32_FIND_DATA fd; //JP-EX
 	HANDLE hFind; //JP-EX
 
-	OSVERSIONINFO osInfo; //JP-EX
-	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO); //JP-EX
-	GetVersionEx(&osInfo);
-	if (osInfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
-		winDistinctionNT = true;
-	else
-		winDistinctionNT = false;
-
 	// off by default now
 	showGUI = false;
 
@@ -318,8 +309,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	peercastApp = new MyPeercastApp();
 
 	peercastInst->init();
-
-	LOG_DEBUG("Set OS Type: %s",winDistinctionNT?"WinNT":"Win9x");
 
 	if (peercastApp->clearTemp()) //JP-EX
 	{
@@ -1039,14 +1028,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				int c = wmId - INFO_CMD;
 				chanInfo = getChannelInfo(c);
 				chanInfoIsRelayed = false;
-				if (winDistinctionNT)
-					DialogBox(hInst, (LPCTSTR)IDD_CHANINFO, hWnd, (DLGPROC)ChanInfoProc);
-				else
-				{
-					HWND WKDLG; //JP-Patch
-					WKDLG = CreateDialog(hInst, (LPCTSTR)IDD_CHANINFO, hWnd, (DLGPROC)ChanInfoProc); //JP-Patch
-					ShowWindow(WKDLG,SW_SHOWNORMAL); //JP-Patch
-				}
+				DialogBox(hInst, (LPCTSTR)IDD_CHANINFO, hWnd, (DLGPROC)ChanInfoProc);
 				return 0;
 			}
 			if ((wmId >= URL_CMD) && (wmId < URL_CMD+MAX_CHANNELS))
@@ -1337,18 +1319,12 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 			break;
 
 		case WM_CLOSE:
-			if (winDistinctionNT)
-				EndDialog(hDlg, 0);
-			else
-				DestroyWindow(hDlg); //JP-Patch
+			EndDialog(hDlg, 0);
 			break;
 
 		case WM_ACTIVATE:
 			if (LOWORD(wParam) == WA_INACTIVE)
-				if (winDistinctionNT)
-					EndDialog(hDlg, 0);
-				else
-					DestroyWindow(hDlg); //JP-Patch
+				EndDialog(hDlg, 0);
 			break;
 		case WM_DESTROY:
 			chWnd = NULL;
