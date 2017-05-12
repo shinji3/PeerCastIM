@@ -61,8 +61,7 @@ public:
 	void	setLinger(int);
 	void	setBufSize(int size);
 
-//	static	HOSTENT		*resolveHost(const char *);
-	static	hostent		*resolveHost(const char *);
+	static	struct in_addr		*resolveHost(const char *);
 
 	void	checkTimeout(bool,bool);
 	void	checkTimeout2(bool,bool);

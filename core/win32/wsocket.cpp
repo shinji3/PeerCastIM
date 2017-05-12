@@ -26,6 +26,7 @@
 #include "winsock2.h"
 #include <windows.h>
 #include <stdio.h>
+#include <WS2tcpip.h>
 #include "wsocket.h"
 #include "..\common\stats.h"
 
@@ -57,16 +58,20 @@ bool ClientSocket::getHostname(char *str,size_t size,unsigned int ip) //JP-MOD
 	if(size == 0)
 		return false;
 
-	HOSTENT *he;
-
 	ip = htonl(ip);
 
-	he = gethostbyaddr((char *)&ip,sizeof(ip),AF_INET);
+    struct sockaddr_in sain;
+    sain.sin_family = AF_INET;
+    sain.sin_addr.s_addr = ip;
 
-	if (he)
+    char h_name[NI_MAXHOST];
+
+    int error = getnameinfo((struct sockaddr *)&sain, sizeof(struct sockaddr), h_name, NI_MAXHOST, NULL, 0, 0);
+
+	if (error == 0)
 	{
-		LOG_DEBUG("getHostname: %d.%d.%d.%d -> %s", ((BYTE*)&ip)[0], ((BYTE*)&ip)[1], ((BYTE*)&ip)[2], ((BYTE*)&ip)[3], he->h_name);
-		strncpy_s(str, size-1, he->h_name, _TRUNCATE);
+		LOG_DEBUG("getHostname: %d.%d.%d.%d -> %s", ((BYTE*)&ip)[0], ((BYTE*)&ip)[1], ((BYTE*)&ip)[2], ((BYTE*)&ip)[3], h_name);
+		strncpy_s(str, size-1, h_name, _TRUNCATE);
 		str[size-1] = '\0';
 		return true;
 	}else
@@ -101,23 +106,16 @@ unsigned int ClientSocket::getIP(const char *name)
 			return 0;
 	}
 
-	HOSTENT *he = WSAClientSocket::resolveHost(name);
+    struct in_addr *inAddr = WSAClientSocket::resolveHost(name);
 
-	if (!he)
-		return 0;
-
-
-	LPSTR lpAddr = he->h_addr_list[0];
-	if (lpAddr)
+	if (inAddr)
 	{
 		unsigned int ret;
-		struct in_addr  inAddr;
-		memmove (&inAddr, lpAddr, 4);
 
-		ret =  inAddr.S_un.S_un_b.s_b1<<24 |
-			   inAddr.S_un.S_un_b.s_b2<<16 |
-			   inAddr.S_un.S_un_b.s_b3<<8 |
-			   inAddr.S_un.S_un_b.s_b4;
+		ret =  inAddr->S_un.S_un_b.s_b1<<24 |
+			   inAddr->S_un.S_un_b.s_b2<<16 |
+			   inAddr->S_un.S_un_b.s_b3<<8 |
+			   inAddr->S_un.S_un_b.s_b4;
 
 		if (null_flg){
 			cache_ip = ret;
@@ -188,23 +186,23 @@ void WSAClientSocket::setBufSize(int size)
 }
 
 // --------------------------------------------------
-HOSTENT *WSAClientSocket::resolveHost(const char *hostName)
+struct in_addr *WSAClientSocket::resolveHost(const char *hostName)
 {
-	HOSTENT *he;
+    struct in_addr *inAddr;
+    struct addrinfo hints, *result;
 
-	if ((he = gethostbyname(hostName)) == NULL)
-	{
-		// if failed, try using gethostbyaddr instead
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_family = AF_INET;
 
-		unsigned long ip = inet_addr(hostName);
-		
-		if (ip == INADDR_NONE)
-			return NULL;
+    if (getaddrinfo(hostName, NULL, &hints, &result) == 0)
+        inAddr = &((struct sockaddr_in *)result->ai_addr)->sin_addr;
+    else
+        inAddr = NULL;
 
-		if ((he = gethostbyaddr((char *)&ip,sizeof(ip),AF_INET)) == NULL)
-			return NULL;	
-	}
-	return he;
+    freeaddrinfo(result);
+    
+	return inAddr;
 }
 
 // --------------------------------------------------
