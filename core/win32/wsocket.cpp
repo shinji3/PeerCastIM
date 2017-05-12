@@ -60,13 +60,13 @@ bool ClientSocket::getHostname(char *str,size_t size,unsigned int ip) //JP-MOD
 
 	ip = htonl(ip);
 
-    struct sockaddr_in sain;
-    sain.sin_family = AF_INET;
-    sain.sin_addr.s_addr = ip;
+    struct sockaddr_in sa;
+    sa.sin_family = AF_INET;
+    sa.sin_addr.s_addr = ip;
 
     char h_name[NI_MAXHOST];
 
-    int error = getnameinfo((struct sockaddr *)&sain, sizeof(struct sockaddr), h_name, NI_MAXHOST, NULL, 0, 0);
+    int error = getnameinfo((struct sockaddr *)&sa, sizeof(struct sockaddr), h_name, NI_MAXHOST, NULL, 0, 0);
 
 	if (error == 0)
 	{

@@ -20,8 +20,6 @@
 // GNU General Public License for more details.
 // ------------------------------------------------
 
-#define _WIN32_WINNT 0x0500
-
 #include "ws2tcpip.h" // getnameinfo
 #include "wspiapi.h" // compatibility for Win2k and earlier
 
@@ -120,7 +118,7 @@ THREAD_PROC GetHostName(ThreadInfo *thread){
 	u_long ip;
 	struct sockaddr_in sa;
 	char host[256];
-	char *tmp;
+    char tmp[INET_ADDRSTRLEN];
 	bool flg = TRUE;
 	bool findFlg;
 	int error;
@@ -142,13 +140,13 @@ THREAD_PROC GetHostName(ThreadInfo *thread){
 
 		case WSAHOST_NOT_FOUND:
 			LOG_ERROR("cannot resolve host for %s",
-				((tmp = inet_ntoa(sa.sin_addr)) ? tmp : ""));
+				(inet_ntop(AF_INET, &sa.sin_addr, tmp, INET_ADDRSTRLEN) != NULL ? tmp : ""));
 			flg = TRUE;
 			break;
 
 		default:
 			LOG_ERROR("an error occurred while resolving hostname of %s (%ld)",
-				((tmp = inet_ntoa(sa.sin_addr)) ? tmp : ""), error);
+				(inet_ntop(AF_INET, &sa.sin_addr, tmp, INET_ADDRSTRLEN) != NULL ? tmp : ""), error);
 		}
 	}
 
