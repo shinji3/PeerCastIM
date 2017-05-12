@@ -121,8 +121,8 @@ void	APICALL MyPeercastApp ::getDirectory()
 {
 	char path_buffer[256],drive[32],dir[128];
 	GetModuleFileName(NULL,path_buffer,255);
-	_splitpath(path_buffer,drive,dir,NULL,NULL);
-	sprintf(servMgr->modulePath,"%s%s",drive,dir);
+    _splitpath_s(path_buffer, drive, sizeof(drive), dir, sizeof(dir), NULL, 0, NULL, 0);
+	sprintf_s(servMgr->modulePath, sizeof(servMgr->modulePath),"%s%s",drive,dir);
 }
 // --------------------------------- JP-EX
 bool	APICALL MyPeercastApp ::clearTemp()
@@ -183,7 +183,7 @@ void LOG2(const char *fmt,...)
 	va_list ap;
 	va_start(ap, fmt);
 	char str[4096];
-	vsprintf(str,fmt,ap);
+	vsprintf_s(str, sizeof(str),fmt,ap);
 	OutputDebugString(str);
 	va_end(ap);	
 }
@@ -339,7 +339,7 @@ int WinMainDummy(HINSTANCE hInstance,
 				p++;
 			}
 			if (*p)
-				strncpy(tmpURL,p,sizeof(tmpURL)-1);
+				strncpy_s(tmpURL,sizeof(tmpURL)-1,p, _TRUNCATE);
 		}
 	}
 
@@ -358,9 +358,9 @@ int WinMainDummy(HINSTANCE hInstance,
 	}
 
 
-	if (strnicmp(tmpURL,"peercast://",11)==0)
+	if (_strnicmp(tmpURL,"peercast://",11)==0)
 	{
-		if (strnicmp(tmpURL+11,"pls/",4)==0)
+		if (_strnicmp(tmpURL+11,"pls/",4)==0)
 			chanURL = tmpURL+11+4;
 		else
 			chanURL = tmpURL+11;
@@ -375,9 +375,9 @@ int WinMainDummy(HINSTANCE hInstance,
 	//LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	//LoadString(hInstance, IDC_APP_TITLE, szWindowClass, MAX_LOADSTRING);
 
-	strcpy(szTitle,"PeerCast");
-	strcpy(szWindowClass,"PeerCast");
-	strcpy(szWindowClass2,"Main");
+	strcpy_s(szTitle, sizeof(szTitle),"PeerCast");
+	strcpy_s(szWindowClass, sizeof(szWindowClass),"PeerCast");
+	strcpy_s(szWindowClass2, sizeof(szWindowClass2),"Main");
 
 	if (!allowMulti)
 	{
@@ -638,7 +638,7 @@ void loadIcons(HINSTANCE hInstance, HWND hWnd)
     trayIcon.uFlags = NIF_MESSAGE + NIF_ICON + NIF_TIP;
     trayIcon.uCallbackMessage = WM_TRAYICON;
     trayIcon.hIcon = icon1;
-    strcpy(trayIcon.szTip, "PeerCast");
+    strcpy_s(trayIcon.szTip, sizeof(trayIcon.szTip), "PeerCast");
 
     Shell_NotifyIcon(NIM_ADD, (NOTIFYICONDATA*)&trayIcon);
 
@@ -706,13 +706,13 @@ void channelPopup(const char *title, const char *msg, bool isPopup = true)
 	both.append(")");
 
 	trayIcon.uFlags = NIF_ICON|NIF_TIP;
-	strncpy(trayIcon.szTip, both.cstr(),sizeof(trayIcon.szTip)-1);
+	strncpy_s(trayIcon.szTip,sizeof(trayIcon.szTip)-1, both.cstr(), _TRUNCATE);
 	trayIcon.szTip[sizeof(trayIcon.szTip)-1]=0;
 
 	if (isPopup) trayIcon.uFlags |= 16;
 	trayIcon.uTimeoutOrVersion = 10000;
-	strncpy(trayIcon.szInfo,msg,sizeof(trayIcon.szInfo)-1);
-	strncpy(trayIcon.szInfoTitle,title,sizeof(trayIcon.szInfoTitle)-1);
+	strncpy_s(trayIcon.szInfo,sizeof(trayIcon.szInfo)-1,msg, _TRUNCATE);
+	strncpy_s(trayIcon.szInfoTitle,sizeof(trayIcon.szInfoTitle)-1,title, _TRUNCATE);
 		
 	Shell_NotifyIcon(NIM_MODIFY, (NOTIFYICONDATA*)&trayIcon);
 }
@@ -721,8 +721,8 @@ void clearChannelPopup()
 {
 	trayIcon.uFlags = NIF_ICON|16;
 	trayIcon.uTimeoutOrVersion = 10000;
-    strncpy(trayIcon.szInfo,"",sizeof(trayIcon.szInfo)-1);
-	strncpy(trayIcon.szInfoTitle,"",sizeof(trayIcon.szInfoTitle)-1);
+    strncpy_s(trayIcon.szInfo,sizeof(trayIcon.szInfo)-1,"", _TRUNCATE);
+	strncpy_s(trayIcon.szInfoTitle,sizeof(trayIcon.szInfoTitle)-1,"", _TRUNCATE);
 	Shell_NotifyIcon(NIM_MODIFY, (NOTIFYICONDATA*)&trayIcon);
 }
 
@@ -933,8 +933,8 @@ void	APICALL MyPeercastApp::notifyMessage(ServMgr::NOTIFY_TYPE type, const char 
 	{
 		trayIcon.uFlags |= 16;
         trayIcon.uTimeoutOrVersion = 10000;
-        strncpy(trayIcon.szInfo,msg,sizeof(trayIcon.szInfo)-1);
-		strncpy(trayIcon.szInfoTitle,title,sizeof(trayIcon.szInfoTitle)-1);
+        strncpy_s(trayIcon.szInfo,sizeof(trayIcon.szInfo)-1,msg, _TRUNCATE);
+		strncpy_s(trayIcon.szInfoTitle,sizeof(trayIcon.szInfoTitle)-1,title, _TRUNCATE);
 	    Shell_NotifyIcon(NIM_MODIFY, (NOTIFYICONDATA*)&trayIcon);
 	}
 }
@@ -983,13 +983,13 @@ void addRelayedChannelsMenu(HMENU cm)
 		if (c->isActive())
 		{
 			char str[128],name[64];
-			strncpy(name,c->info.name,32);
+			strncpy_s(name,32,c->info.name, _TRUNCATE);
 			name[32]=0;
 			if (strlen(c->info.name) > 32)
-				strcat(name,"...");
+				strcat_s(name,"...");
 
 
-			sprintf(str,"%s  (%d kb/s %s)",name,c->info.bitrate,ChanInfo::getTypeStr(c->info.contentType));
+			sprintf_s(str, sizeof(str),"%s  (%d kb/s %s)",name,c->info.bitrate,ChanInfo::getTypeStr(c->info.contentType));
 			//InsertMenu(cm,0,MF_BYPOSITION,RELAY_CMD+i,str);
 		}
 		c=c->next;
@@ -1000,12 +1000,12 @@ typedef int (*COMPARE_FUNC)(const void *,const void *);
 
 static int compareHitLists(ChanHitList **c2, ChanHitList **c1)
 {
-	return stricmp(c1[0]->info.name.cstr(),c2[0]->info.name.cstr());
+	return _stricmp(c1[0]->info.name.cstr(),c2[0]->info.name.cstr());
 }
 
 static int compareChannels(Channel **c2, Channel **c1)
 {
-	return stricmp(c1[0]->info.name.cstr(),c2[0]->info.name.cstr());
+	return _stricmp(c1[0]->info.name.cstr(),c2[0]->info.name.cstr());
 }
 
 // 
@@ -1040,14 +1040,14 @@ void addAllChannelsMenu(HMENU cm)
 		String sjis; //JP-Patch
 		sjis = ch->info.name; //JP-Patch
 		sjis.convertTo(String::T_SJIS); //JP-Patch
-		strncpy(name,sjis.cstr(),32);
-		//strncpy(name,ch->info.name,32);
+		strncpy_s(name,32,sjis.cstr(), _TRUNCATE);
+		//strncpy_s(name,32,ch->info.name, _TRUNCATE);
 		name[32]=0;
 		//if (strlen(ch->info.name) > 32)
 		if (strlen(sjis.cstr()) > 32) //JP-Patch
-			strcat(name,"...");
+			strcat_s(name,"...");
 
-		sprintf(str,"%s  (%d kb/s %s)",name,ch->info.bitrate,ChanInfo::getTypeStr(ch->info.contentType));
+		sprintf_s(str, sizeof(str),"%s  (%d kb/s %s)",name,ch->info.bitrate,ChanInfo::getTypeStr(ch->info.contentType));
 
 		HMENU opMenu = CreatePopupMenu();
 		InsertMenu(opMenu,0,MF_BYPOSITION,INFO_CMD+numActive,"Info");
@@ -1096,7 +1096,7 @@ void flipNotifyPopup(int id, ServMgr::NOTIFY_TYPE nt)
 static void showHTML(const char *file)
 {
 	char url[256];
-	sprintf(url,"%s/%s",servMgr->htmlPath,file);					
+	sprintf_s(url, sizeof(url),"%s/%s",servMgr->htmlPath,file);					
 
 //	sys->callLocalURL(url,servMgr->serverHost.port);
 	sys->callLocalURL(url,	// for PCRaw (url)
@@ -1371,11 +1371,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					sys->getURL("http://yp.peercast.org/");
 					break;
 				case ID_POPUP_YELLOWPAGES1:
-					sprintf(buf, "http://%s",servMgr->rootHost.cstr());
+					sprintf_s(buf, sizeof(buf), "http://%s",servMgr->rootHost.cstr());
 					sys->getURL(buf);
 					break;
 				case ID_POPUP_YELLOWPAGES2:
-					sprintf(buf, "http://%s",servMgr->rootHost2.cstr());
+					sprintf_s(buf, sizeof(buf), "http://%s",servMgr->rootHost2.cstr());
 					sys->getURL(buf);
 					break;
 
@@ -1571,11 +1571,11 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 		case WM_INITDIALOG:
 			{
 				char str[1024];
-				//strcpy(str,chanInfo.track.artist.cstr());
-				strcpy(str,chanInfo.track.artist); //JP-Patch
-				strcat(str," - ");
-				//strcat(str,chanInfo.track.title.cstr());
-				strcat(str,chanInfo.track.title);
+				//strcpy_s(str, sizeof(str),chanInfo.track.artist.cstr());
+				strcpy_s(str, sizeof(str),chanInfo.track.artist); //JP-Patch
+				strcat_s(str," - ");
+				//strcat_s(str,chanInfo.track.title.cstr());
+				strcat_s(str,chanInfo.track.title);
 				String name,track,comment,desc,genre; //JP-Patch
 				name = chanInfo.name; //JP-Patch
 				track = str; //JP-Patch
@@ -1604,7 +1604,7 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 				SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LPARAM)genre.cstr()); // x64‘Î‰ž
 				//SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LONG)genre.cstr()); //JP-Patch
 
-				sprintf(str,"%d kb/s %s",chanInfo.bitrate,ChanInfo::getTypeStr(chanInfo.contentType));
+				sprintf_s(str, sizeof(str),"%d kb/s %s",chanInfo.bitrate,ChanInfo::getTypeStr(chanInfo.contentType));
 				SendDlgItemMessage(hDlg,IDC_FORMAT,WM_SETTEXT,0,(LPARAM)str); // x64‘Î‰ž
 				//SendDlgItemMessage(hDlg,IDC_FORMAT,WM_SETTEXT,0,(LONG)str);
 
@@ -1676,7 +1676,7 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 					}
 				case IDC_DETAILS:
 					{
-						sprintf(str,"admin?page=chaninfo&id=%s&relay=%d",idstr,chanInfoIsRelayed);
+						sprintf_s(str, sizeof(str),"admin?page=chaninfo&id=%s&relay=%d",idstr,chanInfoIsRelayed);
 						sys->callLocalURL(str,servMgr->serverHost.port);
 						return TRUE;
 					}

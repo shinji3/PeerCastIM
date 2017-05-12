@@ -216,7 +216,7 @@ int drawSpeed(Graphics *gra, int posX, int posY){
 	SolidBrush strBrush(Color::Black);
 	// 文字列作成
 	char tmp[256];
-	sprintf(tmp, "R:%.1fkbps S:%.1fkbps", 
+	sprintf_s(tmp, sizeof(tmp), "R:%.1fkbps S:%.1fkbps", 
 		BYTES_TO_KBPS(stats.getPerSecond(Stats::BYTESIN)-stats.getPerSecond(Stats::LOCALBYTESIN)),
 		BYTES_TO_KBPS(stats.getPerSecond(Stats::BYTESOUT)-stats.getPerSecond(Stats::LOCALBYTESOUT)));
 	_bstr_t bstr(tmp);
@@ -299,7 +299,7 @@ void ChannelData::setData(Channel *c){
 	sjis = c->getName();
 	sjis.convertTo(String::T_SJIS);
 
-	strncpy(name, sjis, 256);
+	strncpy_s(name, 256, sjis, _TRUNCATE);
 	name[256] = '\0';
 	channel_id = c->channel_id;
 	bitRate = c->info.bitrate;
@@ -464,7 +464,7 @@ int ChannelData::drawChannel(Graphics *g, int x, int y){
 		//char tmp[512]; // 表示用バッファ
 		//char hostip[256]; // IPアドレスバッファ
 		//chDisp.uphost.toStr(hostip); // 上流IP
-		//sprintf(tmp, "%d/%d - [%d/%d] - %s",
+		//sprintf_s(tmp, sizeof(tmp), "%d/%d - [%d/%d] - %s",
 		//	getTotalListeners(),
 		//	getTotalRelays(),
 		//	getLocalListeners(),
@@ -474,7 +474,7 @@ int ChannelData::drawChannel(Graphics *g, int x, int y){
 
 		// リスナー数/リレー数表示
 		char tmp[256];
-		sprintf(tmp, "%d/%d - [%d/%d]", getTotalListeners(), getTotalRelays(), getLocalListeners(), getLocalRelays());
+		sprintf_s(tmp, sizeof(tmp), "%d/%d - [%d/%d]", getTotalListeners(), getTotalRelays(), getLocalListeners(), getLocalRelays());
 		_bstr_t bstr2(tmp);
 		// 文字表示範囲指定
 		RectF r2(origin.X, origin.Y, 100.0f, 13.0f);
@@ -490,7 +490,7 @@ int ChannelData::drawChannel(Graphics *g, int x, int y){
 		} else {
 			f = ::new Font(L"Arial", 9.0f);
 		}
-		sprintf(tmp, "%dkbps", getBitRate());
+		sprintf_s(tmp, sizeof(tmp), "%dkbps", getBitRate());
 		_bstr_t bstr3(tmp);
 		format.SetAlignment(StringAlignmentFar);
 		// 文字表示範囲指定
@@ -728,7 +728,7 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y){
 	if (infoFlg){
 		if (chanHit.versionExNumber){
 			// 拡張バージョン
-			sprintf(tmp, "%c%c%04d - %d/%d - %s(%s)", 
+			sprintf_s(tmp, sizeof(tmp), "%c%c%04d - %d/%d - %s(%s)", 
 				chanHit.versionExPrefix[0],
 				chanHit.versionExPrefix[1],
 				chanHit.versionExNumber,
@@ -738,7 +738,7 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y){
 				hostname.cstr()
 				);
 		} else if (chanHit.versionVP){
-			sprintf(tmp, "VP%04d - %d/%d - %s(%s)", 
+			sprintf_s(tmp, sizeof(tmp), "VP%04d - %d/%d - %s(%s)", 
 				chanHit.versionVP,
 				totalListeners,
 				totalRelays,
@@ -746,7 +746,7 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y){
 				hostname.cstr()
 				);
 		} else {
-			sprintf(tmp, "(-----) - %d/%d - %s(%s)",
+			sprintf_s(tmp, sizeof(tmp), "(-----) - %d/%d - %s(%s)",
 				totalListeners,
 				totalRelays,
 				host1,
@@ -754,7 +754,7 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y){
 				);
 		}
 	} else {
-			sprintf(tmp, "(-----) - %d/%d - %s(%s)",
+			sprintf_s(tmp, sizeof(tmp), "(-----) - %d/%d - %s(%s)",
 				totalListeners,
 				totalRelays,
 				host1,

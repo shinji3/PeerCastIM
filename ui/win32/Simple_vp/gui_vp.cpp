@@ -327,7 +327,7 @@ void setEditStr(int id, char *str)
 void setEditInt(int id, int v)
 {
 	char str[128];
-	sprintf(str,"%d",v);
+	sprintf_s(str, sizeof(str),"%d",v);
 	SendDlgItemMessage(guiWnd, id,WM_SETTEXT, 0, (LPARAM)str);
 }
 
@@ -419,7 +419,7 @@ void ADDLOG(const char *str,int id,bool sel,void *data, LogBuffer::TYPE type)
 void ADDLOG2(const char *fmt,va_list ap,int id,bool sel,void *data, LogBuffer::TYPE type)
 {
 	char str[4096];
-	vsprintf(str,fmt,ap);
+	vsprintf_s(str, sizeof(str),fmt,ap);
 
 	ADDLOG(str,id,sel,data,type);
 }
@@ -718,7 +718,7 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 						foundFlg = true;
 						if (c->thread.finish) break;
 						ld->flg = true;
-						strncpy(ld->name, sjis, 20);
+						strncpy_s(ld->name, 20, sjis, _TRUNCATE);
 						ld->name[20] = '\0';
 						ld->bitRate = c->info.bitrate;
 						ld->status = c->status;
@@ -740,7 +740,7 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 					list_top = newData;
 					newData->flg = true;
 					newData->channel_id = c->channel_id;
-					strncpy(newData->name, sjis, 20);
+					strncpy_s(newData->name, 20, sjis, _TRUNCATE);
 					newData->name[20] = '\0';
 					newData->bitRate = c->info.bitrate;
 					newData->status = c->status;
@@ -786,8 +786,8 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 /*					String sjis; //JP-Patch
 					sjis = c->getName(); //JP-Patch
 					sjis.convertTo(String::T_SJIS); //JP-Patch
-					strncpy(cname,sjis.cstr(),16); //JP-Patch
-					//strncpy(cname,c->getName(),16);
+					strncpy_s(cname,16,sjis.cstr(), _TRUNCATE); //JP-Patch
+					//strncpy_s(cname,16,c->getName(), _TRUNCATE);
 					cname[16] = 0;
 					//int sec = ((c->currSPacket*c->bitrate*SPacket::DATA_LEN)/8)/(c->bitrate*1024);
 					//int k = ((c->currSPacket*SPacket::DATA_LEN))/(1024);
@@ -826,7 +826,7 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 					{
 						if (chl->info.match(chanMgr->searchInfo))
 						{
-							strncpy(cname,chl->info.name.cstr(),16);
+							strncpy_s(cname,16,chl->info.name.cstr(), _TRUNCATE);
 							cname[16] = 0;
 							ADDHIT(chl,"%s - %d kb/s - %d/%d",cname,chl->info.bitrate,chl->numListeners(),chl->numHits());
 						}
@@ -1237,7 +1237,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 						if (sh.isValid())
 						{
 							char cmd[256];
-							sprintf(cmd,"http://localhost:%d/admin?page=broadcast",sh.port);
+							sprintf_s(cmd, sizeof(cmd),"http://localhost:%d/admin?page=broadcast",sh.port);
 							ShellExecute(hwnd, NULL, cmd, NULL, NULL, SW_SHOWNORMAL);
 		
 						}else{
@@ -1462,7 +1462,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 							_DrawItem->rcItem.top,
 							ld->name,
 							(int)strlen(ld->name));
-/*					sprintf(buf, "- %4dkbps -", ld->bitRate);
+/*					sprintf_s(buf, sizeof(buf), "- %4dkbps -", ld->bitRate);
 					TextOut(_DrawItem->hDC,
 							_DrawItem->rcItem.left + 12 + 118,
 							_DrawItem->rcItem.top,
@@ -1473,19 +1473,19 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 							_DrawItem->rcItem.top,
 							ld->statusStr,
 							strlen(ld->statusStr));
-					sprintf(buf, "- %3d/%3d - [%3d/%3d] -", ld->totalListeners, ld->totalRelays, ld->localListeners, ld->localRelays);
+					sprintf_s(buf, sizeof(buf), "- %3d/%3d - [%3d/%3d] -", ld->totalListeners, ld->totalRelays, ld->localListeners, ld->localRelays);
 					TextOut(_DrawItem->hDC,
 							_DrawItem->rcItem.left + 12 + 118 + 80 + 80,
 							_DrawItem->rcItem.top,
 							buf,
 							strlen(buf));
-					strcpy(buf, ld->stayConnected?"YES":"NO");
+					strcpy_s(buf, sizeof(buf), ld->stayConnected?"YES":"NO");
 					TextOut(_DrawItem->hDC,
 							_DrawItem->rcItem.left + 12 + 118 + 80 + 80 + 130,
 							_DrawItem->rcItem.top,
 							buf,
 							strlen(buf));*/
-					sprintf(buf, "- %4dkbps - %s - %3d/%3d - [%3d/%3d] - %s",
+					sprintf_s(buf, sizeof(buf), "- %4dkbps - %s - %3d/%3d - [%3d/%3d] - %s",
 						ld->bitRate,
 						ld->statusStr,
 						ld->totalListeners,
@@ -1559,7 +1559,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 					if (sd->lastSkipTime + 120 > sys->getTime()){
 						SetBkColor(_DrawItem->hDC,RGB(128,128,128));
 						if (sd->type == Servent::T_RELAY){
-							sprintf(buf, "¥(%d)",sd->lastSkipCount);
+							sprintf_s(buf, sizeof(buf), "¥(%d)",sd->lastSkipCount);
 							TextOut(_DrawItem->hDC,
 							_DrawItem->rcItem.left,
 							_DrawItem->rcItem.top,
@@ -1567,7 +1567,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 							(int)strlen(buf));
 						} else {
 							SetTextColor(_DrawItem->hDC,RGB(0,0,0));
-							sprintf(buf, "¤(%d)",sd->lastSkipCount);
+							sprintf_s(buf, sizeof(buf), "¤(%d)",sd->lastSkipCount);
 							TextOut(_DrawItem->hDC,
 									_DrawItem->rcItem.left,
 									_DrawItem->rcItem.top,
@@ -1611,15 +1611,15 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 
 					char buf2[16];
 					if (sd->ver_ex_number){
-						sprintf(buf2, "(%c%c%04d)", sd->ver_ex_prefix[0], sd->ver_ex_prefix[1], sd->ver_ex_number);
+						sprintf_s(buf2, sizeof(buf2), "(%c%c%04d)", sd->ver_ex_prefix[0], sd->ver_ex_prefix[1], sd->ver_ex_number);
 					} else if (sd->vp_ver){
-						sprintf(buf2, "(VP%04d)", sd->vp_ver);
+						sprintf_s(buf2, sizeof(buf2), "(VP%04d)", sd->vp_ver);
 					} else {
 						buf2[0] = '\0';
 					}
 					if (sd->type == Servent::T_RELAY){
 						if (sd->status == Servent::S_CONNECTED){
-							sprintf(buf, "(%d)RELAYING-%ds  - %d/%d -  %s  -  %d - %s%s",
+							sprintf_s(buf, sizeof(buf), "(%d)RELAYING-%ds  - %d/%d -  %s  -  %d - %s%s",
 								sd->lastSkipCount,
 								sd->tnum,
 								sd->totalListeners, sd->totalRelays,
@@ -1627,7 +1627,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 								sd->syncpos, sd->agent.cstr(), buf2
 								);
 						} else {
-							sprintf(buf, "%s-%s-%ds  - %d/%d -  %s  -  %d - %s%s",
+							sprintf_s(buf, sizeof(buf), "%s-%s-%ds  - %d/%d -  %s  -  %d - %s%s",
 								sd->typeStr, sd->statusStr, sd->tnum,
 								sd->totalListeners, sd->totalRelays,
 								hostName,
@@ -1635,20 +1635,20 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 								);
 						}
 					} else if (sd->type == Servent::T_DIRECT){
-						sprintf(buf, "%s-%s-%ds  -  %s  -  %d - %s ",
+						sprintf_s(buf, sizeof(buf), "%s-%s-%ds  -  %s  -  %d - %s ",
 							sd->typeStr, sd->statusStr, sd->tnum,
 							hostName,
 							sd->syncpos, sd->agent.cstr()
 							);
 					} else {
 						if (sd->status == Servent::S_CONNECTED){
-							sprintf(buf, "%s-%s-%ds  -  %s  -  %d/%s",
+							sprintf_s(buf, sizeof(buf), "%s-%s-%ds  -  %s  -  %d/%s",
 								sd->typeStr, sd->statusStr, sd->tnum,
 								hostName,
 								sd->syncpos, sd->agent.cstr()
 								);
 						} else {
-							sprintf(buf, "%s-%s-%ds  -  %s",
+							sprintf_s(buf, sizeof(buf), "%s-%s-%ds  -  %s",
 								sd->typeStr, sd->statusStr, sd->tnum,
 								hostName
 								);
