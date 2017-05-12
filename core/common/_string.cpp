@@ -525,7 +525,7 @@ String String::format(const char* fmt, ...)
     String result;
 
     va_start(ap, fmt);
-    vsnprintf_s(result.data, ::String::MAX_LEN - 1, _TRUNCATE, fmt, ap);
+    _vsnprintf_s(result.data, ::String::MAX_LEN - 1, _TRUNCATE, fmt, ap);
     va_end(ap);
 
     return result;
