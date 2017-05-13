@@ -25,10 +25,8 @@ int  DynamicMemoryStream::read(void *buf, int count)
     if (m_pos == m_buffer.size())
         throw StreamException("End of stream");
 
-    auto end = std::copy(m_buffer.begin() + m_pos,
-                         m_buffer.begin() + (std::min)(m_pos + count, (int) m_buffer.size()),
-                         static_cast<char*>(buf));
-    auto bytesRead = (int)(end - static_cast<char*>(buf));
+    int bytesRead = (std::min)(m_pos + count, (int)m_buffer.size());
+    memcpy(buf, m_buffer.c_str() + m_pos, bytesRead);;
     m_pos += bytesRead;
     return bytesRead;
 }
