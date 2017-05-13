@@ -15,7 +15,7 @@
 FileSystemMapper::FileSystemMapper(const std::string& aVirtualPath, const std::string& aDocumentRoot)
     : virtualPath(aVirtualPath)
 {
-    char *dr = _fullpath(NULL, aDocumentRoot.c_str(), sizeof(aDocumentRoot.c_str()));
+    char *dr = _fullpath(NULL, aDocumentRoot.c_str(), aDocumentRoot.size());
     if (!dr)
     {
         throw GeneralException(String::format("Document root `%s` inaccessible", aDocumentRoot.c_str()));
@@ -33,7 +33,7 @@ std::string FileSystemMapper::toLocalFilePath(const std::string& vpath)
     auto filePath = str::replace_prefix(vpath, virtualPath, documentRoot);
 
     char* p;
-    p = _fullpath(NULL, filePath.c_str(), sizeof(filePath.c_str()));
+    p = _fullpath(NULL, filePath.c_str(), filePath.size());
 
     if (p == NULL)
     {
