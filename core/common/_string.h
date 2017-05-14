@@ -58,12 +58,7 @@ public:
     }
 
     // set from straight null terminated string
-    void set(const char *p, TYPE t=T_ASCII)
-    {
-        strncpy_s(data, MAX_LEN-1, p, _TRUNCATE);
-        data[MAX_LEN-1] = 0;
-        type = t;
-    }
+    void set(const char *p, TYPE t=T_ASCII);
 
     // set from quoted or unquoted null terminated string
     void setFromString(const char *str, TYPE t=T_ASCII);
@@ -88,25 +83,9 @@ public:
     }
 
     // set from null terminated string, remove first/last chars
-    void setUnquote(const char *p, TYPE t=T_ASCII)
-    {
-        size_t slen = strlen(p);
-        if (slen > 2)
-        {
-            if (slen >= MAX_LEN) slen = MAX_LEN;
-            strncpy_s(data, slen-2, p+1, _TRUNCATE);
-            data[slen-2]=0;
-        }else
-            clear();
-        type = t;
-    }
+    void setUnquote(const char *p, TYPE t=T_ASCII);
 
-    void clear()
-    {
-        memset(data, 0, MAX_LEN);
-        data[0]=0;
-        type = T_UNKNOWN;
-    }
+    void clear();
 
     void ASCII2ESC(const char *, bool);
     void ASCII2HTML(const char *);
@@ -131,27 +110,11 @@ public:
     bool isSame(const char *s) const { return strcmp(data, s)==0; }
     bool contains(::String &s) { return stristr(data, s.data)!=NULL; }
     bool contains(const char *s) { return stristr(data, s)!=NULL; }
-    void append(const char *s)
-    {
-        if ((strlen(s)+strlen(data) < (MAX_LEN-1)))
-            strcat_s(data,s);
-    }
-    void append(char c)
-    {
-        char tmp[2];
-        tmp[0]=c;
-        tmp[1]=0;
-        append(tmp);
-    }
+    void append(const char *s);
+    void append(char c);
+    void prepend(const char *s);
 
-    void prepend(const char *s)
-    {
-        ::String tmp;
-        tmp.set(s);
-        tmp.append(data);
-        tmp.type = type;
-        *this = tmp;
-    }
+    void sprintf(const char* fmt, ...);
 
     static ::String format(const char* fmt, ...);
 
@@ -159,6 +122,10 @@ public:
 
     bool operator == (const char *s) const { return isSame(s); }
     bool operator != (const char *s) const { return !isSame(s); }
+
+    String& operator = (const String& other);
+    String& operator = (const char* cstr);
+    String& operator = (const std::string& rhs);
 
     operator const char *() const { return data; }
 

@@ -519,6 +519,100 @@ void String::convertTo(TYPE t)
 }
 
 // -----------------------------------
+void String::setUnquote(const char *p, TYPE t)
+{
+    size_t slen = strlen(p);
+    if (slen > 2)
+    {
+        if (slen >= MAX_LEN) slen = MAX_LEN;
+        strncpy_s(data, slen-2, p+1, _TRUNCATE);
+        data[slen-2] = 0;
+    }else
+        clear();
+    type = t;
+}
+
+// -----------------------------------
+void String::clear()
+{
+    memset(data, 0, MAX_LEN);
+    data[0] = 0;
+    type = T_UNKNOWN;
+}
+
+// -----------------------------------
+void String::append(const char *s)
+{
+    if ((strlen(s)+strlen(data) < (MAX_LEN-1)))
+        strcat_s(data,s);
+}
+
+// -----------------------------------
+void String::append(char c)
+{
+    char tmp[2];
+    tmp[0] = c;
+    tmp[1] = 0;
+    append(tmp);
+}
+
+// -----------------------------------
+void String::prepend(const char *s)
+{
+    ::String tmp;
+    tmp.set(s);
+    tmp.append(data);
+    tmp.type = type;
+    *this = tmp;
+}
+
+// -----------------------------------
+String& String::operator = (const String& other)
+{
+    strcpy(this->data, other.data);
+    this->type = other.type;
+
+    return *this;
+}
+
+// -----------------------------------
+String& String::operator = (const char* cstr)
+{
+    strncpy(this->data, cstr, MAX_LEN - 1);
+    this->data[MAX_LEN - 1] = '\0';
+    this->type = T_ASCII;
+
+    return *this;
+}
+
+// -----------------------------------
+String& String::operator = (const std::string& rhs)
+{
+    strcpy(data, rhs.substr(0, MAX_LEN - 1).c_str());
+    this->type = T_ASCII;
+
+    return *this;
+}
+
+// -----------------------------------
+void String::set(const char *p, TYPE t)
+{
+    strncpy_s(data, MAX_LEN-1, p, _TRUNCATE);
+    data[MAX_LEN-1] = 0;
+    type = t;
+}
+
+// -----------------------------------
+void String::sprintf(const char* fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(this->data, ::String::MAX_LEN - 1, fmt, ap);
+    va_end(ap);
+}
+
+// -----------------------------------
 String String::format(const char* fmt, ...)
 {
     va_list ap;
