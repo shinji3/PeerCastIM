@@ -1956,7 +1956,7 @@ bool ServMgr::start()
 #else
     priv = "";
 #endif
-    LOG_DEBUG("Peercast %s, %s %s", PCX_VERSTRING_EX, peercastApp->getClientTypeOS(), priv);
+    LOG_DEBUG("Peercast %s, %s %s", PCX_VERSTRING, peercastApp->getClientTypeOS(), priv);
 
     sessionID.toStr(idStr);
     LOG_DEBUG("SessionID: %s", idStr);
@@ -2414,7 +2414,7 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
     String str;
 
     if (var == "version")
-        strcpy_s(buf, sizeof(buf),PCX_VERSTRING_EX);
+        strcpy_s(buf, sizeof(buf),PCX_VERSTRING);
     else if (var == "uptime")
     {
         str.setFromStopwatch(getUptime());
