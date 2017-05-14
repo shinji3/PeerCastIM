@@ -19,6 +19,7 @@
 #ifndef _OGG_H
 #define _OGG_H
 
+#include <sys/types.h>
 #include "channel.h"
 
 // ----------------------------------------------
