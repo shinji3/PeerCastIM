@@ -6,14 +6,14 @@
 #include "str.h"
 #include "_string.h"
 
-using namespace std;
-using namespace str;
-
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
+
+using namespace std;
+using namespace str;
 
 FileSystemMapper::FileSystemMapper(const string& aVirtualPath, const string& aDocumentRoot)
     : virtualPath(aVirtualPath)
