@@ -817,9 +817,7 @@ void ServMgr::quit()
         try
         {
             if (s->thread.active)
-            {
                 s->thread.shutdown();
-            }
         }catch (StreamException &)
         {
         }
@@ -1958,13 +1956,7 @@ bool ServMgr::start()
 #else
     priv = "";
 #endif
-    if (version_ex)
-    {
-        LOG_DEBUG("Peercast %s, %s %s", PCX_VERSTRING_EX, peercastApp->getClientTypeOS(), priv);
-    } else
-    {
-        LOG_DEBUG("Peercast %s, %s %s", PCX_VERSTRING, peercastApp->getClientTypeOS(), priv);
-    }
+    LOG_DEBUG("Peercast %s, %s %s", PCX_VERSTRING_EX, peercastApp->getClientTypeOS(), priv);
 
     sessionID.toStr(idStr);
     LOG_DEBUG("SessionID: %s", idStr);
@@ -2076,11 +2068,7 @@ int ServMgr::broadcastPushRequest(ChanHit &hit, Host &to, GnuID &chanID, Servent
     MemoryStream pmem(pack.data, sizeof(pack.data));
     AtomStream atom(pmem);
 
-#ifndef VERSION_EX
-    atom.writeParent(PCP_BCST, 8);
-#else
     atom.writeParent(PCP_BCST, 10);
-#endif
         atom.writeChar(PCP_BCST_GROUP, PCP_BCST_GROUP_ALL);
         atom.writeChar(PCP_BCST_HOPS, 0);
         atom.writeChar(PCP_BCST_TTL, 7);
@@ -2088,11 +2076,8 @@ int ServMgr::broadcastPushRequest(ChanHit &hit, Host &to, GnuID &chanID, Servent
         atom.writeBytes(PCP_BCST_FROM, servMgr->sessionID.id, 16);
         atom.writeInt(PCP_BCST_VERSION, PCP_CLIENT_VERSION);
         atom.writeInt(PCP_BCST_VERSION_VP, PCP_CLIENT_VERSION_VP);
-        if (version_ex)
-        {
-            atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX, PCP_CLIENT_VERSION_EX_PREFIX, 2);
-            atom.writeShort(PCP_BCST_VERSION_EX_NUMBER, PCP_CLIENT_VERSION_EX_NUMBER);
-        }
+        atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX, PCP_CLIENT_VERSION_EX_PREFIX, 2);
+        atom.writeShort(PCP_BCST_VERSION_EX_NUMBER, PCP_CLIENT_VERSION_EX_NUMBER);
         atom.writeParent(PCP_PUSH, 3);
             atom.writeInt(PCP_PUSH_IP, to.ip);
             atom.writeShort(PCP_PUSH_PORT, to.port);
@@ -2119,6 +2104,7 @@ void ServMgr::writeRootAtoms(AtomStream &atom, bool getUpdate)
         if (getUpdate)
             atom.writeParent(PCP_ROOT_UPDATE, 0);
 }
+
 // --------------------------------------------------
 void ServMgr::broadcastRootSettings(bool getUpdate)
 {
@@ -2127,25 +2113,16 @@ void ServMgr::broadcastRootSettings(bool getUpdate)
         ChanPacket pack;
         MemoryStream mem(pack.data, sizeof(pack.data));
         AtomStream atom(mem);
-        if (version_ex == 0)
-        {
-            atom.writeParent(PCP_BCST, 7);
-        } else
-        {
-            atom.writeParent(PCP_BCST, 9);
-        }
-        atom.writeChar(PCP_BCST_GROUP, PCP_BCST_GROUP_TRACKERS);
-        atom.writeChar(PCP_BCST_HOPS, 0);
-        atom.writeChar(PCP_BCST_TTL, 7);
-        atom.writeBytes(PCP_BCST_FROM, sessionID.id, 16);
-        atom.writeInt(PCP_BCST_VERSION, PCP_CLIENT_VERSION);
-        atom.writeInt(PCP_BCST_VERSION_VP, PCP_CLIENT_VERSION_VP);
-        if (version_ex)
-        {
+        atom.writeParent(PCP_BCST, 9);
+            atom.writeChar(PCP_BCST_GROUP, PCP_BCST_GROUP_TRACKERS);
+            atom.writeChar(PCP_BCST_HOPS, 0);
+            atom.writeChar(PCP_BCST_TTL, 7);
+            atom.writeBytes(PCP_BCST_FROM, sessionID.id, 16);
+            atom.writeInt(PCP_BCST_VERSION, PCP_CLIENT_VERSION);
+            atom.writeInt(PCP_BCST_VERSION_VP, PCP_CLIENT_VERSION_VP);
             atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX, PCP_CLIENT_VERSION_EX_PREFIX, 2);
             atom.writeShort(PCP_BCST_VERSION_EX_NUMBER, PCP_CLIENT_VERSION_EX_NUMBER);
-        }
-        writeRootAtoms(atom, getUpdate);
+            writeRootAtoms(atom, getUpdate);
 
         mem.len = mem.pos;
         mem.rewind();
@@ -2437,13 +2414,7 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
     String str;
 
     if (var == "version")
-        if (version_ex)
-        {
-            strcpy_s(buf, sizeof(buf),PCX_VERSTRING_EX);
-        } else
-        {
-            strcpy_s(buf, sizeof(buf),PCX_VERSTRING);
-        }
+        strcpy_s(buf, sizeof(buf),PCX_VERSTRING_EX);
     else if (var == "uptime")
     {
         str.setFromStopwatch(getUptime());
