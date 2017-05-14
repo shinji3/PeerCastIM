@@ -1,16 +1,19 @@
+#include <algorithm>
+#include <iterator>
+
 #include "public.h"
 #include "str.h"
 #include "dmstream.h"
 #include "template.h"
 #include "jrpc.h"
 
+using namespace std;
+
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
-
-using namespace std;
 
 // ------------------------------------------------------------
 PublicController::PublicController(const string& documentRoot)
@@ -110,10 +113,45 @@ string PublicController::createChannelIndex()
 
     return res;
 }
+// ------------------------------------------------------------
+vector<string>
+PublicController::acceptableLanguages(const string& acceptLanguage)
+{
+    if (acceptLanguage == "")
+        return {};
+
+    vector<string> res;
+    vector<pair<string,double> > tags;
+
+    for (auto tagSpec : str::split(acceptLanguage, ","))
+    {
+        auto ws = str::split(tagSpec, ";");
+        if (ws.size() == 1)
+            tags.push_back(make_pair(ws[0], 1.0));
+        else if (ws.size() > 1)
+            tags.push_back(make_pair(ws[0], atof(str::replace_prefix(ws[1], "q=", "").c_str())));
+        else
+            throw runtime_error("parse error");
+    }
+
+    auto sortfunc = [](pair<string,double>& a,
+                       pair<string,double>& b)
+    {
+        return a.second > b.second;
+    };
+
+    sort(tags.begin(), tags.end(), sortfunc);
+    transform(tags.begin(), tags.end(),
+                   back_inserter(res),
+                   [](pair<string,double>& x) { return x.first; });
+    return res;
+}
 
 // ------------------------------------------------------------
 HTTPResponse PublicController::operator()(const HTTPRequest& req, Stream& stream, Host& remoteHost)
 {
+    vector<string> langs = acceptableLanguages(req.getHeader("Accept-Language"));
+
     if (req.path == "/public")
     {
         return HTTPResponse::redirectTo("/public/");
@@ -123,37 +161,40 @@ HTTPResponse PublicController::operator()(const HTTPRequest& req, Stream& stream
     }else if (req.path == "/public/index.txt")
     {
         return HTTPResponse::ok({{"Content-Type","text/plain"}}, createChannelIndex());
-    }else if (req.path == "/public/index.html")
-    {
-        FileStream file;
-        DynamicMemoryStream mem;
-        HTTPRequestScope scope(req);
-
-        file.openReadOnly(mapper.documentRoot + str::replace_prefix(req.path, "/public", ""));
-        Template(req.queryString).prependScope(scope).readTemplate(file, &mem, 0);
-        return HTTPResponse::ok({{"Content-Type","text/html"}}, mem.str());
     }else if (req.path == "/public/play.html")
     {
-        FileStream file;
-        DynamicMemoryStream mem;
-        HTTPRequestScope scope(req);
-
         String id = cgi::Query(req.queryString).get("id").c_str();
         ChanInfo info;
         bool success = servMgr->getChannel(id.cstr(), info, true);
 
-        if (success)
-        {
-            file.openReadOnly(mapper.documentRoot + str::replace_prefix(req.path, "/public", ""));
-            Template(req.queryString).prependScope(scope).readTemplate(file, &mem, 0);
-            return HTTPResponse::ok({{"Content-Type","text/html"}}, mem.str());
-        }else
-        {
+        if (!success)
             return HTTPResponse::notFound();
-        }
+
+        string path, lang;
+        tie(path, lang) = mapper.toLocalFilePath(req.path, langs);
+
+        FileStream file;
+        DynamicMemoryStream mem;
+        HTTPRequestScope scope(req);
+
+        file.openReadOnly(path.c_str());
+        Template engine(req.queryString);
+        engine.prependScope(scope);
+        engine.readTemplate(file, &mem, 0);
+
+        map<string,string> headers;
+        headers["Content-Type"]     = "text/html";
+        if (lang != "")
+            headers["Content-Language"] = lang;
+        headers["Content-Length"]   = to_string(mem.getLength());
+        return HTTPResponse::ok(headers, mem.str());
     }else
     {
-        auto path = mapper.toLocalFilePath(req.path);
+        string path, lang;
+        tie(path, lang) = mapper.toLocalFilePath(req.path, langs);
+
+        LOG_DEBUG("Writing `%s` lang=%s", path.c_str(), lang.c_str());
+
         if (path.empty())
             return HTTPResponse::notFound();
         else
@@ -162,22 +203,34 @@ HTTPResponse PublicController::operator()(const HTTPRequest& req, Stream& stream
 
             DynamicMemoryStream mem;
             FileStream file;
+            HTTPRequestScope scope(req);
 
             try
             {
-                file.openReadOnly(path.c_str());
-                file.writeTo(mem, file.length());
+                if (type == "text/html")
+                {
+                    file.openReadOnly(path.c_str());
+                    Template engine(req.queryString);
+                    engine.prependScope(scope);
+                    engine.readTemplate(file, &mem, 0);
+                }else
+                {
+                    file.openReadOnly(path.c_str());
+                    file.writeTo(mem, file.length());
+                }
             }catch (StreamException &)
             {
                 LOG_DEBUG("StreamException in %s", __FUNCTION__);
             }
             file.close();
 
-            std::string body = mem.str();
+            string body = mem.str();
             map<string,string> headers = {
                 {"Content-Type",type},
                 {"Content-Length",to_string(body.size())}
             };
+            if (lang != "")
+                headers["Content-Language"] = lang;
             return HTTPResponse::ok(headers, body);
         }
     }
