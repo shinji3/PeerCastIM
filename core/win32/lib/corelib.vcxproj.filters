@@ -353,5 +353,11 @@
     <ClInclude Include="..\..\common\public.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\common\config.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\defer.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

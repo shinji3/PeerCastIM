@@ -584,9 +584,11 @@
     <ClInclude Include="..\..\common\chanmgr.h" />
     <ClInclude Include="..\..\common\channel.h" />
     <ClInclude Include="..\..\common\common.h" />
+    <ClInclude Include="..\..\common\config.h" />
     <ClInclude Include="..\..\common\critsec.h" />
     <ClInclude Include="..\..\common\cstream.h" />
     <ClInclude Include="..\..\common\dechunker.h" />
+    <ClInclude Include="..\..\common\defer.h" />
     <ClInclude Include="..\..\common\dmstream.h" />
     <ClInclude Include="..\..\common\flv.h" />
     <ClInclude Include="..\..\common\gnuid.h" />
