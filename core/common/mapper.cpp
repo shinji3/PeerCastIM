@@ -6,16 +6,19 @@
 #include "str.h"
 #include "_string.h"
 
+using namespace std;
+using namespace str;
+
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
 
-FileSystemMapper::FileSystemMapper(const std::string& aVirtualPath, const std::string& aDocumentRoot)
+FileSystemMapper::FileSystemMapper(const string& aVirtualPath, const string& aDocumentRoot)
     : virtualPath(aVirtualPath)
 {
-    char *dr = _fullpath(NULL, aDocumentRoot.c_str(), aDocumentRoot.size());
+    char *dr = _fullpath(NULL, aDocumentRoot.c_str(), _MAX_PATH);
     if (!dr)
     {
         throw GeneralException(String::format("Document root `%s` inaccessible", aDocumentRoot.c_str()));
@@ -24,22 +27,66 @@ FileSystemMapper::FileSystemMapper(const std::string& aVirtualPath, const std::s
     free(dr);
 }
 
-std::string FileSystemMapper::toLocalFilePath(const std::string& vpath)
+string FileSystemMapper::toLocalFilePath(const string& vpath)
 {
-    if (virtualPath == vpath ||
-        !str::is_prefix_of(virtualPath + "/", vpath))
-        return "";
+    return toLocalFilePath(vpath, {}).first;
+}
 
-    auto filePath = str::replace_prefix(vpath, virtualPath, documentRoot);
+pair<string,string> FileSystemMapper::resolvePath(const string& rawPath, const vector<string>& langs)
+{
+    // if there's a language neutral version, return it
+    if (realPath(rawPath) != "")
+        return make_pair(rawPath, "");
 
-    char* p;
-    p = _fullpath(NULL, filePath.c_str(), filePath.size());
-
-    if (p == NULL)
+    // otherwise, try each of the extensions
+    for (auto ext : langs)
     {
-        LOG_ERROR("Cannot resolve path %s", filePath.c_str());
-        return "";
+        auto r = realPath(rawPath + "." + ext);
+        if (r != "")
+            return make_pair(r, ext);
     }
 
-    return p;
+    // default to the English version if there is one
+    auto r = realPath(rawPath + ".en");
+    if (r != "")
+        return make_pair(r, "en");
+
+    return make_pair("", "");
+}
+
+string FileSystemMapper::realPath(const string& path)
+{
+    char resolvedPath[_MAX_PATH];
+    char *p = _fullpath(resolvedPath, path.c_str(), _MAX_PATH);
+
+    if (!p)
+        return "";
+    else
+        return resolvedPath;
+}
+
+pair<string,string> FileSystemMapper::toLocalFilePath(const string& vpath, const vector<string>& langs)
+{
+    if (virtualPath == vpath || !is_prefix_of(virtualPath + "/", vpath))
+        return make_pair("", "");
+
+    auto filePath = replace_prefix(vpath, virtualPath, documentRoot);
+
+    string resolvedPath, resolvedLang;
+    tie(resolvedPath, resolvedLang) = resolvePath(filePath, langs);
+
+    if (resolvedPath == "")
+    {
+        LOG_ERROR("Cannot resolve path %s", filePath.c_str());
+        return make_pair("", "");
+    }
+
+    // ディレクトリトラバーサルチェック
+    if (documentRoot == resolvedPath || !is_prefix_of(documentRoot, resolvedPath))
+    {
+        LOG_ERROR("Possible directory traversal attack!");
+        return make_pair("", "");
+    }
+
+    return make_pair(resolvedPath, resolvedLang);
 }
