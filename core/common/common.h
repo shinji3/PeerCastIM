@@ -22,6 +22,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <string>
+
 #include "gnuid.h"
 #include "host.h"
 
