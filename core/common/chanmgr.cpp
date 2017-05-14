@@ -3,6 +3,7 @@
 #include "playlist.h"
 #include "peercast.h"
 #include "version2.h" // PCP_BROADCAST_FLAGS
+#include "md5.h"
 #include "win32/seh.h"
 
 #ifdef _DEBUG
@@ -223,6 +224,15 @@ Channel *ChanMgr::createRelay(ChanInfo &info, bool stayConnected)
 }
 
 // -----------------------------------
+static std::string chName(ChanInfo& info)
+{
+    if (info.name.str().empty())
+        return info.id.str().substr(0,7) + "...";
+    else
+        return info.name.str();
+}
+
+// -----------------------------------
 Channel *ChanMgr::findAndRelay(ChanInfo &info)
 {
     char idStr[64];
@@ -328,6 +338,12 @@ ChanMgr::ChanMgr()
 
     lastYPConnect = 0;
     lastYPConnect2 = 0;
+}
+
+// -----------------------------------
+ChanMgr::~ChanMgr()
+{
+    clearHitLists();
 }
 
 // -----------------------------------
@@ -893,4 +909,16 @@ void ChanMgr::playChannel(ChanInfo &info)
     LOG_DEBUG("Executing: %s", fname);
     sys->executeFile(fname);
     delete pls;
+}
+
+// -----------------------------------
+std::string ChanMgr::authSecret(const GnuID& id)
+{
+    return broadcastID.str() + ":" + id.str();
+}
+
+// --------------------------------------------------
+std::string ChanMgr::authToken(const GnuID& id)
+{
+    return md5::hexdigest(authSecret(id));
 }

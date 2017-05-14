@@ -32,6 +32,7 @@ public:
     };
 
     ChanMgr();
+    ~ChanMgr();
 
     Channel *deleteChannel(Channel *);
 
@@ -90,6 +91,9 @@ public:
     bool        isBroadcasting();
 
     int         pickHits(ChanHitSearch &);
+
+    std::string authSecret(const GnuID& id);
+    std::string authToken(const GnuID& id);
 
     bool            findParentHit(ChanHit &p);
 
