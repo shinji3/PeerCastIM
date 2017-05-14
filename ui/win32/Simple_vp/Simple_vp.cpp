@@ -1168,14 +1168,7 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 			//SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LONG)PCX_AGENT);
 //			SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LONG)PCX_AGENTJP);
 			//SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LONG)PCX_AGENTVP);
-
-			if (version_ex)
-			{
-				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENTEX); // x64‘Î‰ž
-			} else
-			{
-				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENTVP);
-			}
+			SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENTEX);
 
 			return TRUE;
 

@@ -20,8 +20,6 @@ ServMgr *servMgr;
 PeercastInstance *peercastInst=NULL;
 PeercastApplication *peercastApp=NULL;
 
-int version_ex = 1; // VERSION_EX—LŒø‰»
-
 // ---------------------------------
 void APICALL PeercastInstance::init()
 {
