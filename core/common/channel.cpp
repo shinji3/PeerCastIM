@@ -1198,31 +1198,21 @@ void Channel::broadcastTrackerUpdate(GnuID &svID, bool force)
         hit.initLocal(numListeners, numRelays, info.numSkips, info.getUptime(), isPlaying(), false, 0, this, oldp, newp);
         hit.tracker = true;
 
-        if (version_ex == 0)
-        {
-            atom.writeParent(PCP_BCST,8);
-        } else
-        {
-            atom.writeParent(PCP_BCST,10);
-        }
-        atom.writeChar(PCP_BCST_GROUP,PCP_BCST_GROUP_ROOT);
-        atom.writeChar(PCP_BCST_HOPS,0);
-        atom.writeChar(PCP_BCST_TTL,11);
-        atom.writeBytes(PCP_BCST_FROM,servMgr->sessionID.id,16);
-        atom.writeInt(PCP_BCST_VERSION,PCP_CLIENT_VERSION);
-        atom.writeInt(PCP_BCST_VERSION_VP,PCP_CLIENT_VERSION_VP);
-
-        if (version_ex)
-        {
+        atom.writeParent(PCP_BCST,10);
+            atom.writeChar(PCP_BCST_GROUP,PCP_BCST_GROUP_ROOT);
+            atom.writeChar(PCP_BCST_HOPS,0);
+            atom.writeChar(PCP_BCST_TTL,11);
+            atom.writeBytes(PCP_BCST_FROM,servMgr->sessionID.id,16);
+            atom.writeInt(PCP_BCST_VERSION,PCP_CLIENT_VERSION);
+            atom.writeInt(PCP_BCST_VERSION_VP,PCP_CLIENT_VERSION_VP);
             atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX,PCP_CLIENT_VERSION_EX_PREFIX,2);
             atom.writeShort(PCP_BCST_VERSION_EX_NUMBER,PCP_CLIENT_VERSION_EX_NUMBER);
-        }
-        atom.writeParent(PCP_CHAN,4);
-        atom.writeBytes(PCP_CHAN_ID,info.id.id,16);
-        atom.writeBytes(PCP_CHAN_BCID,chanMgr->broadcastID.id,16);
-        info.writeInfoAtoms(atom);
-        info.writeTrackAtoms(atom);
-        hit.writeAtoms(atom,info.id);
+            atom.writeParent(PCP_CHAN,4);
+                atom.writeBytes(PCP_CHAN_ID,info.id.id,16);
+                atom.writeBytes(PCP_CHAN_BCID,chanMgr->broadcastID.id,16);
+                info.writeInfoAtoms(atom);
+                info.writeTrackAtoms(atom);
+            hit.writeAtoms(atom,info.id);
 
         pack.len = mem.pos;
         pack.type = ChanPacket::T_PCP;
@@ -1270,29 +1260,20 @@ void Channel::updateInfo(const ChanInfo &newInfo)
 
                 AtomStream atom(mem);
 
-                if (version_ex == 0)
-                {
-                    atom.writeParent(PCP_BCST,8);
-                } else
-                {
-                    atom.writeParent(PCP_BCST,10);
-                }
-                atom.writeChar(PCP_BCST_HOPS,0);
-                atom.writeChar(PCP_BCST_TTL,7);
-                atom.writeChar(PCP_BCST_GROUP,PCP_BCST_GROUP_RELAYS);
-                atom.writeBytes(PCP_BCST_FROM,servMgr->sessionID.id,16);
-                atom.writeInt(PCP_BCST_VERSION,PCP_CLIENT_VERSION);
-                atom.writeInt(PCP_BCST_VERSION_VP,PCP_CLIENT_VERSION_VP);
-                if (version_ex)
-                {
+                atom.writeParent(PCP_BCST,10);
+                    atom.writeChar(PCP_BCST_HOPS,0);
+                    atom.writeChar(PCP_BCST_TTL,7);
+                    atom.writeChar(PCP_BCST_GROUP,PCP_BCST_GROUP_RELAYS);
+                    atom.writeBytes(PCP_BCST_FROM,servMgr->sessionID.id,16);
+                    atom.writeInt(PCP_BCST_VERSION,PCP_CLIENT_VERSION);
+                    atom.writeInt(PCP_BCST_VERSION_VP,PCP_CLIENT_VERSION_VP);
                     atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX,PCP_CLIENT_VERSION_EX_PREFIX,2);
                     atom.writeShort(PCP_BCST_VERSION_EX_NUMBER,PCP_CLIENT_VERSION_EX_NUMBER);
-                }
-                atom.writeBytes(PCP_BCST_CHANID,info.id.id,16);
-                atom.writeParent(PCP_CHAN,3);
-                atom.writeBytes(PCP_CHAN_ID,info.id.id,16);
-                info.writeInfoAtoms(atom);
-                info.writeTrackAtoms(atom);
+                    atom.writeBytes(PCP_BCST_CHANID,info.id.id,16);
+                    atom.writeParent(PCP_CHAN,3);
+                        atom.writeBytes(PCP_CHAN_ID,info.id.id,16);
+                        info.writeInfoAtoms(atom);
+                        info.writeTrackAtoms(atom);
 
                 pack.len = mem.pos;
                 pack.type = ChanPacket::T_PCP;
