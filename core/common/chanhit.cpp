@@ -208,16 +208,9 @@ void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, bool 
 
     version = PCP_CLIENT_VERSION;
     versionVP = PCP_CLIENT_VERSION_VP;
-    if (version_ex)
-    {
-        strncpy_s(versionExPrefix, 2, PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
-        versionExNumber = PCP_CLIENT_VERSION_EX_NUMBER;
-    } else
-    {
-        versionExPrefix[0] = ' ';
-        versionExPrefix[1] = ' ';
-        versionExNumber = 0;
-    }
+
+    strncpy_s(versionExPrefix, 2, PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
+    versionExNumber = PCP_CLIENT_VERSION_EX_NUMBER;
 
     status = ch->status;
 
