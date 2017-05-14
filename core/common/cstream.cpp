@@ -432,26 +432,17 @@ bool ChannelStream::getStatus(Channel *ch, ChanPacket &pack)
         GnuID noID;
         noID.clear();
 
-        if (version_ex == 0)
-        {
-            atom.writeParent(PCP_BCST,8);
-        } else
-        {
-            atom.writeParent(PCP_BCST,10);
-        }
-        atom.writeChar(PCP_BCST_GROUP,PCP_BCST_GROUP_TRACKERS);
-        atom.writeChar(PCP_BCST_HOPS,0);
-        atom.writeChar(PCP_BCST_TTL,11);
-        atom.writeBytes(PCP_BCST_FROM,servMgr->sessionID.id,16);
-        atom.writeInt(PCP_BCST_VERSION,PCP_CLIENT_VERSION);
-        atom.writeInt(PCP_BCST_VERSION_VP,PCP_CLIENT_VERSION_VP);
-        if (version_ex)
-        {
+        atom.writeParent(PCP_BCST,10);
+            atom.writeChar(PCP_BCST_GROUP,PCP_BCST_GROUP_TRACKERS);
+            atom.writeChar(PCP_BCST_HOPS,0);
+            atom.writeChar(PCP_BCST_TTL,11);
+            atom.writeBytes(PCP_BCST_FROM,servMgr->sessionID.id,16);
+            atom.writeInt(PCP_BCST_VERSION,PCP_CLIENT_VERSION);
+            atom.writeInt(PCP_BCST_VERSION_VP,PCP_CLIENT_VERSION_VP);
             atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX,PCP_CLIENT_VERSION_EX_PREFIX,2);
             atom.writeShort(PCP_BCST_VERSION_EX_NUMBER,PCP_CLIENT_VERSION_EX_NUMBER);
-        }
-        atom.writeBytes(PCP_BCST_CHANID,ch->info.id.id,16);
-        hit.writeAtoms(atom,noID);
+            atom.writeBytes(PCP_BCST_CHANID,ch->info.id.id,16);
+            hit.writeAtoms(atom,noID);
 
         pack.len = pmem.pos;
         pack.type = ChanPacket::T_PCP;
