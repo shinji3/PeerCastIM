@@ -569,7 +569,7 @@ void String::prepend(const char *s)
 // -----------------------------------
 String& String::operator = (const String& other)
 {
-    strcpy(this->data, other.data);
+    strcpy_s(this->data, sizeof(this->data), other.data);
     this->type = other.type;
 
     return *this;
@@ -578,7 +578,7 @@ String& String::operator = (const String& other)
 // -----------------------------------
 String& String::operator = (const char* cstr)
 {
-    strncpy(this->data, cstr, MAX_LEN - 1);
+    strncpy_s(this->data, MAX_LEN - 1, cstr, _TRUNCATE);
     this->data[MAX_LEN - 1] = '\0';
     this->type = T_ASCII;
 
@@ -588,7 +588,7 @@ String& String::operator = (const char* cstr)
 // -----------------------------------
 String& String::operator = (const std::string& rhs)
 {
-    strcpy(data, rhs.substr(0, MAX_LEN - 1).c_str());
+    strcpy_s(data, sizeof(data), rhs.substr(0, MAX_LEN - 1).c_str());
     this->type = T_ASCII;
 
     return *this;
@@ -608,7 +608,7 @@ void String::sprintf(const char* fmt, ...)
     va_list ap;
 
     va_start(ap, fmt);
-    vsnprintf(this->data, ::String::MAX_LEN - 1, fmt, ap);
+    _vsnprintf_s(this->data, ::String::MAX_LEN - 1, _TRUNCATE, fmt, ap);
     va_end(ap);
 }
 

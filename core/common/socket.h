@@ -25,65 +25,6 @@
 #include "config.h"
 
 // --------------------------------------------------
-class ClientSocket : public Stream
-{
-public:
-
-    ClientSocket()
-    {
-        readTimeout = 30000;
-        writeTimeout = 30000;
-#ifdef WIN32
-        skipCount = 0;
-        lastSkipTime = 0;
-#endif
-    }
-
-    ~ClientSocket(){
-#ifdef WIN32
-        bufList.clear();
-#endif
-    }
-
-    // required interface
-    virtual void            open(Host &)   = 0;
-    virtual void            bind(Host &)   = 0;
-    virtual void            connect()      = 0;
-    virtual bool            active()       = 0;
-    virtual ClientSocket    *accept()      = 0;
-    virtual Host            getLocalHost() = 0;
-
-    void    setReadTimeout(unsigned int t) override
-    {
-        readTimeout = t;
-    }
-    void    setWriteTimeout(unsigned int t) override
-    {
-        writeTimeout = t;
-    }
-    virtual void    setBlocking(bool) {}
-
-    static unsigned int getIP(const char *);
-    static bool         getHostname(char *, size_t, unsigned int); //JP-MOD
-
-    bool eof() override
-    {
-        return active()==false;
-    }
-
-    Host            host;
-
-#ifdef WIN32
-    SocketBufferList    bufList;
-    virtual void bufferingWrite(const void *, int) = 0;
-    unsigned int skipCount;
-    unsigned int lastSkipTime;
-#endif
-
-    unsigned int    readTimeout, writeTimeout;
-};
-
-// --------------------------------------------------
 class SocketBuffer {
 
 public:
@@ -177,6 +118,65 @@ public:
     unsigned int skipCount;
     unsigned int lastSkipTime;
 
+};
+
+// --------------------------------------------------
+class ClientSocket : public Stream
+{
+public:
+
+    ClientSocket()
+    {
+        readTimeout = 30000;
+        writeTimeout = 30000;
+#ifdef WIN32
+        skipCount = 0;
+        lastSkipTime = 0;
+#endif
+    }
+
+    ~ClientSocket(){
+#ifdef WIN32
+        bufList.clear();
+#endif
+    }
+
+    // required interface
+    virtual void            open(Host &)   = 0;
+    virtual void            bind(Host &)   = 0;
+    virtual void            connect()      = 0;
+    virtual bool            active()       = 0;
+    virtual ClientSocket    *accept()      = 0;
+    virtual Host            getLocalHost() = 0;
+
+    void    setReadTimeout(unsigned int t) override
+    {
+        readTimeout = t;
+    }
+    void    setWriteTimeout(unsigned int t) override
+    {
+        writeTimeout = t;
+    }
+    virtual void    setBlocking(bool) {}
+
+    static unsigned int getIP(const char *);
+    static bool         getHostname(char *, size_t, unsigned int); //JP-MOD
+
+    bool eof() override
+    {
+        return active()==false;
+    }
+
+    Host            host;
+
+#ifdef WIN32
+    SocketBufferList    bufList;
+    virtual void bufferingWrite(const void *, int) = 0;
+    unsigned int skipCount;
+    unsigned int lastSkipTime;
+#endif
+
+    unsigned int    readTimeout, writeTimeout;
 };
 
 #endif
