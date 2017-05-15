@@ -155,6 +155,7 @@ public:
     };
 
     ServMgr();
+    ~ServMgr();
 
     bool    start();
 
@@ -387,6 +388,9 @@ public:
     String              chanLog;
 
     ChannelDirectory    channelDirectory;
+    bool                publicDirectoryEnabled;
+
+    String              serverName;
 
     char modulePath[256]; //JP-EX
     int enableGetName; //JP-EX

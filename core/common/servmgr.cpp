@@ -38,6 +38,7 @@ ThreadInfo ServMgr::serverThread, ServMgr::idleThread;
 
 // -----------------------------------
 ServMgr::ServMgr()
+    : publicDirectoryEnabled(false)
 {
     validBCID = NULL;
 
@@ -201,6 +202,17 @@ ServMgr::ServMgr()
         t.func = ServMgr::graylistThreadFunc;
         t.active = true;
         sys->startThread(&t);
+    }
+}
+
+// -----------------------------------
+ServMgr::~ServMgr()
+{
+    while (servents)
+    {
+        auto next = servents->next;
+        delete servents;
+        servents = next;
     }
 }
 
