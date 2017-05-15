@@ -186,8 +186,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	tmpURL[0]=0;
 	char *chanURL=NULL;
 
-	//VERSION_EX = 0;
-
 	iniFileName.set(".\\peercast.ini");
 
 	WIN32_FIND_DATA fd; //JP-EX
