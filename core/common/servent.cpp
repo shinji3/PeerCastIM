@@ -102,6 +102,77 @@ bool    Servent::isFiltered(int f)
 
 int servent_count = 1;
 // -----------------------------------
+bool Servent::canStream(Channel *ch)
+{
+    if (ch==NULL)
+        return false;
+
+    if (servMgr->isDisabled)
+        return false;
+
+    if (!isPrivate())
+    {
+        if  (!ch->isPlaying() || ch->isFull() || ((type == T_DIRECT) && servMgr->directFull()))
+            return false;
+
+        if (!isIndexTxt(ch) && (type == T_RELAY) && (servMgr->relaysFull()))
+            return false;
+
+        Channel *c = chanMgr->channel;
+        int noRelay = 0;
+        unsigned int needRate = 0;
+        unsigned int allRate = 0;
+        while(c){
+            if (c->isPlaying()){
+                int nlr = c->localRelays();
+                allRate += c->info.bitrate * nlr;
+                if ((c != ch) && (nlr == 0)){
+                    if(!isIndexTxt(c))    // for PCRaw (relay)
+                        noRelay++;
+                    needRate+=c->info.bitrate;
+                }
+            }
+            c = c->next;
+        }
+        unsigned int numRelay = servMgr->numStreams(Servent::T_RELAY,false);
+         int diff = servMgr->maxRelays - numRelay;
+        if (ch->localRelays()){
+            if (noRelay > diff){
+                noRelay = diff;
+            }
+        } else {
+            noRelay = 0;
+            needRate = 0;
+        }
+
+        LOG_DEBUG("Relay check: Max=%d Now=%d Need=%d ch=%d",
+            servMgr->maxBitrateOut, allRate, needRate, ch->info.bitrate);
+        //        if  (    !ch->isPlaying()
+        //                || ch->isFull()
+        //                || (allRate + needRate + ch->info.bitrate > servMgr->maxBitrateOut)
+        //                || ((type == T_RELAY) && servMgr->relaysFull() && force_off)    // for PCRaw (relay) (force_off)
+        //                || ((type == T_RELAY) && (((servMgr->numStreams(Servent::T_RELAY,false) + noRelay) >= servMgr->maxRelays)) && force_off)    // for PCRaw (relay) (force_off)
+        //                || ((type == T_DIRECT) && servMgr->directFull())
+        //        ){
+
+        if (allRate + needRate + ch->info.bitrate > servMgr->maxBitrateOut)
+        {
+            LOG_DEBUG("Relay check: NG");
+            return false;
+        }
+
+        if (!isIndexTxt(ch) && (type == T_RELAY) && (numRelay + noRelay >= servMgr->maxRelays))
+        {
+            LOG_DEBUG("Relay check: NG");
+            return false;
+        }
+    }
+
+    LOG_DEBUG("Relay check: OK");
+    return true;
+}
+
+// -----------------------------------
 Servent::Servent(int index)
     : outPacketsPri(MAX_OUTPACKETS)
     , outPacketsNorm(MAX_OUTPACKETS)
