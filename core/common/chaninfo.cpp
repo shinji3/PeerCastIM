@@ -92,7 +92,7 @@ const char *ChanInfo::getTypeStr(TYPE t)
         case T_WMV: return "WMV";
         case T_FLV: return "FLV";
         case T_MKV: return "MKV";
-        case T_WEBM:return "WEBM";
+        case T_WEBM: return "WEBM";
         case T_TS:  return "TS";
 
         case T_PLS: return "PLS";
