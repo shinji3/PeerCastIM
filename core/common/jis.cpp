@@ -42,7 +42,6 @@
 #define new DEBUG_NEW
 #endif
 
-
 // -----------------------------------
 
 #define     SJ0162  0x00e1      /* 01 - 62 ku offset */
