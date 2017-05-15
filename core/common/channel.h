@@ -145,7 +145,8 @@ public:
         SRC_PEERCAST,
         SRC_SHOUTCAST,
         SRC_ICECAST,
-        SRC_URL
+        SRC_URL,
+        SRC_HTTPPUSH
     };
 
     Channel();
@@ -156,6 +157,8 @@ public:
     void    startGet();
     void    startICY(ClientSocket *, SRC_TYPE);
     void    startURL(const char *);
+    void    startHTTPPush(ClientSocket *, bool isChunked);
+    void    startWMHTTPPush(ClientSocket *cs);
 
     ChannelStream   *createSource();
 
@@ -247,6 +250,7 @@ public:
 
     ChanInfo            info;
     ChanHit             sourceHost;
+    ChanHit             designatedHost;
 
     GnuID               remoteID;
 

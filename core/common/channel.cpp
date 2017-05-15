@@ -22,6 +22,9 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <algorithm>
+#include <numeric> // accumulate
+
 #include "common.h"
 #include "socket.h"
 #include "channel.h"
@@ -40,9 +43,14 @@
 #include "mms.h"
 #include "nsv.h"
 #include "flv.h"
+#include "mkv.h"
+#include "wmhttp.h"
 
 #include "icy.h"
 #include "url.h"
+#include "httppush.h"
+
+#include "str.h"
 
 #include "version2.h"
 #include "win32/seh.h"
@@ -1001,6 +1009,32 @@ yp0:
 
         sys->sleepIdle();
     }
+}
+
+// -----------------------------------
+void    Channel::startHTTPPush(ClientSocket *cs, bool isChunked)
+{
+    srcType = SRC_HTTPPUSH;
+    type    = T_BROADCAST;
+
+    sock = cs;
+    info.srcProtocol = ChanInfo::SP_HTTP;
+
+    sourceData = new HTTPPushSource(isChunked);
+    startStream();
+}
+
+// -----------------------------------
+void    Channel::startWMHTTPPush(ClientSocket *cs)
+{
+    srcType = SRC_HTTPPUSH;
+    type    = T_BROADCAST;
+
+    sock = cs;
+    info.srcProtocol = ChanInfo::SP_WMHTTP;
+
+    sourceData = new HTTPPushSource(false);
+    startStream();
 }
 
 // -----------------------------------

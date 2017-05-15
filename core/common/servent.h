@@ -28,6 +28,8 @@
 #include "http.h"
 #include "pcp.h"
 #include "addrCont.h"
+#include "cgi.h" // Query
+#include "playlist.h"
 #ifdef _WIN32
 #include "win32/ts_vector.h"
 #endif
@@ -166,6 +168,8 @@ public:
     void    handshakeIn();
     void    handshakeOut();
 
+    bool    handshakeHTTPBasicAuth(HTTP &http);
+
     void    processOutPCP();
     void    processOutChannel();
 
@@ -175,6 +179,15 @@ public:
     void    handshakeICY(Channel::SRC_TYPE, bool);
     void    handshakeIncoming();
     void    handshakeHTTP(HTTP &, bool);
+    void    handshakeGET(HTTP &http);
+    void    handshakePOST(HTTP &http);
+    void    handshakeGIV(const char*);
+    void    handshakeSOURCE(char * in, bool isHTTP);
+
+    void    handshakeHTTPPush(const std::string& args);
+    void    handshakeWMHTTPPush(HTTP& http, const std::string& path);
+
+    void    handshakeJRPC(HTTP &http);
 
     void    handshakeRemoteFile(const char *);
     void    handshakeLocalFile(const char *);
@@ -231,6 +244,11 @@ public:
     bool    hasSeenPacket(GnuPacket &p) { return seenIDs.contains(p.id); }
     bool    acceptGIV(ClientSocket *);
     bool    sendPacket(ChanPacket &, GnuID &, GnuID &, GnuID &, Servent::TYPE);
+
+    ChanInfo createChannelInfo(GnuID broadcastID, const String& broadcastMsg, cgi::Query& query);
+
+    static bool hasValidAuthToken(const std::string& requestFilename);
+    static PlayList::TYPE playListType(ChanInfo &info);
 
     TYPE                type;
     STATUS              status;

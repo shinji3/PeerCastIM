@@ -26,14 +26,23 @@
 #include "peercast.h"
 #include "pcp.h"
 #include "version2.h"
+#include "jrpc.h"
 #include "playlist.h"
+#include "dechunker.h"
+#include "matroska.h"
+#include "str.h"
+#include "cgi.h"
 #include "template.h"
+#include "public.h"
+#include "md5.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
+
+using namespace std;
 
 // -----------------------------------
 static void termArgs(char *str)
@@ -137,7 +146,7 @@ void Servent::handshakeJRPC(HTTP &http)
     http.writeLineF("%s %s", HTTP_HS_CONTENT, "application/json");
     http.writeLine("");
 
-    http.write(response.c_str(), response.size());
+    http.write(response.c_str(), (int)response.size());
 }
 
 // -----------------------------------
@@ -227,7 +236,7 @@ void Servent::handshakeGET(HTTP &http)
 
         if (pwdArg && songArg)
         {
-            int slen = strlen(fn);
+            int slen = (int)strlen(fn);
             for (int i=0; i<slen; i++)
                 if (fn[i]=='&') fn[i] = 0;
 
@@ -991,6 +1000,33 @@ bool Servent::getLocalURL(char *str)
 }
 
 // -----------------------------------
+bool Servent::handshakeHTTPBasicAuth(HTTP &http)
+{
+    char user[64] = "", pass[64] = "";
+
+    while (http.nextHeader())
+    {
+        char *arg = http.getArgStr();
+        if (!arg)
+            continue;
+
+        if (http.isHeader("Authorization"))
+            http.getAuthUserPass(user, pass, sizeof(user), sizeof(pass));
+    }
+
+    if (sock->host.isLocalhost())
+        return true;
+
+    if (strlen(servMgr->password) != 0 && strcmp(pass, servMgr->password) == 0)
+        return true;
+
+    http.writeLine(HTTP_SC_UNAUTHORIZED);
+    http.writeLine("WWW-Authenticate: Basic realm=\"PeerCast Admin\"");
+    http.writeLine("");
+    return false;
+}
+
+// -----------------------------------
 bool Servent::getLocalTypeURL(char *str, ChanInfo::TYPE type)
 {
     if (!sock)
@@ -1265,7 +1301,7 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
 
             chanMgr->icyMetaInterval = iv;
         }else if (strcmp(curr, "passnew") == 0)
-            strcpy(servMgr->password, arg);
+            strcpy_s(servMgr->password, sizeof(servMgr->password), arg);
         else if (strcmp(curr, "root") == 0)
             servMgr->isRoot = getCGIargBOOL(arg);
         else if (strcmp(curr, "brroot") == 0)
@@ -1278,8 +1314,8 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
             servMgr->forceIP = arg;
         else if (strcmp(curr, "htmlPath") == 0)
         {
-            strcpy(servMgr->htmlPath, "html/");
-            strcat(servMgr->htmlPath, arg);
+            strcpy_s(servMgr->htmlPath, sizeof(servMgr->htmlPath), "html/");
+            strcat_s(servMgr->htmlPath, arg);
         }else if (strcmp(curr, "djmsg") == 0)
         {
             String msg;
@@ -1524,7 +1560,7 @@ void Servent::CMD_hitlist(char *cmd, HTTP& http, HTML& html, String& jumpStr)
         if (chl->isUsed())
         {
             char tmp[64];
-            sprintf(tmp, "c%d=", index);
+            sprintf_s(tmp, sizeof(tmp), "c%d=", index);
             if (cmpCGIarg(cmd, tmp, "1"))
             {
                 Channel *c;
@@ -1583,7 +1619,7 @@ void Servent::CMD_connect(char *cmd, HTTP& http, HTML& html, String& jumpStr)
     Servent *s = servMgr->servents;
     {
         char tmp[64];
-        sprintf(tmp, "c%d=", s->serventIndex);
+        sprintf_s(tmp, sizeof(tmp), "c%d=", s->serventIndex);
         if (cmpCGIarg(cmd, tmp, "1"))
         {
             if (hasCGIarg(cmd, "stop"))
