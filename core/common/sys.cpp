@@ -240,7 +240,9 @@ void LogBuffer::dumpHTML(Stream &out)
         sp = (currLine+1)%maxLines;
     }
 
-    String tim, str;
+    String tim;
+    const size_t BUFSIZE = (lineLen - 1) * 5 + 1;
+    char* escaped = new char [BUFSIZE];
     if (nl)
     {
         for (unsigned int i=0; i<nl; i++)
@@ -257,16 +259,15 @@ void LogBuffer::dumpHTML(Stream &out)
                 out.writeString("]</b> ");
             }
 
-            str.set(&buf[bp]);
-            str.convertTo(String::T_HTML);
-
-            out.writeString(str.cstr());
+            escapeHTML(escaped, &buf[bp]);
+            out.writeString(escaped);
             out.writeString("<br>");
 
             sp++;
             sp %= maxLines;
         }
     }
+    delete[] escaped;
 
     lb.off();
 }
