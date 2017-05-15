@@ -109,7 +109,7 @@ bool    HTTP::nextHeader()
                 if (!(end = strchr(ap, '\n')))
                     end = ap + strlen(ap);
             value = string(ap, end);
-            for (int i = 0; i < name.size(); ++i)
+            for (int i = 0; i < (int)name.size(); ++i)
                 name[i] = toupper(name[i]);
             headers[name] = value;
         }
