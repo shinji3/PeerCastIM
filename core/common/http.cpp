@@ -240,7 +240,7 @@ void HTTP::send(const HTTPResponse& response)
     writeLine("");
 
     if (response.body.size())
-        write(response.body.data(), response.body.size());
+        write(response.body.data(), (int)response.body.size());
 }
 
 // -----------------------------------

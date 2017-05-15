@@ -55,6 +55,12 @@ Sys::Sys()
 }
 
 // ------------------------------------------
+Sys::~Sys()
+{
+    delete logBuf;
+}
+
+// ------------------------------------------
 void Sys::sleepIdle()
 {
     sleep(idleSleepTime);
@@ -190,6 +196,34 @@ bool hasCGIarg(const char *str, const char *arg)
         return false;
 
     return true;
+}
+
+// ---------------------------
+void LogBuffer::escapeHTML(char* dest, char* src)
+{
+    while (*src)
+    {
+        switch (*src)
+        {
+        case '&':
+            strcpy_s(dest, sizeof(dest), "&amp;");
+            dest += 5;
+            break;
+        case '<':
+            strcpy_s(dest, sizeof(dest), "&lt;");
+            dest += 4;
+            break;
+        case '>':
+            strcpy_s(dest, sizeof(dest), "&gt;");
+            dest += 4;
+            break;
+        default:
+            *dest = *src;
+            dest++;
+        }
+        src++;
+    }
+    *dest = '\0';
 }
 
 // ---------------------------

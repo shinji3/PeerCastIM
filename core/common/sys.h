@@ -20,7 +20,10 @@
 #ifndef _SYS_H
 #define _SYS_H
 
+#include <string>
+
 #include <string.h>
+#include <stdarg.h>
 #include "common.h"
 
 #define RAND(a, b) (((a = 36969 * (a & 65535) + (a >> 16)) << 16) + \
@@ -60,6 +63,7 @@ class Sys
 {
 public:
     Sys();
+    virtual ~Sys();
 
     virtual class ClientSocket  *createSocket() = 0;
     virtual bool            startThread(class ThreadInfo *) = 0;
@@ -75,6 +79,7 @@ public:
     virtual void            executeFile(const char *) = 0;
     virtual void            endThread(ThreadInfo *) {}
     virtual void            waitThread(ThreadInfo *, int timeout = 30000) {}
+    virtual void            setThreadName(ThreadInfo *, const char* name) {}
 
 #ifdef __BIG_ENDIAN__
     unsigned short  convertEndian(unsigned short v) { return SWAP2(v); }
@@ -328,6 +333,13 @@ public:
         types = new TYPE [maxLines];
     }
 
+    ~LogBuffer()
+    {
+        delete[] buf;
+        delete[] times;
+        delete[] types;
+    }
+
     void    clear()
     {
         currLine = 0;
@@ -336,6 +348,8 @@ public:
     void                write(const char *, TYPE);
     static const char   *getTypeStr(TYPE t) { return logTypes[t]; }
     void                dumpHTML(class Stream &);
+
+    static void         escapeHTML(char* dest, char* src);
 
     char            *buf;
     unsigned int    *times;

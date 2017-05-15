@@ -197,7 +197,7 @@ void MKVStream::readTracks(const std::string& data)
             }
         }else
         {
-            mem.skip(size.uint());
+            mem.skip((int)size.uint());
         }
     }
 }
