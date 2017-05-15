@@ -1814,12 +1814,12 @@ void Servent::handshakeIncomingPCP(AtomStream &atom, Host &rhost, GnuID &rid, St
     char tbuf[1024];
     MemoryStream mem(tbuf, sizeof(tbuf));
     AtomStream atom2(mem);
-    atom2.writeParent(PCP_OLEH,5);
-        atom2.writeString(PCP_HELO_AGENT,PCX_AGENT);
-        atom2.writeBytes(PCP_HELO_SESSIONID,servMgr->sessionID.id,16);
-        atom2.writeInt(PCP_HELO_VERSION,PCP_CLIENT_VERSION);
-        atom2.writeInt(PCP_HELO_REMOTEIP,rhost.ip);
-        atom2.writeShort(PCP_HELO_PORT,rhost.port);
+    atom2.writeParent(PCP_OLEH, 5);
+        atom2.writeString(PCP_HELO_AGENT, PCX_AGENT);
+        atom2.writeBytes(PCP_HELO_SESSIONID, servMgr->sessionID.id, 16);
+        atom2.writeInt(PCP_HELO_VERSION, PCP_CLIENT_VERSION);
+        atom2.writeInt(PCP_HELO_REMOTEIP, rhost.ip);
+        atom2.writeShort(PCP_HELO_PORT, rhost.port);
 
     if (version)
     {
