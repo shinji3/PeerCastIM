@@ -25,6 +25,7 @@
 #include "pcp.h"
 #include "servmgr.h"
 #include "version2.h"
+#include "critsec.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
@@ -86,6 +87,19 @@ void ChanPacket::writePeercast(Stream &out)
 }
 
 // -----------------------------------
+ChanPacket& ChanPacket::operator=(const ChanPacket& other)
+{
+    this->type = other.type;
+    this->len  = other.len;
+    this->pos  = other.pos;
+    this->sync = other.sync;
+    this->cont = other.cont;
+    memcpy(this->data, other.data, this->len);
+
+    return *this;
+}
+
+// -----------------------------------
 void ChanPacket::readPeercast(Stream &in)
 {
     unsigned int tp = in.readTag();
@@ -105,6 +119,7 @@ void ChanPacket::readPeercast(Stream &in)
 }
 
 // -----------------------------------
+// (使われていないようだ。)
 int ChanPacketBuffer::copyFrom(ChanPacketBuffer &buf, unsigned int reqPos)
 {
     lock.on();
@@ -117,14 +132,12 @@ int ChanPacketBuffer::copyFrom(ChanPacketBuffer &buf, unsigned int reqPos)
 
     for (unsigned int i = buf.firstPos; i <= buf.lastPos; i++)
     {
-        //ChanPacket *src = &buf.packets[i%MAX_PACKETS];
         ChanPacketv *src = &buf.packets[i%MAX_PACKETS];
         if (src->type & accept)
         {
             if (src->pos >= reqPos)
             {
                 lastPos = writePos;
-                //packets[writePos++] = *src;
                 packets[writePos++].init(*src);
             }
         }
@@ -136,6 +149,9 @@ int ChanPacketBuffer::copyFrom(ChanPacketBuffer &buf, unsigned int reqPos)
 }
 
 // ------------------------------------------------------------------
+// ストリームポジションが spos か、それよりも新しいパケットが見付かれ
+// ば pack に代入する。見付かった場合は true, そうでなければ false を
+// 返す。
 bool ChanPacketBuffer::findPacket(unsigned int spos, ChanPacket &pack)
 {
     if (writePos == 0)
@@ -151,6 +167,8 @@ bool ChanPacketBuffer::findPacket(unsigned int spos, ChanPacket &pack)
         || (spos > lpos && lpos >= fpos && spos - lpos > bound))          // --f---l------s-
         spos = fpos;
 
+    // このループ、lastPos == UINT_MAX の時終了しないのでは？ …4G パ
+    // ケットも送らないか。
     for (unsigned int i = firstPos; i <= lastPos; i++)
     {
         //ChanPacket &p = packets[i%MAX_PACKETS];
@@ -168,6 +186,8 @@ bool ChanPacketBuffer::findPacket(unsigned int spos, ChanPacket &pack)
 }
 
 // ------------------------------------------------------------------
+// バッファー内の一番新しいパケットのストリームポジションを返す。まだ
+// パケットがない場合は 0 を返す。
 unsigned int    ChanPacketBuffer::getLatestPos()
 {
     if (!writePos)
@@ -190,6 +210,26 @@ unsigned int    ChanPacketBuffer::getFirstDataPos()
 }
 
 // ------------------------------------------------------------------
+unsigned int    ChanPacketBuffer::getOldestNonContinuationPos()
+{
+    if (writePos == 0)
+        return 0;
+
+    CriticalSection cs(lock);
+
+    for (int64_t i = firstPos; i <= lastPos; i++)
+    {
+        ChanPacket &p = packets[i%MAX_PACKETS];
+        if (!p.cont)
+            return p.pos;
+    }
+
+    return 0;
+}
+
+// ------------------------------------------------------------------
+// バッファー内の一番古いパケットのストリームポジションを返す。まだパ
+// ケットが無い場合は 0 を返す。
 unsigned int    ChanPacketBuffer::getOldestPos()
 {
     if (!writePos)
@@ -214,12 +254,15 @@ unsigned int    ChanPacketBuffer::findOldestPos(unsigned int spos)
 }
 
 // -------------------------------------------------------------------
+// パケットインデックス index のパケットのストリームポジションを返す。
 unsigned int    ChanPacketBuffer::getStreamPos(unsigned int index)
 {
     return packets[index%MAX_PACKETS].pos;
 }
 
 // -------------------------------------------------------------------
+// パケットインデックス index のパケットの次のパケットのストリームポジ
+// ションを計算する。
 unsigned int    ChanPacketBuffer::getStreamPosEnd(unsigned int index)
 {
     return packets[index%MAX_PACKETS].pos + packets[index%MAX_PACKETS].len;
@@ -325,7 +368,8 @@ void    ChanPacketBuffer::readPacketPri(ChanPacket &pack)
     lock.off();
  }
 
-// -----------------------------------
+// ------------------------------------------------------------
+// バッファーがいっぱいなら true を返す。そうでなければ false。
 bool    ChanPacketBuffer::willSkip()
 {
     return ((writePos - readPos) >= MAX_PACKETS);
@@ -432,17 +476,17 @@ bool ChannelStream::getStatus(Channel *ch, ChanPacket &pack)
         GnuID noID;
         noID.clear();
 
-        atom.writeParent(PCP_BCST,10);
-            atom.writeChar(PCP_BCST_GROUP,PCP_BCST_GROUP_TRACKERS);
-            atom.writeChar(PCP_BCST_HOPS,0);
-            atom.writeChar(PCP_BCST_TTL,11);
-            atom.writeBytes(PCP_BCST_FROM,servMgr->sessionID.id,16);
-            atom.writeInt(PCP_BCST_VERSION,PCP_CLIENT_VERSION);
-            atom.writeInt(PCP_BCST_VERSION_VP,PCP_CLIENT_VERSION_VP);
-            atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX,PCP_CLIENT_VERSION_EX_PREFIX,2);
-            atom.writeShort(PCP_BCST_VERSION_EX_NUMBER,PCP_CLIENT_VERSION_EX_NUMBER);
-            atom.writeBytes(PCP_BCST_CHANID,ch->info.id.id,16);
-            hit.writeAtoms(atom,noID);
+        atom.writeParent(PCP_BCST, 10);
+            atom.writeChar(PCP_BCST_GROUP, PCP_BCST_GROUP_TRACKERS);
+            atom.writeChar(PCP_BCST_HOPS, 0);
+            atom.writeChar(PCP_BCST_TTL, 11);
+            atom.writeBytes(PCP_BCST_FROM, servMgr->sessionID.id, 16);
+            atom.writeInt(PCP_BCST_VERSION, PCP_CLIENT_VERSION);
+            atom.writeInt(PCP_BCST_VERSION_VP, PCP_CLIENT_VERSION_VP);
+            atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX, PCP_CLIENT_VERSION_EX_PREFIX, 2);
+            atom.writeShort(PCP_BCST_VERSION_EX_NUMBER, PCP_CLIENT_VERSION_EX_NUMBER);
+            atom.writeBytes(PCP_BCST_CHANID, ch->info.id.id, 16);
+            hit.writeAtoms(atom, noID);
 
         pack.len = pmem.pos;
         pack.type = ChanPacket::T_PCP;

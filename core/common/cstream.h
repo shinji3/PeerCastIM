@@ -19,6 +19,11 @@
 #ifndef _CSTREAM_H
 #define _CSTREAM_H
 
+#include <vector>
+
+#include "atom.h"
+#include "sys.h"
+
 // ----------------------------------
 
 class Channel;
@@ -60,22 +65,24 @@ public:
         skip = false;
         priority = 0;
     }
+
     void    init(ChanPacketv &p);
-    void    init(TYPE t, const void *, unsigned int, unsigned int);
+    void    init(TYPE type, const void *data, unsigned int length, unsigned int position);
 
     void    writeRaw(Stream &);
     void    writePeercast(Stream &);
     void    readPeercast(Stream &);
+
+    ChanPacket& operator=(const ChanPacket& other);
 
     TYPE            type;
     unsigned int    len;
     unsigned int    pos;
     unsigned int    sync;
     bool            cont; // true if this is a continuation packet
-    char            data[MAX_DATALEN];
     bool            skip;
-
     int             priority;
+    char            data[MAX_DATALEN];
 };
 
 // ----------------------------------
@@ -166,6 +173,11 @@ public:
         NUM_SAFEPACKETS = 60
     };
 
+    ChanPacketBuffer()
+    {
+        init();
+    }
+
     void    init()
     {
         lock.on();
@@ -197,11 +209,37 @@ public:
     unsigned int    getStreamPos(unsigned int);
     unsigned int    getStreamPosEnd(unsigned int);
     unsigned int    getLastSync();
+    unsigned int    getLatestNonContinuationPos();
+    unsigned int    getOldestNonContinuationPos();
 
-    //ChanPacket            packets[MAX_PACKETS];
+    struct Stat
+    {
+        std::vector<unsigned int> packetLengths;
+        int continuations;
+        int nonContinuations;
+    };
+
+    Stat getStatistics()
+    {
+        if (writePos == 0)
+            return { {}, 0, 0 };
+
+        std::vector<unsigned int> lens;
+        int cs = 0, ncs = 0;
+        for (unsigned int i = firstPos; i <= lastPos; i++)
+        {
+            lens.push_back(packets[i % MAX_PACKETS].len);
+            if (packets[i % MAX_PACKETS].cont)
+                cs++;
+            else
+                ncs++;
+        }
+        return { lens, cs, ncs };
+    }
+
     ChanPacketv             packets[MAX_PACKETS];
-    volatile unsigned int   lastPos,firstPos,safePos;
-    volatile unsigned int   readPos,writePos;
+    volatile unsigned int   lastPos, firstPos, safePos;
+    volatile unsigned int   readPos, writePos;
     unsigned int            accept;
     unsigned int            lastWriteTime;
     WLock                   lock;
