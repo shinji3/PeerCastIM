@@ -1269,8 +1269,10 @@ void Servent::CMD_add_bcid(char *cmd, HTTP& http, HTML& html, String& jumpStr)
 
 void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
 {
-    servMgr->numFilters = 0;
+    //servMgr->numFilters = 0;
     ServFilter *currFilter = servMgr->filters;
+    bool beginfilt = false;
+
     servMgr->channelDirectory.clearFeeds();
     servMgr->publicDirectoryEnabled = false;
 
@@ -1280,12 +1282,18 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
     int allowServer1 = 0;
     int allowServer2 = 0;
     int newPort = servMgr->serverHost.port;
+    int enableGetName = 0;
+    int allowConnectPCST = 0;
+    int disableAutoBumpIfDirect = 0; //JP-MOD
+    int asxDetailedMode = 0; //JP-MOD
 
     char arg[MAX_CGI_LEN];
     char curr[MAX_CGI_LEN];
     char *cp = cmd;
     while (cp=nextCGIarg(cp, curr, arg))
     {
+        LOG_DEBUG("ARG: %s = %s", curr, arg);
+
         // server
         if (strcmp(curr, "servername") == 0)
             servMgr->serverName = cgi::unescape(arg);
@@ -1335,8 +1343,8 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
         // connections
         else if (strcmp(curr, "maxcin") == 0)
             servMgr->maxControl = getCGIargINT(arg);
-        else if (strcmp(curr, "maxsin") == 0)
-            servMgr->maxServIn = getCGIargINT(arg);
+        //else if (strcmp(curr, "maxsin") == 0)
+        //    servMgr->maxServIn = getCGIargINT(arg);
 
         else if (strcmp(curr, "maxup") == 0)
             servMgr->maxBitrateOut = getCGIargINT(arg);
@@ -1348,6 +1356,11 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
             chanMgr->maxRelaysPerChannel = getCGIargINT(arg);
         else if (strncmp(curr, "filt_", 5) == 0)
         {
+            if (!beginfilt) {
+                servMgr->numFilters = 0;
+                beginfilt = true;
+            }
+
             char *fs = curr+5;
 
             if (strncmp(fs, "ip", 2) == 0)        // ip must be first
@@ -1359,6 +1372,7 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
                 {
                     servMgr->numFilters++;
                     servMgr->filters[servMgr->numFilters].init();   // clear new entry
+                    LOG_DEBUG("numFilters = %d", servMgr->numFilters);
                 }
             }else if (strncmp(fs, "bn", 2) == 0)
                 currFilter->flags |= ServFilter::F_BAN;
@@ -1394,6 +1408,15 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
                 String str(arg, String::T_ESC);
                 str.convertTo(String::T_ASCII);
                 servMgr->rootHost = str;
+            }
+        }
+        else if (strcmp(curr,"yp2")==0)
+        {
+            if (!PCP_FORCE_YP)
+            {
+                String str(arg,String::T_ESC);
+                str.convertTo(String::T_ASCII);
+                servMgr->rootHost2 = str;
             }
         }
         else if (strcmp(curr, "deadhitage") == 0)
@@ -1438,11 +1461,45 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
             allowServer2 |= atoi(arg) ? (ALLOW_HTML) : 0;
         else if (strcmp(curr, "allowBroadcast2") == 0)
             allowServer2 |= atoi(arg) ? (ALLOW_BROADCAST) : 0;
+
+        // JP-EX
+        else if (strcmp(curr, "autoRelayKeep") ==0)
+            servMgr->autoRelayKeep = getCGIargINT(arg);
+        else if (strcmp(curr, "autoMaxRelaySetting") ==0)
+            servMgr->autoMaxRelaySetting = getCGIargINT(arg);
+        else if (strcmp(curr, "autoBumpSkipCount") ==0)
+            servMgr->autoBumpSkipCount = getCGIargINT(arg);
+        else if (strcmp(curr, "kickPushStartRelays") ==0)
+            servMgr->kickPushStartRelays = getCGIargINT(arg);
+        else if (strcmp(curr, "kickPushInterval") ==0)
+            servMgr->kickPushInterval = getCGIargINT(arg);
+        else if (strcmp(curr, "allowConnectPCST") ==0)
+            allowConnectPCST = atoi(arg) ? 1 : 0;
+        else if (strcmp(curr, "enableGetName") ==0)
+            enableGetName = atoi(arg)? 1 : 0;
+        else if (strcmp(curr, "autoPort0Kick") ==0)
+            servMgr->autoPort0Kick = getCGIargBOOL(arg);
+        else if (strcmp(curr, "allowOnlyVP") ==0)
+            servMgr->allowOnlyVP = getCGIargBOOL(arg);
+        else if (strcmp(curr, "kickKeepTime") ==0)
+            servMgr->kickKeepTime = getCGIargINT(arg);
+        else if (strcmp(curr, "maxRelaysIndexTxt") ==0)        // for PCRaw (relay)
+            servMgr->maxRelaysIndexTxt = getCGIargINT(arg);
+        else if (strcmp(curr, "disableAutoBumpIfDirect") ==0) //JP-MOD
+            disableAutoBumpIfDirect = atoi(arg) ? 1 : 0;
+        else if (strcmp(curr, "asxDetailedMode") ==0) //JP-MOD
+            asxDetailedMode = getCGIargINT(arg);
     }
 
     servMgr->showLog = showLog;
     servMgr->allowServer1 = allowServer1;
     servMgr->allowServer2 = allowServer2;
+    servMgr->enableGetName = enableGetName;
+    servMgr->allowConnectPCST = allowConnectPCST;
+    servMgr->disableAutoBumpIfDirect = disableAutoBumpIfDirect; //JP-MOD
+    servMgr->asxDetailedMode = asxDetailedMode; //JP-MOD
+    if (!(servMgr->allowServer1 & ALLOW_HTML) && !(servMgr->allowServer2 & ALLOW_HTML))
+        servMgr->allowServer1 |= ALLOW_HTML;
 
     if (servMgr->serverHost.port != newPort)
     {
@@ -1515,6 +1572,9 @@ void Servent::CMD_fetch(char *cmd, HTTP& http, HTML& html, String& jumpStr)
             info.contentTypeStr = ChanInfo::getTypeStr(type);
             info.MIMEType = ChanInfo::getMIMEType(type);
             info.streamExt = ChanInfo::getTypeExt(type);
+        }else if (strcmp(curr, "bcstClap") == 0) //JP-MOD
+        {
+            info.ppFlags |= ServMgr::bcstClap;
         }
     }
 
@@ -1651,7 +1711,10 @@ void Servent::CMD_stop(char *cmd, HTTP& http, HTML& html, String& jumpStr)
 
     Channel *c = chanMgr->findChannelByID(id);
     if (c)
+    {
         c->thread.active = false;
+        c->thread.finish = true;
+    }
 
     sys->sleep(500);
     jumpStr.sprintf("/%s/channels.html", servMgr->htmlPath);
@@ -1806,803 +1869,164 @@ void Servent::CMD_login(char *cmd, HTTP& http, HTML& html, String& jumpStr)
     http.writeLine("");
 }
 
-void Servent::handshakeCMD(char *cmd)
+void Servent::CMD_setmeta(char *cmd, HTTP& http, HTML& html, String& jumpStr)
 {
-    char result[MAX_CGI_LEN];
     char arg[MAX_CGI_LEN];
     char curr[MAX_CGI_LEN];
 
-    char    jumpStr[128];
-    char    *jumpArg=NULL;
-    bool    retHTML=true;
-    strcpy_s(result, sizeof(result),"OK");
+    char *cp = cmd;
+    while (cp=nextCGIarg(cp,curr,arg))
+    {
+        if (strcmp(curr,"name")==0)
+        {
+            String chname;
+            chname.set(arg,String::T_ESC);
+            chname.convertTo(String::T_ASCII);
+
+            Channel *c = chanMgr->findChannelByName(chname.cstr());
+            if (c && (c->isActive()) && (c->status == Channel::S_BROADCASTING)){
+                ChanInfo newInfo = c->info;
+                newInfo.ppFlags = ServMgr::bcstNone; //JP-MOD
+                while (cmd=nextCGIarg(cmd,curr,arg))
+                {
+                    String chmeta;
+                    chmeta.set(arg,String::T_ESC);
+                    chmeta.convertTo(String::T_ASCII);
+                    if (strcmp(curr,"desc")==0)
+                        newInfo.desc = chmeta.cstr();
+                    else if (strcmp(curr,"url")==0)
+                        newInfo.url = chmeta.cstr();
+                    else if (strcmp(curr,"genre")==0)
+                        newInfo.genre = chmeta.cstr();
+                    else if (strcmp(curr,"comment")==0)
+                        newInfo.comment = chmeta.cstr();
+                    else if (strcmp(curr,"bcstClap")==0) //JP-MOD
+                        newInfo.ppFlags |= ServMgr::bcstClap;
+                    else if (strcmp(curr,"t_contact")==0)
+                        newInfo.track.contact = chmeta.cstr();
+                    else if (strcmp(curr,"t_title")==0)
+                        newInfo.track.title = chmeta.cstr();
+                    else if (strcmp(curr,"t_artist")==0)
+                        newInfo.track.artist = chmeta.cstr();
+                    else if (strcmp(curr,"t_album")==0)
+                        newInfo.track.album = chmeta.cstr();
+                    else if (strcmp(curr,"t_genre")==0)
+                        newInfo.track.genre = chmeta.cstr();
+                }
+                c->updateInfo(newInfo);
+                char idstr[64];
+                newInfo.id.toStr(idstr);
+                jumpStr.sprintf("/%s/relayinfo.html?id=%s", servMgr->htmlPath, idstr);
+            }
+        }
+    }
+    if (jumpStr.isEmpty())
+    {
+        jumpStr.sprintf("%s", "/");
+    }
+}
+
+void Servent::handshakeCMD(char *cmd)
+{
+    String jumpStr;
 
     HTTP http(*sock);
-    HTML html("",*sock);
+    HTML html("", *sock);
 
-
-    if (!handshakeAuth(http,cmd,true))
+    if (!handshakeAuth(http, cmd, true))
         return;
 
     try
     {
-        if (cmpCGIarg(cmd,"cmd=","redirect"))
+        if (cmpCGIarg(cmd, "cmd=", "redirect"))
         {
-            const char *j = getCGIarg(cmd,"url=");
-            if (j)
-            {
-                termArgs(cmd);
-                String url;
-                url.set(j,String::T_ESC);
-                url.convertTo(String::T_ASCII);
-
-                if (!url.contains("http://"))
-                    url.prepend("http://");
-
-                html.setRefreshURL(url.cstr());
-                html.startHTML();
-                    html.addHead();
-                    html.startBody();
-                        html.startTagEnd("h3","Please wait...");
-                    html.end();
-                html.end();
-
-            }
+            CMD_redirect(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "viewxml"))
+        {
+            CMD_viewxml(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "clearlog"))
+        {
+            CMD_clearlog(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "save"))
+        {
+            CMD_save(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "reg"))
+        {
+            CMD_reg(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "edit_bcid"))
+        {
+            CMD_edit_bcid(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "add_bcid"))
+        {
+            CMD_add_bcid(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "apply"))
+        {
+            CMD_apply(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "fetch"))
+        {
+            CMD_fetch(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "stopserv"))
+        {
+            CMD_stopserv(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "hitlist"))
+        {
+            CMD_hitlist(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "clear"))
+        {
+            CMD_clear(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "upgrade"))
+        {
+            CMD_upgrade(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "connect"))
+        {
+            CMD_connect(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "shutdown"))
+        {
+            CMD_shutdown(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "stop"))
+        {
+            CMD_stop(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "bump"))
+        {
+            CMD_bump(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "keep"))
+        {
+            CMD_keep(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "relay"))
+        {
+            CMD_relay(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "net=", "add"))
+        {
+            CMD_net_add(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "logout"))
+        {
+            CMD_logout(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "login"))
+        {
+            CMD_login(cmd, http, html, jumpStr);
+        }else if (cmpCGIarg(cmd, "cmd=", "setmeta"))
+        {
+            CMD_setmeta(cmd, http, html, jumpStr);
         }else{
-
-            if (cmpCGIarg(cmd,"cmd=","viewxml"))
-            {
-
-                handshakeXML();
-                retHTML = false;
-            }else if (cmpCGIarg(cmd,"cmd=","clearlog"))
-            {
-                sys->logBuf->clear();
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/viewlog.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-
-            }else if (cmpCGIarg(cmd,"cmd=","save"))
-            {
-
-                peercastInst->saveSettings();
-
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/settings.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-            }else if (cmpCGIarg(cmd,"cmd=","reg"))
-            {
-                char idstr[128];
-                chanMgr->broadcastID.toStr(idstr);
-                sprintf_s(jumpStr, sizeof(jumpStr),"http://www.peercast.org/register/?id=%s",idstr);                    
-                jumpArg = jumpStr;
-            }else if (cmpCGIarg(cmd,"cmd=","edit_bcid"))
-            {
-                char *cp = cmd;
-                GnuID id;
-                BCID *bcid;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    if (strcmp(curr,"id")==0)
-                        id.fromStr(arg);
-                    else if (strcmp(curr,"del")==0)
-                        servMgr->removeValidBCID(id);
-                    else if (strcmp(curr,"valid")==0)
-                    {
-                        bcid = servMgr->findValidBCID(id);
-                        if (bcid)
-                            bcid->valid = getCGIargBOOL(arg);
-                    }
-                }
-                peercastInst->saveSettings();
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/bcid.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-
-            }else if (cmpCGIarg(cmd,"cmd=","add_bcid"))
-            {
-                BCID *bcid = new BCID();
-
-                char *cp = cmd;
-                bool result=false;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    if (strcmp(curr,"id")==0)
-                        bcid->id.fromStr(arg);
-                    else if (strcmp(curr,"name")==0)
-                        bcid->name.set(arg);
-                    else if (strcmp(curr,"email")==0)
-                        bcid->email.set(arg);
-                    else if (strcmp(curr,"url")==0)
-                        bcid->url.set(arg);
-                    else if (strcmp(curr,"valid")==0)
-                        bcid->valid = getCGIargBOOL(arg);
-                    else if (strcmp(curr,"result")==0)
-                        result = true;
-
-                }
-    
-                LOG_DEBUG("Adding BCID : %s",bcid->name.cstr());            
-                servMgr->addValidBCID(bcid);
-                peercastInst->saveSettings();
-                if (result)
-                {
-                    http.writeLine(HTTP_SC_OK);
-                    http.writeLine("");
-                    http.writeString("OK");
-                }else
-                {
-                    sprintf_s(jumpStr, sizeof(jumpStr),"/%s/bcid.html",servMgr->htmlPath);                    
-                    jumpArg = jumpStr;
-                }
-
-
-            }else if (cmpCGIarg(cmd,"cmd=","apply"))
-            {    
-                //servMgr->numFilters = 0;
-                ServFilter *currFilter=servMgr->filters;
-                bool beginfilt = false;
-
-                bool brRoot=false;
-                bool getUpd=false;
-                int showLog=0;
-                int allowServer1=0;
-                int allowServer2=0;
-                int newPort=servMgr->serverHost.port;
-                int enableGetName = 0;
-                int allowConnectPCST = 0;
-                int disableAutoBumpIfDirect = 0; //JP-MOD
-                int asxDetailedMode = 0; //JP-MOD
-
-                char *cp = cmd;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    LOG_DEBUG("ARG: %s = %s", curr, arg);
-
-                    // server
-                    if (strcmp(curr,"serveractive")==0)
-                        servMgr->autoServe = getCGIargBOOL(arg);
-                    else if (strcmp(curr,"port")==0)
-                        newPort = getCGIargINT(arg);
-                    else if (strcmp(curr,"icymeta")==0)
-                    {
-                        int iv = getCGIargINT(arg);
-                        if (iv < 0) iv = 0;
-                        else if (iv > 16384) iv = 16384;
-
-                        chanMgr->icyMetaInterval = iv;
-
-                    }else if (strcmp(curr,"passnew")==0)
-                        strcpy_s(servMgr->password, sizeof(servMgr->password),arg);
-                    else if (strcmp(curr,"root")==0)
-                        servMgr->isRoot = getCGIargBOOL(arg);
-                    else if (strcmp(curr,"brroot")==0)
-                        brRoot = getCGIargBOOL(arg);
-                    else if (strcmp(curr,"getupd")==0)
-                        getUpd = getCGIargBOOL(arg);
-                    else if (strcmp(curr,"huint")==0)
-                        chanMgr->setUpdateInterval(getCGIargINT(arg));
-                    else if (strcmp(curr,"forceip")==0)
-                        servMgr->forceIP = arg;
-                    else if (strcmp(curr,"htmlPath")==0)
-                    {
-                        strcpy_s(servMgr->htmlPath, sizeof(servMgr->htmlPath),"html/");
-                        strcat_s(servMgr->htmlPath,arg);
-                    }else if (strcmp(curr,"djmsg")==0)
-                    {
-                        String msg;
-                        msg.set(arg,String::T_ESC);
-                        msg.convertTo(String::T_UNICODE);
-                        chanMgr->setBroadcastMsg(msg);
-                    }
-                    else if (strcmp(curr,"pcmsg")==0)
-                    {
-                        servMgr->rootMsg.set(arg,String::T_ESC);
-                        servMgr->rootMsg.convertTo(String::T_UNICODE);
-                    }else if (strcmp(curr,"minpgnu")==0)
-                        servMgr->minGnuIncoming = atoi(arg);
-                    else if (strcmp(curr,"maxpgnu")==0)
-                        servMgr->maxGnuIncoming = atoi(arg);
-                    
-
-
-                    // connections
-                    else if (strcmp(curr,"maxcin")==0)
-                        servMgr->maxControl = getCGIargINT(arg);
-
-                    else if (strcmp(curr,"maxup")==0)
-                        servMgr->maxBitrateOut = getCGIargINT(arg);
-                    else if (strcmp(curr,"maxrelays")==0)
-                        servMgr->setMaxRelays(getCGIargINT(arg));
-                    else if (strcmp(curr,"maxdirect")==0)
-                        servMgr->maxDirect = getCGIargINT(arg);
-                    else if (strcmp(curr,"maxrelaypc")==0)
-                        chanMgr->maxRelaysPerChannel = getCGIargINT(arg);
-                    else if (strncmp(curr,"filt_",5)==0)
-                    {
-                        if (!beginfilt) {
-                            servMgr->numFilters = 0;
-                            beginfilt = true;
-                        }
-                        char *fs = curr+5;
-                        {
-                            if (strncmp(fs,"ip",2)==0)        // ip must be first
-                            {
-                                currFilter = &servMgr->filters[servMgr->numFilters];
-                                currFilter->init();    
-                                currFilter->host.fromStrIP(arg,DEFAULT_PORT);
-                                if ((currFilter->host.ip) && (servMgr->numFilters < (ServMgr::MAX_FILTERS-1)))
-                                {
-                                    servMgr->numFilters++;
-                                    servMgr->filters[servMgr->numFilters].init();    // clear new entry
-                                    LOG_DEBUG("numFilters = %d", servMgr->numFilters);
-                                }
-
-                            }else if (strncmp(fs,"bn",2)==0)
-                                currFilter->flags |= ServFilter::F_BAN;
-                            else if (strncmp(fs,"pr",2)==0)
-                                currFilter->flags |= ServFilter::F_PRIVATE;
-                            else if (strncmp(fs,"nw",2)==0)
-                                currFilter->flags |= ServFilter::F_NETWORK;
-                            else if (strncmp(fs,"di",2)==0)
-                                currFilter->flags |= ServFilter::F_DIRECT;
-                        }
-                    }
-
-                    // client
-                    else if (strcmp(curr,"clientactive")==0)
-                        servMgr->autoConnect = getCGIargBOOL(arg);
-                    else if (strcmp(curr,"yp")==0)
-                    {
-                        if (!PCP_FORCE_YP)
-                        {
-                            String str(arg,String::T_ESC);
-                            str.convertTo(String::T_ASCII);
-                            servMgr->rootHost = str;
-                        }
-                    }
-                    else if (strcmp(curr,"yp2")==0)
-                    {
-                        if (!PCP_FORCE_YP)
-                        {
-                            String str(arg,String::T_ESC);
-                            str.convertTo(String::T_ASCII);
-                            servMgr->rootHost2 = str;
-                        }
-                    }
-                    else if (strcmp(curr,"deadhitage")==0)
-                        chanMgr->deadHitAge = getCGIargINT(arg);
-                    else if (strcmp(curr,"refresh")==0)
-                        servMgr->refreshHTML = getCGIargINT(arg);
-                    else if (strcmp(curr,"auth")==0)
-                    {
-                        if (strcmp(arg,"cookie")==0)
-                            servMgr->authType = ServMgr::AUTH_COOKIE;
-                        else if (strcmp(arg,"http")==0)
-                            servMgr->authType = ServMgr::AUTH_HTTPBASIC;
-
-                    }else if (strcmp(curr,"expire")==0)
-                    {
-                        if (strcmp(arg,"session")==0)
-                            servMgr->cookieList.neverExpire = false;
-                        else if (strcmp(arg,"never")==0)
-                            servMgr->cookieList.neverExpire = true;
-                    }
-
-                    else if (strcmp(curr,"logDebug")==0)
-                        showLog |= atoi(arg)?(1<<LogBuffer::T_DEBUG):0;
-                    else if (strcmp(curr,"logErrors")==0)
-                        showLog |= atoi(arg)?(1<<LogBuffer::T_ERROR):0;
-                    else if (strcmp(curr,"logNetwork")==0)
-                        showLog |= atoi(arg)?(1<<LogBuffer::T_NETWORK):0;
-                    else if (strcmp(curr,"logChannel")==0)
-                        showLog |= atoi(arg)?(1<<LogBuffer::T_CHANNEL):0;
-
-                    else if (strcmp(curr,"allowHTML1")==0)
-                        allowServer1 |= atoi(arg)?(ALLOW_HTML):0;
-                    else if (strcmp(curr,"allowNetwork1")==0)
-                        allowServer1 |= atoi(arg)?(ALLOW_NETWORK):0;
-                    else if (strcmp(curr,"allowBroadcast1")==0)
-                        allowServer1 |= atoi(arg)?(ALLOW_BROADCAST):0;
-                    else if (strcmp(curr,"allowDirect1")==0)
-                        allowServer1 |= atoi(arg)?(ALLOW_DIRECT):0;
-
-                    else if (strcmp(curr,"allowHTML2")==0)
-                        allowServer2 |= atoi(arg)?(ALLOW_HTML):0;
-                    else if (strcmp(curr,"allowBroadcast2")==0)
-                        allowServer2 |= atoi(arg)?(ALLOW_BROADCAST):0;
-
-                    // JP-EX
-                    else if (strcmp(curr, "autoRelayKeep") ==0)
-                            servMgr->autoRelayKeep = getCGIargINT(arg);
-                    else if (strcmp(curr, "autoMaxRelaySetting") ==0)
-                            servMgr->autoMaxRelaySetting = getCGIargINT(arg);
-                    else if (strcmp(curr, "autoBumpSkipCount") ==0)
-                            servMgr->autoBumpSkipCount = getCGIargINT(arg);
-                    else if (strcmp(curr, "kickPushStartRelays") ==0)
-                            servMgr->kickPushStartRelays = getCGIargINT(arg);
-                    else if (strcmp(curr, "kickPushInterval") ==0)
-                            servMgr->kickPushInterval = getCGIargINT(arg);
-                    else if (strcmp(curr, "allowConnectPCST") ==0)
-                        allowConnectPCST = atoi(arg) ? 1 : 0;
-                    else if (strcmp(curr, "enableGetName") ==0)
-                        enableGetName = atoi(arg)? 1 : 0;
-                    else if (strcmp(curr, "autoPort0Kick") ==0)
-                        servMgr->autoPort0Kick = getCGIargBOOL(arg);
-                    else if (strcmp(curr, "allowOnlyVP") ==0)
-                        servMgr->allowOnlyVP = getCGIargBOOL(arg);
-                    else if (strcmp(curr, "kickKeepTime") ==0)
-                        servMgr->kickKeepTime = getCGIargINT(arg);
-
-                    else if (strcmp(curr, "maxRelaysIndexTxt") ==0)        // for PCRaw (relay)
-                        servMgr->maxRelaysIndexTxt = getCGIargINT(arg);
-                    else if (strcmp(curr, "disableAutoBumpIfDirect") ==0) //JP-MOD
-                        disableAutoBumpIfDirect = atoi(arg) ? 1 : 0;
-                    else if (strcmp(curr, "asxDetailedMode") ==0) //JP-MOD
-                        asxDetailedMode = getCGIargINT(arg);
-                }
-
-
-
-                servMgr->showLog = showLog;
-                servMgr->allowServer1 = allowServer1;
-                servMgr->allowServer2 = allowServer2;
-                servMgr->enableGetName = enableGetName;
-                servMgr->allowConnectPCST = allowConnectPCST;
-                servMgr->disableAutoBumpIfDirect = disableAutoBumpIfDirect; //JP-MOD
-                servMgr->asxDetailedMode = asxDetailedMode; //JP-MOD
-                if (!(servMgr->allowServer1 & ALLOW_HTML) && !(servMgr->allowServer2 & ALLOW_HTML))
-                    servMgr->allowServer1 |= ALLOW_HTML;
-
-                if (servMgr->serverHost.port != newPort)
-                {
-                    Host lh(ClientSocket::getIP(NULL),newPort);
-                    char ipstr[64];
-                    lh.toStr(ipstr);
-                    sprintf_s(jumpStr, sizeof(jumpStr),"http://%s/%s/settings.html",ipstr,servMgr->htmlPath);                    
-
-                    servMgr->serverHost.port = newPort;
-                    servMgr->restartServer=true;
-                    //html.setRefresh(3);
-                    //html.setRefreshURL(jumpStr);
-                    //html.startHTML();
-                    //html.addHead();
-                    //    html.startBody();
-                    //        html.startTagEnd("h1","Please wait...");
-                    //    html.end();
-                    //html.end();
-
-                    
-
-                    //char ipstr[64];
-                    //servMgr->serverHost.toStr(ipstr);
-                    //sprintf_s(jumpStr, sizeof(jumpStr),"/%s/settings.html",ipstr,servMgr->htmlPath);                    
-                    jumpArg = jumpStr;
-
-                }else
-                {
-                    sprintf_s(jumpStr, sizeof(jumpStr),"/%s/settings.html",servMgr->htmlPath);                    
-                    jumpArg = jumpStr;
-                }
-
-                peercastInst->saveSettings();
-
-                peercastApp->updateSettings();
-
-                if ((servMgr->isRoot) && (brRoot))
-                    servMgr->broadcastRootSettings(getUpd);
-
-
-
-                
-
-            }else if (cmpCGIarg(cmd,"cmd=","fetch"))
-            {
-
-                ChanInfo info;
-                String curl;
-
-                char *cp = cmd;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    if (strcmp(curr,"url")==0)
-                    {
-                        curl.set(arg,String::T_ESC);
-                        curl.convertTo(String::T_UNICODE);
-                    }else if (strcmp(curr,"name")==0)
-                    {
-                        info.name.set(arg,String::T_ESC);
-                        info.name.convertTo(String::T_UNICODE);
-                    }else if (strcmp(curr,"desc")==0)
-                    {
-                        info.desc.set(arg,String::T_ESC);
-                        info.desc.convertTo(String::T_UNICODE);
-                    }else if (strcmp(curr,"genre")==0)
-                    {
-                        info.genre.set(arg,String::T_ESC);
-                        info.genre.convertTo(String::T_UNICODE);
-                    }else if (strcmp(curr,"contact")==0)
-                    {
-                        info.url.set(arg,String::T_ESC);
-                        info.url.convertTo(String::T_UNICODE);
-                    }else if (strcmp(curr,"bitrate")==0)
-                    {
-                        info.bitrate = atoi(arg);
-                    }else if (strcmp(curr,"type")==0)
-                    {
-                        info.contentType = ChanInfo::getTypeFromStr(arg);
-                    }else if (strcmp(curr,"bcstClap")==0) //JP-MOD
-                    {
-                        info.ppFlags |= ServMgr::bcstClap;
-                    }
-
-                }
-                
-                info.bcID = chanMgr->broadcastID;
-
-                Channel *c = chanMgr->createChannel(info,NULL);
-                if (c)
-                    c->startURL(curl.cstr());
-
-
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/relays.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-
-            }else if (cmpCGIarg(cmd,"cmd=","stopserv"))
-            {
-
-                char *cp = cmd;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    if (strcmp(curr,"index")==0)
-                    {
-                        Servent *s = servMgr->findServentByIndex(atoi(arg));
-                        if (s)
-                            s->abort();
-                    }
-                }
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/connections.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-
-
-            }else if (cmpCGIarg(cmd,"cmd=","hitlist"))
-            {            
-                    
-                bool stayConnected=hasCGIarg(cmd,"relay");
-
-                int index = 0;
-                ChanHitList *chl = chanMgr->hitlist;                
-                while (chl)
-                {
-                    if (chl->isUsed())
-                    {
-                        char tmp[64];
-                        sprintf_s(tmp, sizeof(tmp),"c%d=",index);
-                        if (cmpCGIarg(cmd,tmp,"1"))
-                        {
-                            Channel *c;
-                            if (!(c=chanMgr->findChannelByID(chl->info.id)))
-                            {
-                                c = chanMgr->createChannel(chl->info,NULL);
-                                if (!c)
-                                    throw StreamException("out of channels");
-                                c->stayConnected = stayConnected;
-                                c->startGet();
-                            }
-                        }
-                    }
-                    chl = chl->next;
-                    index++;
-                }
-
-                const char *findArg = getCGIarg(cmd,"keywords=");
-
-                if (hasCGIarg(cmd,"relay"))
-                {
-                    sys->sleep(500);
-                    sprintf_s(jumpStr, sizeof(jumpStr),"/%s/relays.html",servMgr->htmlPath);                    
-                    jumpArg = jumpStr;
-                }
-            }else if (cmpCGIarg(cmd,"cmd=","clear"))
-            {
-                char *cp = cmd;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    if (strcmp(curr,"hostcache")==0)
-                        servMgr->clearHostCache(ServHost::T_SERVENT);
-                    else if (strcmp(curr,"hitlists")==0)
-                        chanMgr->clearHitLists();
-                    else if (strcmp(curr,"packets")==0)
-                    {
-                        stats.clearRange(Stats::PACKETSSTART,Stats::PACKETSEND);
-                        servMgr->numVersions = 0;
-                    }
-                }
-
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/index.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-
-            }else if (cmpCGIarg(cmd,"cmd=","upgrade"))
-            {
-                if (servMgr->downloadURL[0])
-                {
-                    sprintf_s(jumpStr, sizeof(jumpStr),"/admin?cmd=redirect&url=%s",servMgr->downloadURL);
-                    jumpArg = jumpStr;
-                }
-            }else if (cmpCGIarg(cmd,"cmd=","connect"))
-            {            
-                    
-
-                Servent *s = servMgr->servents;
-                {
-                    char tmp[64];
-                    sprintf_s(tmp, sizeof(tmp),"c%d=",s->serventIndex);
-                    if (cmpCGIarg(cmd,tmp,"1"))
-                    {
-                        if (hasCGIarg(cmd,"stop"))
-                            s->thread.active = false;
-                    }
-                    s=s->next;
-                }
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/connections.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-
-            }else if (cmpCGIarg(cmd,"cmd=","shutdown"))
-            {
-                servMgr->shutdownTimer = 1;
-
-            }else if (cmpCGIarg(cmd,"cmd=","stop"))
-            {
-                GnuID id;
-                char *cp = cmd;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    if (strcmp(curr,"id")==0)
-                        id.fromStr(arg);
-                }
-
-                Channel *c = chanMgr->findChannelByID(id);
-                if (c){
-                    c->thread.active = false;
-                    c->thread.finish = true;
-                }
-
-                sys->sleep(500);
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/relays.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-
-            }else if (cmpCGIarg(cmd,"cmd=","bump"))
-            {
-                GnuID id;
-                char *cp = cmd;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    if (strcmp(curr,"id")==0)
-                        id.fromStr(arg);
-                }
-
-                Channel *c = chanMgr->findChannelByID(id);
-                if (c)
-                    c->bump = true;
-
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/relays.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-
-            }else if (cmpCGIarg(cmd,"cmd=","keep"))
-            {
-                GnuID id;
-                char *cp = cmd;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    if (strcmp(curr,"id")==0)
-                        id.fromStr(arg);
-                }
-
-                Channel *c = chanMgr->findChannelByID(id);
-                if (c)
-                { //JP-Patch
-                    //c->stayConnected = true;
-                    if (!c->stayConnected)
-                    {
-                        //if (servMgr->getFirewall() == ServMgr::FW_OFF)
-                        c->stayConnected = true;
-                    }
-                    else
-                        c->stayConnected = false;
-                } //JP-Patch
-
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/relays.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-
-            }else if (cmpCGIarg(cmd,"cmd=","relay"))
-            {
-                ChanInfo info;
-                char *cp = cmd;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    if (strcmp(curr,"id")==0)
-                        info.id.fromStr(arg);
-                }
-
-
-                if (!chanMgr->findChannelByID(info.id))
-                {
-
-                    ChanHitList *chl = chanMgr->findHitList(info);
-                    if (!chl)
-                        throw StreamException("channel not found");
-
-
-                    Channel *c = chanMgr->createChannel(chl->info,NULL);
-                    if (!c)
-                        throw StreamException("out of channels");
-
-                    c->stayConnected = true;
-                    c->startGet();
-                }
-
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/relays.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-
-
-            }else if (cmpCGIarg(cmd,"net=","add"))
-            {
-                
-                GnuID id;
-                id.clear();
-                while (cmd=nextCGIarg(cmd,curr,arg))
-                {
-                    if (strcmp(curr,"ip")==0)
-                    {
-                        Host h;
-                        h.fromStrIP(arg,DEFAULT_PORT);
-                        if (servMgr->addOutgoing(h,id,true))
-                            LOG_NETWORK("Added connection: %s",arg);
-
-                    }else if (strcmp(curr,"id")==0)
-                    {
-                        id.fromStr(arg);
-                    }
-
-                }
-
-            }else if (cmpCGIarg(cmd,"cmd=","logout"))
-            {
-                jumpArg = "/";
-                servMgr->cookieList.remove(cookie);
-
-            }else if (cmpCGIarg(cmd,"cmd=","login"))
-            {
-                GnuID id;
-                char idstr[64];
-                id.generate();
-                id.toStr(idstr);
-
-                cookie.set(idstr,sock->host.ip);
-                servMgr->cookieList.add(cookie);    
-
-                http.writeLine(HTTP_SC_FOUND);
-                if (servMgr->cookieList.neverExpire)
-                    http.writeLineF("%s id=%s; path=/; expires=\"Mon, 01-Jan-3000 00:00:00 GMT\";",HTTP_HS_SETCOOKIE,idstr);
-                else
-                    http.writeLineF("%s id=%s; path=/;",HTTP_HS_SETCOOKIE,idstr);
-                http.writeLineF("Location: /%s/index.html",servMgr->htmlPath);
-                http.writeLine("");
-
-            }else if (cmpCGIarg(cmd,"cmd=","setmeta"))
-            {
-                char *cp = cmd;
-                while (cp=nextCGIarg(cp,curr,arg))
-                {
-                    if (strcmp(curr,"name")==0)
-                    {
-/*                        String chname;
-                        chname.set(arg,String::T_ESC);
-                        chname.convertTo(String::T_ASCII);
-                        for(int i=0; i<ChanMgr::MAX_CHANNELS; i++)
-                        {
-                            Channel *c = &chanMgr->channels[i];
-                            if ((c->isActive()) && (c->status == Channel::S_BROADCASTING) && (strcmp(c->info.name.cstr(),chname.cstr())==0)) 
-                            {    
-                                ChanInfo newInfo = c->info;
-
-                                while (cmd=nextCGIarg(cmd,curr,arg))
-                                {
-                                    String chmeta;
-                                    chmeta.set(arg,String::T_ESC);
-                                    chmeta.convertTo(String::T_ASCII);
-                                    if (strcmp(curr,"desc")==0)
-                                        newInfo.desc = chmeta.cstr();
-                                    else if (strcmp(curr,"url")==0)
-                                        newInfo.url = chmeta.cstr();
-                                    else if (strcmp(curr,"genre")==0)
-                                        newInfo.genre = chmeta.cstr();
-                                    else if (strcmp(curr,"comment")==0)
-                                        newInfo.comment = chmeta.cstr();
-                                    else if (strcmp(curr,"t_contact")==0)
-                                        newInfo.track.contact = chmeta.cstr();
-                                    else if (strcmp(curr,"t_title")==0)
-                                        newInfo.track.title = chmeta.cstr();
-                                    else if (strcmp(curr,"t_artist")==0)
-                                        newInfo.track.artist = chmeta.cstr();
-                                    else if (strcmp(curr,"t_album")==0)
-                                        newInfo.track.album = chmeta.cstr();
-                                    else if (strcmp(curr,"t_genre")==0)
-                                        newInfo.track.genre = chmeta.cstr();
-                                }
-                                c->updateInfo(newInfo);
-                                char idstr[64];
-                                newInfo.id.toStr(idstr);
-                                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/relayinfo.html?id=%s",servMgr->htmlPath,idstr);
-                                jumpArg = jumpStr;
-                                break;
-                            }
-                        }*/
-                        String chname;
-                        chname.set(arg,String::T_ESC);
-                        chname.convertTo(String::T_ASCII);
-
-                        Channel *c = chanMgr->findChannelByName(chname.cstr());
-                        if (c && (c->isActive()) && (c->status == Channel::S_BROADCASTING)){
-                            ChanInfo newInfo = c->info;
-                            newInfo.ppFlags = ServMgr::bcstNone; //JP-MOD
-                            while (cmd=nextCGIarg(cmd,curr,arg))
-                            {
-                                String chmeta;
-                                chmeta.set(arg,String::T_ESC);
-                                chmeta.convertTo(String::T_ASCII);
-                                if (strcmp(curr,"desc")==0)
-                                    newInfo.desc = chmeta.cstr();
-                                else if (strcmp(curr,"url")==0)
-                                    newInfo.url = chmeta.cstr();
-                                else if (strcmp(curr,"genre")==0)
-                                    newInfo.genre = chmeta.cstr();
-                                else if (strcmp(curr,"comment")==0)
-                                    newInfo.comment = chmeta.cstr();
-                                else if (strcmp(curr,"bcstClap")==0) //JP-MOD
-                                    newInfo.ppFlags |= ServMgr::bcstClap;
-                                else if (strcmp(curr,"t_contact")==0)
-                                    newInfo.track.contact = chmeta.cstr();
-                                else if (strcmp(curr,"t_title")==0)
-                                    newInfo.track.title = chmeta.cstr();
-                                else if (strcmp(curr,"t_artist")==0)
-                                    newInfo.track.artist = chmeta.cstr();
-                                else if (strcmp(curr,"t_album")==0)
-                                    newInfo.track.album = chmeta.cstr();
-                                else if (strcmp(curr,"t_genre")==0)
-                                    newInfo.track.genre = chmeta.cstr();
-                            }
-                            c->updateInfo(newInfo);
-                            char idstr[64];
-                            newInfo.id.toStr(idstr);
-                            sprintf_s(jumpStr, sizeof(jumpStr),"/%s/relayinfo.html?id=%s",servMgr->htmlPath,idstr);
-                            jumpArg = jumpStr;
-                        }
-                    }
-                }
-                if (!jumpArg)
-                {
-                    jumpArg = "/";
-                }
-                
-            }else{
-
-                sprintf_s(jumpStr, sizeof(jumpStr),"/%s/index.html",servMgr->htmlPath);                    
-                jumpArg = jumpStr;
-            }
+            jumpStr.sprintf("/%s/index.html", servMgr->htmlPath);
         }
-
-    }catch(StreamException &e)
+    }catch (HTTPException &e)
     {
-        html.startTagEnd("h1","ERROR - %s",e.msg);
-        LOG_ERROR("html: %s",e.msg);
+        http.writeLine(e.msg);
+        http.writeLineF("%s %s", HTTP_HS_SERVER, PCX_AGENT);
+        http.writeLineF("%s %s", HTTP_HS_CONTENT, "text/html");
+        http.writeLine("");
+
+        html.startTagEnd("h1", "ERROR - %s", e.msg);
+
+        LOG_ERROR("html: %s", e.msg);
     }
 
-    if (retHTML)
+    if (jumpStr != "")
     {
-        if (jumpArg)
-        {
-            String jmp(jumpArg,String::T_HTML);
-            jmp.convertTo(String::T_ASCII);
-            html.locateTo(jmp.cstr());
-        }
+        String jmp(jumpStr, String::T_HTML);
+        jmp.convertTo(String::T_ASCII);
+        html.locateTo(jmp.cstr());
     }
 }
 
