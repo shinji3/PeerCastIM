@@ -42,6 +42,7 @@ void ChanPacket::init(ChanPacketv &p)
         throw StreamException("Packet data too large");
     pos = p.pos;
     sync = p.sync;
+    cont = p.cont;
     skip = p.skip;
     priority = p.priority;
     memcpy(data, p.data, len);
@@ -56,8 +57,6 @@ void ChanPacket::init(TYPE t, const void *p, unsigned int l, unsigned int _pos)
     len = l;
     memcpy(data, p, len);
     pos = _pos;
-    skip = false;
-    priority = 0;
 }
 
 // -----------------------------------
@@ -219,7 +218,7 @@ unsigned int    ChanPacketBuffer::getOldestNonContinuationPos()
 
     for (int64_t i = firstPos; i <= lastPos; i++)
     {
-        ChanPacket &p = packets[i%MAX_PACKETS];
+        ChanPacketv &p = packets[i%MAX_PACKETS];
         if (!p.cont)
             return p.pos;
     }

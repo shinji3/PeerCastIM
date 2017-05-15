@@ -89,11 +89,16 @@ public:
 class ChanPacketv
 {
 public:
-    enum {BSIZE = 0x100};
+    enum
+    {
+        BSIZE = 0x100
+    };
+
     ChanPacketv() 
     {
         init();
     }
+
     ~ChanPacketv()
     {
         free();
@@ -107,22 +112,26 @@ public:
             datasize = 0;
         }
     }
+
     void reset()
     {
         free();
         init();
     }
+
     void    init()
     {
         type = ChanPacket::T_UNKNOWN;
         len = 0;
         pos = 0;
         sync = 0;
+        cont = false;
         skip = false;
+        priority = 0;
         data = NULL;
         datasize = 0;
-        priority = 0;
     }
+
     void init(ChanPacket &p)
     {
         if (data && (datasize < p.len || datasize > p.len + BSIZE * 4)) {
@@ -134,6 +143,7 @@ public:
         len = p.len;
         pos = p.pos;
         sync = p.sync;
+        cont = p.cont;
         skip = p.skip;
         priority = p.priority;
         if (!data) {
@@ -142,6 +152,7 @@ public:
         }
         memcpy(data, p.data, len);
     }
+
     void init(ChanPacketv &p)
     {
         ChanPacket tp;
@@ -153,15 +164,15 @@ public:
     void    writePeercast(Stream &);
     void    readPeercast(Stream &);
 
-    unsigned int sync;
-    unsigned int pos;
     ChanPacket::TYPE type;
-    unsigned int len;
-    char *data;
-    unsigned int datasize;
-    bool skip;
-
-    int priority;
+    unsigned int     len;
+    unsigned int     pos;
+    unsigned int     sync;
+    bool             cont; // true if this is a continuation packet
+    bool             skip;
+    int              priority;
+    char             *data;
+    unsigned int     datasize;
 };
 
 // ----------------------------------
