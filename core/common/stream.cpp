@@ -128,8 +128,17 @@ int FileStream::read(void *ptr, int len)
 
     int r = (int)fread(ptr, 1, len, file);
 
-    updateTotals(r, 0);
-    return r;
+    if (r > 0)
+    {
+        updateTotals(r, 0);
+        int c = fgetc(file);
+        if (c != EOF)
+        {
+            ungetc(c, file);
+        }
+        return r;
+    }else
+        throw StreamException("End of file");
 }
 
 // -------------------------------------
@@ -226,27 +235,50 @@ void Stream::skip(int len)
 }
 
 // -------------------------------------
+unsigned int Stream::totalBytesIn()
+{
+    return stat.totalBytesIn();
+}
+
+unsigned int Stream::totalBytesOut()
+{
+    return stat.totalBytesOut();
+}
+
+unsigned int Stream::lastBytesIn()
+{
+    return stat.lastBytesIn();
+}
+
+unsigned int Stream::lastBytesOut()
+{
+    return stat.lastBytesOut();
+}
+
+unsigned int Stream::bytesInPerSec()
+{
+    return stat.bytesInPerSec();
+}
+
+unsigned int Stream::bytesOutPerSec()
+{
+    return stat.bytesOutPerSec();
+}
+
+// -------------------------------------
 void Stream::updateTotals(unsigned int in, unsigned int out)
 {
-    totalBytesIn += in;
-    totalBytesOut += out;
-
-    unsigned int tdiff = sys->getTime()-lastUpdate;
-    if (tdiff >= 5)
-    {
-        bytesInPerSec = (totalBytesIn-lastBytesIn)/tdiff;
-        bytesOutPerSec = (totalBytesOut-lastBytesOut)/tdiff;
-        lastBytesIn = totalBytesIn;
-        lastBytesOut = totalBytesOut;
-        lastUpdate = sys->getTime();
-    }
+    stat.update(in, out);
 }
 
 // -------------------------------------
 int Stream::readLine(char *in, int max)
 {
+    if (max <= 0)
+        return 0;
+
     int i=0;
-    max -= 2;
+    max--;
 
     while (max--)
     {

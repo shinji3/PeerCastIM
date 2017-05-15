@@ -53,7 +53,7 @@ void HTTPPushSource::stream(Channel *ch)
 int HTTPPushSource::getSourceRate()
 {
     if (m_sock != nullptr)
-        return m_sock->bytesInPerSec;
+        return m_sock->bytesInPerSec();
     else
         return 0;
 }

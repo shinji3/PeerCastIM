@@ -51,7 +51,7 @@ void URLSource::stream(Channel *ch)
 int URLSource::getSourceRate()
 {
     if (inputStream)
-        return inputStream->bytesInPerSec;
+        return inputStream->bytesInPerSec();
     else
         return 0;
 }

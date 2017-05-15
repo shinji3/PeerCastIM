@@ -36,13 +36,6 @@ class Stream
 public:
     Stream()
     : writeCRLF(true)
-    , totalBytesIn(0)
-    , totalBytesOut(0)
-    , lastBytesIn(0)
-    , lastBytesOut(0)
-    , bytesInPerSec(0)
-    , bytesOutPerSec(0)
-    , lastUpdate(0)
     , bitsBuffer(0)
     , bitsPos(0)
     {
@@ -230,13 +223,12 @@ public:
     unsigned char   bitsBuffer;
     unsigned int    bitsPos;
 
-    unsigned int totalBytesIn;
-    unsigned int totalBytesOut;
-    unsigned int lastBytesIn;
-    unsigned int lastBytesOut;
-    unsigned int bytesInPerSec;
-    unsigned int bytesOutPerSec;
-    unsigned int lastUpdate;
+    unsigned int totalBytesIn();
+    unsigned int totalBytesOut();
+    unsigned int lastBytesIn();
+    unsigned int lastBytesOut();
+    unsigned int bytesInPerSec();
+    unsigned int bytesOutPerSec();
 
     class Stat
     {
@@ -316,11 +308,14 @@ class FileStream : public Stream
 {
 public:
     FileStream() { file=NULL; }
+    ~FileStream() { close(); }
 
     void    openReadOnly(const char *);
     void    openReadOnly(const std::string& fn) { openReadOnly(fn.c_str()); }
     void    openWriteReplace(const char *);
+    void    openWriteReplace(const std::string& fn) { openWriteReplace(fn.c_str()); }
     void    openWriteAppend(const char *);
+    void    openWriteAppend(const std::string& fn) { openWriteAppend(fn.c_str()); }
     bool    isOpen() { return file!=NULL; }
     int     length();
     int     pos();

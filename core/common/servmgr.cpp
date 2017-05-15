@@ -748,7 +748,7 @@ unsigned int ServMgr::totalOutput(bool all)
         if (s->isConnected())
             if (all || !s->isPrivate())
                 if (s->sock)
-                    tot += s->sock->bytesOutPerSec;
+                    tot += s->sock->bytesOutPerSec();
         s=s->next;
     }
 
@@ -765,7 +765,7 @@ unsigned int ServMgr::totalInput(bool all)
         if (s->isConnected())
             if (all || !s->isPrivate())
                 if (s->sock)
-                    tot += s->sock->bytesInPerSec;
+                    tot += s->sock->bytesInPerSec();
         s=s->next;
     }
 
