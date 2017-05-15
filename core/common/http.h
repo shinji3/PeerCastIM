@@ -42,6 +42,9 @@ public:
 #define HTTP_SC_BADREQUEST   "HTTP/1.0 400 Bad Request"
 #define HTTP_SC_FORBIDDEN    "HTTP/1.0 403 Forbidden"
 #define HTTP_SC_SWITCH       "HTTP/1.0 101 Switch protocols"
+#define HTTP_SC_BADGATEWAY   "HTTP/1.0 502 Bad Gateway"
+#define HTTP_SC_SERVERERROR  "HTTP/1.0 500 Internal Server Error"
+#define HTTP_SC_URITOOLONG   "HTTP/1.0 414 URI Too Long"
 
 #define HTTP_PROTO1          "HTTP/1."
 
@@ -231,16 +234,16 @@ class HTTP : public IndirectStream
 {
 public:
     HTTP(Stream &s)
+        : arg(NULL)
     {
+        cmdLine[0] = '\0';
         init(&s);
     }
 
-    void    initRequest(const char *r)
-    {
-        strcpy_s(cmdLine, sizeof(cmdLine),r);
-    }
+    void    initRequest(const char *r);
     void    readRequest();
     bool    isRequest(const char *);
+    void    parseRequestLine();
 
     int     readResponse();
     bool    checkResponse(int);
@@ -252,7 +255,44 @@ public:
 
     void    getAuthUserPass(char *, char *, size_t, size_t);
 
+    void    readHeaders()
+    {
+        while(nextHeader());
+    }
+
+    void reset()
+    {
+        cmdLine[0] = '\0';
+        arg = NULL;
+        method = "";
+        requestUrl = "";
+        protocolVersion = "";
+        headers.clear();
+    }
+
+    HTTPRequest getRequest()
+    {
+        if (method.size() > 0 &&
+            requestUrl.size() > 0 &&
+            protocolVersion.size() > 0 &&
+            strlen(cmdLine) == 0)
+        {
+            return HTTPRequest(method, requestUrl, protocolVersion, headers);
+        }else
+        {
+            throw GeneralException("Request not ready");
+        }
+    }
+
+    void send(const HTTPResponse& response);
+
     char    cmdLine[8192], *arg;
+
+    std::string method;
+    std::string requestUrl;
+    std::string protocolVersion;
+    // ヘッダー名と値。ヘッダー名は全て大文字。
+    std::map<std::string,std::string> headers;
 };
 
 #endif
