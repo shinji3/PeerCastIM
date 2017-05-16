@@ -1337,6 +1337,7 @@ void readFilterSettings(IniFile &iniFile, ServFilter &sv)
 // --------------------------------------------------
 void ServMgr::loadSettings(const char *fn)
 {
+    int feedIndex = 0;
     IniFile iniFile;
 
     if (!iniFile.openReadOnly(fn))
@@ -2677,24 +2678,24 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
 
         if (strrchr(htmlPath, '/') &&
             strcmp(strrchr(htmlPath, '/') + 1, lang) == 0)
-            strcpy(buf, "1");
+            strcpy_s(buf, sizeof(buf), "1");
         else
-            strcpy(buf, "0");
+            strcpy_s(buf, sizeof(buf), "0");
     }else if (var == "numExternalChannels")
     {
-        sprintf(buf, "%d", channelDirectory.numChannels());
+        sprintf_s(buf, sizeof(buf), "%d", channelDirectory.numChannels());
     }else if (var == "numChannelFeedsPlusOne")
     {
-        sprintf(buf, "%d", channelDirectory.numFeeds() + 1);
+        sprintf_s(buf, sizeof(buf), "%d", channelDirectory.numFeeds() + 1);
     }else if (var == "numChannelFeeds")
     {
-        sprintf(buf, "%d", channelDirectory.numFeeds());
+        sprintf_s(buf, sizeof(buf), "%d", channelDirectory.numFeeds());
     }else if (var.startsWith("channelDirectory."))
     {
         return channelDirectory.writeVariable(out, var + strlen("channelDirectory."));
     }else if (var == "publicDirectoryEnabled")
     {
-        sprintf(buf, "%d", publicDirectoryEnabled);
+        sprintf_s(buf, sizeof(buf), "%d", publicDirectoryEnabled);
     }else if (var == "test")
     {
         out.writeUTF8(0x304b);
