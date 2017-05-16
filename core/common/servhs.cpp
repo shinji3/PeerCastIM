@@ -485,122 +485,29 @@ void Servent::handshakeSOURCE(char * in, bool isHTTP)
 }
 
 // -----------------------------------
-void Servent::handshakeHTTP(HTTP &http, bool isHTTP)
+void Servent::handshakeHEAD(HTTP &http, bool isHTTP)
 {
     char *in = http.cmdLine;
+    char *str = in + 4;
 
-    if (http.isRequest("GET /"))
+    if (str = stristr(str, "/stream/"))
     {
-        char *fn = in+4;
+        int cnt = 0;
 
-        char *pt = strstr(fn,HTTP_PROTO1);
-        if (pt)
-            pt[-1] = 0;
+        str += 8;
+        while (*str && (('0' <= *str && *str <= '9') || ('A' <= *str && *str <= 'F') || ('a' <= *str && *str <= 'f')))
+            ++cnt, ++str;
 
-        if (strncmp(fn,"/admin?",7)==0)
+        if (cnt == 32 && !strncmp(str, ".wmv", 4))
         {
-            if (!isAllowed(ALLOW_HTML))
-                throw HTTPException(HTTP_SC_UNAVAILABLE,503);
+            // interpret "HEAD /stream/[0-9a-fA-F]{32}.wmv" as GET
+            LOG_DEBUG("INFO: interpret as GET");
 
+            char *fn = in+5;
 
-            LOG_DEBUG("Admin client");
-            handshakeCMD(fn+7);
-
-        }else if (strncmp(fn,"/http/",6)==0)
-        {
-            String dirName = fn+6;
-
-            if (!isAllowed(ALLOW_HTML))
-                throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-            if (!handshakeAuth(http,fn,false))
-                throw HTTPException(HTTP_SC_UNAUTHORIZED,401);
-
-
-            handshakeRemoteFile(dirName);
-
-
-        }else if (strncmp(fn,"/html/",6)==0)
-        {
-            String dirName = fn+1;
-
-            if (!isAllowed(ALLOW_HTML))
-                throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-            if (handshakeAuth(http,fn,true))
-                handshakeLocalFile(dirName);
-
-
-        }else if (strncmp(fn,"/admin/?",8)==0)
-        {
-            if (!isAllowed(ALLOW_HTML))
-                throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-            LOG_DEBUG("Admin client");
-            handshakeCMD(fn+8);
-
-        }else if (strncmp(fn,"/admin.cgi",10)==0)
-        {
-            if (!isAllowed(ALLOW_BROADCAST))
-                throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-            const char *pwdArg = getCGIarg(fn,"pass=");
-            const char *songArg = getCGIarg(fn,"song=");
-            const char *mountArg = getCGIarg(fn,"mount=");
-            const char *urlArg = getCGIarg(fn,"url=");
-
-            if (pwdArg && songArg)
-            {
-                size_t i;
-                size_t slen = strlen(fn);
-                for(i=0; i<slen; i++)
-                    if (fn[i]=='&') fn[i] = 0;
-
-                Channel *c=chanMgr->channel;
-                while (c)
-                {
-                    if ((c->status == Channel::S_BROADCASTING) &&
-                       (c->info.contentType == ChanInfo::T_MP3) )
-                    {
-                        // if we have a mount point then check for it, otherwise update all channels.
-                        bool match=true;
-
-                        if (mountArg)
-                            match = strcmp(c->mount,mountArg)==0;
-
-                        if (match)
-                        {
-                            ChanInfo newInfo = c->info;
-                            newInfo.track.title.set(songArg,String::T_ESC);
-                            newInfo.track.title.convertTo(String::T_UNICODE);
-
-                            if (urlArg)
-                                if (urlArg[0])
-                                    newInfo.track.contact.set(urlArg,String::T_ESC);
-                            LOG_CHANNEL("Channel Shoutcast update: %s",songArg);
-                            c->updateInfo(newInfo);
-                        }
-                    }
-                    c=c->next;
-                }
-            }
-
-        }else if (strncmp(fn,"/pls/",5)==0)
-        {
-
-            if (!sock->host.isLocalhost())
-                if (!isAllowed(ALLOW_DIRECT) || !isFiltered(ServFilter::F_DIRECT))
-                    throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-            
-            ChanInfo info;
-            if (servMgr->getChannel(fn+5,info,isPrivate()))
-                handshakePLS(info,false);
-            else
-                throw HTTPException(HTTP_SC_NOTFOUND,404);
-
-        }else if (strncmp(fn,"/stream/",8)==0)
-        {
+            char *pt = strstr(fn,HTTP_PROTO1);
+            if (pt)
+                pt[-1] = 0;
 
             if (!sock->host.isLocalhost())
                 if (!isAllowed(ALLOW_DIRECT) || !isFiltered(ServFilter::F_DIRECT))
@@ -608,223 +515,72 @@ void Servent::handshakeHTTP(HTTP &http, bool isHTTP)
 
             triggerChannel(fn+8,ChanInfo::SP_HTTP,isPrivate());
 
-            
-        }else if (strncmp(fn,"/channel/",9)==0)
-        {
-
-            if (!sock->host.isLocalhost())
-                if (!isAllowed(ALLOW_NETWORK) || !isFiltered(ServFilter::F_NETWORK))
-                    throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-            triggerChannel(fn+9,ChanInfo::SP_PCP,false);
-
-        }else 
-        {
-            while (http.nextHeader());
-            http.writeLine(HTTP_SC_FOUND);
-            http.writeLineF("Location: /%s/index.html",servMgr->htmlPath);
-            http.writeLine("");
+            return;
         }
     }
-    else if (http.isRequest("POST /"))
-    {
-        char *fn = in+5;
 
-        char *pt = strstr(fn,HTTP_PROTO1);
-        if (pt)
-            pt[-1] = 0;
-
-        if (strncmp(fn,"/pls/",5)==0)
-        {
-
-            if (!sock->host.isLocalhost())
-                if (!isAllowed(ALLOW_DIRECT) || !isFiltered(ServFilter::F_DIRECT))
-                    throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-            
-            ChanInfo info;
-            if (servMgr->getChannel(fn+5,info,isPrivate()))
-                handshakePLS(info,false);
-            else
-                throw HTTPException(HTTP_SC_NOTFOUND,404);
-
-        }else if (strncmp(fn,"/stream/",8)==0)
-        {
-
-            if (!sock->host.isLocalhost())
-                if (!isAllowed(ALLOW_DIRECT) || !isFiltered(ServFilter::F_DIRECT))
-                    throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-            triggerChannel(fn+8,ChanInfo::SP_HTTP,isPrivate());
-
-        }else if (strncmp(fn,"/admin",7)==0)
-        {
-            if (!isAllowed(ALLOW_HTML))
-                throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-
-            LOG_DEBUG("Admin client");
-            while(http.nextHeader()){
-                LOG_DEBUG("%s",http.cmdLine);
-            }
-            char buf[8192];
-            if (sock->readLine(buf, sizeof(buf)) != 0){
-                handshakeCMD(buf);
-            }
-
-        }else 
-        {
-            while (http.nextHeader());
-            http.writeLine(HTTP_SC_FOUND);
-            http.writeLineF("Location: /%s/index.html",servMgr->htmlPath);
-            http.writeLine("");
-        }
-    }else if (http.isRequest("GIV"))
-    {
-        HTTP http(*sock);
-    
-        while (http.nextHeader()) ;
-
-        if (!isAllowed(ALLOW_NETWORK))
-            throw HTTPException(HTTP_SC_UNAVAILABLE, 503);
-
-        GnuID id;
-        id.clear();
-
-        char *idstr = strstr(in,"/");
-        if (idstr)
-            id.fromStr(idstr+1);
-
-        char ipstr[64];
-        sock->host.toStr(ipstr);
-
-        if (id.isSet())
-        {
-            // at the moment we don`t really care where the GIV came from, so just give to chan. no. if its waiting.
-            Channel *ch = chanMgr->findChannelByID(id);
-
-            if (!ch)
-                throw HTTPException(HTTP_SC_NOTFOUND, 404);
-
-            if (!ch->acceptGIV(sock))
-                throw HTTPException(HTTP_SC_UNAVAILABLE, 503);
-
-        
-            LOG_DEBUG("Accepted GIV channel %s from: %s",idstr,ipstr);
-
-            sock=NULL;                    // release this servent but dont close socket.    
-        }else 
-        {
-
-            if (!servMgr->acceptGIV(sock))
-                throw HTTPException(HTTP_SC_UNAVAILABLE, 503);
-
-            LOG_DEBUG("Accepted GIV PCP from: %s", ipstr);
-            sock=NULL;                    // release this servent but dont close socket.    
-        }
-
-    }else if (http.isRequest(PCX_PCP_CONNECT))
-    {
-
-        if (!isAllowed(ALLOW_NETWORK) || !isFiltered(ServFilter::F_NETWORK))
-            throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-        
-        processIncomingPCP(true);
-
-    }else if (http.isRequest("PEERCAST CONNECT"))
-    {
-        if (!isAllowed(ALLOW_NETWORK) || !isFiltered(ServFilter::F_NETWORK))
-            throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-        LOG_DEBUG("PEERCAST client");
-        processServent();
-
-    }else if (http.isRequest("SOURCE"))
+    if (http.isRequest(servMgr->password))
     {
         if (!isAllowed(ALLOW_BROADCAST))
             throw HTTPException(HTTP_SC_UNAVAILABLE,503);
 
-        char *mount = NULL;
+        loginPassword.set(servMgr->password);    // pwd already checked
 
-        char *ps;
-        if (ps=strstr(in,"ICE/1.0"))
-        {
-            mount = in+7;
-            *ps = 0;
-            LOG_DEBUG("ICE 1.0 client to %s",mount?mount:"unknown");
-        }else{
-            mount = in+strlen(in);
-            while (*--mount)
-                if (*mount == '/')
-                {
-                    mount[-1] = 0; // password preceeds
-                    break;
-                }
-            loginPassword.set(in+7);
-            
-            LOG_DEBUG("ICY client: %s %s",loginPassword.cstr(),mount?mount:"unknown");
-        }
+        sock->writeLine("OK2");
+        sock->writeLine("icy-caps:11");
+        sock->writeLine("");
+        LOG_DEBUG("ShoutCast client");
 
-        if (mount)
-            loginMount.set(mount);
-
-        handshakeICY(Channel::SRC_ICECAST,isHTTP);
+        handshakeICY(Channel::SRC_SHOUTCAST,isHTTP);
         sock = NULL;    // socket is taken over by channel, so don`t close it
 
+    }else
+    {
+        throw HTTPException(HTTP_SC_BADREQUEST,400);
+    }
+}
+
+// -----------------------------------
+void Servent::handshakeHTTP(HTTP &http, bool isHTTP)
+{
+    if (http.isRequest("GET /"))
+    {
+        handshakeGET(http);
+    }else if (http.isRequest("POST /"))
+    {
+        handshakePOST(http);
+    }else if (http.isRequest("GIV"))
+    {
+        // Push リレー
+
+        handshakeGIV(http.cmdLine);
+    }else if (http.isRequest(PCX_PCP_CONNECT))
+    {
+        // CIN
+
+        if (!isAllowed(ALLOW_NETWORK) || !isFiltered(ServFilter::F_NETWORK))
+            throw HTTPException(HTTP_SC_UNAVAILABLE, 503);
+
+        processIncomingPCP(true);
+    }else if (http.isRequest("PEERCAST CONNECT"))
+    {
+        if (!isAllowed(ALLOW_NETWORK) || !isFiltered(ServFilter::F_NETWORK))
+            throw HTTPException(HTTP_SC_UNAVAILABLE, 503);
+
+        LOG_DEBUG("PEERCAST client");
+        processServent();
+    }else if (http.isRequest("SOURCE"))
+    {
+        // Icecast 放送
+
+        handshakeSOURCE(http.cmdLine, isHTTP);
     } else if (http.isRequest("HEAD")) // for android client
     {
-        char *str = in + 4;
-
-        if (str = stristr(str, "/stream/"))
-        {
-            int cnt = 0;
-
-            str += 8;
-            while (*str && (('0' <= *str && *str <= '9') || ('A' <= *str && *str <= 'F') || ('a' <= *str && *str <= 'f')))
-                ++cnt, ++str;
-
-            if (cnt == 32 && !strncmp(str, ".wmv", 4))
-            {
-                // interpret "HEAD /stream/[0-9a-fA-F]{32}.wmv" as GET
-                LOG_DEBUG("INFO: interpret as GET");
-
-                char *fn = in+5;
-
-                char *pt = strstr(fn,HTTP_PROTO1);
-                if (pt)
-                    pt[-1] = 0;
-
-                if (!sock->host.isLocalhost())
-                    if (!isAllowed(ALLOW_DIRECT) || !isFiltered(ServFilter::F_DIRECT))
-                        throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-                triggerChannel(fn+8,ChanInfo::SP_HTTP,isPrivate());
-
-                return;
-            }
-        }
-
-        if (http.isRequest(servMgr->password))
-        {
-            if (!isAllowed(ALLOW_BROADCAST))
-                throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-            loginPassword.set(servMgr->password);    // pwd already checked
-
-            sock->writeLine("OK2");
-            sock->writeLine("icy-caps:11");
-            sock->writeLine("");
-            LOG_DEBUG("ShoutCast client");
-
-            handshakeICY(Channel::SRC_SHOUTCAST,isHTTP);
-            sock = NULL;    // socket is taken over by channel, so don`t close it
-
-        }else
-        {
-            throw HTTPException(HTTP_SC_BADREQUEST,400);
-        }
-    } else if (http.isRequest(servMgr->password))
+        handshakeHEAD(http, isHTTP);
+    }else if (http.isRequest(servMgr->password)) // FIXME: check for empty password!
     {
+        // ShoutCast broadcast
+
         if (!isAllowed(ALLOW_BROADCAST))
             throw HTTPException(HTTP_SC_UNAVAILABLE, 503);
 
@@ -839,6 +595,8 @@ void Servent::handshakeHTTP(HTTP &http, bool isHTTP)
         sock = NULL;    // socket is taken over by channel, so don`t close it
     }else
     {
+        // リクエスト解釈失敗
+
         throw HTTPException(HTTP_SC_BADREQUEST, 400);
     }
 }

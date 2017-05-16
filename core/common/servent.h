@@ -183,6 +183,7 @@ public:
     void    handshakePOST(HTTP &http);
     void    handshakeGIV(const char*);
     void    handshakeSOURCE(char * in, bool isHTTP);
+    void    handshakeHEAD(HTTP &http, bool isHTTP);
 
     void    handshakeHTTPPush(const std::string& args);
     void    handshakeWMHTTPPush(HTTP& http, const std::string& path);
