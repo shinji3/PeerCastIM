@@ -194,9 +194,6 @@
     <ClInclude Include="..\..\common\gnutella.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\html-xml.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\common\html.h">
       <Filter>Core Includes</Filter>
     </ClInclude>

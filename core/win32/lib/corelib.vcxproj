@@ -594,7 +594,6 @@
     <ClInclude Include="..\..\common\gnuid.h" />
     <ClInclude Include="..\..\common\gnutella.h" />
     <ClInclude Include="..\..\common\host.h" />
-    <ClInclude Include="..\..\common\html-xml.h" />
     <ClInclude Include="..\..\common\html.h" />
     <ClInclude Include="..\..\common\http.h" />
     <ClInclude Include="..\..\common\httppush.h" />
