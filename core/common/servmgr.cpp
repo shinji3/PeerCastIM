@@ -1051,6 +1051,7 @@ void ServMgr::saveSettings(const char *fn)
         char idStr[64];
 
         iniFile.writeSection("Server");
+        iniFile.writeStrValue("serverName", servMgr->serverName);
         iniFile.writeIntValue("serverPort", servMgr->serverHost.port);
         iniFile.writeBoolValue("autoServe", servMgr->autoServe);
         iniFile.writeStrValue("forceIP", servMgr->forceIP);
@@ -1069,6 +1070,7 @@ void ServMgr::saveSettings(const char *fn)
         iniFile.writeIntValue("maxPGNUIncoming", servMgr->maxGnuIncoming);
         iniFile.writeIntValue("maxServIn", servMgr->maxServIn);
         iniFile.writeStrValue("chanLog", servMgr->chanLog.cstr());
+        iniFile.writeBoolValue("publicDirectory", servMgr->publicDirectoryEnabled);
 
         networkID.toStr(idStr);
         iniFile.writeStrValue("networkID", idStr);
@@ -1172,6 +1174,14 @@ void ServMgr::saveSettings(const char *fn)
             iniFile.writeLine("[End]");
         }
 
+        for (auto feed : servMgr->channelDirectory.feeds())
+        {
+            iniFile.writeSection("Feed");
+            iniFile.writeStrValue("url", feed.url.c_str());
+            iniFile.writeBoolValue("isPublic", feed.isPublic);
+            iniFile.writeLine("[End]");
+        }
+
         iniFile.writeSection("Notify");
             iniFile.writeBoolValue("PeerCast", notifyMask&NT_PEERCAST);
             iniFile.writeBoolValue("Broadcasters", notifyMask&NT_BROADCASTERS);
@@ -1230,6 +1240,8 @@ void ServMgr::saveSettings(const char *fn)
                         iniFile.writeStrValue("sourceURL", c->sourceURL.cstr());
                     iniFile.writeStrValue("sourceProtocol", ChanInfo::getProtocolStr(c->info.srcProtocol));
                     iniFile.writeStrValue("contentType", c->info.getTypeStr());
+                    iniFile.writeStrValue("MIMEType", c->info.MIMEType);
+                    iniFile.writeStrValue("streamExt", c->info.streamExt);
                     iniFile.writeIntValue("bitrate", c->info.bitrate);
                     iniFile.writeStrValue("contactURL", c->info.url.cstr());
                     iniFile.writeStrValue("id", idstr);
@@ -1338,7 +1350,9 @@ void ServMgr::loadSettings(const char *fn)
         while (iniFile.readNext())
         {
             // server settings
-            if (iniFile.isName("serverPort"))
+            if (iniFile.isName("serverName"))
+                servMgr->serverName = iniFile.getStrValue();
+            else if (iniFile.isName("serverPort"))
                 servMgr->serverHost.port = iniFile.getIntValue();
             else if (iniFile.isName("autoServe"))
                 servMgr->autoServe = iniFile.getBoolValue();
@@ -1396,6 +1410,9 @@ void ServMgr::loadSettings(const char *fn)
                 servMgr->maxServIn = iniFile.getIntValue();
             else if (iniFile.isName("chanLog"))
                 servMgr->chanLog.set(iniFile.getStrValue(), String::T_ASCII);
+            else if (iniFile.isName("publicDirectory"))
+                servMgr->publicDirectoryEnabled = iniFile.getBoolValue();
+
             else if (iniFile.isName("rootMsg"))
                 rootMsg.set(iniFile.getStrValue());
             else if (iniFile.isName("networkID"))
@@ -1596,6 +1613,21 @@ void ServMgr::loadSettings(const char *fn)
                     numFilters++;
                 LOG_DEBUG("*** numFilters = %d", numFilters);
             }
+            else if (iniFile.isName("[Feed]"))
+            {
+                while (iniFile.readNext())
+                {
+                    if (iniFile.isName("[End]"))
+                        break;
+                    else if (iniFile.isName("url"))
+                        servMgr->channelDirectory.addFeed(iniFile.getStrValue());
+                    else if (iniFile.isName("isPublic"))
+                    {
+                        servMgr->channelDirectory.setFeedPublic(feedIndex, iniFile.getBoolValue());
+                    }
+                }
+                feedIndex++;
+            }
             else if (iniFile.isName("[Notify]"))
             {
                 notifyMask = NT_UPGRADE;
@@ -1629,7 +1661,14 @@ void ServMgr::loadSettings(const char *fn)
                     else if (iniFile.isName("sourceType"))
                         info.srcProtocol = ChanInfo::getProtocolFromStr(iniFile.getStrValue());
                     else if (iniFile.isName("contentType"))
+                    {
                         info.contentType = ChanInfo::getTypeFromStr(iniFile.getStrValue());
+                        info.contentTypeStr = iniFile.getStrValue();
+                    }
+                    else if (iniFile.isName("MIMEType"))
+                        info.MIMEType = iniFile.getStrValue();
+                    else if (iniFile.isName("streamExt"))
+                        info.streamExt = iniFile.getStrValue();
                     else if (iniFile.isName("stayConnected"))
                         stayConnected = iniFile.getBoolValue();
                     else if (iniFile.isName("sourceURL"))
@@ -1782,6 +1821,18 @@ bool ServMgr::getChannel(char *str, ChanInfo &info, bool relay)
             {
                 ch->info.lastPlayStart = 0; // force reconnect
                 ch->info.lastPlayEnd = 0;
+                for (int i = 0; i < 100; i++)    // wait til it's playing for 10 seconds
+                {
+                    ch = chanMgr->findChannelByNameID(ch->info);
+
+                    if (!ch)
+                        return false;
+
+                    if (ch->isPlaying())
+                        break;
+
+                    sys->sleep(100);
+                }
             }else
                 return false;
         }
@@ -1950,7 +2001,7 @@ void ServMgr::procConnectArgs(char *str, ChanInfo &info)
                 Host h;
                 h.fromStrName(arg, DEFAULT_PORT);
                 chanMgr->hitlistlock.on();
-                chanMgr->addHit(h,info.id, true);
+                chanMgr->addHit(h, info.id, true);
                 chanMgr->hitlistlock.off();
             }
         }
@@ -2225,8 +2276,11 @@ int ServMgr::idleProc(ThreadInfo *thread)
             }
         }
 
-        // clear dead hits
-        chanMgr->clearDeadHits(true);
+        // デッドヒットをクリアする。オリジナルはトラッカーをクリアす
+        // るが、開くチャンネルがこのサーバーに設定されている YP に掲
+        // 載されているとは限らないので、トラッカーが消えると再び開く
+        // ことができないので、トラッカーを残す。
+        chanMgr->clearDeadHits(false);
 
         if (servMgr->kickPushStartRelays && servMgr->kickPushInterval) //JP-EX
         {
@@ -2246,18 +2300,21 @@ int ServMgr::idleProc(ThreadInfo *thread)
         if (chanMgr->numIdleChannels() > ChanMgr::MAX_IDLE_CHANNELS)
             chanMgr->closeOldestIdle();
 
+        // チャンネル一覧を取得する。
+        servMgr->channelDirectory.update();
+
         sys->sleep(500);
     }
 
     sys->endThread(thread);
-//    thread->unlock();
+//  thread->unlock();
     return 0;
 }
 
 // --------------------------------------------------
 int ServMgr::serverProc(ThreadInfo *thread)
 {
-//    thread->lock();
+//  thread->lock();
 
     Servent *serv = servMgr->allocServent();
     Servent *serv2 = servMgr->allocServent();
@@ -2296,13 +2353,19 @@ int ServMgr::serverProc(ThreadInfo *thread)
                     Host h = servMgr->serverHost;
 
                     if (!serv->sock)
-                        serv->initServer(h);
+                        if (!serv->initServer(h))
+                        {
+                            LOG_ERROR("Failed to start server on port %d. Exitting...", h.port);
+                            sys->exit();
+                        }
 
                     h.port++;
                     if (!serv2->sock)
-                        serv2->initServer(h);
-
-
+                        if (!serv2->initServer(h))
+                        {
+                            LOG_ERROR("Failed to start server on port %d. Exitting...", h.port);
+                            sys->exit();
+                        }
                 }
             }
         }else{
@@ -2326,7 +2389,7 @@ int ServMgr::serverProc(ThreadInfo *thread)
     }
 
     sys->endThread(thread);
-//    thread->unlock();
+//  thread->unlock();
     return 0;
 }
 
@@ -2430,7 +2493,6 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
     else if (var == "uptime")
     {
         str.setFromStopwatch(getUptime());
-        str.convertTo(String::T_HTML);
         strcpy_s(buf, sizeof(buf), str.cstr());
     }else if (var == "numRelays")
         sprintf_s(buf, sizeof(buf), "%d", numStreams(Servent::T_RELAY, true));
@@ -2609,6 +2671,30 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
             strcpy_s(buf, sizeof(buf), (showLog&(1<<LogBuffer::T_CHANNEL))?"1":"0");
         else
             return false;
+    }else if (var.startsWith("lang."))
+    {
+        const char* lang = var.c_str() + 5;
+
+        if (strrchr(htmlPath, '/') &&
+            strcmp(strrchr(htmlPath, '/') + 1, lang) == 0)
+            strcpy(buf, "1");
+        else
+            strcpy(buf, "0");
+    }else if (var == "numExternalChannels")
+    {
+        sprintf(buf, "%d", channelDirectory.numChannels());
+    }else if (var == "numChannelFeedsPlusOne")
+    {
+        sprintf(buf, "%d", channelDirectory.numFeeds() + 1);
+    }else if (var == "numChannelFeeds")
+    {
+        sprintf(buf, "%d", channelDirectory.numFeeds());
+    }else if (var.startsWith("channelDirectory."))
+    {
+        return channelDirectory.writeVariable(out, var + strlen("channelDirectory."));
+    }else if (var == "publicDirectoryEnabled")
+    {
+        sprintf(buf, "%d", publicDirectoryEnabled);
     }else if (var == "test")
     {
         out.writeUTF8(0x304b);
