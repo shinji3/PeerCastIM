@@ -606,25 +606,23 @@ void Servent::handshakeIncoming()
 {
     setStatus(S_HANDSHAKE);
 
-    char buf[2048];
-    sock->readLine(buf, sizeof(buf));
+    char buf[8192];
 
-    char sb[64];
-    sock->host.toStr(sb);
-
-    if (stristr(buf, HTTP_PROTO1))
+    if (sock->readLine(buf, sizeof(buf)) >= sizeof(buf)-1)
     {
-        LOG_DEBUG("HTTP from %s '%.100s'", sb, buf);
-        HTTP http(*sock);
-        http.initRequest(buf);
-        handshakeHTTP(http, true);
-    }else
-    {
-        LOG_DEBUG("Connect from %s '%.100s'", sb, buf);
-        HTTP http(*sock);
-        http.initRequest(buf);
-        handshakeHTTP(http, false);
+        throw HTTPException(HTTP_SC_URITOOLONG, 414);
     }
+
+    bool isHTTP = (stristr(buf, HTTP_PROTO1) != NULL);
+
+    if (isHTTP)
+        LOG_DEBUG("HTTP from %s '%s'", sock->host.str().c_str(), buf);
+    else
+        LOG_DEBUG("Connect from %s '%s'", sock->host.str().c_str(), buf);
+
+    HTTP http(*sock);
+    http.initRequest(buf);
+    handshakeHTTP(http, isHTTP);
 }
 
 // -----------------------------------
@@ -688,23 +686,13 @@ void Servent::handshakePLS(ChanInfo &info, bool doneHandshake)
 
     if (getLocalTypeURL(url, info.contentType))
     {
-
-        PlayList::TYPE type;
-
-        if ((info.contentType == ChanInfo::T_WMA) || (info.contentType == ChanInfo::T_WMV))
-            type = PlayList::T_ASX;
-        else if (info.contentType == ChanInfo::T_OGM)
-            type = PlayList::T_RAM;
-        else
-            type = PlayList::T_PLS;
+        PlayList::TYPE type = PlayList::getPlayListType(info.contentType);
 
         writePLSHeader(*sock, type);
 
-        PlayList *pls;
-        pls = new PlayList(type,1);
-        pls->addChannel(url,info);
-        pls->write(*sock);
-        delete pls;
+        PlayList pls(type, 1);
+        pls.addChannel(url, info);
+        pls.write(*sock);
     }
 }
 
@@ -721,16 +709,12 @@ void Servent::handshakePLS(ChanHitList **cl, int num, bool doneHandshake)
     {
         writePLSHeader(*sock, PlayList::T_SCPLS);
 
-        PlayList *pls;
+        PlayList pls(PlayList::T_SCPLS, num);
 
-        pls = new PlayList(PlayList::T_SCPLS, num);
+        for (int i=0; i<num; i++)
+            pls.addChannel(url, cl[i]->info);
 
-        for(int i=0; i<num; i++)
-            pls->addChannel(url, cl[i]->info);
-
-        pls->write(*sock);
-
-        delete pls;
+        pls.write(*sock);
     }
 }
 
@@ -814,7 +798,7 @@ bool Servent::getLocalTypeURL(char *str, ChanInfo::TYPE type)
 }
 
 // -----------------------------------
-bool Servent::handshakeAuth(HTTP &http,const char *args,bool local)
+bool Servent::handshakeAuth(HTTP &http, const char *args, bool local)
 {
     char user[1024], pass[1024];
     user[0] = pass[0] = 0;
@@ -828,7 +812,7 @@ bool Servent::handshakeAuth(HTTP &http,const char *args,bool local)
         if (as) *as = 0;
         if (strcmp(tmp, servMgr->password) == 0)
         {
-            while (http.nextHeader());
+            http.readHeaders();
             return true;
         }
     }
@@ -888,13 +872,18 @@ bool Servent::handshakeAuth(HTTP &http,const char *args,bool local)
     {
         http.writeLine(HTTP_SC_UNAUTHORIZED);
         http.writeLine("WWW-Authenticate: Basic realm=\"PeerCast Admin\"");
+        http.writeLine("");
     }else if (servMgr->authType == ServMgr::AUTH_COOKIE)
     {
         String file = servMgr->htmlPath;
         file.append("/login.html");
         if (local)
-            handshakeLocalFile(file);
-        else
+        {
+            if (http.headers["X-REQUESTED-WITH"] == "XMLHttpRequest")
+                throw HTTPException(HTTP_SC_FORBIDDEN, 403);
+            else
+                handshakeLocalFile(file);
+        }else
             handshakeRemoteFile(file);
     }
 
@@ -1908,7 +1897,7 @@ void Servent::handshakeXML()
 }
 
 // -----------------------------------
-void Servent::readICYHeader(HTTP &http, ChanInfo &info, char *pwd, size_t szPwd)
+void Servent::readICYHeader(HTTP &http, ChanInfo &info, char *pwd, size_t plen)
 {
     char *arg = http.getArgStr();
     if (!arg) return;
@@ -1930,8 +1919,10 @@ void Servent::readICYHeader(HTTP &http, ChanInfo &info, char *pwd, size_t szPwd)
         info.desc.set(arg, String::T_ASCII);
         info.desc.convertTo(String::T_UNICODE);
 
-    }else if (http.isHeader("Authorization"))
-        http.getAuthUserPass(NULL, pwd, 0, sizeof(pwd));
+    }else if (http.isHeader("Authorization")) {
+        if (pwd)
+            http.getAuthUserPass(NULL, pwd, 0, plen);
+    }
     else if (http.isHeader(PCX_HS_CHANNELID))
         info.id.fromStr(arg);
     else if (http.isHeader("ice-password"))
@@ -2200,7 +2191,6 @@ void Servent::handshakeICY(Channel::SRC_TYPE type, bool isHTTP)
 // -----------------------------------
 void Servent::handshakeLocalFile(const char *fn)
 {
-    HTTP http(*sock);
     String fileName;
 
     if (servMgr->getModulePath) //JP-EX
@@ -2214,6 +2204,7 @@ void Servent::handshakeLocalFile(const char *fn)
 
     LOG_DEBUG("Writing HTML file: %s", fileName.cstr());
 
+    HTTP http(*sock);
     HTML html("", *sock);
 
     char *args = strstr(fileName.cstr(), "?");
@@ -2222,24 +2213,45 @@ void Servent::handshakeLocalFile(const char *fn)
 
     if (fileName.contains(".htm"))
     {
+        if (str::contains(fn, "play.html"))
+        {
+            auto vec = str::split(fn, "?");
+            if (vec.size() != 2)
+                throw HTTPException(HTTP_SC_BADREQUEST, 400);
+
+            String id = cgi::Query(vec[1]).get("id").c_str();
+
+            if (id.isEmpty())
+                throw HTTPException(HTTP_SC_BADREQUEST, 400);
+
+            ChanInfo info;
+            if (!servMgr->getChannel(id.cstr(), info, true))
+                throw HTTPException(HTTP_SC_NOTFOUND, 404);
+        }
+
+        char *args = strstr(fileName.cstr(), "?");
+        if (args)
+            *args++ = 0;
         html.writeOK(MIME_HTML);
         html.writeTemplate(fileName.cstr(), args);
     }else if (fileName.contains(".css"))
     {
-        html.writeOK(MIME_CSS);
-        html.writeRawFile(fileName.cstr());
+        html.writeRawFile(fileName.cstr(), MIME_CSS);
     }else if (fileName.contains(".jpg"))
     {
-        html.writeOK(MIME_JPEG);
-        html.writeRawFile(fileName.cstr());
+        html.writeRawFile(fileName.cstr(), MIME_JPEG);
     }else if (fileName.contains(".gif"))
     {
-        html.writeOK(MIME_GIF);
-        html.writeRawFile(fileName.cstr());
+        html.writeRawFile(fileName.cstr(), MIME_GIF);
     }else if (fileName.contains(".png"))
     {
-        html.writeOK(MIME_PNG);
-        html.writeRawFile(fileName.cstr());
+        html.writeRawFile(fileName.cstr(), MIME_PNG);
+    }else if (fileName.contains(".js"))
+    {
+        html.writeRawFile(fileName.cstr(), MIME_JS);
+    }else
+    {
+        throw HTTPException(HTTP_SC_NOTFOUND, 404);
     }
 }
 
@@ -2254,6 +2266,12 @@ void Servent::handshakeRemoteFile(const char *dirName)
 
     Host host;
     host.fromStrName(hostName, 80);
+
+    if (host.ip == 0)
+    {
+        LOG_ERROR("handshakeRemoteFile: lookup failed for %s", hostName);
+        throw HTTPException(HTTP_SC_BADGATEWAY, 502);
+    }
 
     rsock->open(host);
     rsock->connect();

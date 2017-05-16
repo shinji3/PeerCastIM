@@ -21,6 +21,7 @@
 #define _HTML_H
 
 // ---------------------------------------
+#include <map>
 #include "xml.h"
 #include "sys.h"
 
@@ -58,8 +59,9 @@ public:
     void    addContent(const char *);
 
     // HTTP ƒŒƒXƒ|ƒ“ƒX
-    void    writeOK(const char *);
-    void    writeRawFile(const char *);
+    void    writeOK(const char *content,
+                    const std::map<std::string,std::string>& = {});
+    void    writeRawFile(const char *, const char *);
 
     void    writeTemplate(const char *, const char *);
 
