@@ -1644,7 +1644,7 @@ void Servent::processRoot()
 // -----------------------------------
 int Servent::givProcMain(ThreadInfo *thread)
 {
-//    thread->lock();
+//  thread->lock();
     Servent *sv = (Servent*)thread->data;
     try
     {
@@ -1750,10 +1750,14 @@ void Servent::handshakeOutgoingPCP(AtomStream &atom, Host &rhost, GnuID &rid, St
         {
             if ((servMgr->serverHost.ip != thisHost.ip) && (servMgr->forceIP.isEmpty()))
             {
-                char ipstr[64];
-                thisHost.toStr(ipstr);
-                LOG_DEBUG("Got new ip: %s",ipstr);
-                servMgr->serverHost.ip = thisHost.ip;
+                // グローバルのリモートからプライベートIPを設定されないようにする。
+                if (rhost.globalIP() == thisHost.globalIP())
+                {
+                    char ipstr[64];
+                    thisHost.toStr(ipstr);
+                    LOG_DEBUG("Got new ip: %s",ipstr);
+                    servMgr->serverHost.ip = thisHost.ip;
+                }
             }
 
             if (servMgr->getFirewall() == ServMgr::FW_UNKNOWN)
@@ -2074,7 +2078,7 @@ void Servent::processIncomingPCP(bool suggestOthers)
 // -----------------------------------
 int Servent::outgoingProcMain(ThreadInfo *thread)
 {
-//    thread->lock();
+//  thread->lock();
     LOG_DEBUG("COUT started");
 
     Servent *sv = (Servent*)thread->data;
