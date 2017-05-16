@@ -2505,6 +2505,8 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
         sprintf_s(buf, sizeof(buf), "%d", numHosts(ServHost::T_SERVENT));
     else if (var == "numServents")
         sprintf_s(buf, sizeof(buf), "%d", numServents());
+    else if (var == "serverName")
+        sprintf_s(buf, sizeof(buf), "%s", serverName.cstr());
     else if (var == "serverPort")
         sprintf_s(buf, sizeof(buf), "%d", serverHost.port);
     else if (var == "serverIP")
