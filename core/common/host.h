@@ -18,8 +18,6 @@
 #ifndef _HOST_H
 #define _HOST_H
 
-#include <string>
-
 class String;
 
 // ----------------------------------
