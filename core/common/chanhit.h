@@ -23,10 +23,10 @@
 
 #include "chaninfo.h"
 #include "xml.h"
-#include "cstream.h"
 
 class AtomStream;
 class ChanHitSearch;
+class Channel;
 
 // ----------------------------------
 class ChanHit
@@ -50,7 +50,6 @@ public:
     unsigned int    numListeners, numRelays, numHops;
     int             clap_pp;    //JP-MOD
     unsigned int    time, upTime, lastContact;
-    unsigned int    hitID;
     GnuID           sessionID, chanID;
     unsigned int    version;
     unsigned int    oldestPos, newestPos;
@@ -84,8 +83,6 @@ public:
     std::string str(bool withPort = false);
 
     ChanHit *next;
-
-    unsigned int    lastSendSeq;
 };
 
 // ----------------------------------
@@ -158,7 +155,6 @@ public:
     bool            useBusyRelays, useBusyControls;
     GnuID           excludeID;
     int             numResults;
-    unsigned int    seed;
 
     int getRelayHost(Host host1, Host host2, GnuID exID, ChanHitList *chl);
 };
