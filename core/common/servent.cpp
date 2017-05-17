@@ -3070,24 +3070,24 @@ bool    Servent::writeVariable(Stream &s, const String &var)
                 if (isfw == true)
                 {
                     if (numRelay== 0)
-                        strcat_s(buf,"<font color=red>");
+                        strcat_s(buf, sizeof(buf),"<font color=red>");
                     else 
-                        strcat_s(buf,"<font color=orange>");
+                        strcat_s(buf, sizeof(buf),"<font color=orange>");
                 }
                 else
-                    strcat_s(buf,"<font color=green>");
+                    strcat_s(buf, sizeof(buf),"<font color=green>");
             }
-            strcat_s(buf,h_ip);
+            strcat_s(buf, sizeof(buf),h_ip);
             char h_name[128];
             if (ClientSocket::getHostname(h_name,h.ip))
             {
-                strcat_s(buf,"[");
-                strcat_s(buf,h_name);
-                strcat_s(buf,"]");
+                strcat_s(buf, sizeof(buf),"[");
+                strcat_s(buf, sizeof(buf),h_name);
+                strcat_s(buf, sizeof(buf),"]");
             }
             if (ishit == true) 
             {
-                strcat_s(buf,"</font>");
+                strcat_s(buf, sizeof(buf),"</font>");
             }
         } //JP-EX e*/
 
@@ -3111,9 +3111,9 @@ bool    Servent::writeVariable(Stream &s, const String &var)
             strcpy_s(buf, sizeof(buf), "");
             if (isfw){
                 if (numRelay == 0){
-                    strcat_s(buf,"<font color=red>");
+                    strcat_s(buf, sizeof(buf),"<font color=red>");
                 } else {
-                    strcat_s(buf,"<font color=orange>");
+                    strcat_s(buf, sizeof(buf),"<font color=orange>");
                 }
             } else {
                 if (!isRelay){
@@ -3126,15 +3126,15 @@ bool    Servent::writeVariable(Stream &s, const String &var)
                     strcpy_s(buf, sizeof(buf),"<font color=green>");
                 }
             }
-            strcat_s(buf,h_ip);
+            strcat_s(buf, sizeof(buf),h_ip);
             char h_name[128];
             if (ClientSocket::getHostname(h_name,sizeof(h_name),h.ip)) //JP-MOD(BOFëŒçÙ)
             {
-                strcat_s(buf,"[");
-                strcat_s(buf,h_name);
-                strcat_s(buf,"]");
+                strcat_s(buf, sizeof(buf),"[");
+                strcat_s(buf, sizeof(buf),h_name);
+                strcat_s(buf, sizeof(buf),"]");
             }
-            strcat_s(buf,"</font>");
+            strcat_s(buf, sizeof(buf),"</font>");
         }
         else 
             getHost().toStr(buf);

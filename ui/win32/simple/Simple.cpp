@@ -950,7 +950,7 @@ void addRelayedChannelsMenu(HMENU cm)
 			strncpy_s(name,32,c->info.name, _TRUNCATE);
 			name[32]=0;
 			if (strlen(c->info.name) > 32)
-				strcat_s(name,"...");
+				strcat_s(name, sizeof(name),"...");
 
 
 			sprintf_s(str, sizeof(str),"%s  (%d kb/s %s)",name,c->info.bitrate,ChanInfo::getTypeStr(c->info.contentType));
@@ -1009,7 +1009,7 @@ void addAllChannelsMenu(HMENU cm)
 		name[32]=0;
 		//if (strlen(ch->info.name) > 32)
 		if (strlen(sjis.cstr()) > 32) //JP-Patch
-			strcat_s(name,"...");
+			strcat_s(name, sizeof(name),"...");
 
 		sprintf_s(str, sizeof(str),"%s  (%d kb/s %s)",name,ch->info.bitrate,ChanInfo::getTypeStr(ch->info.contentType));
 
@@ -1513,9 +1513,9 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 				char str[1024];
 				//strcpy_s(str, sizeof(str),chanInfo.track.artist.cstr());
 				strcpy_s(str, sizeof(str),chanInfo.track.artist); //JP-Patch
-				strcat_s(str," - ");
-				//strcat_s(str,chanInfo.track.title.cstr());
-				strcat_s(str,chanInfo.track.title);
+				strcat_s(str, sizeof(str)," - ");
+				//strcat_s(str, sizeof(str),chanInfo.track.title.cstr());
+				strcat_s(str, sizeof(str),chanInfo.track.title);
 				String name,track,comment,desc,genre; //JP-Patch
 				name = chanInfo.name; //JP-Patch
 				track = str; //JP-Patch

@@ -323,16 +323,16 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
             }
 
             rhost[0].toStr(buf2);
-            strcat_s(buf,buf2);
+            strcat_s(buf, sizeof(buf), buf2);
 
             char h_name[128];
             if (ClientSocket::getHostname(h_name,sizeof(h_name),rhost[0].ip)) // BOFëŒçÙÇ¡Ç€Ç¢
             {
-                strcat_s(buf,"[");
-                strcat_s(buf,h_name);
-                strcat_s(buf,"]");
+                strcat_s(buf, sizeof(buf), "[");
+                strcat_s(buf, sizeof(buf), h_name);
+                strcat_s(buf, sizeof(buf), "]");
             }
-            strcat_s(buf,"</font>");
+            strcat_s(buf, sizeof(buf),"</font>");
         } //JP-EX e
         else
             rhost[0].toStr(buf);
@@ -380,8 +380,8 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
         char buf2[256];
         strcpy_s(buf, sizeof(buf), "<a href=\"#\" onclick=\"checkip('");
         rhost[0].IPtoStr(buf2);
-        strcat_s(buf, buf2);
-        strcat_s(buf, "')\">_</a>");
+        strcat_s(buf, sizeof(buf), buf2);
+        strcat_s(buf, sizeof(buf), "')\">_</a>");
     }
     else if (var == "uphost")        // tree
         uphost.toStr(buf);
