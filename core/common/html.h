@@ -55,8 +55,6 @@ public:
     void    startHTML();
     void    startBody();
 
-    void    addContent(const char *);
-
     // HTTP ƒŒƒXƒ|ƒ“ƒX
     void    writeOK(const char *content,
                     const std::map<std::string,std::string>& = {});

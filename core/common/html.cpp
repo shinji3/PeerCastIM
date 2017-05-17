@@ -26,8 +26,6 @@
 #include "html.h"
 #include "http.h"
 #include "stream.h"
-#include "channel.h"
-#include "stats.h"
 #include "version2.h"
 #include "template.h"
 #include "dmstream.h"
@@ -176,11 +174,6 @@ void HTML::addHead()
     end();
 }
 
-// --------------------------------------
-void HTML::addContent(const char *s)
-{
-    out->writeString(s);
-}
 // --------------------------------------
 void HTML::startNode(const char *tag, const char *data)
 {
