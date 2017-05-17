@@ -169,7 +169,7 @@ void PlayList::writeASX(Stream &out)
     if (servMgr->asxDetailedMode)
         WriteASXInfo(out, titles[0], contacturls[0], tEncoding); //JP-MOD
 
-    for (int i = 0; i < numURLs; i++)
+    for (int i=0; i<numURLs; i++)
     {
         out.writeLine("<ENTRY>");
         if (servMgr->asxDetailedMode)
