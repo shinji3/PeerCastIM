@@ -60,6 +60,7 @@ public:
     int     numIdleChannels();
     int     numChannels();
 
+    void    closeIdles();
     void    closeOldestIdle();
     void    closeAll();
     void    quit();

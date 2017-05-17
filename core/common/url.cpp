@@ -236,17 +236,9 @@ int URLSource::getSourceRateAvg()
 
             ChanInfo::TYPE fileType = ChanInfo::T_UNKNOWN;
             // if filetype is unknown, try and figure it out from file extension.
-            //if ((info.srcType == ChanInfo::T_UNKNOWN) || (info.srcType == ChanInfo::T_PLAYLIST))
+            //if (ch->info.contentType == ChanInfo::T_UNKNOWN)
             {
-                const char *ext = fileName+strlen(fileName);
-                while (*--ext)
-                    if (*ext == '.')
-                    {
-                        ext++;
-                        break;
-                    }
-
-                fileType = ChanInfo::getTypeFromStr(ext);
+                fileType = ChanInfo::getTypeFromStr(str::extension_without_dot(fileName).c_str());
             }
 
             if (ch->info.bitrate)
@@ -257,7 +249,7 @@ int URLSource::getSourceRateAvg()
             else if (fileType == ChanInfo::T_ASX)
                 pls = new PlayList(PlayList::T_ASX, 1000);
             else
-                ch->info.contentType = fileType;
+                ch->info.setContentType(fileType);
         }else
         {
             throw StreamException("Unsupported URL");

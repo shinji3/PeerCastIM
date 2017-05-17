@@ -1408,9 +1408,14 @@ void Servent::CMD_clear(char *cmd, HTTP& http, HTML& html, String& jumpStr)
             chanMgr->clearHitLists();
         else if (strcmp(curr, "packets") == 0)
             stats.clearRange(Stats::PACKETSSTART, Stats::PACKETSEND);
+        else if (strcmp(curr, "channels") == 0)
+            chanMgr->closeIdles();
     }
 
-    jumpStr.sprintf("/%s/index.html", servMgr->htmlPath);
+    if (!http.getHeader("Referer").empty())
+        jumpStr.sprintf("%s", http.getHeader("Referer").c_str());
+    else
+        jumpStr.sprintf("/%s/index.html", servMgr->htmlPath);
 }
 
 void Servent::CMD_upgrade(char *cmd, HTTP& http, HTML& html, String& jumpStr)
@@ -1511,10 +1516,10 @@ void Servent::CMD_bump(char *cmd, HTTP& http, HTML& html, String& jumpStr)
         c->bump = true;
     }
 
-    try
+    if (!http.getHeader("Referer").empty())
     {
-        jumpStr.sprintf("%s", http.headers.at("REFERER").c_str());
-    } catch (std::out_of_range&)
+        jumpStr.sprintf("%s", http.getHeader("Referer").c_str());
+    }else
     {
         jumpStr.sprintf("/%s/channels.html", servMgr->htmlPath);
     }
@@ -2063,11 +2068,16 @@ void Servent::handshakeWMHTTPPush(HTTP& http, const std::string& path)
 }
 
 // -----------------------------------
-ChanInfo Servent::createChannelInfo(GnuID broadcastID, const String& broadcastMsg, cgi::Query& query)
+ChanInfo Servent::createChannelInfo(GnuID broadcastID, const String& broadcastMsg, cgi::Query& query, const std::string& contentType)
 {
     ChanInfo info;
 
-    info.setContentType(ChanInfo::getTypeFromStr(query.get("type").c_str()));
+    auto type = ChanInfo::getTypeFromStr(query.get("type").c_str());
+    // type が空、あるいは認識できない場合はリクエストの Content-Type から自動判別する
+    if (type == ChanInfo::T_UNKNOWN)
+        type = ChanInfo::getTypeFromMIME(contentType);
+
+    info.setContentType(type);
     info.name    = query.get("name");
     info.genre   = query.get("genre");
     info.desc    = query.get("desc");
@@ -2077,6 +2087,7 @@ ChanInfo Servent::createChannelInfo(GnuID broadcastID, const String& broadcastMs
 
     info.id = broadcastID;
     info.id.encode(NULL, info.name.cstr(), info.genre.cstr(), info.bitrate);
+    info.bcID = broadcastID;
 
     return info;
 }
@@ -2094,24 +2105,13 @@ void Servent::handshakeHTTPPush(const std::string& args)
     HTTP http(*sock);
     http.readHeaders();
 
-    // User-Agent ヘッダーがあれば agent をセット
-    for (auto& header : http.headers)
+    if (query.get("name").empty())
     {
-        LOG_DEBUG("%s: %s", header.first.c_str(), header.second.c_str());
-        if (header.first == "USER-AGENT")
-            this->agent = header.second.c_str();
+        LOG_ERROR("handshakeHTTPPush: name parameter is mandatory");
+        throw HTTPException(HTTP_SC_BADREQUEST, 400);
     }
 
-    for (auto param : { "name", "type" })
-    {
-        if (query.get(param).empty())
-        {
-            LOG_ERROR("HTTP broadcast request does not have mandatory parameter `%s'", param);
-            throw HTTPException(HTTP_SC_BADREQUEST, 400);
-        }
-    }
-
-    ChanInfo info = createChannelInfo(chanMgr->broadcastID, chanMgr->broadcastMsg, query);
+    ChanInfo info = createChannelInfo(chanMgr->broadcastID, chanMgr->broadcastMsg, query, http.getHeader("Content-Type"));
 
     Channel *c = chanMgr->findChannelByID(info.id);
     if (c)
@@ -2121,13 +2121,11 @@ void Servent::handshakeHTTPPush(const std::string& args)
     }
     // ここでシャットダウン待たなくていいの？
 
-    info.bcID    = chanMgr->broadcastID;
-
     c = chanMgr->createChannel(info, NULL);
     if (!c)
         throw HTTPException(HTTP_SC_UNAVAILABLE, 503);
 
-    bool chunked = (http.headers["TRANSFER-ENCODING"] == "chunked");
+    bool chunked = (http.getHeader("Transfer-Encoding") == "chunked");
     c->startHTTPPush(sock, chunked);
     sock = NULL;    // socket is taken over by channel, so don`t close it
 }
