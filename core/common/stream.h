@@ -458,53 +458,7 @@ public:
     Stream *stream;
 };
 
-// -------------------------------------
-
-class SockBufStream : public Stream
-{
-public:
-    SockBufStream(Stream &sockStream, int bufsize=128*1024)
-        : sock(sockStream), mem(bufsize)
-        {
-        }
-
-    ~SockBufStream()
-        {
-            flush();
-        }
-
-    virtual int read(void *p,int l)
-        {
-            return sock.read(p, l);
-        }
-
-    virtual void write(const void *p, int len)
-        {
-            if ( mem.pos+len > mem.len )
-                flush();
-
-            mem.write(p, len);
-        }
-
-    void flush()
-        {
-            if ( mem.pos > 0 ) {
-                sock.write(mem.buf, mem.pos);
-                clearWriteBuffer();
-            }
-        }
-
-    void clearWriteBuffer()
-        {
-            mem.rewind();
-        }
-
-private:
-    Stream &sock;
-    MemoryStream mem;
-};
-
-// -------------------------------------
+// --------------------------------------------------
 class WriteBufferStream : public Stream
 {
 public:
