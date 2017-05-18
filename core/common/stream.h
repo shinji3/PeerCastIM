@@ -157,7 +157,7 @@ public:
         return res;
     }
 
-    virtual bool    readReady() { return true; }
+    virtual bool    readReady(int timeoutMilliseconds = 0) { return true; }
     virtual int numPending() { return 0; }
 
     void writeID4(ID4 id)
@@ -344,11 +344,11 @@ public:
     {
     }
 
-    MemoryStream(void *p, int l)
+    MemoryStream(void *p, int l, bool aOwn = false)
         : buf((char *)p)
         , len(l)
         , pos(0)
-        , own(false)
+        , own(aOwn)
     {
     }
 
@@ -362,26 +362,19 @@ public:
 
     ~MemoryStream()
     {
-        free2();
+        if (own)
+            free();
     }
 
     void readFromFile(FileStream &file)
     {
+        free(); // free old buffer
+
         len = file.length();
         buf = new char[len];
         pos = 0;
         own = true;
         file.read(buf, len);
-    }
-
-    void free2()
-    {
-        if (own && buf)
-        {
-            delete buf;
-            buf = NULL;
-            own = false;
-        }
     }
 
     int read(void *p, int l) override
@@ -431,6 +424,13 @@ public:
     char    *buf;
     int     len, pos;
     bool    own;
+
+private:
+    void free()
+    {
+        delete[] buf;
+        buf = nullptr;
+    }
 };
 
 // --------------------------------------------------
@@ -479,7 +479,6 @@ public:
     ~SockBufStream()
         {
             flush();
-            mem.free2();
         }
 
     virtual int read(void *p,int l)

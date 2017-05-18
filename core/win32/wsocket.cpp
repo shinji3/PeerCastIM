@@ -660,15 +660,15 @@ void WSAClientSocket::close()
 }
 
 // --------------------------------------------------
-bool	WSAClientSocket::readReady()
+bool	WSAClientSocket::readReady(int timeoutMilliseconds)
 {
 	if (rbDataSize) return true;
 
 	timeval timeout;
 	fd_set read_fds;
 
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 0;
+	timeout.tv_sec = timeoutMilliseconds / 1000;
+	timeout.tv_usec = (timeoutMilliseconds % 1000) * 1000;
 
     FD_ZERO (&read_fds);
     FD_SET (sockNum, &read_fds);

@@ -2328,5 +2328,4 @@ void Servent::handshakeRemoteFile(const char *dirName)
     }else
         sock->write(mem.buf, fileLen);
 
-    mem.free2();
 }

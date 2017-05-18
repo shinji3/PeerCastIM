@@ -95,7 +95,6 @@ void HTML::writeTemplate(const char *fileName, const char *args)
         out->writeString(fileName);
     }
 
-    mm.free2();
     file.close();
 }
 
