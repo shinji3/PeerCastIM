@@ -23,10 +23,6 @@
 #include "common.h"
 #include "sys.h"
 #include "gnutella.h"
-#include "servmgr.h" //JP-EX
-#ifdef WIN32
-#include "utf8.h" //JP-Patch
-#endif
 #include <stdlib.h>
 #include <time.h>
 
@@ -79,15 +75,14 @@ char *trimstr(char *s1)
 
     char *s = s1;
 
-    if(strlen(s1) > 0) {
-        s1 = s1+strlen(s1);
+    s1 = s1+strlen(s1);
 
-        while (*--s1)
-            if ((*s1 != ' ') && (*s1 != '\t'))
-                break;
+    while (*--s1)
+        if ((*s1 != ' ') && (*s1 != '\t'))
+            break;
 
-        s1[1] = 0;
-    }
+    s1[1] = 0;
+
     return s;
 }
 
