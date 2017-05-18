@@ -336,14 +336,6 @@ public:
 class MemoryStream : public Stream
 {
 public:
-    MemoryStream()
-        : buf(NULL)
-        , len(0)
-        , pos(0)
-        , own(false)
-    {
-    }
-
     MemoryStream(void *p, int l, bool aOwn = false)
         : buf((char *)p)
         , len(l)

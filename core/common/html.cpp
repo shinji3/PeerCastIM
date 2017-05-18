@@ -80,7 +80,7 @@ void HTML::writeOK(const char *content, const std::map<std::string,std::string>&
 void HTML::writeTemplate(const char *fileName, const char *args)
 {
     FileStream file;
-    MemoryStream mm;
+    MemoryStream mm(NULL, 0);
     try
     {
         Template temp(args);
