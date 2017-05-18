@@ -2,7 +2,6 @@
 #include "peercast.h"
 #include "channel.h"
 #include "servmgr.h"
-#include "version2.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
