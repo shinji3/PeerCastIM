@@ -18,7 +18,6 @@
 #ifndef _GNUID_H
 #define _GNUID_H
 
-#include <string>
 #include "common.h"
 
 // --------------------------------
@@ -44,10 +43,7 @@ public:
 
     bool    isSame(const GnuID &gid) const
     {
-        for(int i=0; i<16; i++)
-            if (gid.id[i] != id[i])
-                return false;
-        return true;
+        return memcmp(id, gid.id, 16) == 0;
     }
 
     bool    isSet() const
@@ -60,8 +56,7 @@ public:
 
     void    clear()
     {
-        for (int i=0; i<16; i++)
-            id[i] = 0;
+        memset(id, 0, 16);
         storeTime = 0;
     }
 
