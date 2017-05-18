@@ -103,10 +103,6 @@ public:
 
 typedef __int64 int64_t;
 
-#ifndef _UINTPTR_T_DEFINED
-typedef unsigned int uintptr_t;
-#endif
-
 // ------------------------------------
 class WEvent
 {
@@ -187,7 +183,6 @@ public:
 #define _BIG_ENDIAN 1
 #endif
 
-typedef long long int64_t;
 #define THREAD_PROC int
 typedef pthread_t THREAD_HANDLE;
 
@@ -359,21 +354,6 @@ public:
     static          const char *logTypes[];
 };
 
-#define RWLOCK_READ_MAX 32
-
-class LockBlock
-{
-public:
-    LockBlock(WLock &l){ flg = false; lock = l; }
-    ~LockBlock(){ if (flg) lock.off(); }
-    void lockon(){ flg = true; lock.on(); }
-    void lockoff(){ flg = false; lock.off(); }
-
-private:
-    WLock lock;
-    bool flg;
-};
-
 // ------------------------------------
 extern Sys *sys;
 
@@ -384,9 +364,9 @@ extern Sys *sys;
 #define CHECK_ENDIAN3(v) v=SWAP3(v)
 #define CHECK_ENDIAN4(v) v=SWAP4(v)
 #else
-#define CHECK_ENDIAN2
-#define CHECK_ENDIAN3
-#define CHECK_ENDIAN4
+#define CHECK_ENDIAN2(v)
+#define CHECK_ENDIAN3(v)
+#define CHECK_ENDIAN4(v)
 #endif
 
 // ------------------------------------

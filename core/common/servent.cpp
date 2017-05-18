@@ -1036,9 +1036,6 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
         //JP-Patch add-e
     }
 
-//    LockBlock lockblock(chanMgr->hitlistlock);
-
-//    lockblock.lockon();
     ChanHitList *chl = chanMgr->findHitList(chanInfo);
     if (chl)
     {
