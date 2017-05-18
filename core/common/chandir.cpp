@@ -115,7 +115,7 @@ static bool getFeed(std::string url, std::vector<ChannelEntry>& out)
     }
 
     unique_ptr<ClientSocket> rsock(sys->createSocket());
-    WriteBufferStream brsock(&*rsock);
+    WriteBufferedStream brsock(&*rsock);
 
     try {
         LOG_DEBUG("Connecting to %s ...", feed.host().c_str());

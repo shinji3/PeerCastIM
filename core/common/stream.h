@@ -459,126 +459,71 @@ public:
 };
 
 // --------------------------------------------------
-class WriteBufferStream : public Stream
+class WriteBufferedStream : public IndirectStream
 {
+    static const int kBufSize = 64 * 1024;
+
 public:
-    WriteBufferStream(Stream *out_)
-    :buf(NULL)
-    ,own(false)
-    ,len(0)
-    ,pos(0)
-    ,out(out_)
+    WriteBufferedStream(Stream *s)
     {
+        init(s);
     }
 
-    WriteBufferStream(void *p, int l, Stream *out_)
-    :buf((char *)p)
-    ,own(false)
-    ,len(l)
-    ,pos(0)
-    ,out(out_)
+    ~WriteBufferedStream()
     {
-    }
-
-    WriteBufferStream(int l, Stream *out_)
-    :buf(NULL)
-    ,own(true)
-    ,len(l)
-    ,pos(0)
-    ,out(out_)
-    {
-        buf = (char*)malloc(l);
-        if (!buf)
-            throw GeneralException("cannot allocate memory", 0x1234);
-    }
-
-    virtual ~WriteBufferStream()
-    {
-        try {
+        try
+        {
             flush();
-        } catch (StreamException &) {}
-        free();
+        }
+        catch (StreamException& e)
+        {
+            LOG_ERROR("StreamException in dtor of WriteBufferedStream: %s", e.msg);
+        }
     }
 
-    void readFromFile(FileStream &file)
+    int read(void *p, int l) override
     {
-        len = file.length();
-        buf = new char[len];
-        own = true;
-        pos = 0;
-        file.read(buf,len);
+        flush();
+        return stream->read(p, l);
     }
 
     void flush()
     {
-        if (!out || !buf) return;
-        out->write(buf, pos);
-        pos = 0;
-    }
-
-    void free()
-    {
-        if (own && buf)
+        if (buf.size() > 0)
         {
-            ::free(buf);
-            buf = NULL;
-            own = false;
+            stream->write(buf.c_str(), (int)buf.size());
+            buf.clear();
         }
-
     }
 
-    virtual int read(void *p,int l)
+    void write(const void *p, int l) override
     {
-        return 0;
-    }
-
-    virtual void write(const void *p,int l)
-    {
-        char *cp = (char *) p;
-        while ((pos + l) >= len) {
-            int n = len - pos;
-            memcpy(&buf[pos], cp, n);
-            l -= n;
-            cp += n;
-            pos = len;
+        if (l > kBufSize)
+        {
             flush();
-            if (pos != 0) return;
+            stream->write(p, l);
+        } else if (buf.size() + l > kBufSize)
+        {
+            for (int i = 0; i < l; i++)
+                buf.push_back(static_cast<const char*>(p)[i]);
+            flush();
+        } else
+        {
+            for (int i = 0; i < l; i++)
+                buf.push_back(static_cast<const char*>(p)[i]);
         }
-        if (l > 0) {
-            memcpy(&buf[pos], cp, l);
-            pos += l;
-        }
     }
 
-    virtual bool eof()
+    void close() override
     {
-        return true;
+        flush();
+        stream->close();
     }
 
-    virtual void rewind()
-    {
-        pos = 0;
-    }
-
-    virtual void seekTo(int p)
-    {
-        pos = p;
-    }
-
-    virtual int getPosition()
-    {
-        return pos;
-    }
-
-    void    convertFromBase64();
-
-
-    char *buf;
-    bool own;
-    int len,pos;
-    Stream *out;
+    std::string buf;
 };
 
+// --------------------------------------------------
 // writeされたものを捨ててバイト数だけカウントするストリーム
 class DummyStream : public Stream
 {

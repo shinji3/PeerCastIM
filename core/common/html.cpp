@@ -39,21 +39,12 @@
 // --------------------------------------
 HTML::HTML(const char *t, Stream &o)
 {
-    o.writeCRLF = false;
-    out = new WriteBufferStream(8192, &o);
+    out = &o;
     out->writeCRLF = false;
 
     title.set(t);
     tagLevel = 0;
     refresh = 0;
-}
-
-HTML::~HTML()
-{
-    try {
-        out->flush();
-    } catch (StreamException &) {}
-    delete out;
 }
 
 // --------------------------------------
@@ -87,14 +78,12 @@ void HTML::writeTemplate(const char *fileName, const char *args)
         file.openReadOnly(fileName);
         mm.readFromFile(file);
         temp.readTemplate(mm, out, 0);
-
     }catch (StreamException &e)
     {
         out->writeString(e.msg);
         out->writeString(" : ");
         out->writeString(fileName);
     }
-
     file.close();
 }
 
