@@ -30,6 +30,7 @@
 #include "addrCont.h"
 #include "cgi.h" // Query
 #include "playlist.h"
+#include "varwriter.h"
 #ifdef _WIN32
 #include "win32/ts_vector.h"
 #endif
@@ -40,7 +41,7 @@ class AtomStream;
 
 // ----------------------------------
 // Servent handles the actual connection between clients
-class Servent
+class Servent : public VariableWriter
 {
 public:
 
@@ -201,7 +202,7 @@ public:
     bool    waitForChannelHeader(ChanInfo &);
     ChanInfo findChannel(char *str, ChanInfo &);
 
-    bool    writeVariable(Stream &, const String &);
+    bool    writeVariable(Stream &, const String &) override;
 
     // the "mainloop" of servents
     void    processGnutella();
@@ -266,7 +267,7 @@ public:
 
     GnuID               remoteID;
     GnuID               chanID;
-    GnuID               givID;
+    GnuID               givID; // GIV ‚·‚éƒ`ƒƒƒ“ƒlƒ‹‚ÌID
 
     ThreadInfo          thread;
 

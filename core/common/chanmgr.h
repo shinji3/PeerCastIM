@@ -22,7 +22,7 @@
 #include "channel.h"
 
 // ----------------------------------
-class ChanMgr
+class ChanMgr : public VariableWriter
 {
 public:
     enum
@@ -52,7 +52,7 @@ public:
     int     broadcastPacketUp(ChanPacket &, GnuID &, GnuID &, GnuID &);
     void    broadcastTrackerUpdate(GnuID &, bool = false);
 
-    bool    writeVariable(Stream &, const String &, int);
+    bool    writeVariable(Stream &, const String &) override;
 
     int     findChannels(ChanInfo &, Channel **, int);
     int     findChannelsByStatus(Channel **, int, Channel::STATUS);

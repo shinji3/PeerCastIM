@@ -1,4 +1,4 @@
-#include "dmstream.h"
+#include "sstream.h"
 #include <algorithm>
 #include <string>
 
@@ -8,31 +8,34 @@
 #define new DEBUG_NEW
 #endif
 
-DynamicMemoryStream::DynamicMemoryStream()
+StringStream::StringStream()
     : m_pos(0)
 {
 }
 
-void  DynamicMemoryStream::checkSize(int size)
+void  StringStream::checkSize(size_t size)
 {
     if (size > (int)m_buffer.size())
         while ((int)m_buffer.size() < size)
             m_buffer.push_back(0);
 }
 
-int  DynamicMemoryStream::read(void *buf, int count)
+int  StringStream::read(void *buf, int count)
 {
     if (m_pos == m_buffer.size())
         throw StreamException("End of stream");
 
-    int bytesRead = (std::min)(m_pos + count, (int)m_buffer.size());
+    int bytesRead = (std::min)(m_pos + count, m_buffer.size());
     memcpy(buf, m_buffer.c_str() + m_pos, bytesRead);;
     m_pos += bytesRead;
     return bytesRead;
 }
 
-void DynamicMemoryStream::write(const void *buf, int count)
+void StringStream::write(const void *buf, int count)
 {
+    if (count < 0)
+        throw GeneralException("Bad argument");
+
     checkSize(m_pos + count);
     std::copy(static_cast<const char*>(buf),
               static_cast<const char*>(buf) + count,
@@ -40,38 +43,38 @@ void DynamicMemoryStream::write(const void *buf, int count)
     m_pos += count;
 }
 
-bool DynamicMemoryStream::eof()
+bool StringStream::eof()
 {
     return m_pos == m_buffer.size();
 }
 
-void DynamicMemoryStream::rewind()
+void StringStream::rewind()
 {
     m_pos = 0;
 }
 
-void DynamicMemoryStream::seekTo(int newPos)
+void StringStream::seekTo(int newPos)
 {
     checkSize(newPos);
     m_pos = newPos;
 }
 
-int  DynamicMemoryStream::getPosition()
+int  StringStream::getPosition()
 {
     return m_pos;
 }
 
-int  DynamicMemoryStream::getLength()
+int  StringStream::getLength()
 {
     return (int)m_buffer.size();
 }
 
-std::string DynamicMemoryStream::str()
+std::string StringStream::str()
 {
     return std::string(m_buffer.begin(), m_buffer.end());
 }
 
-void DynamicMemoryStream::str(const std::string& data)
+void StringStream::str(const std::string& data)
 {
     m_buffer = data;
     m_pos = 0;

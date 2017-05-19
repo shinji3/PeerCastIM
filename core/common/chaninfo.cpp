@@ -836,8 +836,12 @@ const char* ChanInfo::getPlayListExt()
         return ".asx";
     case PlayList::T_RAM:
         return ".ram";
-    //case PlayList::T_PLS:
-    default:
+    case PlayList::T_PLS:
         return ".m3u"; // or could be .pls ...
+    case PlayList::T_SCPLS:
+        return ".pls";
+    case PlayList::T_NONE:
+    default:
+        return "";
     }
 }

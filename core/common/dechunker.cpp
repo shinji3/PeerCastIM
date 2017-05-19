@@ -31,10 +31,15 @@ int Dechunker::hexValue(char c)
 // きっちり size バイト読めるまでブロックして欲しい。UClientSocket
 // はそういう作りになってるな。上流はClientSocketが本番環境だから、
 // それでいこう。
-int  Dechunker::read(void *buf, int size)
+int  Dechunker::read(void *buf, int aSize)
 {
     if (m_eof)
         throw StreamException("Closed on read");
+
+    if (aSize < 0)
+        throw GeneralException("Bad argument");
+
+    size_t size = aSize;
 
     char *p = (char*) buf;
 
@@ -90,7 +95,7 @@ void Dechunker::getNextChunk()
 
     char *buf = new char[size];
     Defer cleanup([=]() { delete[] buf; });
-    int r;
+    size_t r;
 
     r = m_stream.read(buf, (int)size);
     if (r != size)

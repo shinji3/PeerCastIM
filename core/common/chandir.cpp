@@ -206,7 +206,7 @@ bool ChannelDirectory::writeChannelVariable(Stream& out, const String& varName, 
 {
     CriticalSection cs(m_lock);
 
-    if (!(index >= 0 && index < (int)m_channels.size()))
+    if (!(index >= 0 && (size_t)index < m_channels.size()))
         return false;
 
     char buf[1024];
@@ -370,7 +370,7 @@ void ChannelDirectory::clearFeeds()
 void ChannelDirectory::setFeedPublic(int index, bool isPublic)
 {
     CriticalSection cs(m_lock);
-    if (index < (int)m_feeds.size())
+    if (index >= 0 && (size_t)index < m_feeds.size())
         m_feeds[index].isPublic = isPublic;
     else
         LOG_DEBUG("setFeedPublic: index %d out of range", index);

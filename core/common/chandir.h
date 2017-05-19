@@ -10,6 +10,8 @@
 #include "cgi.h"
 #include "sys.h" // WLock
 
+#include "varwriter.h"
+
 class ChannelEntry
 {
 public:
@@ -100,7 +102,7 @@ public:
 };
 
 // 外部からチャンネルリストを取得して保持する。
-class ChannelDirectory
+class ChannelDirectory : public VariableWriter
 {
 public:
     ChannelDirectory();
@@ -119,8 +121,8 @@ public:
 
     bool writeChannelVariable(Stream& out, const String& varName, int index);
     bool writeFeedVariable(Stream& out, const String& varName, int index);
-    bool writeVariable(Stream& out, const String& varName);
-    bool writeVariable(Stream &, const String &, int);
+    bool writeVariable(Stream& out, const String& varName) override;
+    bool writeVariable(Stream &, const String &, int) override;
 
     std::vector<ChannelEntry> channels() { return m_channels; };
 

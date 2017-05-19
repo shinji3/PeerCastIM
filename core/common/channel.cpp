@@ -1068,17 +1068,6 @@ static char *nextMetaPart(char *str, char delim)
 }
 
 // -----------------------------------
-static void copyStr(char *to, char *from, int max)
-{
-    char c;
-    while ((c=*from++) && (--max))
-        if (c != '\'')
-            *to++ = c;
-
-    *to = 0;
-}
-
-// -----------------------------------
 void Channel::processMp3Metadata(char *str)
 {
     ChanInfo newInfo = info;
@@ -1653,7 +1642,26 @@ void Channel::getStreamPath(char *str)
 }
 
 // -----------------------------------
-bool Channel::writeVariable(Stream &out, const String &var, int index)
+std::string Channel::renderHexDump(const std::string& in)
+{
+    std::string res;
+    size_t i;
+    for (i = 0; i < in.size()/16; i++)
+    {
+        auto line = in.substr(i*16, 16);
+        res += str::hexdump(line) + "  " + str::ascii_dump(line) + "\n";
+    }
+    auto rem = in.size() - 16*(in.size()/16);
+    if (rem)
+    {
+        auto line = in.substr(16*(in.size()/16), rem);
+        res += str::format("%-47s  %s\n", str::hexdump(line).c_str(), str::ascii_dump(line).c_str());
+    }
+    return res;
+}
+
+// -----------------------------------
+bool Channel::writeVariable(Stream &out, const String &var)
 {
     char buf[1024];
 

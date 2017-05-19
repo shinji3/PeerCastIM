@@ -155,11 +155,42 @@ public:
 };
 
 // --------------------------------------------
+class HTTPHeaders
+{
+public:
+    void set(const std::string& name, const std::string& value)
+    {
+        m_headers[str::upcase(name)] = value;
+    }
+
+    std::string get(const std::string& name) const
+    {
+        auto it = m_headers.find(str::upcase(name));
+        if (it == m_headers.end())
+            return "";
+        else
+            return it->second;
+    }
+
+    size_t size()
+    {
+        return m_headers.size();
+    }
+
+    void clear()
+    {
+        return m_headers.clear();
+    }
+
+    std::map<std::string,std::string> m_headers;
+};
+
+// --------------------------------------------
 class HTTPRequest
 {
 public:
     HTTPRequest(const std::string& aMethod, const std::string& aUrl, const std::string& aProtocolVersion,
-        std::map<std::string,std::string>& aHeaders)
+        HTTPHeaders& aHeaders)
         : method(aMethod)
         , url(aUrl)
         , protocolVersion(aProtocolVersion)
@@ -174,21 +205,12 @@ public:
             path = url;
     }
 
-    std::string getHeader(const std::string& name) const
-    {
-        auto it = headers.find(str::upcase(name));
-        if (it == headers.end())
-            return "";
-        else
-            return it->second;
-    }
-
     std::string method;
     std::string url;
     std::string path;
     std::string queryString;
     std::string protocolVersion;
-    std::map<std::string,std::string> headers;
+    HTTPHeaders headers;
 };
 
 // --------------------------------------------
@@ -284,15 +306,6 @@ public:
         }
     }
 
-    std::string getHeader(const std::string& name) const
-    {
-        auto it = headers.find(str::upcase(name));
-        if (it == headers.end())
-            return "";
-        else
-            return it->second;
-    }
-
     void send(const HTTPResponse& response);
 
     char    cmdLine[8192], *arg;
@@ -300,8 +313,7 @@ public:
     std::string method;
     std::string requestUrl;
     std::string protocolVersion;
-    // ヘッダー名と値。ヘッダー名は全て大文字。
-    std::map<std::string,std::string> headers;
+    HTTPHeaders headers;
 };
 
 #endif

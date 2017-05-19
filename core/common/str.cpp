@@ -20,7 +20,7 @@ std::string hexdump(const std::string& in)
 {
     std::string res;
 
-    for (int i = 0; i < (int)in.size(); i++) {
+    for (size_t i = 0; i < in.size(); i++) {
         if (i != 0)
             res += ' ';
         char buf[3];

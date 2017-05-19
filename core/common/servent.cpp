@@ -391,6 +391,8 @@ bool Servent::outputPacket(GnuPacket &p, bool pri)
 }
 
 // -----------------------------------
+// ソケットでの待ち受けを行う SERVER サーバントを開始する。成功すれば
+// true を返す。
 bool Servent::initServer(Host &h)
 {
     try
@@ -430,6 +432,7 @@ void Servent::checkFree()
 }
 
 // -----------------------------------
+// クライアントとの対話を開始する。
 void Servent::initIncoming(ClientSocket *s, unsigned int a)
 {
     try{
@@ -1369,6 +1372,7 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
 }
 
 // -----------------------------------
+// GIV しにいく
 void Servent::handshakeGiv(GnuID &id)
 {
     if (id.isSet())
@@ -1657,7 +1661,10 @@ int Servent::givProcMain(ThreadInfo *thread)
     return 0;
 }
 
-// -----------------------------------
+// ------------------------------------------------------------------
+// Pushリレーサーバントのメインプロシージャ。こちらからリモートホスト
+// へ接続に行くが、その後は着信したかのように振る舞い、要求を受け付け
+// る。
 int Servent::givProc(ThreadInfo *thread)
 {
     SEH_THREAD(givProcMain, Servent::givProc);
@@ -1785,7 +1792,9 @@ void Servent::handshakeOutgoingPCP(AtomStream &atom, Host &rhost, GnuID &rid, St
     LOG_DEBUG("PCP Outgoing handshake complete.");
 }
 
-// -----------------------------------
+// -------------------------------------------------------------------
+// PCPハンドシェイク。HELO, OLEH。グローバルIP、ファイアウォールチェッ
+// ク。
 void Servent::handshakeIncomingPCP(AtomStream &atom, Host &rhost, GnuID &rid, String &agent)
 {
     int numc, numd;
@@ -1920,7 +1929,9 @@ void Servent::handshakeIncomingPCP(AtomStream &atom, Host &rhost, GnuID &rid, St
     LOG_DEBUG("PCP Incoming handshake complete.");
 }
 
-// -----------------------------------
+// ------------------------------------------------------------------
+// コントロール・インの処理。通信の状態は、"pcp\n" を読み込んだ後。
+// suggestOthers は常に true が渡される。
 void Servent::processIncomingPCP(bool suggestOthers)
 {
     PCPStream::readVersion(*sock);
@@ -1930,14 +1941,17 @@ void Servent::processIncomingPCP(bool suggestOthers)
 
     handshakeIncomingPCP(atom, rhost, remoteID, agent);
 
-    bool alreadyConnected = (servMgr->findConnection(Servent::T_COUT, remoteID)!=NULL)
-                            || (servMgr->findConnection(Servent::T_CIN, remoteID)!=NULL);
-    bool unavailable = servMgr->controlInFull();
-    bool offair = !servMgr->isRoot && !chanMgr->isBroadcasting();
+    bool alreadyConnected = (servMgr->findConnection(Servent::T_COUT, remoteID)!=NULL) ||
+                            (servMgr->findConnection(Servent::T_CIN,  remoteID)!=NULL);
+    bool unavailable      = servMgr->controlInFull();
+    bool offair           = !servMgr->isRoot && !chanMgr->isBroadcasting();
 
     char rstr[64];
     rhost.toStr(rstr);
 
+    // 接続を断わる場合の処理。コントロール接続数が上限に達しているか、
+    // リモートホストとのコントロール接続が既にあるか、自分は放送中の
+    // トラッカーではない。
     if (unavailable || alreadyConnected || offair)
     {
         int error;
@@ -2010,8 +2024,7 @@ void Servent::processIncomingPCP(bool suggestOthers)
             if (cnt)
             {
                 LOG_DEBUG("Sent %d tracker(s) to %s", cnt, rstr);
-            }
-            else if (rhost.port)
+            }else if (rhost.port)
             {
                 // send push request to best firewalled tracker on other network
                 chs.init();
@@ -2283,7 +2296,8 @@ int Servent::incomingProcMain(ThreadInfo *thread)
     return 0;
 }
 
-// -----------------------------------
+// -------------------------------------------------------------
+// SERVER サーバントから起動されたサーバントのメインプロシージャ
 int Servent::incomingProc(ThreadInfo *thread)
 {
     SEH_THREAD(incomingProcMain, Servent::incomingProc);
@@ -3005,7 +3019,8 @@ int Servent::serverProcMain(ThreadInfo *thread)
     return 0;
 }
 
-// -----------------------------------
+// -----------------------------------------------------------------
+// ソケットでの待ち受けを行う SERVER サーバントのメインプロシージャ。
 int Servent::serverProc(ThreadInfo *thread)
 {
     SEH_THREAD(serverProcMain, Servent::serverProc);

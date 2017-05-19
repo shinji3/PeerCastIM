@@ -28,7 +28,7 @@
 #include "stream.h"
 #include "version2.h"
 #include "template.h"
-#include "dmstream.h"
+#include "sstream.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"

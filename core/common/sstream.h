@@ -5,10 +5,10 @@
 #include "stream.h"
 #include <string>
 
-class DynamicMemoryStream : public Stream
+class StringStream : public Stream
 {
 public:
-    DynamicMemoryStream();
+    StringStream();
 
     int  read(void *, int) override;
     void write(const void *, int) override;
@@ -21,9 +21,9 @@ public:
     std::string str();
     void str(const std::string& data);
 
-    void checkSize(int);
+    void checkSize(size_t);
 
-    int m_pos;
+    size_t m_pos;
     std::string m_buffer;
 };
 

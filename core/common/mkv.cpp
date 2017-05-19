@@ -4,7 +4,7 @@
 #include "channel.h"
 #include "stream.h"
 #include "matroska.h"
-#include "dmstream.h"
+#include "sstream.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
@@ -87,7 +87,7 @@ uint64_t MKVStream::unpackUnsignedInt(const std::string& bytes)
 
     uint64_t res = 0;
 
-    for (int i = 0; i < (int)bytes.size(); i++)
+    for (size_t i = 0; i < bytes.size(); i++)
     {
         res <<= 8;
         res |= (uint8_t) bytes[i];
@@ -168,10 +168,10 @@ void MKVStream::sendCluster(const byte_string& cluster, Channel* ch)
             if (buffer.size() != 0) throw StreamException("Logic error");
             buffer = id.bytes + size.bytes;
             buffer.append(payload.begin(), payload.end());
-            int pos = 0;
-            while (pos < (int)buffer.size())
+            size_t pos = 0;
+            while (pos < buffer.size())
             {
-                int next = (std::min)(pos + 15*1024, (int)buffer.size());
+                int next = (std::min)(pos + 15*1024, buffer.size());
                 sendPacket(ChanPacket::T_DATA, buffer.substr(pos, next-pos), continuation, ch);
                 continuation = true;
                 pos = next;
@@ -196,7 +196,7 @@ void MKVStream::sendCluster(const byte_string& cluster, Channel* ch)
 // Tracks 要素からビデオトラックのトラック番号を調べる。
 void MKVStream::readTracks(const std::string& data)
 {
-    DynamicMemoryStream mem;
+    StringStream mem;
     mem.str(data);
 
     while (!mem.eof())
@@ -239,7 +239,7 @@ void MKVStream::readTracks(const std::string& data)
 // TimecodeScale の値を調べる。
 void MKVStream::readInfo(const std::string& data)
 {
-    DynamicMemoryStream in;
+    StringStream in;
     in.str(data);
 
     while (true)

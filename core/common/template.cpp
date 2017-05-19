@@ -24,7 +24,7 @@
 
 #include "servmgr.h"
 #include "stats.h"
-#include "dmstream.h"
+#include "sstream.h"
 #include "notif.h"
 #include "str.h"
 #include "jrpc.h"
@@ -42,11 +42,47 @@ using namespace std;
 static json::object_t array_to_object(json::array_t arr)
 {
     json::object_t obj;
-    for (int i = 0; i < (int)arr.size(); i++)
+    for (size_t i = 0; i < arr.size(); i++)
     {
         obj[to_string(i)] = arr[i];
     }
     return obj;
+}
+
+// --------------------------------------
+void Template::initVariableWriters()
+{
+    m_variableWriters["servMgr"] = servMgr;
+    m_variableWriters["chanMgr"] = chanMgr;
+    m_variableWriters["stats"]   = &stats;
+    m_variableWriters["notificationBufer"] = &g_notificationBuffer;
+    m_variableWriters["sys"]     = sys;
+}
+
+// --------------------------------------
+Template::Template(const char* args)
+    : currentElement(json::object({}))
+{
+    if (args)
+        tmplArgs = strdup(args);
+    else
+        tmplArgs = NULL;
+    initVariableWriters();
+}
+
+// --------------------------------------
+Template::Template(const std::string& args)
+    : currentElement(json::object({}))
+{
+    tmplArgs = strdup(args.c_str());
+    initVariableWriters();
+}
+
+// --------------------------------------
+Template::~Template()
+{
+    if (tmplArgs)
+        free(tmplArgs);
 }
 
 // --------------------------------------
@@ -108,140 +144,144 @@ void Template::writeVariable(Stream &s, const String &varName, int loop)
 }
 
 // --------------------------------------
+bool Template::writeLoopVariable(Stream &s, const String &varName, int loop)
+{
+    if (varName.startsWith("loop.channel."))
+    {
+        Channel *ch = chanMgr->findChannelByIndex(loop);
+        if (ch)
+            return ch->writeVariable(s, varName+13);
+    }else if (varName.startsWith("loop.servent."))
+    {
+        Servent *sv = servMgr->findServentByIndex(loop);
+        if (sv)
+            return sv->writeVariable(s, varName+13);
+    }else if (varName.startsWith("loop.filter."))
+    {
+        ServFilter *sf = &servMgr->filters[loop];
+        return sf->writeVariable(s, varName+12);
+    }else if (varName.startsWith("loop.bcid."))
+    {
+        BCID *bcid = servMgr->findValidBCID(loop);
+        if (bcid)
+            return bcid->writeVariable(s, varName+10);
+    }else if (varName == "loop.indexEven")
+    {
+        s.writeStringF("%d", (loop&1)==0);
+        return true;
+    }else if (varName == "loop.index")
+    {
+        s.writeStringF("%d", loop);
+        return true;
+    }else if (varName == "loop.indexBaseOne")
+    {
+        s.writeStringF("%d", loop + 1);
+        return true;
+    }else if (varName.startsWith("loop.hit."))
+    {
+        const char *idstr = getCGIarg(tmplArgs, "id=");
+        if (idstr)
+        {
+            GnuID id;
+            id.fromStr(idstr);
+            ChanHitList *chl = chanMgr->findHitListByID(id);
+            if (chl)
+            {
+                int cnt=0;
+                ChanHit *ch = chl->hit;
+                while (ch)
+                {
+                    if (ch->host.ip && !ch->dead)
+                    {
+                        if (cnt == loop)
+                        {
+                            return ch->writeVariable(s, varName+9);
+                            break;
+                        }
+                        cnt++;
+                    }
+                    ch=ch->next;
+                }
+            }
+        }
+    }else if (varName.startsWith("loop.externalChannel."))
+    {
+        return servMgr->channelDirectory.writeVariable(s, varName + strlen("loop."), loop);
+    }else if (varName.startsWith("loop.channelFeed."))
+    {
+        return servMgr->channelDirectory.writeVariable(s, varName + strlen("loop."), loop);
+    }else if (varName.startsWith("loop.notification."))
+    {
+        return g_notificationBuffer.writeVariable(s, varName + strlen("loop."), loop);
+    }
+
+    return false;
+}
+
+// --------------------------------------
+bool Template::writePageVariable(Stream &s, const String &varName, int loop)
+{
+    if (varName.startsWith("page.channel."))
+    {
+        const char *idstr = getCGIarg(tmplArgs, "id=");
+        if (idstr)
+        {
+            GnuID id;
+            id.fromStr(idstr);
+            Channel *ch = chanMgr->findChannelByID(id);
+            if (varName == "page.channel.exist")
+            {
+                if (ch)
+                    s.writeString("1");
+                else
+                    s.writeString("0");
+                return true;
+            }else
+            {
+                if (ch)
+                    return ch->writeVariable(s, varName+13);
+            }
+        }
+    }else
+    {
+        String v = varName+5;
+        v.append('=');
+        const char *a = getCGIarg(tmplArgs, v);
+        if (a)
+        {
+            s.writeString(a);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// --------------------------------------
 void Template::writeGlobalVariable(Stream &s, const String &varName, int loop)
 {
     bool r = false;
-    if (varName.startsWith("servMgr."))
-        r = servMgr->writeVariable(s, varName+8);
-    else if (varName.startsWith("chanMgr."))
-        r = chanMgr->writeVariable(s, varName+8, loop);
-    else if (varName.startsWith("stats."))
-        r = stats.writeVariable(s, varName+6);
-    else if (varName.startsWith("sys."))
+
+    const std::string v = varName;
+    if (v.find('.') != std::string::npos)
     {
-        if (varName == "sys.log.dumpHTML")
+        const auto qual = v.substr(0, v.find('.'));
+        if (m_variableWriters.count(qual))
         {
-            sys->logBuf->dumpHTML(s);
-            r = true;
-        }else if (varName == "sys.time")
-        {
-            s.writeString(to_string(sys->getTime()).c_str());
-            r = true;
+            r = m_variableWriters[qual]->writeVariable(s, varName + qual.size() + 1);
+            goto End;
         }
     }
-    else if (varName.startsWith("notificationBuffer."))
-        r = g_notificationBuffer.writeVariable(s, varName + strlen("notificationBuffer."));
-    else if (varName.startsWith("loop."))
+
+    if (varName.startsWith("loop."))
     {
-        if (varName.startsWith("loop.channel."))
-        {
-            Channel *ch = chanMgr->findChannelByIndex(loop);
-            if (ch)
-                r = ch->writeVariable(s, varName+13, loop);
-        }else if (varName.startsWith("loop.servent."))
-        {
-            Servent *sv = servMgr->findServentByIndex(loop);
-            if (sv)
-                r = sv->writeVariable(s, varName+13);
-        }else if (varName.startsWith("loop.filter."))
-        {
-            ServFilter *sf = &servMgr->filters[loop];
-            r = sf->writeVariable(s, varName+12);
-        }else if (varName.startsWith("loop.bcid."))
-        {
-            BCID *bcid = servMgr->findValidBCID(loop);
-            if (bcid)
-                r = bcid->writeVariable(s, varName+10);
-        }else if (varName == "loop.indexEven")
-        {
-            s.writeStringF("%d", (loop&1)==0);
-            r = true;
-        }else if (varName == "loop.index")
-        {
-            s.writeStringF("%d", loop);
-            r = true;
-        }else if (varName == "loop.indexBaseOne")
-        {
-            s.writeStringF("%d", loop + 1);
-            r = true;
-        }else if (varName.startsWith("loop.hit."))
-        {
-            const char *idstr = getCGIarg(tmplArgs, "id=");
-            if (idstr)
-            {
-                GnuID id;
-                id.fromStr(idstr);
-                ChanHitList *chl = chanMgr->findHitListByID(id);
-                if (chl)
-                {
-                    int cnt=0;
-                    ChanHit *ch = chl->hit;
-                    while (ch)
-                    {
-                        if (ch->host.ip && !ch->dead)
-                        {
-                            if (cnt == loop)
-                            {
-                                r = ch->writeVariable(s, varName+9);
-                                break;
-                            }
-                            cnt++;
-                        }
-                        ch=ch->next;
-                    }
-                }
-            }
-        }else if (varName.startsWith("loop.externalChannel."))
-        {
-            r = servMgr->channelDirectory.writeVariable(s, varName + strlen("loop."), loop);
-        }else if (varName.startsWith("loop.channelFeed."))
-        {
-            r = servMgr->channelDirectory.writeVariable(s, varName + strlen("loop."), loop);
-        }else if (varName.startsWith("loop.notification."))
-        {
-            r = g_notificationBuffer.writeVariable(s, varName + strlen("loop."), loop);
-        }
+        r = writeLoopVariable(s, varName, loop);
     }else if (varName.startsWith("this."))
     {
         r = writeObjectProperty(s, varName + strlen("this."), currentElement);
     }else if (varName.startsWith("page."))
     {
-        if (varName == "page.channel.exist")
-        {
-            const char *idstr = getCGIarg(tmplArgs, "id=");
-            if (idstr)
-            {
-                GnuID id;
-                id.fromStr(idstr);
-                Channel *ch = chanMgr->findChannelByID(id);
-                if (ch)
-                    s.writeString("1");
-                else
-                    s.writeString("0");
-                r = true;
-            }
-        }if (varName.startsWith("page.channel."))
-        {
-            const char *idstr = getCGIarg(tmplArgs, "id=");
-            if (idstr)
-            {
-                GnuID id;
-                id.fromStr(idstr);
-                Channel *ch = chanMgr->findChannelByID(id);
-                if (ch)
-                    r = ch->writeVariable(s, varName+13, loop);
-            }
-        }else
-        {
-            String v = varName+5;
-            v.append('=');
-            const char *a = getCGIarg(tmplArgs, v);
-            if (a)
-            {
-                s.writeString(a);
-                r = true;
-            }
-        }
+        r = writePageVariable(s, varName, loop);
     }else if (varName == "TRUE")
     {
         s.writeString("1");
@@ -252,6 +292,8 @@ void Template::writeGlobalVariable(Stream &s, const String &varName, int loop)
         r = true;
     }
 
+    // ïœêîÇ™å©ïtÇ©ÇÁÇ»Ç©Ç¡ÇΩèÍçáÇÕïœêîñºÇèëÇ´èoÇ∑
+End:
     if (!r)
         s.writeString(varName);
 }
@@ -259,7 +301,7 @@ void Template::writeGlobalVariable(Stream &s, const String &varName, int loop)
 // --------------------------------------
 string Template::getStringVariable(const string& varName, int loop)
 {
-    DynamicMemoryStream mem;
+    StringStream mem;
 
     writeVariable(mem, varName.c_str(), loop);
 
@@ -269,7 +311,7 @@ string Template::getStringVariable(const string& varName, int loop)
 // --------------------------------------
 int Template::getIntVariable(const String &varName, int loop)
 {
-    DynamicMemoryStream mem;
+    StringStream mem;
 
     writeVariable(mem, varName, loop);
 
@@ -279,7 +321,7 @@ int Template::getIntVariable(const String &varName, int loop)
 // --------------------------------------
 bool Template::getBoolVariable(const String &varName, int loop)
 {
-    DynamicMemoryStream mem;
+    StringStream mem;
 
     writeVariable(mem, varName, loop);
 
@@ -633,7 +675,7 @@ void    Template::readForeach(Stream &in, Stream *outp, int loop)
             {
                 auto outer = currentElement;
                 int start = in.getPosition();
-                for (int i = 0; i < (int)coll.size(); i++)
+                for (size_t i = 0; i < coll.size(); i++)
                 {
                     in.seekTo(start);
                     currentElement = coll[i];
@@ -706,7 +748,7 @@ void    Template::readVariable(Stream &in, Stream *outp, int loop)
         {
             if (inSelectedFragment() && outp)
             {
-                DynamicMemoryStream mem;
+                StringStream mem;
 
                 writeVariable(mem, var, loop);
                 outp->writeString(cgi::escape_html(mem.str()).c_str());
@@ -730,7 +772,7 @@ void    Template::readVariableJavaScript(Stream &in, Stream *outp, int loop)
         {
             if (inSelectedFragment() && outp)
             {
-                DynamicMemoryStream mem;
+                StringStream mem;
 
                 writeVariable(mem, var, loop);
                 outp->writeString(cgi::escape_javascript(mem.str()).c_str());
@@ -825,7 +867,7 @@ bool HTTPRequestScope::writeVariable(Stream& s, const String& varName, int loop)
 {
     if (varName == "request.host")
     {
-        if (m_request.getHeader("Host").empty())
+        if (m_request.headers.get("Host").empty())
         {
             servMgr->writeVariable(s, "serverIP");
             s.writeString(":");
@@ -833,7 +875,7 @@ bool HTTPRequestScope::writeVariable(Stream& s, const String& varName, int loop)
         }
         else
         {
-            s.writeString(m_request.getHeader("Host"));
+            s.writeString(m_request.headers.get("Host"));
             return true;
         }
     }
