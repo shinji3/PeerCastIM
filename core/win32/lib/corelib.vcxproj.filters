@@ -150,9 +150,6 @@
     <ClCompile Include="..\..\common\httppush.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\dmstream.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\common\chandir.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
@@ -166,6 +163,9 @@
       <Filter>Core Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\common\public.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\sstream.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -332,9 +332,6 @@
     <ClInclude Include="..\..\common\httppush.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\dmstream.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\common\chandir.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
@@ -354,6 +351,12 @@
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\defer.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\sstream.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\varwriter.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
   </ItemGroup>

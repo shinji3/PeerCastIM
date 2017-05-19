@@ -531,7 +531,6 @@
     <ClCompile Include="..\..\common\channel.cpp" />
     <ClCompile Include="..\..\common\cstream.cpp" />
     <ClCompile Include="..\..\common\dechunker.cpp" />
-    <ClCompile Include="..\..\common\dmstream.cpp" />
     <ClCompile Include="..\..\common\flv.cpp" />
     <ClCompile Include="..\..\common\gnuid.cpp" />
     <ClCompile Include="..\..\common\gnutella.cpp" />
@@ -559,6 +558,7 @@
     <ClCompile Include="..\..\common\servent.cpp" />
     <ClCompile Include="..\..\common\servhs.cpp" />
     <ClCompile Include="..\..\common\servmgr.cpp" />
+    <ClCompile Include="..\..\common\sstream.cpp" />
     <ClCompile Include="..\..\common\stats.cpp" />
     <ClCompile Include="..\..\common\str.cpp" />
     <ClCompile Include="..\..\common\stream.cpp" />
@@ -589,7 +589,6 @@
     <ClInclude Include="..\..\common\cstream.h" />
     <ClInclude Include="..\..\common\dechunker.h" />
     <ClInclude Include="..\..\common\defer.h" />
-    <ClInclude Include="..\..\common\dmstream.h" />
     <ClInclude Include="..\..\common\flv.h" />
     <ClInclude Include="..\..\common\gnuid.h" />
     <ClInclude Include="..\..\common\gnutella.h" />
@@ -620,6 +619,7 @@
     <ClInclude Include="..\..\common\servent.h" />
     <ClInclude Include="..\..\common\servmgr.h" />
     <ClInclude Include="..\..\common\socket.h" />
+    <ClInclude Include="..\..\common\sstream.h" />
     <ClInclude Include="..\..\common\stats.h" />
     <ClInclude Include="..\..\common\str.h" />
     <ClInclude Include="..\..\common\stream.h" />
@@ -628,6 +628,7 @@
     <ClInclude Include="..\..\common\ts_vector.h" />
     <ClInclude Include="..\..\common\uri.h" />
     <ClInclude Include="..\..\common\url.h" />
+    <ClInclude Include="..\..\common\varwriter.h" />
     <ClInclude Include="..\..\common\version2.h" />
     <ClInclude Include="..\..\common\wmhttp.h" />
     <ClInclude Include="..\..\common\xml.h" />
