@@ -25,7 +25,7 @@ int  StringStream::read(void *buf, int count)
     if (m_pos == m_buffer.size())
         throw StreamException("End of stream");
 
-    int bytesRead = (std::min)(m_pos + count, m_buffer.size());
+    int bytesRead = (int)(std::min)(m_pos + count, m_buffer.size());
     memcpy(buf, m_buffer.c_str() + m_pos, bytesRead);;
     m_pos += bytesRead;
     return bytesRead;
@@ -61,7 +61,7 @@ void StringStream::seekTo(int newPos)
 
 int  StringStream::getPosition()
 {
-    return m_pos;
+    return (int)m_pos;
 }
 
 int  StringStream::getLength()

@@ -64,7 +64,7 @@ Template::Template(const char* args)
     : currentElement(json::object({}))
 {
     if (args)
-        tmplArgs = strdup(args);
+        tmplArgs = _strdup(args);
     else
         tmplArgs = NULL;
     initVariableWriters();
@@ -74,7 +74,7 @@ Template::Template(const char* args)
 Template::Template(const std::string& args)
     : currentElement(json::object({}))
 {
-    tmplArgs = strdup(args.c_str());
+    tmplArgs = _strdup(args.c_str());
     initVariableWriters();
 }
 
@@ -679,7 +679,7 @@ void    Template::readForeach(Stream &in, Stream *outp, int loop)
                 {
                     in.seekTo(start);
                     currentElement = coll[i];
-                    readTemplate(in, outp, i); // loop
+                    readTemplate(in, outp, (int)i); // loop
                 }
                 currentElement = outer;
             }

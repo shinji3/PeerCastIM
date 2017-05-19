@@ -240,6 +240,8 @@ public:
     int          totalListeners();
     int          totalRelays();
 
+    static std::string renderHexDump(const std::string& in);
+
     ::String            mount;
     ChanMeta            insertMeta;
     ChanPacket          headPack;
