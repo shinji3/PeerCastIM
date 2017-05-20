@@ -138,13 +138,12 @@ void LogBuffer::write(const char *str, TYPE t)
     while (len)
     {
         size_t rlen = len;
-        if (rlen > (lineLen-1))
-            rlen = lineLen-1;
+        if (rlen > lineLen)
+            rlen = lineLen;
 
         int i = currLine % maxLines;
         int bp = i*lineLen;
         strncpy_s(&buf[bp], rlen, str, _TRUNCATE);
-        buf[bp+rlen] = 0;
         if (cnt==0)
         {
             times[i] = sys->getTime();

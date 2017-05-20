@@ -177,9 +177,8 @@ void ADDLOG(const char *fmt, va_list ap, LogBuffer::TYPE type)
     {
         const int MAX_LINELEN = 1024;
 
-        char str[MAX_LINELEN+1];
-        _vsnprintf_s(str, MAX_LINELEN-1, _TRUNCATE, fmt, ap);
-        str[MAX_LINELEN-1]=0;
+        char str[MAX_LINELEN];
+        _vsnprintf_s(str, MAX_LINELEN, _TRUNCATE, fmt, ap);
 
         if (type != LogBuffer::T_NONE)
             sys->logBuf->write(str, type);
