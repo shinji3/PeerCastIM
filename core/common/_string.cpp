@@ -608,7 +608,7 @@ void String::sprintf(const char* fmt, ...)
     va_list ap;
 
     va_start(ap, fmt);
-    _vsnprintf_s(this->data, ::String::MAX_LEN - 1, _TRUNCATE, fmt, ap);
+    _vsnprintf_s(this->data, ::String::MAX_LEN, _TRUNCATE, fmt, ap);
     va_end(ap);
 }
 
