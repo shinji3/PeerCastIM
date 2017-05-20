@@ -71,8 +71,7 @@ bool ClientSocket::getHostname(char *str,size_t size,unsigned int ip) //JP-MOD
 	if (error == 0)
 	{
 		LOG_DEBUG("getHostname: %d.%d.%d.%d -> %s", ((BYTE*)&ip)[0], ((BYTE*)&ip)[1], ((BYTE*)&ip)[2], ((BYTE*)&ip)[3], h_name);
-		strncpy_s(str, size-1, h_name, _TRUNCATE);
-		str[size-1] = '\0';
+		strncpy_s(str, size, h_name, _TRUNCATE);
 		return true;
 	}else
 		return false;
