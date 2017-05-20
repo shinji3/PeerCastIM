@@ -117,8 +117,7 @@ public:
 
     void    set(const char *i, unsigned int nip)
     {
-        strncpy_s(id, sizeof(id)-1, i, _TRUNCATE);
-        id[sizeof(id)-1]=0;
+        strncpy_s(id, sizeof(id), i, _TRUNCATE);
         ip = nip;
     }
     bool    compare(Cookie &c)
