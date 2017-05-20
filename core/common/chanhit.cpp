@@ -98,7 +98,7 @@ void ChanHit::init()
     uphostHops = 0;
 
     versionVP = 0;
-    strncpy_s(versionExPrefix, 2, "  ", _TRUNCATE);
+    strncpy_s(versionExPrefix, 3, "  ", _TRUNCATE);
     versionExNumber = 0;
 }
 
@@ -123,7 +123,7 @@ void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, unsig
 
     version = PCP_CLIENT_VERSION;
     versionVP = PCP_CLIENT_VERSION_VP;
-    strncpy_s(versionExPrefix, 2, PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
+    strncpy_s(versionExPrefix, 3, PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
     versionExNumber = PCP_CLIENT_VERSION_EX_NUMBER;
 
     rhost[0] = Host(host.ip, host.port);
@@ -209,7 +209,7 @@ void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, bool 
     version = PCP_CLIENT_VERSION;
     versionVP = PCP_CLIENT_VERSION_VP;
 
-    strncpy_s(versionExPrefix, 2, PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
+    strncpy_s(versionExPrefix, 3, PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
     versionExNumber = PCP_CLIENT_VERSION_EX_NUMBER;
 
     status = ch->status;

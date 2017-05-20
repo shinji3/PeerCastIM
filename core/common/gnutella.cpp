@@ -692,7 +692,6 @@ bool GnuStream::readHit(Stream &data, ChanHit &ch, int hops, GnuID &id)
                 if (ag)
                 {
                     strncpy_s(agentStr, 16, ag, _TRUNCATE);
-                    agentStr[15]=0;
                 }
                 maxPreviewTime = sn->findAttrInt("preview");
             }

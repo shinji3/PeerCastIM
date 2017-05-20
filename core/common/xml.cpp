@@ -42,7 +42,7 @@ static inline int strToID(char *str)
         int i;
         char s[8];
     };
-    strncpy_s(s, 4, str, _TRUNCATE);
+    strncpy_s(s, 5, str, _TRUNCATE);
     return i;
 }
 
