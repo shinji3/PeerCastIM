@@ -398,6 +398,7 @@
     <ClCompile Include="..\core\common\chkMemoryLeak.cpp" />
     <ClCompile Include="..\core\common\identify_encoding.c" />
     <ClCompile Include="..\core\common\utf8.c" />
+    <ClCompile Include="cgi_unittest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Private Debug|Win32'">Create</PrecompiledHeader>
