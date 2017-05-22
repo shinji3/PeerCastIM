@@ -46,7 +46,7 @@ namespace strFixture
         TEST_METHOD(codepoint_to_utf8)
         {
             Assert::AreEqual(" ", str::codepoint_to_utf8(0x20).c_str());
-            Assert::AreEqual("‚ ", str::codepoint_to_utf8(12354).c_str());
+            Assert::AreEqual("\xE3\x81\x82", str::codepoint_to_utf8(12354).c_str());
             Assert::AreEqual("\xf0\x9f\x92\xa9", str::codepoint_to_utf8(0x1f4a9).c_str()); // PILE OF POO
         }
 
