@@ -534,7 +534,6 @@ void String::setUnquote(const char *p, TYPE t)
 // -----------------------------------
 void String::clear()
 {
-    memset(data, 0, MAX_LEN);
     data[0] = 0;
     type = T_UNKNOWN;
 }
@@ -542,7 +541,7 @@ void String::clear()
 // -----------------------------------
 void String::append(const char *s)
 {
-    if ((strlen(s)+strlen(data) < (MAX_LEN-1)))
+    if ((strlen(s)+strlen(data)) < (MAX_LEN-1))
         strcat_s(data, MAX_LEN, s);
 }
 
