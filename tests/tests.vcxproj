@@ -393,7 +393,6 @@
     <ClInclude Include="..\core\common\utf8.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="unittest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\common\chkMemoryLeak.cpp" />
@@ -412,6 +411,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Private Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="string_unittest.cpp" />
+    <ClCompile Include="str_unittest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

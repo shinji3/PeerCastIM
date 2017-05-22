@@ -1,17 +1,16 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "unittest.h"
 
 #include "sys.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace StringTest
-{		
+{
     TEST_CLASS(StringTest)
     {
     public:
-        
+
         TEST_METHOD(isEmptyWorks) {
             String str;
             Assert::IsTrue(str.isEmpty());
