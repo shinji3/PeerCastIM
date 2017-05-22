@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 
+using namespace std;
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace mapFixture
@@ -16,15 +18,34 @@ namespace mapFixture
 
         TEST_METHOD(bracketsDoesNotThrow)
         {
-            Assert::AreEqual(0, dic.size());
-            ASSERT_NO_THROW(dic["hoge"]);
+            Assert::AreEqual(0, (int)dic.size());
+
+            bool e = false;
+            try
+            {
+                dic["hoge"];
+            }
+            catch (std::out_of_range)
+            {
+                e = true;
+            }
+            Assert::AreNotEqual(e, true);
             Assert::AreEqual("", dic["hoge"].c_str());
-            Assert::AreEqual(1, dic.size());
+            Assert::AreEqual(1, (int)dic.size());
         }
 
         TEST_METHOD(atThrows)
         {
-            ASSERT_THROW(dic.at("hoge"), std::out_of_range);
+            bool e = false;
+            try
+            {
+                dic.at("hoge");
+            }
+            catch (std::out_of_range)
+            {
+                e = true;
+            }
+            Assert::AreEqual(e, true);
         }
 
     };
