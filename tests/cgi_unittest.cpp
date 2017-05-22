@@ -5,13 +5,13 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace strFixture
+namespace cgiFixture
 {
-    TEST_CLASS(strFixture)
+    TEST_CLASS(cgiFixture)
     {
     public:
 
-        strFixture()
+        cgiFixture()
         {
             for (auto i = 0; i < 256; i++) {
                 all_bytes.push_back(i);
