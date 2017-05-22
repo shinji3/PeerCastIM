@@ -70,11 +70,11 @@ void String::setFromTime(unsigned int t)
 {
     time_t tmp = t;
     char p[26];
-    ctime_s(p, sizeof(p), &tmp);
+    ctime_s(p, 26, &tmp);
     if (p)
-        strcpy_s(data, sizeof(data), p);
+        strcpy_s(data, MAX_LEN, p);
     else
-        strcpy_s(data, sizeof(data), "-");
+        strcpy_s(data, MAX_LEN, "-");
     type = T_ASCII;
 }
 
@@ -89,15 +89,15 @@ void String::setFromStopwatch(unsigned int t)
     day = (t/86400);
 
     if (day)
-        sprintf_s(data, sizeof(data), "%d day, %d hour", day, hour);
+        sprintf_s(data, MAX_LEN, "%d day, %d hour", day, hour);
     else if (hour)
-        sprintf_s(data, sizeof(data), "%d hour, %d min", hour, min);
+        sprintf_s(data, MAX_LEN, "%d hour, %d min", hour, min);
     else if (min)
-        sprintf_s(data, sizeof(data), "%d min, %d sec", min, sec);
+        sprintf_s(data, MAX_LEN, "%d min, %d sec", min, sec);
     else if (sec)
-        sprintf_s(data, sizeof(data), "%d sec", sec);
+        sprintf_s(data, MAX_LEN, "%d sec", sec);
     else
-        sprintf_s(data, sizeof(data), "-");
+        sprintf_s(data, MAX_LEN, "-");
 
     type = T_ASCII;
 }
@@ -279,7 +279,7 @@ void String::ASCII2HTML(const char *in)
             *op++ = c;
         }else
         {
-            sprintf_s(op, sizeof(op), "&#x%02X;", (int)c);
+            sprintf_s(op, MAX_LEN - (op - data), "&#x%02X;", (int)c);
             op += 6;
         }
         if (op >= oe)
@@ -305,7 +305,7 @@ void String::ASCII2ESC(const char *in, bool safe)
             if (safe)
                 *op++ = '%';
             *op = 0;
-            sprintf_s(op, sizeof(op), "%02X", (int)c);
+            sprintf_s(op, MAX_LEN - (op - data), "%02X", (int)c);
             op += 2;
         }
         if (op >= oe)
@@ -442,12 +442,12 @@ void String::ASCII2SJIS(const char *in) //JP-EX
 {
     char *op = data;
     char *p;
-    if (utf8_decode(in,&p)<0)
+    if (utf8_decode(in, &p)<0)
     {
-        strcpy_s(op, sizeof(op),in);
+        strcpy_s(op, MAX_LEN, in);
         return;
     }
-    strcpy_s(op, sizeof(op),p);
+    strcpy_s(op, MAX_LEN, p);
     free(p);
 }
 #endif
@@ -484,7 +484,7 @@ void String::convertTo(TYPE t)
         {
             case T_UNKNOWN:
             case T_ASCII:
-                strcpy_s(data, sizeof(data), tmp.data);
+                strcpy_s(data, MAX_LEN, tmp.data);
                 break;
             case T_UNICODE:
                 UNKNOWN2UNICODE(tmp.data, false);
@@ -543,7 +543,7 @@ void String::clear()
 void String::append(const char *s)
 {
     if ((strlen(s)+strlen(data) < (MAX_LEN-1)))
-        strcat_s(data, sizeof(data),s);
+        strcat_s(data, MAX_LEN, s);
 }
 
 // -----------------------------------
@@ -568,7 +568,7 @@ void String::prepend(const char *s)
 // -----------------------------------
 String& String::operator = (const String& other)
 {
-    strcpy_s(this->data, sizeof(this->data), other.data);
+    strcpy_s(this->data, MAX_LEN, other.data);
     this->type = other.type;
 
     return *this;
@@ -586,7 +586,7 @@ String& String::operator = (const char* cstr)
 // -----------------------------------
 String& String::operator = (const std::string& rhs)
 {
-    strcpy_s(data, sizeof(data), rhs.substr(0, MAX_LEN - 1).c_str());
+    strcpy_s(data, MAX_LEN, rhs.substr(0, MAX_LEN - 1).c_str());
     this->type = T_ASCII;
 
     return *this;
