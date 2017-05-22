@@ -17,6 +17,7 @@ namespace cgiFixture
                 all_bytes.push_back(i);
             }
         }
+
         std::string all_bytes;
 
         TEST_METHOD(escape)
