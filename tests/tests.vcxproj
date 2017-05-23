@@ -401,6 +401,8 @@
     <ClCompile Include="..\core\common\identify_encoding.c" />
     <ClCompile Include="..\core\common\utf8.c" />
     <ClCompile Include="cgi_unittest.cpp" />
+    <ClCompile Include="chanhitsearch_unittest.cpp" />
+    <ClCompile Include="chanpacket_unittest.cpp" />
     <ClCompile Include="clientsocket_unittest.cpp" />
     <ClCompile Include="criticalsection_unittest.cpp" />
     <ClCompile Include="map_unittest.cpp" />

@@ -22,7 +22,7 @@ namespace ChanHitSearchFixture
             chs.matchHost.toStr(buf);
             Assert::AreEqual("0.0.0.0:0", buf);
 
-            Assert::AreEqual(0, chs.waitDelay);
+            Assert::AreEqual(0, (int)chs.waitDelay);
             Assert::AreEqual(false, chs.useFirewalled);
             Assert::AreEqual(false, chs.trackersOnly);
             Assert::AreEqual(true, chs.useBusyRelays);

@@ -15,10 +15,10 @@ namespace ChanPacketFixture
 
         TEST_METHOD(initialState)
         {
-            Assert::AreEqual(ChanPacket::T_UNKNOWN, p.type);
-            Assert::AreEqual(0, p.len);
-            Assert::AreEqual(0, p.pos);
-            Assert::AreEqual(0, p.sync);
+            Assert::AreEqual((int)ChanPacket::T_UNKNOWN, (int)p.type);
+            Assert::AreEqual(0, (int)p.len);
+            Assert::AreEqual(0, (int)p.pos);
+            Assert::AreEqual(0, (int)p.sync);
 
             // we don't know what's in p.data[]
         }
@@ -32,10 +32,10 @@ namespace ChanPacketFixture
 
             p.init();
 
-            Assert::AreEqual(ChanPacket::T_UNKNOWN, p.type);
-            Assert::AreEqual(0, p.len);
-            Assert::AreEqual(0, p.pos);
-            Assert::AreEqual(0, p.sync);
+            Assert::AreEqual((int)ChanPacket::T_UNKNOWN, (int)p.type);
+            Assert::AreEqual(0, (int)p.len);
+            Assert::AreEqual(0, (int)p.pos);
+            Assert::AreEqual(0, (int)p.sync);
         }
 
     };
