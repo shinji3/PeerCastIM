@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "win32/wsocket.h"
-#include "win32/wsys.h"
+#include "mockpeercast.h"
+#include "win32\wsocket.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -12,10 +12,22 @@ namespace ClientSocketFixture
     {
     public:
 
+        ClientSocketFixture()
+        {
+            peercastApp = new MockPeercastApplication();
+            peercastInst = new MockPeercastInstance();
+            peercastInst->init();
+
+            WSAClientSocket::init();
+        }
+
+        ~ClientSocketFixture()
+        {
+            WSACleanup();
+        }
+
         TEST_METHOD(getIP)
         {
-            printf("%d\n", (127 << 24 | 1));
-            printf("%d\n", (int)ClientSocket::getIP("localhost"));
             Assert::AreEqual((127<<24 | 1), (int)ClientSocket::getIP("localhost"));
             Assert::AreEqual((127<<24 | 1), (int)ClientSocket::getIP("127.0.0.1"));
         }

@@ -76,11 +76,11 @@ void GnuID::toStr(char *str) const
     str[0] = 0;
     for (int i=0; i<16; i++)
     {
-        char tmp[8];
+        char tmp[3];
         unsigned char ipb = id[i];
 
-        sprintf_s(tmp, sizeof(tmp), "%02X", ipb);
-        strcat_s(str, sizeof(str), tmp);
+        sprintf_s(tmp, 3, "%02X", ipb);
+        strcat_s(str, 33, tmp);
     }
 }
 
