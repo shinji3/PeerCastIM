@@ -402,6 +402,7 @@
     <ClCompile Include="..\core\common\utf8.c" />
     <ClCompile Include="cgi_unittest.cpp" />
     <ClCompile Include="clientsocket_unittest.cpp" />
+    <ClCompile Include="criticalsection_unittest.cpp" />
     <ClCompile Include="map_unittest.cpp" />
     <ClCompile Include="md5_unittest.cpp" />
     <ClCompile Include="mkvstream_unittest.cpp" />
