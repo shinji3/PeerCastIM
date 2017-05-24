@@ -405,6 +405,8 @@
     <ClCompile Include="chanpacket_unittest.cpp" />
     <ClCompile Include="clientsocket_unittest.cpp" />
     <ClCompile Include="criticalsection_unittest.cpp" />
+    <ClCompile Include="defer_unittest.cpp" />
+    <ClCompile Include="idstring_unittest.cpp" />
     <ClCompile Include="map_unittest.cpp" />
     <ClCompile Include="md5_unittest.cpp" />
     <ClCompile Include="mkvstream_unittest.cpp" />
@@ -422,6 +424,7 @@
     </ClCompile>
     <ClCompile Include="string_unittest.cpp" />
     <ClCompile Include="str_unittest.cpp" />
+    <ClCompile Include="xml_unittest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
