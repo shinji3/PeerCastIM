@@ -229,7 +229,7 @@ std::string downcase(const std::string& input)
     std::string res;
     for (auto c : input)
     {
-        if (isalpha(c))
+        if (isalpha((unsigned char)c))
             res += tolower(c);
         else
             res += c;

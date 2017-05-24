@@ -501,7 +501,7 @@ std::string escape_javascript(const std::string& input)
         {
             res += '\\';
             res += c;
-        } else if (iscntrl(c))
+        } else if (iscntrl((unsigned char)c))
         {
             char buf[3];
 
