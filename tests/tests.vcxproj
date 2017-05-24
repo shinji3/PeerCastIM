@@ -416,6 +416,8 @@
     <ClCompile Include="md5_unittest.cpp" />
     <ClCompile Include="mkvstream_unittest.cpp" />
     <ClCompile Include="notificationbuffer_unittest.cpp" />
+    <ClCompile Include="notification_unittest.cpp" />
+    <ClCompile Include="query_unittest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Private Debug|Win32'">Create</PrecompiledHeader>
@@ -428,8 +430,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release(SSE2)|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Private Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="stdstring_unittest.cpp" />
     <ClCompile Include="string_unittest.cpp" />
     <ClCompile Include="str_unittest.cpp" />
+    <ClCompile Include="vint_unittest.cpp" />
     <ClCompile Include="xml_unittest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
