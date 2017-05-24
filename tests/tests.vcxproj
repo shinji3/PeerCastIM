@@ -402,8 +402,10 @@
     <ClCompile Include="..\core\common\utf8.c" />
     <ClCompile Include="cgi_unittest.cpp" />
     <ClCompile Include="chanhitsearch_unittest.cpp" />
+    <ClCompile Include="channeldirectory_unittest.cpp" />
     <ClCompile Include="chanpacket_unittest.cpp" />
     <ClCompile Include="clientsocket_unittest.cpp" />
+    <ClCompile Include="cookie_unittest.cpp" />
     <ClCompile Include="criticalsection_unittest.cpp" />
     <ClCompile Include="defer_unittest.cpp" />
     <ClCompile Include="idstring_unittest.cpp" />
