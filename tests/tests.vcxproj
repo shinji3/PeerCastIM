@@ -403,15 +403,18 @@
     <ClCompile Include="cgi_unittest.cpp" />
     <ClCompile Include="chanhitsearch_unittest.cpp" />
     <ClCompile Include="channeldirectory_unittest.cpp" />
+    <ClCompile Include="chanpacketbuffer_unittest.cpp" />
     <ClCompile Include="chanpacket_unittest.cpp" />
     <ClCompile Include="clientsocket_unittest.cpp" />
     <ClCompile Include="cookie_unittest.cpp" />
     <ClCompile Include="criticalsection_unittest.cpp" />
     <ClCompile Include="defer_unittest.cpp" />
+    <ClCompile Include="httpheaders_unittest.cpp" />
     <ClCompile Include="idstring_unittest.cpp" />
     <ClCompile Include="map_unittest.cpp" />
     <ClCompile Include="md5_unittest.cpp" />
     <ClCompile Include="mkvstream_unittest.cpp" />
+    <ClCompile Include="notificationbuffer_unittest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Private Debug|Win32'">Create</PrecompiledHeader>
