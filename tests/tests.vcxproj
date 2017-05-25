@@ -403,6 +403,7 @@
     <ClCompile Include="cgi_unittest.cpp" />
     <ClCompile Include="chanhitsearch_unittest.cpp" />
     <ClCompile Include="channeldirectory_unittest.cpp" />
+    <ClCompile Include="channelentry_unittest.cpp" />
     <ClCompile Include="chanpacketbuffer_unittest.cpp" />
     <ClCompile Include="chanpacket_unittest.cpp" />
     <ClCompile Include="clientsocket_unittest.cpp" />
