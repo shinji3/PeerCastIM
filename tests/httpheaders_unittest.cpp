@@ -13,13 +13,13 @@ namespace HTTPHeadersFixture
 
         HTTPHeaders headers;
 
-        TEST_METHOD(set)
+        TEST_METHOD(HTTPHeadersFixture_set)
         {
             headers.set("Content-Length", "123");
             Assert::AreEqual("123", headers.m_headers["CONTENT-LENGTH"].c_str());
         }
 
-        TEST_METHOD(get)
+        TEST_METHOD(HTTPHeadersFixture_get)
         {
             headers.set("Content-Length", "123");
             Assert::AreEqual("123", headers.get("Content-Length").c_str());
@@ -27,14 +27,14 @@ namespace HTTPHeadersFixture
             Assert::AreEqual("123", headers.get("content-length").c_str());
         }
 
-        TEST_METHOD(copyConstruct)
+        TEST_METHOD(HTTPHeadersFixture_copyConstruct)
         {
             headers.set("a", "b");
             HTTPHeaders copy(headers);
             Assert::AreEqual("b", copy.get("A").c_str());
         }
 
-        TEST_METHOD(assignment)
+        TEST_METHOD(HTTPHeadersFixture_assignment)
         {
             headers.set("a", "b");
             HTTPHeaders copy;

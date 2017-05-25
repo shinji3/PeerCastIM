@@ -11,7 +11,7 @@ namespace NotificationFixture
     {
     public:
 
-        TEST_METHOD(initialState1)
+        TEST_METHOD(NotificationFixture_initialState1)
         {
             Notification notif;
             Assert::AreEqual(0, (int)notif.time);
@@ -19,7 +19,7 @@ namespace NotificationFixture
             Assert::AreEqual("", notif.message.c_str());
         }
 
-        TEST_METHOD(initialState2)
+        TEST_METHOD(NotificationFixture_initialState2)
         {
             Notification notif(1, ServMgr::NT_BROADCASTERS, "A");
             Assert::AreEqual(1, (int)notif.time);
@@ -27,7 +27,7 @@ namespace NotificationFixture
             Assert::AreEqual("A", notif.message.c_str());
         }
 
-        TEST_METHOD(getTypeStr)
+        TEST_METHOD(NotificationFixture_getTypeStr)
         {
             Notification notif;
 

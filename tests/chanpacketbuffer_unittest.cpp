@@ -21,7 +21,7 @@ namespace ChanPacketBufferFixture
 
         ChanPacketBuffer data;
 
-        TEST_METHOD(init)
+        TEST_METHOD(ChanPacketBufferFixture_init)
         {
             data.init();
 
@@ -36,7 +36,7 @@ namespace ChanPacketBufferFixture
             Assert::AreEqual(0, data.numPending());
         }
 
-        TEST_METHOD(addPacket)
+        TEST_METHOD(ChanPacketBufferFixture_addPacket)
         {
             ChanPacket packet;
 

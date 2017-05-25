@@ -11,7 +11,7 @@ namespace NotificationBufferFixture
     {
     public:
 
-        TEST_METHOD(initialState)
+        TEST_METHOD(NotificationBufferFixture_initialState)
         {
             NotificationBuffer buf;
 
@@ -33,7 +33,7 @@ namespace NotificationBufferFixture
             Assert::IsFalse(entry.isRead);
         }
 
-        TEST_METHOD(addNotification)
+        TEST_METHOD(NotificationBufferFixture_addNotification)
         {
             NotificationBuffer buf;
             Notification notif;
@@ -43,7 +43,7 @@ namespace NotificationBufferFixture
             Assert::AreEqual(1, buf.numNotifications());
         }
 
-        TEST_METHOD(maxNotifs)
+        TEST_METHOD(NotificationBufferFixture_maxNotifs)
         {
             NotificationBuffer buf;
             Notification notif;

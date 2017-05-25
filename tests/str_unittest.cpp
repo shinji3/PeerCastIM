@@ -11,7 +11,7 @@ namespace strFixture
     {
     public:
 
-        TEST_METHOD(group_digits)
+        TEST_METHOD(strFixture_group_digits)
         {
             Assert::AreEqual("0", str::group_digits("0").c_str());
             Assert::AreEqual("1", str::group_digits("1").c_str());
@@ -33,7 +33,7 @@ namespace strFixture
             Assert::AreEqual("1,111,111,111", str::group_digits("1111111111").c_str());
         }
 
-        TEST_METHOD(split)
+        TEST_METHOD(strFixture_split)
         {
             auto vec = str::split("a b c", " ");
 
@@ -43,14 +43,14 @@ namespace strFixture
             Assert::AreEqual("c", vec[2].c_str());
         }
 
-        TEST_METHOD(codepoint_to_utf8)
+        TEST_METHOD(strFixture_codepoint_to_utf8)
         {
             Assert::AreEqual(" ", str::codepoint_to_utf8(0x20).c_str());
             Assert::AreEqual("\xE3\x81\x82", str::codepoint_to_utf8(12354).c_str());
             Assert::AreEqual("\xf0\x9f\x92\xa9", str::codepoint_to_utf8(0x1f4a9).c_str()); // PILE OF POO
         }
 
-        TEST_METHOD(format)
+        TEST_METHOD(strFixture_format)
         {
             Assert::AreEqual("a", str::format("a").c_str());
             Assert::AreEqual("a", str::format("%s", "a").c_str());
@@ -58,7 +58,7 @@ namespace strFixture
             Assert::AreEqual("12", str::format("%d%d", 1, 2).c_str());
         }
 
-        TEST_METHOD(contains)
+        TEST_METHOD(strFixture_contains)
         {
             Assert::IsTrue(str::contains("abc", "bc"));
             Assert::IsFalse(str::contains("abc", "d"));
@@ -68,7 +68,7 @@ namespace strFixture
             Assert::IsFalse(str::contains("", "abc"));
         }
 
-        TEST_METHOD(replace_prefix)
+        TEST_METHOD(strFixture_replace_prefix)
         {
             Assert::AreEqual("", str::replace_prefix("", "", "").c_str());
             Assert::AreEqual("b", str::replace_prefix("", "", "b").c_str());
@@ -80,7 +80,7 @@ namespace strFixture
             Assert::AreEqual("bc", str::replace_prefix("abc", "a", "").c_str());
         }
 
-        TEST_METHOD(replace_suffix)
+        TEST_METHOD(strFixture_replace_suffix)
         {
             Assert::AreEqual("", str::replace_suffix("", "", "").c_str());
             Assert::AreEqual("b", str::replace_suffix("", "", "b").c_str());
@@ -92,7 +92,7 @@ namespace strFixture
             Assert::AreEqual("ab", str::replace_suffix("abc", "c", "").c_str());
         }
 
-        TEST_METHOD(capitalize)
+        TEST_METHOD(strFixture_capitalize)
         {
             Assert::AreEqual("", str::capitalize("").c_str());
             Assert::AreEqual("A", str::capitalize("a").c_str());
@@ -106,7 +106,7 @@ namespace strFixture
             Assert::AreEqual("‚ ‚¢‚¤‚¦‚¨Š¿Žšƒ¿ƒÀƒÁ", str::downcase("‚ ‚¢‚¤‚¦‚¨Š¿Žšƒ¿ƒÀƒÁ").c_str());
         }
 
-        TEST_METHOD(upcase)
+        TEST_METHOD(strFixture_upcase)
         {
             Assert::AreEqual("", str::upcase("").c_str());
             Assert::AreEqual("A", str::upcase("a").c_str());
@@ -120,7 +120,7 @@ namespace strFixture
             Assert::AreEqual("‚ ‚¢‚¤‚¦‚¨Š¿Žšƒ¿ƒÀƒÁ", str::downcase("‚ ‚¢‚¤‚¦‚¨Š¿Žšƒ¿ƒÀƒÁ").c_str());
         }
 
-        TEST_METHOD(downcase)
+        TEST_METHOD(strFixture_downcase)
         {
             Assert::AreEqual("", str::downcase("").c_str());
             Assert::AreEqual("a", str::downcase("a").c_str());
@@ -134,7 +134,7 @@ namespace strFixture
             Assert::AreEqual("‚ ‚¢‚¤‚¦‚¨Š¿Žšƒ¿ƒÀƒÁ", str::downcase("‚ ‚¢‚¤‚¦‚¨Š¿Žšƒ¿ƒÀƒÁ").c_str());
         }
 
-        TEST_METHOD(is_prefix_of)
+        TEST_METHOD(strFixture_is_prefix_of)
         {
             Assert::IsTrue(str::is_prefix_of("", ""));
             Assert::IsTrue(str::is_prefix_of("", "a"));
@@ -147,7 +147,7 @@ namespace strFixture
             Assert::IsTrue(str::is_prefix_of("‚ ", "‚ ‚¢‚¤‚¦‚¨"));
         }
 
-        TEST_METHOD(join)
+        TEST_METHOD(strFixture_join)
         {
             Assert::AreEqual("", str::join("", {}).c_str());
             Assert::AreEqual("", str::join(",", {}).c_str());
@@ -156,7 +156,7 @@ namespace strFixture
             Assert::AreEqual("ab", str::join("", str::split("a,b", ",")).c_str());
         }
 
-        TEST_METHOD(extension_without_dot)
+        TEST_METHOD(strFixture_extension_without_dot)
         {
             Assert::AreEqual("", str::extension_without_dot("").c_str());
             Assert::AreEqual("flv", str::extension_without_dot("test.flv").c_str());

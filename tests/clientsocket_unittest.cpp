@@ -26,7 +26,7 @@ namespace ClientSocketFixture
             WSACleanup();
         }
 
-        TEST_METHOD(getIP)
+        TEST_METHOD(ClientSocketFixture_getIP)
         {
             Assert::AreEqual((127<<24 | 1), (int)ClientSocket::getIP("localhost"));
             Assert::AreEqual((127<<24 | 1), (int)ClientSocket::getIP("127.0.0.1"));

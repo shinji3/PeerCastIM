@@ -12,7 +12,7 @@ namespace XMLFixture
     {
     public:
 
-        TEST_METHOD(read)
+        TEST_METHOD(XMLFixture_read)
         {
             StringStream mem;
             mem.writeString("<br/>");
@@ -28,7 +28,7 @@ namespace XMLFixture
         }
 
         // タグ名はフォーマット文字列として解釈されてはならない。
-        TEST_METHOD(readCrash)
+        TEST_METHOD(XMLFixture_readCrash)
         {
             StringStream mem;
             mem.writeString("<%s%s%s%s%s%s%s%s%s%s%s%s/>");

@@ -11,7 +11,7 @@ namespace MKVStreamFixture
     {
     public:
 
-        TEST_METHOD(unpackUnsignedInt)
+        TEST_METHOD(MKVStreamFixture_unpackUnsignedInt)
         {
             bool e = false;
             try

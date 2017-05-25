@@ -11,7 +11,7 @@ namespace md5Fixture
     {
     public:
 
-        TEST_METHOD(test)
+        TEST_METHOD(md5Fixture_test)
         {
             auto out = md5::hexdigest("hello");
             Assert::AreEqual("5d41402abc4b2a76b9719d911017c592", out.c_str());

@@ -13,7 +13,7 @@ namespace ChanPacketFixture
 
         ChanPacket p;
 
-        TEST_METHOD(initialState)
+        TEST_METHOD(ChanPacketFixture_initialState)
         {
             Assert::AreEqual((int)ChanPacket::T_UNKNOWN, (int)p.type);
             Assert::AreEqual(0, (int)p.len);
@@ -23,7 +23,7 @@ namespace ChanPacketFixture
             // we don't know what's in p.data[]
         }
 
-        TEST_METHOD(init)
+        TEST_METHOD(ChanPacketFixture_init)
         {
             p.type = ChanPacket::T_DATA;
             p.len = 1;

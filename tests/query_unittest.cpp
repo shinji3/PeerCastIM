@@ -20,7 +20,7 @@ namespace QueryFixture
 
         Query query;
 
-        TEST_METHOD(singleValuedKey)
+        TEST_METHOD(QueryFixture_singleValuedKey)
         {
             Assert::AreEqual(true, query.hasKey("a"));
             Assert::AreEqual("1", query.get("a").c_str());
@@ -28,7 +28,7 @@ namespace QueryFixture
             Assert::AreEqual("1", query.getAll("a")[0].c_str());
         }
 
-        TEST_METHOD(multiValuedKey)
+        TEST_METHOD(QueryFixture_multiValuedKey)
         {
             Assert::AreEqual(true, query.hasKey("b"));
             Assert::AreEqual("2", query.get("b").c_str());
@@ -37,14 +37,14 @@ namespace QueryFixture
             Assert::AreEqual("3", query.getAll("b")[1].c_str());
         }
 
-        TEST_METHOD(keyWithNoValue)
+        TEST_METHOD(QueryFixture_keyWithNoValue)
         {
             Assert::AreEqual(true, query.hasKey("c"));
             Assert::AreEqual("", query.get("c").c_str());
             Assert::AreEqual(0, (int)query.getAll("c").size());
         }
 
-        TEST_METHOD(nonexistentKey)
+        TEST_METHOD(QueryFixture_nonexistentKey)
         {
             Assert::AreEqual(false, query.hasKey("d"));
             Assert::AreEqual("", query.get("d").c_str());

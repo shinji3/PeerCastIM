@@ -13,7 +13,7 @@ namespace ChanHitSearchFixture
 
         ChanHitSearch chs;
 
-        TEST_METHOD(initialState)
+        TEST_METHOD(ChanHitSearchFixture_initialState)
         {
             char buf[33];
             GnuID zero_id;

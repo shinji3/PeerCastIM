@@ -20,17 +20,17 @@ namespace IDStringFixture
     IDString idstr;
     IDString long_idstr;
 
-    TEST_METHOD(TruncateToSpecifiedLength)
+    TEST_METHOD(IDStringFixture_TruncateToSpecifiedLength)
     {
         Assert::AreEqual("abcd", idstr.str());
     }
 
-    TEST_METHOD(CanBeCastToConstCharPointer)
+    TEST_METHOD(IDStringFixture_CanBeCastToConstCharPointer)
     {
         Assert::AreEqual("abcd", (const char*) idstr);
     }
 
-    TEST_METHOD(TruncateTooLongString)
+    TEST_METHOD(IDStringFixture_TruncateTooLongString)
     {
         Assert::AreEqual(31, (int)strlen(long_idstr.str()));
     }

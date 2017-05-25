@@ -13,14 +13,14 @@ namespace ChannelDirectoryFixture
 
         ChannelDirectory dir;
 
-//      TEST_METHOD(update)
+//      TEST_METHOD(ChannelDirectoryFixture_update)
 //      {
 //          bool res = dir.update();
 
 //          Assert::AreEqual(false, res);
 //      }
 
-        TEST_METHOD(findTracker)
+        TEST_METHOD(ChannelDirectoryFixture_findTracker)
         {
             ChannelEntry entry({ "", "01234567890123456789012345678901", "127.0.0.1:7144", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" }, "http://example.com/index.txt");
 

@@ -28,13 +28,13 @@ namespace ID4Fixture
         ID4 abcd;
         ID4 abcd2;
 
-        TEST_METHOD(initializedToZero)
+        TEST_METHOD(ID4Fixture_initializedToZero)
         {
             Assert::AreEqual(0, id.getValue());
             Assert::AreEqual(0, pid->getValue());
         }
 
-        TEST_METHOD(equalsAndNotEqual)
+        TEST_METHOD(ID4Fixture_equalsAndNotEqual)
         {
             Assert::AreEqual((int)id, (int)*pid);
             Assert::AreNotEqual((int)id, (int)abcd);
@@ -42,7 +42,7 @@ namespace ID4Fixture
 
         // 複数文字の文字定数はリトル・エンディアンの環境で文字の順番が反転す
         // ることが期待される。
-        TEST_METHOD(getValue)
+        TEST_METHOD(ID4Fixture_getValue)
         {
             uint16_t n = 0xabcd;
             uint8_t *p = (uint8_t*)&n;

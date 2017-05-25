@@ -13,21 +13,21 @@ namespace CookieFixture
 
         Cookie c;
 
-        TEST_METHOD(initialState)
+        TEST_METHOD(CookieFixture_initialState)
         {
             Assert::AreEqual(0, (int)c.ip);
             Assert::AreEqual("", c.id);
             Assert::AreEqual(0, (int)c.time);
         }
 
-        TEST_METHOD(set)
+        TEST_METHOD(CookieFixture_set)
         {
             c.set("hoge", 0xffffffff);
             Assert::AreEqual(0xffffffff, c.ip);
             Assert::AreEqual("hoge", c.id);
         }
 
-        TEST_METHOD(compare)
+        TEST_METHOD(CookieFixture_compare)
         {
             Cookie d, e, f, g;
 

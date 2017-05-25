@@ -11,7 +11,7 @@ namespace CriticalSectionFixture
     {
     public:
 
-        TEST_METHOD(smokeTest)
+        TEST_METHOD(CriticalSectionFixture_smokeTest)
         {
             WLock lock;
 
@@ -27,7 +27,7 @@ namespace CriticalSectionFixture
             Assert::AreNotEqual(e, true);
         }
 
-        TEST_METHOD(recursive)
+        TEST_METHOD(CriticalSectionFixture_recursive)
         {
             WLock lock;
 

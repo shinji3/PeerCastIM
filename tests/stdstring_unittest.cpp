@@ -13,7 +13,7 @@ namespace stdStringFixture
     {
     public:
 
-        TEST_METHOD(size)
+        TEST_METHOD(stdStringFixture_size)
         {
             const char *p = "a\0b";
             Assert::AreEqual(3, (int)string(p, p + 3).size());
@@ -22,7 +22,7 @@ namespace stdStringFixture
             Assert::AreEqual(1, (int)string(p).size());
         }
 
-        TEST_METHOD(equals)
+        TEST_METHOD(stdStringFixture_equals)
         {
             Assert::IsTrue(string("a") != string("b"));
             Assert::IsTrue(string("a") != string("ab"));
@@ -30,7 +30,7 @@ namespace stdStringFixture
             Assert::IsTrue(string("abc") == string("abc\0"));
         }
 
-        TEST_METHOD(substr)
+        TEST_METHOD(stdStringFixture_substr)
         {
             string s = "0123456789";
 
@@ -38,7 +38,7 @@ namespace stdStringFixture
             Assert::AreEqual("23", s.substr(2, 2).c_str());
         }
 
-        TEST_METHOD(find)
+        TEST_METHOD(stdStringFixture_find)
         {
             string s = "0123456789";
 
@@ -46,7 +46,7 @@ namespace stdStringFixture
             Assert::AreEqual(-1, (int)string::npos);
         }
 
-        TEST_METHOD(initializerList)
+        TEST_METHOD(stdStringFixture_initializerList)
         {
             string s = { 0, 1 };
 

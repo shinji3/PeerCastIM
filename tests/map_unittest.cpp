@@ -16,7 +16,7 @@ namespace mapFixture
 
         map<string,string> dic;
 
-        TEST_METHOD(bracketsDoesNotThrow)
+        TEST_METHOD(mapFixture_bracketsDoesNotThrow)
         {
             Assert::AreEqual(0, (int)dic.size());
 
@@ -34,7 +34,7 @@ namespace mapFixture
             Assert::AreEqual(1, (int)dic.size());
         }
 
-        TEST_METHOD(atThrows)
+        TEST_METHOD(mapFixture_atThrows)
         {
             bool e = false;
             try

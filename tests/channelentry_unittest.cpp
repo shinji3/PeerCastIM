@@ -11,7 +11,7 @@ namespace ChannelEntryFixture
     {
     public:
 
-        TEST_METHOD(constructor)
+        TEST_METHOD(ChannelEntryFixture_constructor)
         {
             bool e = false;
             try
@@ -25,7 +25,7 @@ namespace ChannelEntryFixture
             Assert::AreEqual(e, true);
         }
 
-        TEST_METHOD(textToChannelEntries)
+        TEST_METHOD(ChannelEntryFixture_textToChannelEntries)
         {
             auto vec = ChannelEntry::textToChannelEntries("予定地<>97968780D09CC97BB98D4A2BF221EDE7<>127.0.0.1:7144<>http://www.example.com/<>プログラミング<>peercastをいじる - &lt;Free&gt;<>-1<>-1<>428<>FLV<><><><><>%E4%BA%88%E5%AE%9A%E5%9C%B0<>1:14<>click<><>1\n", "");
 

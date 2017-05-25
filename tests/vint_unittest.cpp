@@ -13,7 +13,7 @@ namespace VIntFixture
     {
     public:
 
-        TEST_METHOD(numLeadingZeroes)
+        TEST_METHOD(VIntFixture_numLeadingZeroes)
         {
             uint8_t n = 1;
 
@@ -28,7 +28,7 @@ namespace VIntFixture
             Assert::AreEqual(0, VInt::numLeadingZeroes(1 << 7));
         }
 
-        TEST_METHOD(uint64)
+        TEST_METHOD(VIntFixture_uint64)
         {
             Assert::AreEqual(1, (int)VInt({ 0x81 }).uint());
 
@@ -40,7 +40,7 @@ namespace VIntFixture
                 (int)VInt({ 0x7f, 0xff }).uint());
         }
 
-        TEST_METHOD(constructor)
+        TEST_METHOD(VIntFixture_constructor)
         {
             bool e = false;
             try
@@ -54,7 +54,7 @@ namespace VIntFixture
             Assert::AreEqual(e, true);
         }
 
-        TEST_METHOD(idToName)
+        TEST_METHOD(VIntFixture_idToName)
         {
             Assert::AreEqual("EBML", VInt({ 0x1A,0x45,0xDF,0xA3 }).toName().c_str());
         }

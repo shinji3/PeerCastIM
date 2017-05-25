@@ -18,7 +18,7 @@ namespace DeferFixture
 
         bool y;
 
-        TEST_METHOD(makeTrue)
+        TEST_METHOD(DeferFixture_makeTrue)
         {
             bool x = false;
             {
@@ -28,7 +28,7 @@ namespace DeferFixture
             Assert::IsTrue(x);
         }
 
-        TEST_METHOD(makeTrueAlways)
+        TEST_METHOD(DeferFixture_makeTrueAlways)
         {
             Assert::IsFalse(y);
             bool e = false;

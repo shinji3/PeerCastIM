@@ -11,12 +11,12 @@ namespace StringTest
     {
     public:
 
-        TEST_METHOD(isEmptyWorks) {
+        TEST_METHOD(StringTest_isEmptyWorks) {
             String str;
             Assert::IsTrue(str.isEmpty());
         }
 
-        TEST_METHOD(setFromStopwatchWorks) {
+        TEST_METHOD(StringTest_setFromStopwatchWorks) {
             String str;
             str.setFromStopwatch(60 * 60 * 24);
             Assert::AreEqual("1 day, 0 hour", str);
@@ -25,7 +25,7 @@ namespace StringTest
             Assert::AreEqual("-", str);
         }
 
-        TEST_METHOD(eqWorks) {
+        TEST_METHOD(StringTest_eqWorks) {
             String s1("abc");
             String s2("abc");
             String s3("ABC");
@@ -36,7 +36,7 @@ namespace StringTest
             Assert::AreNotEqual(s1, s4.cstr());
         }
 
-        TEST_METHOD(containsWorks) {
+        TEST_METHOD(StringTest_containsWorks) {
             String abc("abc");
             String ABC("ABC");
             String xyz("xyz");
@@ -50,7 +50,7 @@ namespace StringTest
             Assert::IsFalse(a.contains(abc));
         }
 
-        TEST_METHOD(appendChar) {
+        TEST_METHOD(StringTest_appendChar) {
             String buf;
             for (int i = 0; i < 500; i++) {
                 buf.append('A');
@@ -61,7 +61,7 @@ namespace StringTest
             Assert::AreEqual(254, (int)strlen(buf.data));
         }
 
-        TEST_METHOD(appendString) {
+        TEST_METHOD(StringTest_appendString) {
             String s = "a";
 
             s.append("bc");
@@ -69,7 +69,7 @@ namespace StringTest
             Assert::AreEqual("abc", s.cstr());
         }
 
-        TEST_METHOD(prependWorks) {
+        TEST_METHOD(StringTest_prependWorks) {
             String buf = " world!";
             buf.prepend("Hello");
             Assert::AreEqual("Hello world!", buf);
@@ -79,7 +79,7 @@ namespace StringTest
             Assert::AreEqual("Hello", buf2);
         }
 
-        TEST_METHOD(isWhitespaceWorks) {
+        TEST_METHOD(StringTest_isWhitespaceWorks) {
             Assert::IsTrue(String::isWhitespace(' '));
             Assert::IsTrue(String::isWhitespace('\t'));
             Assert::IsFalse(String::isWhitespace('A'));
@@ -88,7 +88,7 @@ namespace StringTest
             Assert::IsFalse(String::isWhitespace('\n'));
         }
 
-        TEST_METHOD(ASCII2HTMLWorks) {
+        TEST_METHOD(StringTest_ASCII2HTMLWorks) {
             String str;
 
             str.ASCII2HTML("AAA");
@@ -102,7 +102,7 @@ namespace StringTest
             Assert::AreEqual("&#x26;&#x22;&#x3C;&#x3E;", str);
         }
 
-        // TEST_METHOD(ASCII2HTMLWorks) {
+        // TEST_METHOD(StringTest_ASCII2HTMLWorks) {
         //     String str;
 
         //     str.ASCII2HTML("AAA");
@@ -119,7 +119,7 @@ namespace StringTest
         //     Assert::AreEqual(251, strlen(str.data));
         // }
 
-        TEST_METHOD(HTML2ASCIIWorks) {
+        TEST_METHOD(StringTest_HTML2ASCIIWorks) {
             String str;
 
             str.HTML2ASCII("&#x21;");
@@ -132,7 +132,7 @@ namespace StringTest
             Assert::AreEqual("&amp;", str);
         }
 
-        TEST_METHOD(setFromStopwatch)
+        TEST_METHOD(StringTest_setFromStopwatch)
         {
             String s;
 
@@ -143,7 +143,7 @@ namespace StringTest
             Assert::AreEqual("-", (s.setFromStopwatch(0), s).cstr());
         }
 
-        TEST_METHOD(assignment)
+        TEST_METHOD(StringTest_assignment)
         {
             String s, t;
 
@@ -152,14 +152,14 @@ namespace StringTest
             Assert::AreEqual("hoge", t.cstr());
         }
 
-        TEST_METHOD(sjisToUtf8)
+        TEST_METHOD(StringTest_sjisToUtf8)
         {
             String tmp = "4\x93\xFA\x96\xDA"; // "4“ú–Ú" in Shit_JIS
             tmp.convertTo(String::T_UNICODESAFE);
             Assert::AreEqual("4\xE6\x97\xA5\xE7\x9B\xAE", tmp.cstr());
         }
 
-        TEST_METHOD(setUnquote)
+        TEST_METHOD(StringTest_setUnquote)
         {
             String s = "xyz";
 
@@ -171,7 +171,7 @@ namespace StringTest
             Assert::AreEqual("", s.cstr());
         }
 
-        TEST_METHOD(clear)
+        TEST_METHOD(StringTest_clear)
         {
             String s = "abc";
 
@@ -181,7 +181,7 @@ namespace StringTest
             Assert::AreEqual("", s.cstr());
         }
 
-        TEST_METHOD(equalOperatorCString)
+        TEST_METHOD(StringTest_equalOperatorCString)
         {
             String s;
             const char* xs = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // 300 x's
@@ -191,7 +191,7 @@ namespace StringTest
             Assert::AreEqual(255, (int)strlen(s.cstr()));
         }
 
-        TEST_METHOD(equalOperatorStdString)
+        TEST_METHOD(StringTest_equalOperatorStdString)
         {
             String s;
             const char* xs = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // 300 x's
@@ -201,7 +201,7 @@ namespace StringTest
             Assert::AreEqual(255, (int)strlen(s.cstr()));
         }
 
-        TEST_METHOD(cstr)
+        TEST_METHOD(StringTest_cstr)
         {
             String s = "abc";
 
@@ -209,7 +209,7 @@ namespace StringTest
             Assert::AreSame(*s.data, *s.cstr());
         }
 
-        TEST_METHOD(c_str)
+        TEST_METHOD(StringTest_c_str)
         {
             String s = "abc";
 
@@ -217,7 +217,7 @@ namespace StringTest
             Assert::AreSame(*s.data, *s.c_str());
         }
 
-        TEST_METHOD(str)
+        TEST_METHOD(StringTest_str)
         {
             Assert::AreEqual("", String("").str().c_str());
             Assert::AreEqual("A", String("A").str().c_str());
@@ -228,13 +228,13 @@ namespace StringTest
             Assert::AreNotSame(*s.data, *s.str().c_str());
         }
 
-        TEST_METHOD(size)
+        TEST_METHOD(StringTest_size)
         {
             Assert::AreEqual(0, (int)String("").size());
             Assert::AreEqual(3, (int)String("abc").size());
         }
 
-        TEST_METHOD(setFromString)
+        TEST_METHOD(StringTest_setFromString)
         {
             String s;
 
