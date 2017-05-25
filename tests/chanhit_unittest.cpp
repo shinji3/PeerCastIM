@@ -98,7 +98,7 @@ namespace ChanHitFixture
 
                 hit->pickNearestIP(host);
 
-                char ip[16];
+                char ip[22];
                 hit->host.toStr(ip);
 
                 Assert::AreEqual("192.168.0.2:8145", ip);
@@ -110,7 +110,7 @@ namespace ChanHitFixture
 
                 hit->pickNearestIP(host);
 
-                char ip[16];
+                char ip[22];
                 hit->host.toStr(ip);
 
                 Assert::AreEqual("210.210.210.210:8145", ip);
