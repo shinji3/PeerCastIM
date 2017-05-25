@@ -27,8 +27,8 @@ namespace ServentFixture
 
         TEST_METHOD(ServentFixture_initialState)
         {
-            Assert::AreEqual(Servent::T_NONE, s.type);
-            Assert::AreEqual(Servent::S_NONE, s.status);
+            Assert::AreEqual((int)Servent::T_NONE, (int)s.type);
+            Assert::AreEqual((int)Servent::S_NONE, (int)s.status);
 
             // static const char   *statusMsgs[], *typeMsgs[];
 
@@ -70,7 +70,7 @@ namespace ServentFixture
             // Assert::AreEqual(0, s.streamPos);  // 不定
             Assert::AreEqual(0, s.servPort);
 
-            Assert::AreEqual(ChanInfo::SP_UNKNOWN, s.outputProtocol);
+            Assert::AreEqual((int)ChanInfo::SP_UNKNOWN, (int)s.outputProtocol);
 
             // GnuPacketBuffer     outPacketsNorm, outPacketsPri;
 
@@ -272,7 +272,7 @@ namespace ServentFixture
             Query query("");
             auto info = s.createChannelInfo(GnuID(), String(), query, "");
 
-            Assert::AreEqual(ChanInfo::T_UNKNOWN, info.contentType);
+            Assert::AreEqual((int)ChanInfo::T_UNKNOWN, (int)info.contentType);
             Assert::AreEqual("", info.name.cstr());
             Assert::AreEqual("", info.genre.cstr());
             Assert::AreEqual("", info.desc.cstr());
@@ -302,7 +302,7 @@ namespace ServentFixture
             Query query("name=予定地&genre=テスト&desc=てすと&url=http://example.com&comment=スレなし&bitrate=400&type=mkv");
             auto info = s.createChannelInfo(GnuID(), String(), query, "");
 
-            Assert::AreEqual(ChanInfo::T_MKV, info.contentType);
+            Assert::AreEqual((int)ChanInfo::T_MKV, (int)info.contentType);
             Assert::AreEqual("予定地", info.name.cstr());
             Assert::AreEqual("テスト", info.genre.cstr());
             Assert::AreEqual("てすと", info.desc.cstr());
