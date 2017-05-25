@@ -3,6 +3,8 @@
 
 #include "cgi.h"
 
+using namespace cgi;
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace cgiFixture
@@ -42,31 +44,31 @@ namespace cgiFixture
 
         TEST_METHOD(cgiFixture_escape_html)
         {
-            Assert::AreEqual("", cgi::escape_html("").c_str());
-            Assert::AreEqual("a", cgi::escape_html("a").c_str());
-            Assert::AreEqual("aa", cgi::escape_html("aa").c_str());
-            Assert::AreEqual("&lt;&amp;&gt;&#39;&quot;", cgi::escape_html("<&>\'\"").c_str());
+            Assert::AreEqual("", escape_html("").c_str());
+            Assert::AreEqual("a", escape_html("a").c_str());
+            Assert::AreEqual("aa", escape_html("aa").c_str());
+            Assert::AreEqual("&lt;&amp;&gt;&#39;&quot;", escape_html("<&>\'\"").c_str());
         }
 
         TEST_METHOD(cgiFixture_unescape_html)
         {
-            Assert::AreEqual("", cgi::unescape_html("").c_str());
-            Assert::AreEqual("a", cgi::unescape_html("a").c_str());
-            Assert::AreEqual("aa", cgi::unescape_html("aa").c_str());
-            Assert::AreEqual("<&>", cgi::unescape_html("&lt;&amp;&gt;").c_str());
-            Assert::AreEqual("\xE3\x81\x82", cgi::unescape_html("&#12354;").c_str());
-            Assert::AreEqual("\xf0\x9f\x92\xa9", cgi::unescape_html("&#x1f4a9;").c_str());
-            Assert::AreEqual("\xf0\x9f\x92\xa9", cgi::unescape_html("&#X1F4A9;").c_str());
+            Assert::AreEqual("", unescape_html("").c_str());
+            Assert::AreEqual("a", unescape_html("a").c_str());
+            Assert::AreEqual("aa", unescape_html("aa").c_str());
+            Assert::AreEqual("<&>", unescape_html("&lt;&amp;&gt;").c_str());
+            Assert::AreEqual("\xE3\x81\x82", unescape_html("&#12354;").c_str());
+            Assert::AreEqual("\xf0\x9f\x92\xa9", unescape_html("&#x1f4a9;").c_str());
+            Assert::AreEqual("\xf0\x9f\x92\xa9", unescape_html("&#X1F4A9;").c_str());
         }
 
         TEST_METHOD(cgiFixture_unescape_javascript)
         {
-            Assert::AreEqual("", cgi::escape_javascript("").c_str());
-            Assert::AreEqual("a", cgi::escape_javascript("a").c_str());
-            Assert::AreEqual("aa", cgi::escape_javascript("aa").c_str());
-            Assert::AreEqual("\\\'\\\"\\\\", cgi::escape_javascript("\'\"\\").c_str());
-            Assert::AreEqual("‚ ", cgi::escape_javascript("‚ ").c_str());
-            Assert::AreEqual("\\x0D\\x0A", cgi::escape_javascript("\r\n").c_str());
+            Assert::AreEqual("", escape_javascript("").c_str());
+            Assert::AreEqual("a", escape_javascript("a").c_str());
+            Assert::AreEqual("aa", escape_javascript("aa").c_str());
+            Assert::AreEqual("\\\'\\\"\\\\", escape_javascript("\'\"\\").c_str());
+            Assert::AreEqual("‚ ", escape_javascript("‚ ").c_str());
+            Assert::AreEqual("\\x0D\\x0A", escape_javascript("\r\n").c_str());
         }
 
     };

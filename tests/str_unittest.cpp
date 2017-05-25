@@ -3,6 +3,8 @@
 
 #include "str.h"
 
+using namespace str;
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace strFixture
@@ -13,29 +15,29 @@ namespace strFixture
 
         TEST_METHOD(strFixture_group_digits)
         {
-            Assert::AreEqual("0", str::group_digits("0").c_str());
-            Assert::AreEqual("1", str::group_digits("1").c_str());
-            Assert::AreEqual("1.0", str::group_digits("1.0").c_str());
-            Assert::AreEqual("1.1", str::group_digits("1.1").c_str());
-            Assert::AreEqual("1.1234", str::group_digits("1.1234").c_str());
-            Assert::AreEqual("123,456", str::group_digits("123456").c_str());
-            Assert::AreEqual("123,456.789123", str::group_digits("123456.789123").c_str());
+            Assert::AreEqual("0", group_digits("0").c_str());
+            Assert::AreEqual("1", group_digits("1").c_str());
+            Assert::AreEqual("1.0", group_digits("1.0").c_str());
+            Assert::AreEqual("1.1", group_digits("1.1").c_str());
+            Assert::AreEqual("1.1234", group_digits("1.1234").c_str());
+            Assert::AreEqual("123,456", group_digits("123456").c_str());
+            Assert::AreEqual("123,456.789123", group_digits("123456.789123").c_str());
 
-            Assert::AreEqual("1", str::group_digits("1").c_str());
-            Assert::AreEqual("11", str::group_digits("11").c_str());
-            Assert::AreEqual("111", str::group_digits("111").c_str());
-            Assert::AreEqual("1,111", str::group_digits("1111").c_str());
-            Assert::AreEqual("11,111", str::group_digits("11111").c_str());
-            Assert::AreEqual("111,111", str::group_digits("111111").c_str());
-            Assert::AreEqual("1,111,111", str::group_digits("1111111").c_str());
-            Assert::AreEqual("11,111,111", str::group_digits("11111111").c_str());
-            Assert::AreEqual("111,111,111", str::group_digits("111111111").c_str());
-            Assert::AreEqual("1,111,111,111", str::group_digits("1111111111").c_str());
+            Assert::AreEqual("1",             group_digits("1").c_str());
+            Assert::AreEqual("11",            group_digits("11").c_str());
+            Assert::AreEqual("111",           group_digits("111").c_str());
+            Assert::AreEqual("1,111",         group_digits("1111").c_str());
+            Assert::AreEqual("11,111",        group_digits("11111").c_str());
+            Assert::AreEqual("111,111",       group_digits("111111").c_str());
+            Assert::AreEqual("1,111,111",     group_digits("1111111").c_str());
+            Assert::AreEqual("11,111,111",    group_digits("11111111").c_str());
+            Assert::AreEqual("111,111,111",   group_digits("111111111").c_str());
+            Assert::AreEqual("1,111,111,111", group_digits("1111111111").c_str());
         }
 
         TEST_METHOD(strFixture_split)
         {
-            auto vec = str::split("a b c", " ");
+            auto vec = split("a b c", " ");
 
             Assert::AreEqual(3, (int)vec.size());
             Assert::AreEqual("a", vec[0].c_str());
@@ -45,17 +47,17 @@ namespace strFixture
 
         TEST_METHOD(strFixture_codepoint_to_utf8)
         {
-            Assert::AreEqual(" ", str::codepoint_to_utf8(0x20).c_str());
-            Assert::AreEqual("\xE3\x81\x82", str::codepoint_to_utf8(12354).c_str());
-            Assert::AreEqual("\xf0\x9f\x92\xa9", str::codepoint_to_utf8(0x1f4a9).c_str()); // PILE OF POO
+            Assert::AreEqual(" ", codepoint_to_utf8(0x20).c_str());
+            Assert::AreEqual("\xE3\x81\x82", codepoint_to_utf8(12354).c_str());
+            Assert::AreEqual("\xf0\x9f\x92\xa9", codepoint_to_utf8(0x1f4a9).c_str()); // PILE OF POO
         }
 
         TEST_METHOD(strFixture_format)
         {
-            Assert::AreEqual("a", str::format("a").c_str());
-            Assert::AreEqual("a", str::format("%s", "a").c_str());
-            Assert::AreEqual("1", str::format("%d", 1).c_str());
-            Assert::AreEqual("12", str::format("%d%d", 1, 2).c_str());
+            Assert::AreEqual("a", format("a").c_str());
+            Assert::AreEqual("a", format("%s", "a").c_str());
+            Assert::AreEqual("1", format("%d", 1).c_str());
+            Assert::AreEqual("12", format("%d%d", 1, 2).c_str());
         }
 
         TEST_METHOD(strFixture_contains)
