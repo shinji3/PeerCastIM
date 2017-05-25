@@ -43,7 +43,17 @@ namespace HTTPFixture
         {
             mem.str("HTTP/1.0 404 Not Found\r\n");
 
-            ASSERT_THROW(http.checkResponse(200), StreamException);
+            bool e = false;
+            try
+            {
+                http.checkResponse(200);
+            }
+            catch (StreamException)
+            {
+                e = true;
+            }
+            Assert::AreEqual(e, true);
+
             Assert::IsTrue(mem.eof());
         }
 
@@ -63,19 +73,19 @@ namespace HTTPFixture
                 "\r\n");
 
             http.readRequest();
-            Assert::AreEqual(0, http.headers.size());
+            Assert::AreEqual(0, (int)http.headers.size());
             Assert::AreEqual(NULL, http.arg);
 
             Assert::IsTrue(http.nextHeader());
-            Assert::AreEqual(1, http.headers.size());
+            Assert::AreEqual(1, (int)http.headers.size());
             Assert::AreEqual("localhost", http.arg);
 
             Assert::IsTrue(http.nextHeader());
-            Assert::AreEqual(2, http.headers.size());
+            Assert::AreEqual(2, (int)http.headers.size());
             Assert::AreEqual("close", http.arg);
 
             Assert::IsFalse(http.nextHeader());
-            Assert::AreEqual(2, http.headers.size());
+            Assert::AreEqual(2, (int)http.headers.size());
             Assert::AreEqual(NULL, http.arg);
 
             Assert::AreEqual("localhost", http.headers.get("Host").c_str());
@@ -189,20 +199,20 @@ namespace HTTPFixture
 
             Assert::AreEqual("Host: localhost", http.cmdLine);
             Assert::AreEqual("localhost", http.arg);
-            Assert::AreEqual(1, http.headers.size());
+            Assert::AreEqual(1, (int)http.headers.size());
 
             http.reset();
 
             Assert::AreEqual("", http.cmdLine);
             Assert::AreEqual(NULL, http.arg);
-            Assert::AreEqual(0, http.headers.size());
+            Assert::AreEqual(0, (int)http.headers.size());
         }
 
         TEST_METHOD(HTTPFixture_initialState)
         {
             Assert::AreEqual("", http.cmdLine);
             Assert::AreEqual(NULL, http.arg);
-            Assert::AreEqual(0, http.headers.size());
+            Assert::AreEqual(0, (int)http.headers.size());
         }
 
     };

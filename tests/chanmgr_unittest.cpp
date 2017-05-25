@@ -46,7 +46,7 @@ namespace ChanMgrFixture
             // ...
 
             // Assert::AreEqual(0, x->numFinds); // ‰Šú‰»‚³‚ê‚È‚¢B
-            Assert::AreEqual(String(), x->broadcastMsg);
+            Assert::AreEqual(String(), x->broadcastMsg.c_str());
             Assert::AreEqual(10, (int)x->broadcastMsgInterval);
             //Assert::AreEqual(0, x->lastHit); // ‰Šú‰»‚³‚ê‚È‚¢B
             Assert::AreEqual(0, (int)x->lastQuery);
@@ -80,7 +80,7 @@ namespace ChanMgrFixture
             c = x->createChannel(info, NULL);
 
             Assert::IsTrue(c);
-            Assert::AreEqual(c, x->channel);
+            Assert::AreEqual(c->channel_id, x->channel->channel_id);
 
             x->deleteChannel(c);
         }

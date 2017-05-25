@@ -7,6 +7,9 @@
 #include "sstream.h"
 
 #include "defer.h"
+#include "servmgr.h"
+
+#include "mockclientsocket.h"
 
 using namespace cgi;
 
@@ -17,6 +20,7 @@ namespace ServentFixture
     TEST_CLASS(ServentFixture)
     {
     public:
+
         ServentFixture()
             : s(0) {}
         Servent s;
@@ -31,9 +35,9 @@ namespace ServentFixture
             // GnuStream           gnuStream;
             // GnuPacket           pack;
 
-            Assert::AreEqual(0, s.lastConnect);
-            Assert::AreEqual(0, s.lastPing);
-            Assert::AreEqual(0, s.lastPacket);
+            Assert::AreEqual(0, (int)s.lastConnect);
+            Assert::AreEqual(0, (int)s.lastPing);
+            Assert::AreEqual(0, (int)s.lastPacket);
             Assert::AreEqual("", s.agent.cstr());
 
             Assert::AreEqual(0, s.seenIDs.numUsed());
@@ -44,7 +48,7 @@ namespace ServentFixture
             Assert::AreEqual("00000000000000000000000000000000", s.chanID.str().c_str());
             Assert::AreEqual("00000000000000000000000000000000", s.givID.str().c_str());
 
-            Assert::AreEqual(false, s.thread.active);
+            Assert::AreEqual(false, (bool)s.thread.active);
 
             Assert::AreEqual("", s.loginPassword.cstr());
             Assert::AreEqual("", s.loginMount.cstr());
@@ -54,10 +58,10 @@ namespace ServentFixture
 
             Assert::AreEqual(0, s.nsSwitchNum);
 
-            Assert::AreEqual(Servent::ALLOW_ALL, s.allow);
+            Assert::AreEqual((int)Servent::ALLOW_ALL, (int)s.allow);
 
-            Assert::AreEqual(nullptr, s.sock);
-            Assert::AreEqual(nullptr, s.pushSock);
+            Assert::IsNull(s.sock);
+            Assert::IsNull(s.pushSock);
 
             // WLock               lock;
 
@@ -72,17 +76,15 @@ namespace ServentFixture
 
             Assert::AreEqual(false, s.flowControl);
 
-            Assert::AreEqual(nullptr, s.next);
+            Assert::IsNull(s.next);
 
-            Assert::AreEqual(nullptr, s.pcpStream);
+            Assert::IsNull(s.pcpStream);
 
-            Assert::AreEqual(0, s.cookie.time);
+            Assert::AreEqual(0, (int)s.cookie.time);
             Assert::AreEqual("", s.cookie.id);
-            Assert::AreEqual(0, s.cookie.ip);
+            Assert::AreEqual(0, (int)s.cookie.ip);
 
         }
-
-#include "mockclientsocket.h"
 
         TEST_METHOD(ServentFixture_handshakeHTTP)
         {
@@ -164,8 +166,6 @@ namespace ServentFixture
 
             delete mock;
         }
-
-#include "servmgr.h"
 
         TEST_METHOD(ServentFixture_handshakeIncomingJRPCGetAuthorized)
         {

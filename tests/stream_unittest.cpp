@@ -58,17 +58,44 @@ namespace StreamFixture
 
         TEST_METHOD(StreamFixture_eof)
         {
-            ASSERT_THROW(s.eof(), StreamException);
+            bool e = false;
+            try
+            {
+                s.eof();
+            }
+            catch (StreamException)
+            {
+                e = true;
+            }
+            Assert::AreEqual(e, true);
         }
 
         TEST_METHOD(StreamFixture_rewind)
         {
-            ASSERT_THROW(s.rewind(), StreamException);
+            bool e = false;
+            try
+            {
+                s.rewind();
+            }
+            catch (StreamException)
+            {
+                e = true;
+            }
+            Assert::AreEqual(e, true);
         }
 
         TEST_METHOD(StreamFixture_seekTo)
         {
-            ASSERT_THROW(s.seekTo(0), StreamException);
+            bool e = false;
+            try
+            {
+                s.seekTo(0);
+            }
+            catch (StreamException)
+            {
+                e = true;
+            }
+            Assert::AreEqual(e, true);
         }
 
         TEST_METHOD(StreamFixture_writeTo)
@@ -84,32 +111,98 @@ namespace StreamFixture
         {
             Assert::AreEqual(0, s.readCount);
 
-            ASSERT_NO_THROW(s.skip(0));
+            bool e;
+            e = false;
+            try
+            {
+                s.skip(0);
+            }
+            catch (...)
+            {
+                e = true;
+            }
+            Assert::AreNotEqual(e, true);
             Assert::AreEqual(0, s.readCount);
 
-            ASSERT_NO_THROW(s.skip(1));
+            e = false;
+            try
+            {
+                s.skip(1);
+            }
+            catch (...)
+            {
+                e = true;
+            }
+            Assert::AreNotEqual(e, true);
             Assert::AreEqual(1, s.readCount);
         }
 
         TEST_METHOD(StreamFixture_close)
         {
-            ASSERT_NO_THROW(s.close());
+            bool e = false;
+            try
+            {
+                s.close();
+            }
+            catch (...)
+            {
+                e = true;
+            }
+            Assert::AreNotEqual(e, true);
         }
 
         TEST_METHOD(StreamFixture_setReadTimeout)
         {
-            ASSERT_NO_THROW(s.setReadTimeout(0));
+            bool e = false;
+            try
+            {
+                s.setReadTimeout(0);
+            }
+            catch (...)
+            {
+                e = true;
+            }
+            Assert::AreNotEqual(e, true);
         }
 
         TEST_METHOD(StreamFixture_setWriteTimeout)
         {
-            ASSERT_NO_THROW(s.setWriteTimeout(0));
+            bool e = false;
+            try
+            {
+                s.setWriteTimeout(0);
+            }
+            catch (...)
+            {
+                e = true;
+            }
+            Assert::AreNotEqual(e, true);
         }
 
         TEST_METHOD(StreamFixture_setPollRead)
         {
-            ASSERT_NO_THROW(s.setPollRead(false));
-            ASSERT_NO_THROW(s.setPollRead(true));
+            bool e;
+            e = false;
+            try
+            {
+                s.setPollRead(false);
+            }
+            catch (...)
+            {
+                e = true;
+            }
+            Assert::AreNotEqual(e, true);
+
+            e = false;
+            try
+            {
+                s.setPollRead(true);
+            }
+            catch (...)
+            {
+                e = true;
+            }
+            Assert::AreNotEqual(e, true);
         }
 
         TEST_METHOD(StreamFixture_getPosition)
@@ -124,12 +217,12 @@ namespace StreamFixture
 
         TEST_METHOD(StreamFixture_readShort)
         {
-            Assert::AreEqual(0x4241, s.readShort());
+            Assert::AreEqual(0x4241, (int)s.readShort());
         }
 
         TEST_METHOD(StreamFixture_readLong)
         {
-            Assert::AreEqual(0x42414241, s.readLong());
+            Assert::AreEqual(0x42414241, (int)s.readLong());
         }
 
         TEST_METHOD(StreamFixture_readInt)
@@ -149,7 +242,7 @@ namespace StreamFixture
 
         TEST_METHOD(StreamFixture_readTag)
         {
-            Assert::AreEqual('ABAB', s.readTag());
+            Assert::AreEqual('ABAB', (int)s.readTag());
         }
 
         TEST_METHOD(StreamFixture_readString)
@@ -248,7 +341,19 @@ namespace StreamFixture
 
             memset(buf, 0, 1024);
             mem.str("abc");
-            ASSERT_THROW(mem.readLine(buf, 1024), StreamException);
+
+            bool e;
+            e = false;
+            try
+            {
+                mem.readLine(buf, 1024);
+            }
+            catch (StreamException)
+            {
+                e = true;
+            }
+            Assert::AreEqual(e, true);
+
 
             memset(buf, 0, 1024);
             mem.str("abc\ndef");
@@ -263,7 +368,17 @@ namespace StreamFixture
             // CR では停止しない
             memset(buf, 0, 1024);
             mem.str("abc\rdef");
-            ASSERT_THROW(mem.readLine(buf, 1024), StreamException);
+
+            e = false;
+            try
+            {
+                mem.readLine(buf, 1024);
+            }
+            catch (StreamException)
+            {
+                e = true;
+            }
+            Assert::AreEqual(e, true);
 
             // 行中の CR は削除される
             memset(buf, 0, 1024);
@@ -474,43 +589,43 @@ namespace StreamFixture
         TEST_METHOD(StreamFixture_readBits_4bytes)
         {
             mem.str("\xde\xad\xbe\xef");
-            Assert::AreEqual(0xdeadbeef, mem.readBits(32));
+            Assert::AreEqual(0xdeadbeef, (unsigned)mem.readBits(32));
         }
 
         TEST_METHOD(StreamFixture_totalBytesIn)
         {
-            Assert::AreEqual(0, s.totalBytesIn());
+            Assert::AreEqual(0, (int)s.totalBytesIn());
             s.updateTotals(1, 0);
-            Assert::AreEqual(1, s.totalBytesIn());
+            Assert::AreEqual(1, (int)s.totalBytesIn());
 
             s.updateTotals(1, 0);
-            Assert::AreEqual(2, s.totalBytesIn());
+            Assert::AreEqual(2, (int)s.totalBytesIn());
         }
 
         TEST_METHOD(StreamFixture_totalBytesOut)
         {
-            Assert::AreEqual(0, s.totalBytesOut());
+            Assert::AreEqual(0, (int)s.totalBytesOut());
             s.updateTotals(0, 1);
-            Assert::AreEqual(1, s.totalBytesOut());
+            Assert::AreEqual(1, (int)s.totalBytesOut());
 
             s.updateTotals(0, 1);
-            Assert::AreEqual(2, s.totalBytesOut());
+            Assert::AreEqual(2, (int)s.totalBytesOut());
         }
 
         // 時間を進めないと変化しない。
         TEST_METHOD(StreamFixture_lastBytesIn)
         {
-            Assert::AreEqual(0, s.lastBytesIn());
+            Assert::AreEqual(0, (int)s.lastBytesIn());
             s.updateTotals(1, 0);
-            Assert::AreEqual(0, s.lastBytesIn());
+            Assert::AreEqual(0, (int)s.lastBytesIn());
         }
 
         // 時間を進めないと変化しない。
         TEST_METHOD(StreamFixture_lastBytesOut)
         {
-            Assert::AreEqual(0, s.lastBytesOut());
+            Assert::AreEqual(0, (int)s.lastBytesOut());
             s.updateTotals(0, 1);
-            Assert::AreEqual(0, s.lastBytesOut());
+            Assert::AreEqual(0, (int)s.lastBytesOut());
         }
 
     };

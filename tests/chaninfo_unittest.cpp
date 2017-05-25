@@ -19,16 +19,16 @@ namespace ChanInfoFixture
             Assert::AreEqual("00000000000000000000000000000000", static_cast<std::string>(info.id).c_str());
             Assert::AreEqual("00000000000000000000000000000000", static_cast<std::string>(info.bcID).c_str());
             Assert::AreEqual(0, info.bitrate);
-            Assert::AreEqual(ChanInfo::T_UNKNOWN, info.contentType);
+            Assert::AreEqual((int)ChanInfo::T_UNKNOWN, (int)info.contentType);
             Assert::AreEqual("", info.contentTypeStr.cstr());
             Assert::AreEqual("", info.MIMEType.cstr());
             Assert::AreEqual("", info.streamExt.cstr());
-            Assert::AreEqual(ChanInfo::PROTOCOL::SP_UNKNOWN, info.srcProtocol);
-            Assert::AreEqual(0, info.lastPlayStart);
-            Assert::AreEqual(0, info.lastPlayEnd);
-            Assert::AreEqual(0, info.numSkips);
-            Assert::AreEqual(0, info.createdTime);
-            Assert::AreEqual(ChanInfo::S_UNKNOWN, info.status);
+            Assert::AreEqual((int)ChanInfo::PROTOCOL::SP_UNKNOWN, (int)info.srcProtocol);
+            Assert::AreEqual(0, (int)info.lastPlayStart);
+            Assert::AreEqual(0, (int)info.lastPlayEnd);
+            Assert::AreEqual(0, (int)info.numSkips);
+            Assert::AreEqual(0, (int)info.createdTime);
+            Assert::AreEqual((int)ChanInfo::S_UNKNOWN, (int)info.status);
 
             {
                 Assert::AreEqual("", info.track.contact.cstr());
@@ -66,8 +66,8 @@ namespace ChanInfoFixture
 
         TEST_METHOD(ChanInfoFixture_getters)
         {
-            Assert::AreEqual(0, info.getUptime());
-            Assert::AreEqual(0, info.getAge());
+            Assert::AreEqual(0, (int)info.getUptime());
+            Assert::AreEqual(0, (int)info.getAge());
             Assert::AreEqual(false, info.isActive());
             Assert::AreEqual(false, info.isPrivate());
             Assert::AreEqual("UNKNOWN", info.getTypeStr());
@@ -132,41 +132,41 @@ namespace ChanInfoFixture
 
         TEST_METHOD(ChanInfoFixture_static_getTypeFromStr)
         {
-            Assert::AreEqual(ChanInfo::T_MP3, ChanInfo::getTypeFromStr("MP3"));
-            Assert::AreEqual(ChanInfo::T_OGG, ChanInfo::getTypeFromStr("OGG"));
-            Assert::AreEqual(ChanInfo::T_OGM, ChanInfo::getTypeFromStr("OGM"));
-            Assert::AreEqual(ChanInfo::T_RAW, ChanInfo::getTypeFromStr("RAW"));
-            Assert::AreEqual(ChanInfo::T_NSV, ChanInfo::getTypeFromStr("NSV"));
-            Assert::AreEqual(ChanInfo::T_WMA, ChanInfo::getTypeFromStr("WMA"));
-            Assert::AreEqual(ChanInfo::T_WMV, ChanInfo::getTypeFromStr("WMV"));
-            Assert::AreEqual(ChanInfo::T_FLV, ChanInfo::getTypeFromStr("FLV"));
-            Assert::AreEqual(ChanInfo::T_PLS, ChanInfo::getTypeFromStr("PLS"));
-            Assert::AreEqual(ChanInfo::T_PLS, ChanInfo::getTypeFromStr("M3U"));
-            Assert::AreEqual(ChanInfo::T_ASX, ChanInfo::getTypeFromStr("ASX"));
+            Assert::AreEqual((int)ChanInfo::T_MP3, (int)ChanInfo::getTypeFromStr("MP3"));
+            Assert::AreEqual((int)ChanInfo::T_OGG, (int)ChanInfo::getTypeFromStr("OGG"));
+            Assert::AreEqual((int)ChanInfo::T_OGM, (int)ChanInfo::getTypeFromStr("OGM"));
+            Assert::AreEqual((int)ChanInfo::T_RAW, (int)ChanInfo::getTypeFromStr("RAW"));
+            Assert::AreEqual((int)ChanInfo::T_NSV, (int)ChanInfo::getTypeFromStr("NSV"));
+            Assert::AreEqual((int)ChanInfo::T_WMA, (int)ChanInfo::getTypeFromStr("WMA"));
+            Assert::AreEqual((int)ChanInfo::T_WMV, (int)ChanInfo::getTypeFromStr("WMV"));
+            Assert::AreEqual((int)ChanInfo::T_FLV, (int)ChanInfo::getTypeFromStr("FLV"));
+            Assert::AreEqual((int)ChanInfo::T_PLS, (int)ChanInfo::getTypeFromStr("PLS"));
+            Assert::AreEqual((int)ChanInfo::T_PLS, (int)ChanInfo::getTypeFromStr("M3U"));
+            Assert::AreEqual((int)ChanInfo::T_ASX, (int)ChanInfo::getTypeFromStr("ASX"));
 
-            Assert::AreEqual(ChanInfo::T_MP3, ChanInfo::getTypeFromStr("mp3")); // type str. is case-insensitive
-            Assert::AreEqual(ChanInfo::T_UNKNOWN, ChanInfo::getTypeFromStr("mp345"));
+            Assert::AreEqual((int)ChanInfo::T_MP3, (int)ChanInfo::getTypeFromStr("mp3")); // type str. is case-insensitive
+            Assert::AreEqual((int)ChanInfo::T_UNKNOWN, (int)ChanInfo::getTypeFromStr("mp345"));
         }
 
         TEST_METHOD(ChanInfoFixture_static_getProtocolFromStr)
         {
-            Assert::AreEqual(ChanInfo::SP_PEERCAST, ChanInfo::getProtocolFromStr("PEERCAST"));
-            Assert::AreEqual(ChanInfo::SP_HTTP, ChanInfo::getProtocolFromStr("HTTP"));
-            Assert::AreEqual(ChanInfo::SP_FILE, ChanInfo::getProtocolFromStr("FILE"));
-            Assert::AreEqual(ChanInfo::SP_MMS, ChanInfo::getProtocolFromStr("MMS"));
-            Assert::AreEqual(ChanInfo::SP_PCP, ChanInfo::getProtocolFromStr("PCP"));
-            Assert::AreEqual(ChanInfo::SP_WMHTTP, ChanInfo::getProtocolFromStr("WMHTTP"));
+            Assert::AreEqual((int)ChanInfo::SP_PEERCAST, (int)ChanInfo::getProtocolFromStr("PEERCAST"));
+            Assert::AreEqual((int)ChanInfo::SP_HTTP, (int)ChanInfo::getProtocolFromStr("HTTP"));
+            Assert::AreEqual((int)ChanInfo::SP_FILE, (int)ChanInfo::getProtocolFromStr("FILE"));
+            Assert::AreEqual((int)ChanInfo::SP_MMS, (int)ChanInfo::getProtocolFromStr("MMS"));
+            Assert::AreEqual((int)ChanInfo::SP_PCP, (int)ChanInfo::getProtocolFromStr("PCP"));
+            Assert::AreEqual((int)ChanInfo::SP_WMHTTP, (int)ChanInfo::getProtocolFromStr("WMHTTP"));
 
-            Assert::AreEqual(ChanInfo::SP_PEERCAST, ChanInfo::getProtocolFromStr("Peercast")); // type str. is case-insesitive
-            Assert::AreEqual(ChanInfo::SP_UNKNOWN, ChanInfo::getProtocolFromStr("RTMP"));
+            Assert::AreEqual((int)ChanInfo::SP_PEERCAST, (int)ChanInfo::getProtocolFromStr("Peercast")); // type str. is case-insesitive
+            Assert::AreEqual((int)ChanInfo::SP_UNKNOWN, (int)ChanInfo::getProtocolFromStr("RTMP"));
         }
 
         TEST_METHOD(ChanInfoFixture_setContentType)
         {
-            Assert::AreEqual(ChanInfo::T_UNKNOWN, info.contentType);
+            Assert::AreEqual((int)ChanInfo::T_UNKNOWN, (int)info.contentType);
 
             info.setContentType(ChanInfo::T_MKV);
-            Assert::AreEqual(ChanInfo::T_MKV, info.contentType);
+            Assert::AreEqual((int)ChanInfo::T_MKV, (int)info.contentType);
             Assert::AreEqual("MKV", info.contentTypeStr.cstr());
             Assert::AreEqual("video/x-matroska", info.MIMEType.cstr());
             Assert::AreEqual(".mkv", info.streamExt.cstr());

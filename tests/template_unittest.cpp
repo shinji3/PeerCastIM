@@ -52,7 +52,7 @@ namespace TemplateFixture
 
         TEST_METHOD(TemplateFixture_getBoolVariable)
         {
-            Assert::AreEqual(false, temp.getIntVariable("servMgr.version", 0));
+            Assert::AreEqual(false, (bool)temp.getIntVariable("servMgr.version", 0));
         }
 
 
@@ -93,7 +93,7 @@ namespace TemplateFixture
         {
             auto tok = temp.tokenize("a==b");
 
-            Assert::AreEqual(3, tok.size());
+            Assert::AreEqual(3, (int)tok.size());
             Assert::AreEqual("a", tok[0].c_str());
             Assert::AreEqual("==", tok[1].c_str());
             Assert::AreEqual("b", tok[2].c_str());
@@ -103,11 +103,11 @@ namespace TemplateFixture
         {
             auto tok = temp.tokenize("a");
 
-            Assert::AreEqual(1, tok.size());
+            Assert::AreEqual(1, (int)tok.size());
             Assert::AreEqual("a", tok[0].c_str());
 
             tok = temp.tokenize("!a");
-            Assert::AreEqual(1, tok.size());
+            Assert::AreEqual(1, (int)tok.size());
             Assert::AreEqual("!a", tok[0].c_str());
         }
 

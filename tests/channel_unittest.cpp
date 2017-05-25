@@ -48,12 +48,12 @@ namespace ChannelFixture
             Assert::IsFalse(c.readDelay);
 
             // TYPE                type;
-            Assert::AreEqual(Channel::T_NONE, c.type);
+            Assert::AreEqual((int)Channel::T_NONE, (int)c.type);
             // ChannelSource       *sourceData;
             Assert::IsNull(c.sourceData);
 
             // SRC_TYPE            srcType;
-            Assert::AreEqual(Channel::SRC_NONE, c.srcType);
+            Assert::AreEqual((int)Channel::SRC_NONE, (int)c.srcType);
 
             // MP3Header           mp3Head;
             // ThreadInfo          thread;
@@ -61,7 +61,7 @@ namespace ChannelFixture
             // unsigned int        lastIdleTime;
             Assert::AreEqual(0, (int)c.lastIdleTime);
             // STATUS              status;
-            Assert::AreEqual(Channel::S_NONE, c.status);
+            Assert::AreEqual((int)Channel::S_NONE, (int)c.status);
 
             // ClientSocket        *sock;
             Assert::IsNull(c.sock);

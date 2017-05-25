@@ -29,29 +29,29 @@ namespace ChanHitFixture
         // ‰Šúó‘Ô‚ðŠm‚©‚ß‚é‚¾‚¯B
         TEST_METHOD(ChanHitFixture_initialState)
         {
-            Assert::AreEqual(0, hit->host.ip);
-            Assert::AreEqual(0, hit->host.port);
+            Assert::AreEqual(0, (int)hit->host.ip);
+            Assert::AreEqual(0, (int)hit->host.port);
 
-            Assert::AreEqual(0, hit->rhost[0].ip);
-            Assert::AreEqual(0, hit->rhost[0].port);
+            Assert::AreEqual(0, (int)hit->rhost[0].ip);
+            Assert::AreEqual(0, (int)hit->rhost[0].port);
 
-            Assert::AreEqual(0, hit->rhost[1].ip);
-            Assert::AreEqual(0, hit->rhost[1].port);
+            Assert::AreEqual(0, (int)hit->rhost[1].ip);
+            Assert::AreEqual(0, (int)hit->rhost[1].port);
 
-            Assert::AreEqual(0, hit->numListeners);
-            Assert::AreEqual(0, hit->numRelays);
-            Assert::AreEqual(0, hit->numHops);
+            Assert::AreEqual(0, (int)hit->numListeners);
+            Assert::AreEqual(0, (int)hit->numRelays);
+            Assert::AreEqual(0, (int)hit->numHops);
             // Assert::AreEqual(0, hit->clap_pp);
-            Assert::AreEqual(0, hit->time);
-            Assert::AreEqual(0, hit->upTime);
-            Assert::AreEqual(0, hit->lastContact);
+            Assert::AreEqual(0, (int)hit->time);
+            Assert::AreEqual(0, (int)hit->upTime);
+            Assert::AreEqual(0, (int)hit->lastContact);
             //Assert::AreEqual(0, hit->hitID);
 
             Assert::IsFalse(hit->sessionID.isSet());
             Assert::IsFalse(hit->chanID.isSet());
 
-            Assert::AreEqual(0, hit->version);
-            Assert::AreEqual(0, hit->versionVP);
+            Assert::AreEqual(0, (int)hit->version);
+            Assert::AreEqual(0, (int)hit->versionVP);
 
             Assert::AreEqual(false, hit->firewalled);
             Assert::AreEqual(false, hit->stable);
@@ -66,22 +66,22 @@ namespace ChanHitFixture
             // Assert::AreEqual(false, hit->chfull);
             // Assert::AreEqual(false, hit->ratefull);
 
-            Assert::AreEqual(NULL, hit->next);
+            Assert::AreEqual(NULL, (int)hit->next);
 
             // Assert::AreEqual(0, hit->status);
             // Assert::AreEqual(0, hit->servent_id);
-            Assert::AreEqual(0, hit->oldestPos);
-            Assert::AreEqual(0, hit->newestPos);
+            Assert::AreEqual(0, (int)hit->oldestPos);
+            Assert::AreEqual(0, (int)hit->newestPos);
 
-            Assert::AreEqual(0, hit->uphost.ip);
-            Assert::AreEqual(0, hit->uphost.port);
+            Assert::AreEqual(0, (int)hit->uphost.ip);
+            Assert::AreEqual(0, (int)hit->uphost.port);
 
-            Assert::AreEqual(0, hit->uphostHops);
+            Assert::AreEqual(0, (int)hit->uphostHops);
 
             Assert::AreEqual(' ', hit->versionExPrefix[0]);
             Assert::AreEqual(' ', hit->versionExPrefix[1]);
 
-            Assert::AreEqual(0, hit->versionExNumber);
+            Assert::AreEqual(0, (int)hit->versionExNumber);
             // Assert::AreEqual(0, hit->lastSendSeq);
         }
 
@@ -180,7 +180,7 @@ namespace ChanHitFixture
         MemoryStream mem(1024);                             \
         char buf[1025];                                     \
         Assert::AreEqual(true, hit->writeVariable(mem, name));     \
-        EXPECT_STREQ(value, (name, asString(mem, buf)));    \
+        Assert::AreEqual(value, (name, asString(mem, buf)));    \
     } while (0)
 
             TEST_VARIABLE("rhost0", "0.0.0.0:0");
@@ -276,15 +276,15 @@ namespace ChanHitFixture
                 /* isFull, bitrate, ch, */
                 oldp, newp);
 
-            Assert::AreEqual(1, hit->numListeners);
-            Assert::AreEqual(2, hit->numRelays);
+            Assert::AreEqual(1, (int)hit->numListeners);
+            Assert::AreEqual(2, (int)hit->numRelays);
 
-            Assert::AreEqual(4, hit->upTime);
+            Assert::AreEqual(4, (int)hit->upTime);
             Assert::AreEqual(true, hit->recv);
             // Assert::AreEqual(true, hit->chfull);
 
-            Assert::AreEqual(6, hit->oldestPos);
-            Assert::AreEqual(7, hit->newestPos);
+            Assert::AreEqual(6, (int)hit->oldestPos);
+            Assert::AreEqual(7, (int)hit->newestPos);
         }
 
         TEST_METHOD(ChanHitFixture_str)

@@ -23,13 +23,13 @@ namespace PlayListFixture
 
         TEST_METHOD(PlayListFixture_initialState)
         {
-            Assert::AreEqual(PlayList::T_PLS, pls.type);
+            Assert::AreEqual((int)PlayList::T_PLS, (int)pls.type);
             Assert::AreEqual(0, pls.numURLs);
             Assert::AreEqual(1, pls.maxURLs);
             Assert::IsNotNull(pls.urls);
             Assert::IsNotNull(pls.titles);
 
-            Assert::AreEqual(PlayList::T_ASX, asx.type);
+            Assert::AreEqual((int)PlayList::T_ASX, (int)asx.type);
             Assert::AreEqual(0, asx.numURLs);
             Assert::AreEqual(1, asx.maxURLs);
             Assert::IsNotNull(asx.urls);
@@ -40,14 +40,15 @@ namespace PlayListFixture
         {
             Assert::AreEqual(0, pls.numURLs);
 
-            pls.addURL("http://127.0.0.1:7144/stream/00000000000000000000000000000000.flv", "A ch");
+            pls.addURL("http://127.0.0.1:7144/stream/00000000000000000000000000000000.flv", "A ch", "http://jbbs.shitaraba.net/bbs/read.cgi/internet/7144/0000000000/");
 
             Assert::AreEqual(1, pls.numURLs);
             Assert::AreEqual("http://127.0.0.1:7144/stream/00000000000000000000000000000000.flv", pls.urls[0].cstr());
             Assert::AreEqual("A ch", pls.titles[0].cstr());
+            Assert::AreEqual("http://jbbs.shitaraba.net/bbs/read.cgi/internet/7144/0000000000/", pls.contacturls[0].cstr());
 
             // cannot add beyond maxURLs
-            pls.addURL("http://127.0.0.1:7144/stream/FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.flv", "B ch");
+            pls.addURL("http://127.0.0.1:7144/stream/FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.flv", "B ch", "http://jbbs.shitaraba.net/bbs/read.cgi/internet/7144/FFFFFFFFFF/");
 
             Assert::AreEqual(1, pls.numURLs);
         }
@@ -104,13 +105,13 @@ namespace PlayListFixture
 
         TEST_METHOD(PlayListFixture_getPlayListType)
         {
-            Assert::AreEqual(PlayList::T_ASX, PlayList::getPlayListType(ChanInfo::T_WMA));
-            Assert::AreEqual(PlayList::T_ASX, PlayList::getPlayListType(ChanInfo::T_WMV));
-            Assert::AreEqual(PlayList::T_RAM, PlayList::getPlayListType(ChanInfo::T_OGM));
-            Assert::AreEqual(PlayList::T_PLS, PlayList::getPlayListType(ChanInfo::T_OGG));
-            Assert::AreEqual(PlayList::T_PLS, PlayList::getPlayListType(ChanInfo::T_MP3));
-            Assert::AreEqual(PlayList::T_PLS, PlayList::getPlayListType(ChanInfo::T_FLV));
-            Assert::AreEqual(PlayList::T_PLS, PlayList::getPlayListType(ChanInfo::T_MKV));
+            Assert::AreEqual((int)PlayList::T_ASX, (int)PlayList::getPlayListType(ChanInfo::T_WMA));
+            Assert::AreEqual((int)PlayList::T_ASX, (int)PlayList::getPlayListType(ChanInfo::T_WMV));
+            Assert::AreEqual((int)PlayList::T_RAM, (int)PlayList::getPlayListType(ChanInfo::T_OGM));
+            Assert::AreEqual((int)PlayList::T_PLS, (int)PlayList::getPlayListType(ChanInfo::T_OGG));
+            Assert::AreEqual((int)PlayList::T_PLS, (int)PlayList::getPlayListType(ChanInfo::T_MP3));
+            Assert::AreEqual((int)PlayList::T_PLS, (int)PlayList::getPlayListType(ChanInfo::T_FLV));
+            Assert::AreEqual((int)PlayList::T_PLS, (int)PlayList::getPlayListType(ChanInfo::T_MKV));
         }
 
     };

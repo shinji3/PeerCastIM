@@ -391,6 +391,7 @@
     <ClInclude Include="..\core\common\chkMemoryLeak.h" />
     <ClInclude Include="..\core\common\identify_encoding.h" />
     <ClInclude Include="..\core\common\utf8.h" />
+    <ClInclude Include="mockclientsocket.h" />
     <ClInclude Include="mockpeercast.h" />
     <ClInclude Include="mocksys.h" />
     <ClInclude Include="stdafx.h" />

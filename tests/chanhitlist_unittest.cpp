@@ -41,9 +41,9 @@ namespace ChanHitListFixture
         {
             Assert::AreEqual(false, hitlist->used);
 
-            Assert::AreEqual(NULL, hitlist->hit);
+            Assert::IsNull(hitlist->hit);
 
-            Assert::AreEqual(0, hitlist->lastHitTime);
+            Assert::AreEqual(0, (int)hitlist->lastHitTime);
         }
 
         TEST_METHOD(ChanHitListFixture_contactTrackers)
@@ -112,14 +112,14 @@ namespace ChanHitListFixture
 
         TEST_METHOD(ChanHitListFixture_deleteHit)
         {
-            Assert::AreEqual(NULL, hitlist->hit);
+            Assert::IsNull(hitlist->hit);
 
             hitlist->addHit(hit);
 
             Assert::AreEqual(1, listCount(hitlist->hit));
             // Assert::AreNotEqual(NULL, hitlist->hit); // なんでコンパイルできない？
 
-            Assert::AreEqual(NULL, hitlist->deleteHit(hitlist->hit));
+            Assert::IsNull(hitlist->deleteHit(hitlist->hit));
             Assert::AreEqual(0, listCount(hitlist->hit));
         }
 

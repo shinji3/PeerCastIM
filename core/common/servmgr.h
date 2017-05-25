@@ -462,7 +462,6 @@ public:
     GnuID lastPCPFromID;
     time_t lastPCPBcstTime;
 
-private:
     FW_STATE            firewalled;
 };
 
