@@ -25,7 +25,7 @@ namespace HTTPFixture
             int statusCode = http.readResponse();
 
             Assert::AreEqual(200, statusCode);
-            // 副作用として cmdLine がちょんぎれる。
+            // ����p�Ƃ��� cmdLine ������񂬂��B
             Assert::AreEqual("HTTP/1.0 200", http.cmdLine);
             Assert::IsTrue(mem.eof());
         }
@@ -94,9 +94,9 @@ namespace HTTPFixture
             Assert::IsTrue(http.nextHeader());
             Assert::IsTrue(http.isHeader("Host"));
             Assert::IsTrue(http.isHeader("host")); // case-insensitive
-            Assert::IsTrue(http.isHeader("localhost")); // 値の部分にもマッチしちゃう
-            Assert::IsTrue(http.isHeader("h")); // 実は前方一致
-            Assert::IsFalse(http.isHeader("")); // でも空文字列はダメ
+            Assert::IsTrue(http.isHeader("localhost")); // �l�̕����ɂ��}�b�`�����Ⴄ
+            Assert::IsTrue(http.isHeader("h")); // ���͑O����v
+            Assert::IsFalse(http.isHeader("")); // �ł��󕶎���̓_��
 
             Assert::IsTrue(http.nextHeader());
             Assert::IsTrue(http.isHeader("Connection"));
@@ -173,7 +173,7 @@ namespace HTTPFixture
         TEST_METHOD(HTTPFixture_initRequest)
         {
             http.initRequest("GET /index.html HTTP/1.0\r\n");
-            // readRequest と違って、改行コードは削除されない。
+            // readRequest �ƈ���āA���s�R�[�h�͍폜����Ȃ��B
             Assert::AreEqual("GET /index.html HTTP/1.0\r\n", http.cmdLine);
         }
 

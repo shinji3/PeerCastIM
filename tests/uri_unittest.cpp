@@ -1,4 +1,4 @@
-// URI クラスのテスト。
+// URI �N���X�̃e�X�g�B
 
 #include "stdafx.h"
 #include "CppUnitTest.h"
@@ -21,8 +21,8 @@ namespace URIFixture
             Assert::IsTrue(u.isValid());
             Assert::AreEqual("http", u.scheme().c_str());
             Assert::AreEqual("www.example.com", u.host().c_str());
-            Assert::AreEqual(80, u.port()); // ポート指定がない場合はスキームのデフォルトポート。
-            Assert::AreEqual("/", u.path().c_str()); // パスが省略されている場合は "/" になる。
+            Assert::AreEqual(80, u.port()); // �|�[�g�w�肪�Ȃ��ꍇ�̓X�L�[���̃f�t�H���g�|�[�g�B
+            Assert::AreEqual("/", u.path().c_str()); // �p�X���ȗ�����Ă���ꍇ�� "/" �ɂȂ�B
         }
 
         TEST_METHOD(URIFixture_httpSchemeWithPortQueryAndFragment)
@@ -34,7 +34,7 @@ namespace URIFixture
             Assert::AreEqual("localhost", u.host().c_str());
             Assert::AreEqual(7144, u.port());
             Assert::AreEqual("/html/en/index.html", u.path().c_str());
-            Assert::AreEqual("name=%E4%BA%88%E5%AE%9A%E5%9C%B0", u.query().c_str()); // 自動的に unescape はされない。
+            Assert::AreEqual("name=%E4%BA%88%E5%AE%9A%E5%9C%B0", u.query().c_str()); // �����I�� unescape �͂���Ȃ��B
             Assert::AreEqual("top", u.fragment().c_str());
         }
 
@@ -82,14 +82,14 @@ namespace URIFixture
         //     Assert::AreEqual("", u.host().c_str());
         // }
 
-        // mailtoスキームには対応しない。
+        // mailto�X�L�[���ɂ͑Ή����Ȃ��B
         TEST_METHOD(URIFixture_mailtoScheme)
         {
             URI u("mailto:webmaster@example.com");
             Assert::IsFalse(u.isValid());
         }
 
-        // 相対URLは使えない。
+        // ����URL�͎g���Ȃ��B
         TEST_METHOD(URIFixture_relativeURI)
         {
             bool e = false;

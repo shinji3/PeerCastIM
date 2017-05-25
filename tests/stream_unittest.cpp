@@ -225,21 +225,21 @@ namespace StreamFixture
         {
             mem.writeUTF8(0x3b1);
             Assert::AreEqual(2, mem.getLength());
-            Assert::AreEqual("Î±", mem.str().c_str());
+            Assert::AreEqual("ƒ¿", mem.str().c_str());
         }
 
         TEST_METHOD(StreamFixture_writeUTF8_3)
         {
             mem.writeUTF8(0x3042);
             Assert::AreEqual(3, mem.getLength());
-            Assert::AreEqual("ã‚", mem.str().c_str());
+            Assert::AreEqual("‚ ", mem.str().c_str());
         }
 
         TEST_METHOD(StreamFixture_writeUTF8_4)
         {
             mem.writeUTF8(0x1f4a9);
             Assert::AreEqual(4, mem.getLength());
-            Assert::AreEqual("ğŸ’©", mem.str().c_str());
+            Assert::AreEqual("\xF0\x9F\x92\xA9", mem.str().c_str());
         }
 
         TEST_METHOD(StreamFixture_readLine)
@@ -260,12 +260,12 @@ namespace StreamFixture
             Assert::AreEqual(3, mem.readLine(buf, 1024));
             Assert::AreEqual("abc", buf);
 
-            // CR ã§ã¯åœæ­¢ã—ãªã„
+            // CR ‚Å‚Í’â~‚µ‚È‚¢
             memset(buf, 0, 1024);
             mem.str("abc\rdef");
             ASSERT_THROW(mem.readLine(buf, 1024), StreamException);
 
-            // è¡Œä¸­ã® CR ã¯å‰Šé™¤ã•ã‚Œã‚‹
+            // s’†‚Ì CR ‚Ííœ‚³‚ê‚é
             memset(buf, 0, 1024);
             mem.str("abc\rdef\r\n");
             Assert::AreEqual(6, mem.readLine(buf, 1024));
@@ -356,7 +356,7 @@ namespace StreamFixture
         {
             char buf[1024] = "ABCD";
 
-            // ãƒãƒƒãƒ•ã‚¡ãƒ¼ã‚µã‚¤ã‚ºãŒè¶³ã‚Šãªã„ã¨è¨˜éŒ²ã§ããªã‹ã£ãŸ1æ–‡å­—ã¯æ¶ˆãˆã¦ã—ã¾ã†
+            // ƒoƒbƒtƒ@[ƒTƒCƒY‚ª‘«‚è‚È‚¢‚Æ‹L˜^‚Å‚«‚È‚©‚Á‚½1•¶š‚ÍÁ‚¦‚Ä‚µ‚Ü‚¤
             mem.str("abc");
             Assert::AreEqual(1, mem.readWord(buf, 2));
             Assert::AreEqual("a", buf);
@@ -364,7 +364,7 @@ namespace StreamFixture
             Assert::AreEqual("c", buf);
         }
 
-        // ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ä½¿ã„æ–¹ã‚ã‹ã‚‰ãªã„ã—ã€ä½¿ã‚ã‚Œã¦ãªã„ã‹ã‚‰æ¶ˆã—ãŸã„ãªã€‚
+        // ‚±‚Ìƒƒ\ƒbƒhg‚¢•û‚í‚©‚ç‚È‚¢‚µAg‚í‚ê‚Ä‚È‚¢‚©‚çÁ‚µ‚½‚¢‚ÈB
         TEST_METHOD(StreamFixture_readBase64)
         {
             // Base64.strict_encode64("foo")
@@ -497,7 +497,7 @@ namespace StreamFixture
             Assert::AreEqual(2, s.totalBytesOut());
         }
 
-        // æ™‚é–“ã‚’é€²ã‚ãªã„ã¨å¤‰åŒ–ã—ãªã„ã€‚
+        // ŠÔ‚ği‚ß‚È‚¢‚Æ•Ï‰»‚µ‚È‚¢B
         TEST_METHOD(StreamFixture_lastBytesIn)
         {
             Assert::AreEqual(0, s.lastBytesIn());
@@ -505,7 +505,7 @@ namespace StreamFixture
             Assert::AreEqual(0, s.lastBytesIn());
         }
 
-        // æ™‚é–“ã‚’é€²ã‚ãªã„ã¨å¤‰åŒ–ã—ãªã„ã€‚
+        // ŠÔ‚ği‚ß‚È‚¢‚Æ•Ï‰»‚µ‚È‚¢B
         TEST_METHOD(StreamFixture_lastBytesOut)
         {
             Assert::AreEqual(0, s.lastBytesOut());

@@ -62,8 +62,8 @@ namespace ServentFixture
             // WLock               lock;
 
             Assert::AreEqual(true, s.sendHeader);
-            // Assert::AreEqual(0, s.syncPos); // ä¸å®š
-            // Assert::AreEqual(0, s.streamPos);  // ä¸å®š
+            // Assert::AreEqual(0, s.syncPos); // •s’è
+            // Assert::AreEqual(0, s.streamPos);  // •s’è
             Assert::AreEqual(0, s.servPort);
 
             Assert::AreEqual(ChanInfo::SP_UNKNOWN, s.outputProtocol);
@@ -115,8 +115,8 @@ namespace ServentFixture
                 mock->outgoing.str().c_str());
         }
 
-        // servMgr->password ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„æ™‚ã« ShoutCast ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰
-        // ã®æ”¾é€è¦æ±‚ã ã¨ã—ã¦é€šã—ã¦ã—ã¾ã†ãŒã€è‰¯ã„ã®ã‹ï¼Ÿ
+        // servMgr->password ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¢‚É ShoutCast ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç
+        // ‚Ì•ú‘——v‹‚¾‚Æ‚µ‚Ä’Ê‚µ‚Ä‚µ‚Ü‚¤‚ªA—Ç‚¢‚Ì‚©H
         TEST_METHOD(ServentFixture_handshakeIncomingBadRequest)
         {
             MockClientSocket* mock;
@@ -140,7 +140,7 @@ namespace ServentFixture
 
             std::string output = mock->outgoing.str();
 
-            // ãƒ•ã‚¡ã‚¤ãƒ«ãŒç„¡ã„ã®ã« OK ã¯ãŠã‹ã—ããªã„ã‹â€¦
+            // ƒtƒ@ƒCƒ‹‚ª–³‚¢‚Ì‚É OK ‚Í‚¨‚©‚µ‚­‚È‚¢‚©c
             Assert::IsTrue(str::contains(output, "200 OK"));
             Assert::IsTrue(str::contains(output, "Server: "));
             Assert::IsTrue(str::contains(output, "Date: "));
@@ -224,7 +224,7 @@ namespace ServentFixture
     LONG_STRING \
     LONG_STRING
 
-// 8191 ãƒã‚¤ãƒˆä»¥ä¸Šã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆã«å¯¾ã—ã¦ã‚¨ãƒ©ãƒ¼ã‚’è¿”ã™ã€‚
+// 8191 ƒoƒCƒgˆÈã‚ÌƒŠƒNƒGƒXƒg‚É‘Î‚µ‚ÄƒGƒ‰[‚ğ•Ô‚·B
         TEST_METHOD(ServentFixture_handshakeIncomingLongURI)
         {
             Assert::AreEqual(8470, strlen(LONG_LONG_STRING));
@@ -257,31 +257,31 @@ namespace ServentFixture
         TEST_METHOD(ServentFixture_createChannelInfoComment)
         {
             Query query("");
-            auto info = s.createChannelInfo(GnuID(), "ä¿ºãŸã¡ã¿ã‚“ãªãƒˆãƒ‰ã ãœ (ãƒ»Ï‰ãƒ»ï½€Ğ·)3", query, "");
+            auto info = s.createChannelInfo(GnuID(), "‰´‚½‚¿‚İ‚ñ‚Èƒgƒh‚¾‚º (EƒÖEM„x)3", query, "");
 
-            Assert::AreEqual("ä¿ºãŸã¡ã¿ã‚“ãªãƒˆãƒ‰ã ãœ (ãƒ»Ï‰ãƒ»ï½€Ğ·)3", info.comment);
+            Assert::AreEqual("‰´‚½‚¿‚İ‚ñ‚Èƒgƒh‚¾‚º (EƒÖEM„x)3", info.comment);
         }
 
         TEST_METHOD(ServentFixture_createChannelInfoCommentOverride)
         {
-            Query query("comment=ã‚¹ãƒ¬ãªã—");
-            auto info = s.createChannelInfo(GnuID(), "ä¿ºãŸã¡ã¿ã‚“ãªãƒˆãƒ‰ã ãœ (ãƒ»Ï‰ãƒ»ï½€Ğ·)3", query, "");
+            Query query("comment=ƒXƒŒ‚È‚µ");
+            auto info = s.createChannelInfo(GnuID(), "‰´‚½‚¿‚İ‚ñ‚Èƒgƒh‚¾‚º (EƒÖEM„x)3", query, "");
 
-            Assert::AreEqual("ã‚¹ãƒ¬ãªã—", info.comment);
+            Assert::AreEqual("ƒXƒŒ‚È‚µ", info.comment);
         }
 
         TEST_METHOD(ServentFixture_createChannelInfoTypicalCase)
         {
-            Query query("name=äºˆå®šåœ°&genre=ãƒ†ã‚¹ãƒˆ&desc=ã¦ã™ã¨&url=http://example.com&comment=ã‚¹ãƒ¬ãªã—&bitrate=400&type=mkv");
+            Query query("name=—\’è’n&genre=ƒeƒXƒg&desc=‚Ä‚·‚Æ&url=http://example.com&comment=ƒXƒŒ‚È‚µ&bitrate=400&type=mkv");
             auto info = s.createChannelInfo(GnuID(), String(), query, "");
 
             Assert::AreEqual(ChanInfo::T_MKV, info.contentType);
-            Assert::AreEqual("äºˆå®šåœ°", info.name.cstr());
-            Assert::AreEqual("ãƒ†ã‚¹ãƒˆ", info.genre.cstr());
-            Assert::AreEqual("ã¦ã™ã¨", info.desc.cstr());
+            Assert::AreEqual("—\’è’n", info.name.cstr());
+            Assert::AreEqual("ƒeƒXƒg", info.genre.cstr());
+            Assert::AreEqual("‚Ä‚·‚Æ", info.desc.cstr());
             Assert::AreEqual("http://example.com", info.url.cstr());
             Assert::AreEqual(400, info.bitrate);
-            Assert::AreEqual("ã‚¹ãƒ¬ãªã—", info.comment);
+            Assert::AreEqual("ƒXƒŒ‚È‚µ", info.comment);
         }
 
         TEST_METHOD(ServentFixture_createChannelInfoNonnumericBitrate)
@@ -300,8 +300,8 @@ namespace ServentFixture
             Assert::IsFalse(s.hasValidAuthToken("01234567890123456789012345678901.flv?"));
             Assert::IsFalse(s.hasValidAuthToken("01234567890123456789012345678901.flv"));
             Assert::IsFalse(s.hasValidAuthToken(""));
-            Assert::IsFalse(s.hasValidAuthToken("ã»ã’ã»ã’.flv?auth=44d5299e57ad9274fee7960a9fa60bfd"));
-            Assert::IsFalse(s.hasValidAuthToken("ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’ã»ã’.flv?auth=44d5299e57ad9274fee7960a9fa60bfd"));
+            Assert::IsFalse(s.hasValidAuthToken("‚Ù‚°‚Ù‚°.flv?auth=44d5299e57ad9274fee7960a9fa60bfd"));
+            Assert::IsFalse(s.hasValidAuthToken("‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°‚Ù‚°.flv?auth=44d5299e57ad9274fee7960a9fa60bfd"));
             Assert::IsFalse(s.hasValidAuthToken("?auth=44d5299e57ad9274fee7960a9fa60bfd"));
         }
 

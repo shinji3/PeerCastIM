@@ -63,7 +63,7 @@ namespace HTMLFixture
         }
 
 
-        // タイトルはフォーマット文字列として解釈されてはいけない。
+        // �^�C�g���̓t�H�[�}�b�g������Ƃ��ĉ��߂���Ă͂����Ȃ��B
         TEST_METHOD(HTMLFixture_addHead2)
         {
             StringStream mem2;

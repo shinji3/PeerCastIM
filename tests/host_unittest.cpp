@@ -17,8 +17,8 @@ namespace HostTest
             host.fromStrIP("127.0.0.1", 0);
             Assert::IsTrue(host.loopbackIP());
 
-            // 127 で始まるクラスAのネットワーク全部がループバックとして機能す
-            // るが、loopbackIP は 127.0.0.1 以外には FALSE を返す。
+            // 127 �Ŏn�܂�N���XA�̃l�b�g���[�N�S�������[�v�o�b�N�Ƃ��ċ@�\��
+            // �邪�AloopbackIP �� 127.0.0.1 �ȊO�ɂ� FALSE ��Ԃ��B
             host.fromStrIP("127.99.99.99", 0);
             Assert::IsFalse(host.loopbackIP());
         }

@@ -45,13 +45,13 @@ namespace ChanMgrFixture
             Assert::IsTrue(id.isSame(x->searchInfo.bcID));
             // ...
 
-            // Assert::AreEqual(0, x->numFinds); // åˆæœŸåŒ–ã•ã‚Œãªã„ã€‚
+            // Assert::AreEqual(0, x->numFinds); // ‰Šú‰»‚³‚ê‚È‚¢B
             Assert::AreEqual(String(), x->broadcastMsg);
             Assert::AreEqual(10, (int)x->broadcastMsgInterval);
-            //Assert::AreEqual(0, x->lastHit); // åˆæœŸåŒ–ã•ã‚Œãªã„ã€‚
+            //Assert::AreEqual(0, x->lastHit); // ‰Šú‰»‚³‚ê‚È‚¢B
             Assert::AreEqual(0, (int)x->lastQuery);
             Assert::AreEqual(0, (int)x->maxUptime);
-            // Assert::AreEqual(true, x->searchActive); // åˆæœŸåŒ–ã•ã‚Œãªã„ã€‚
+            // Assert::AreEqual(true, x->searchActive); // ‰Šú‰»‚³‚ê‚È‚¢B
             Assert::AreEqual(600, (int)x->deadHitAge);
             Assert::AreEqual(8192, x->icyMetaInterval);
             Assert::AreEqual(0, x->maxRelaysPerChannel);

@@ -87,7 +87,7 @@ namespace ServMgrFixture
             // unsigned int        refreshHTML;
             Assert::AreEqual(5, m.refreshHTML);
             // unsigned int        relayBroadcast;
-            //Assert::AreEqual(0, m.relayBroadcast); // ‰∏çÂÆö
+            //Assert::AreEqual(0, m.relayBroadcast); // ïsíË
             // unsigned int        notifyMask;
             Assert::AreEqual(0xffff, m.notifyMask);
             // BCID                *validBCID;

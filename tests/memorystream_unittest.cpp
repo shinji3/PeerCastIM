@@ -24,7 +24,7 @@ namespace MemoryStreamFixture
         char data[5];
         MemoryStream hoge_mm;
 
-        // readUpto ã¯å®Ÿè£…ã•ã‚Œã¦ã„ãªã„ã®ã§ä½•ã‚‚ã›ãš 0 ã‚’è¿”ã™ã€‚
+        // readUpto ‚ÍÀ‘•‚³‚ê‚Ä‚¢‚È‚¢‚Ì‚Å‰½‚à‚¹‚¸ 0 ‚ğ•Ô‚·B
         TEST_METHOD(MemoryStreamFixture_readUpto)
         {
             char buf[1024] = "X";
@@ -50,7 +50,7 @@ namespace MemoryStreamFixture
         {
             char buf[1024];
 
-            // ãƒ¡ãƒ¢ãƒªãƒ¼ã«åã¾ã‚‰ãªã„ write ã¯ StreamException ã‚’ä¸Šã’ã‚‹ã€‚
+            // ƒƒ‚ƒŠ[‚Éû‚Ü‚ç‚È‚¢ write ‚Í StreamException ‚ğã‚°‚éB
             bool e = false;
             try
             {
@@ -64,7 +64,7 @@ namespace MemoryStreamFixture
 
             one_byte_mm.rewind();
 
-            // ã‚¨ãƒ©ãƒ¼ã«ãªã£ãŸå ´åˆã¯1æ–‡å­—ã‚‚æ›¸ãè¾¼ã¾ã‚Œã¦ã„ãªã„ã€‚
+            // ƒGƒ‰[‚É‚È‚Á‚½ê‡‚Í1•¶š‚à‘‚«‚Ü‚ê‚Ä‚¢‚È‚¢B
             one_byte_mm.read(buf, 1);
             Assert::AreEqual('A', buf[0]);
         }

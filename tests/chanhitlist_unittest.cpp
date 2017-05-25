@@ -48,7 +48,7 @@ namespace ChanHitListFixture
 
         TEST_METHOD(ChanHitListFixture_contactTrackers)
         {
-            // ä½¿ã‚ã‚Œã¦ãªã„ã€‚
+            // Žg‚í‚ê‚Ä‚È‚¢B
             Assert::AreEqual(0, hitlist->contactTrackers(false, 0, 0, 0));
         }
 
@@ -71,7 +71,7 @@ namespace ChanHitListFixture
 
             Assert::AreEqual(1, listCount(hitlist));
 
-            // åŒã˜ãƒ›ã‚¹ãƒˆã‚’è¿½åŠ ã—ã¦ã‚‚å¢—ãˆãªã„ã€‚
+            // “¯‚¶ƒzƒXƒg‚ð’Ç‰Á‚µ‚Ä‚à‘‚¦‚È‚¢B
             hitlist->addHit(hit);
 
             Assert::AreEqual(1, listCount(hitlist));
@@ -117,7 +117,7 @@ namespace ChanHitListFixture
             hitlist->addHit(hit);
 
             Assert::AreEqual(1, listCount(hitlist->hit));
-            // Assert::AreNotEqual(NULL, hitlist->hit); // ãªã‚“ã§ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã§ããªã„ï¼Ÿ
+            // Assert::AreNotEqual(NULL, hitlist->hit); // ‚È‚ñ‚ÅƒRƒ“ƒpƒCƒ‹‚Å‚«‚È‚¢H
 
             Assert::AreEqual(NULL, hitlist->deleteHit(hitlist->hit));
             Assert::AreEqual(0, listCount(hitlist->hit));
