@@ -126,7 +126,16 @@ namespace ServentFixture
             s.sock = mock = new MockClientSocket();
             mock->incoming.str("\r\n");
 
-            ASSERT_THROW(s.handshakeIncoming(), StreamException);
+            bool e = false;
+            try
+            {
+                s.handshakeIncoming();
+            }
+            catch (StreamException)
+            {
+                e = true;
+            }
+            Assert::AreEqual(e, true);
 
             delete mock;
         }
@@ -158,7 +167,16 @@ namespace ServentFixture
             s.sock = mock = new MockClientSocket();
             mock->incoming.str("GET /api/1 HTTP/1.0\r\n\r\n");
 
-            ASSERT_NO_THROW(s.handshakeIncoming());
+            bool e = false;
+            try
+            {
+                s.handshakeIncoming();
+            }
+            catch (std::runtime_error)
+            {
+                e = true;
+            }
+            Assert::AreNotEqual(e, true);
 
             std::string output = mock->outgoing.str();
 
@@ -171,7 +189,7 @@ namespace ServentFixture
         {
             MockClientSocket* mock;
 
-            strcpy(servMgr->password, "Passw0rd");
+            strcpy_s(servMgr->password, sizeof(servMgr->password), "Passw0rd");
 
             // --------------------------------------------
             s.sock = mock = new MockClientSocket();
@@ -227,7 +245,7 @@ namespace ServentFixture
 // 8191 バイト以上のリクエストに対してエラーを返す。
         TEST_METHOD(ServentFixture_handshakeIncomingLongURI)
         {
-            Assert::AreEqual(8470, strlen(LONG_LONG_STRING));
+            Assert::AreEqual(8470, (int)strlen(LONG_LONG_STRING));
 
             MockClientSocket* mock;
 
@@ -235,7 +253,16 @@ namespace ServentFixture
             mock->incoming.str("GET /" LONG_LONG_STRING " HTTP/1.0\r\n"
                 "\r\n");
 
-            ASSERT_THROW(s.handshakeIncoming(), HTTPException);
+            bool e = false;
+            try
+            {
+                s.handshakeIncoming();
+            }
+            catch (HTTPException)
+            {
+                e = true;
+            }
+            Assert::AreEqual(e, true);
 
             delete mock;
         }
@@ -289,7 +316,18 @@ namespace ServentFixture
             Query query("bitrate=BITRATE");
             ChanInfo info;
 
-            ASSERT_NO_THROW(info = s.createChannelInfo(GnuID(), String(), query, ""));
+            bool e = false;
+            try
+            {
+                info = s.createChannelInfo(GnuID(), String(), query, "");
+            }
+            catch (...)
+            {
+                e = true;
+            }
+            Assert::AreNotEqual(e, true);
+
+
             Assert::AreEqual(0, info.bitrate);
         }
 

@@ -107,8 +107,8 @@ namespace MemoryStreamFixture
             Assert::AreEqual(1000, s.getLength());
 
             char buf[1000];
-            buf[0] = 0xff;
-            buf[999] = 0xff;
+            buf[0] = (char)0xff;
+            buf[999] = (char)0xff;
 
             s.rewind();
             s.read(buf, 1000);
