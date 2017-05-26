@@ -4,6 +4,8 @@
 #include "channel.h"
 #include "servmgr.h"
 
+#include "mockpeercast.h"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace ChanHitListFixture
@@ -14,6 +16,10 @@ namespace ChanHitListFixture
 
         ChanHitListFixture()
         {
+            peercastApp = new MockPeercastApplication();
+            peercastInst = new MockPeercastInstance();
+            peercastInst->init();
+
             hitlist = new ChanHitList();
 
             host.fromStrIP("209.209.209.209", 7144);

@@ -4,6 +4,8 @@
 #include "atom.h"
 #include "channel.h"
 
+#include "mockpeercast.h"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace ChanHitFixture
@@ -15,6 +17,10 @@ namespace ChanHitFixture
         ChanHitFixture()
             : hit(new ChanHit())
         {
+            peercastApp = new MockPeercastApplication();
+            peercastInst = new MockPeercastInstance();
+            peercastInst->init();
+
             hit->init();
         }
 
