@@ -318,14 +318,14 @@ namespace StreamFixture
         {
             mem.writeUTF8(0x3b1);
             Assert::AreEqual(2, mem.getLength());
-            Assert::AreEqual("ƒ¿", mem.str().c_str());
+            Assert::AreEqual("\xCE\xB1", mem.str().c_str());
         }
 
         TEST_METHOD(StreamFixture_writeUTF8_3)
         {
             mem.writeUTF8(0x3042);
             Assert::AreEqual(3, mem.getLength());
-            Assert::AreEqual("‚ ", mem.str().c_str());
+            Assert::AreEqual("\xE3\x81\x82", mem.str().c_str());
         }
 
         TEST_METHOD(StreamFixture_writeUTF8_4)
