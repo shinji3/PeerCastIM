@@ -5,6 +5,8 @@
 #include "version2.h"
 #include "md5.h"
 
+#include "mockpeercast.h"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace ChanMgrFixture
@@ -12,6 +14,13 @@ namespace ChanMgrFixture
     TEST_CLASS(ChanMgrFixture)
     {
     public:
+
+        TEST_CLASS_INITIALIZE(ClassInitialize)
+        {
+            peercastApp = new MockPeercastApplication();
+            peercastInst = new MockPeercastInstance();
+            peercastInst->init();
+        }
 
         ChanMgrFixture()
         {
@@ -54,7 +63,7 @@ namespace ChanMgrFixture
             // Assert::AreEqual(true, x->searchActive); // ‰Šú‰»‚³‚ê‚È‚¢B
             Assert::AreEqual(600, (int)x->deadHitAge);
             Assert::AreEqual(8192, x->icyMetaInterval);
-            Assert::AreEqual(0, x->maxRelaysPerChannel);
+            Assert::AreEqual(1, x->maxRelaysPerChannel);
             Assert::AreEqual(1, x->minBroadcastTTL);
             Assert::AreEqual(7, x->maxBroadcastTTL);
             Assert::AreEqual(60, x->pushTimeout);

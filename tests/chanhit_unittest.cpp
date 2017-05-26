@@ -189,7 +189,7 @@ namespace ChanHitFixture
         Assert::AreEqual(value, (name, asString(mem, buf)));    \
     } while (0)
 
-            TEST_VARIABLE("rhost0", "0.0.0.0:0");
+            TEST_VARIABLE("rhost0", "<font color=green>0.0.0.0:0</font>");
             TEST_VARIABLE("rhost1", "0.0.0.0:0");
             TEST_VARIABLE("numHops", "0");
             TEST_VARIABLE("numListeners", "0");
@@ -197,8 +197,9 @@ namespace ChanHitFixture
             TEST_VARIABLE("uptime", "-");
             TEST_VARIABLE("update", "-");
             TEST_VARIABLE("isFirewalled", "0");
-            //TEST_VARIABLE("version", "0"); // original
-            TEST_VARIABLE("version", "-");
+            TEST_VARIABLE("version", "0"); // original
+            
+            // TEST_VARIABLE("version", "-");
             // TEST_VARIABLE("agent", "0");
             // TEST_VARIABLE("check", "<a href=\"#\" onclick=\"checkip('0.0.0.0')\">_</a>");
             // TEST_VARIABLE("uphost", "0.0.0.0:0");
