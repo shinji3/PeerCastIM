@@ -4,6 +4,8 @@
 #include "playlist.h"
 #include "sstream.h"
 
+#include "mockpeercast.h"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace PlayListFixture
@@ -16,6 +18,9 @@ namespace PlayListFixture
             : pls(PlayList::T_PLS, 1)
             , asx(PlayList::T_ASX, 1)
         {
+            peercastApp = new MockPeercastApplication();
+            peercastInst = new MockPeercastInstance();
+            peercastInst->init();
         }
 
         PlayList pls;
@@ -96,8 +101,10 @@ namespace PlayListFixture
 
             asx.write(mem);
             Assert::AreEqual("<ASX Version=\"3.0\">\r\n"
+                "<TITLE>1ch</TITLE>\r\n"
                 "<ENTRY>\r\n"
-                "<REF href=\"mmsh://127.0.0.1:7144/stream/01234567890123456789012345678901.wmv?auth=44d5299e57ad9274fee7960a9fa60bfd\" />\r\n"
+                "<TITLE>1ch</TITLE>\r\n"
+                "<REF href = \"http://127.0.0.1:7144/stream/01234567890123456789012345678901.wmv?auth=44d5299e57ad9274fee7960a9fa60bfd\" />\r\n"
                 "</ENTRY>\r\n"
                 "</ASX>\r\n",
                 mem.str().c_str());
