@@ -3,6 +3,8 @@
 
 #include "servmgr.h"
 
+#include "mockpeercast.h"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace ServMgrFixture
@@ -10,6 +12,13 @@ namespace ServMgrFixture
     TEST_CLASS(ServMgrFixture)
     {
     public:
+
+        TEST_CLASS_INITIALIZE(ClassInitialize)
+        {
+            peercastApp = new MockPeercastApplication();
+            peercastInst = new MockPeercastInstance();
+            peercastInst->init();
+        }
 
         ServMgr m;
 
@@ -24,9 +33,9 @@ namespace ServMgrFixture
             // bool                allowGnutella;
             Assert::IsFalse(m.allowGnutella);
             // unsigned int        maxBitrateOut, maxControl, maxRelays, maxDirect;
-            Assert::AreEqual(0, (int)m.maxBitrateOut);
+            Assert::AreEqual(540, (int)m.maxBitrateOut);
             Assert::AreEqual(3, (int)m.maxControl);
-            Assert::AreEqual(2, (int)m.maxRelays);
+            Assert::AreEqual(1, (int)m.maxRelays);
             Assert::AreEqual(0, (int)m.maxDirect);
             // unsigned int        minGnuIncoming, maxGnuIncoming;
             Assert::AreEqual(10, (int)m.minGnuIncoming);
@@ -85,7 +94,7 @@ namespace ServMgrFixture
             // unsigned int        tryoutDelay;
             Assert::AreEqual(10, (int)m.tryoutDelay);
             // unsigned int        refreshHTML;
-            Assert::AreEqual(5, (int)m.refreshHTML);
+            Assert::AreEqual(1800, (int)m.refreshHTML);
             // unsigned int        relayBroadcast;
             //Assert::AreEqual(0, m.relayBroadcast); // •s’è
             // unsigned int        notifyMask;
@@ -96,14 +105,14 @@ namespace ServMgrFixture
             Assert::AreEqual("00151515151515151515151515151515", m.sessionID.str().c_str());
             // ServFilter          filters[MAX_FILTERS];
             Assert::AreEqual(0xffffffff, m.filters[0].host.ip);
-            Assert::AreEqual((int)(ServFilter::F_NETWORK | ServFilter::F_DIRECT), (int)m.filters[0].flags);
+            Assert::AreEqual((int)ServFilter::F_NETWORK, (int)m.filters[0].flags);
             // int                 numFilters;
             Assert::AreEqual(1, m.numFilters);
             // CookieList          cookieList;
             // AUTH_TYPE           authType;
             Assert::AreEqual((int)ServMgr::AUTH_COOKIE, (int)m.authType);
             // char                htmlPath[128];
-            Assert::AreEqual("html/en", m.htmlPath);
+            Assert::AreEqual("html/ja", m.htmlPath);
             // int                 serventNum;
             Assert::AreEqual(0, m.serventNum);
             // String              chanLog;
