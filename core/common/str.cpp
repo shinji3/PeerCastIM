@@ -216,7 +216,7 @@ std::string upcase(const std::string& input)
     std::string res;
     for (auto c : input)
     {
-        if (isalpha(c))
+        if (isalpha((unsigned char)c))
             res += toupper(c);
         else
             res += c;
@@ -244,7 +244,7 @@ std::string capitalize(const std::string& input)
 
     for (auto c : input)
     {
-        if (isalpha(c))
+        if (isalpha((unsigned char)c))
         {
             if (prevWasAlpha)
                 res += tolower(c);
@@ -290,7 +290,7 @@ std::string ascii_dump(const std::string& in, const std::string& replacement)
 
     for (auto c : in)
     {
-        if (std::isprint(c))
+        if (std::isprint((unsigned char)c))
             res += c;
         else
             res += replacement;
