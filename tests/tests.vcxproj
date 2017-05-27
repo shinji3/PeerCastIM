@@ -402,6 +402,7 @@
     <ClCompile Include="..\core\common\identify_encoding.c" />
     <ClCompile Include="..\core\common\utf8.c" />
     <ClCompile Include="bcid_unittest.cpp" />
+    <ClCompile Include="broadcaststate_unittest.cpp" />
     <ClCompile Include="cgi_unittest.cpp" />
     <ClCompile Include="chanhitlist_unittest.cpp" />
     <ClCompile Include="chanhitsearch_unittest.cpp" />
