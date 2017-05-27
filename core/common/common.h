@@ -28,16 +28,22 @@
 #include "host.h"
 
 // ----------------------------------
-class GeneralException
+class GeneralException : public std::exception
 {
 public:
     GeneralException(const char *m, int e = 0)
     {
-        strcpy_s(msg, sizeof(msg), m);
-        err=e;
+        snprintf(msg, sizeof(msg), "%s", m);
+        err = e;
     }
+
+    const char* what() const throw() override
+    {
+        return msg;
+    }
+
     char msg[128];
-    int err;
+    int  err;
 };
 
 // -------------------------------------

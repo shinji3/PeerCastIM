@@ -56,6 +56,10 @@ namespace cgiFixture
             Assert::AreEqual("a", unescape_html("a").c_str());
             Assert::AreEqual("aa", unescape_html("aa").c_str());
             Assert::AreEqual("<&>", unescape_html("&lt;&amp;&gt;").c_str());
+            Assert::AreEqual("<&>", unescape_html("&lt;&&gt;").c_str());
+            Assert::AreEqual("<a&b>", unescape_html("&lt;a&b&gt;").c_str());
+            Assert::AreEqual("&gt", unescape_html("&gt").c_str());
+            Assert::AreEqual("&YY;", unescape_html("&YY;").c_str());
             Assert::AreEqual("\xE3\x81\x82", unescape_html("&#12354;").c_str());
             Assert::AreEqual("\xf0\x9f\x92\xa9", unescape_html("&#x1f4a9;").c_str());
             Assert::AreEqual("\xf0\x9f\x92\xa9", unescape_html("&#X1F4A9;").c_str());

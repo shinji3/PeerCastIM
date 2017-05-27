@@ -208,6 +208,16 @@ void Servent::handshakeGET(HTTP &http)
             throw HTTPException(HTTP_SC_UNAUTHORIZED, 401);
 
         handshakeRemoteFile(dirName);
+    }else if (strcmp(fn, "/html/index.html") == 0)
+    {
+        // PeerCastStation が "/" を "/html/index.html" に 301 Moved
+        // でリダイレクトするので、ブラウザによっては無期限にキャッシュされる。
+        // "/" に再リダイレクトしてキャッシュを無効化する。
+
+        http.readHeaders();
+        http.writeLine(HTTP_SC_FOUND);
+        http.writeLineF("Location: /");
+        http.writeLine("");
     }else if (strncmp(fn, "/html/", 6) == 0)
     {
         // HTML UI
@@ -326,10 +336,22 @@ void Servent::handshakeGET(HTTP &http)
 
         try
         {
-            std::string dir = peercastApp->getPath() + std::string("public");
-            PublicController publicController(dir);
-            HTTPResponse response = publicController(http.getRequest(), (Stream&)*sock, sock->host);
-            http.send(response);
+            PublicController controller(peercastApp->getPath() + std::string("public"));
+            http.send(controller(http.getRequest(), *sock, sock->host));
+        } catch (GeneralException& e)
+        {
+            LOG_ERROR("Error: %s", e.msg);
+            throw HTTPException(HTTP_SC_SERVERERROR, 500);
+        }
+    }else if (str::is_prefix_of("/assets/", fn))
+    {
+        // html と public の共有アセット。
+
+        http.readHeaders();
+        try
+        {
+            AssetsController controller(peercastApp->getPath() + std::string("assets"));
+            http.send(controller(http.getRequest(), *sock, sock->host));
         } catch (GeneralException& e)
         {
             LOG_ERROR("Error: %s", e.msg);
@@ -1614,7 +1636,10 @@ void Servent::CMD_login(char *cmd, HTTP& http, HTML& html, String& jumpStr)
         http.writeLineF("%s id=%s; path=/; expires=\"Mon, 01-Jan-3000 00:00:00 GMT\";", HTTP_HS_SETCOOKIE, idstr);
     else
         http.writeLineF("%s id=%s; path=/;", HTTP_HS_SETCOOKIE, idstr);
-    http.writeLineF("Location: /%s/index.html", servMgr->htmlPath);
+    if (!http.headers.get("Referer").empty())
+        http.writeLineF("Location: %s", http.headers.get("Referer").c_str());
+    else
+        http.writeLineF("Location: /%s/index.html", servMgr->htmlPath);
     http.writeLine("");
 }
 
