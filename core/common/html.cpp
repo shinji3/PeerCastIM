@@ -71,13 +71,21 @@ void HTML::writeOK(const char *content, const std::map<std::string,std::string>&
 void HTML::writeTemplate(const char *fileName, const char *args)
 {
     FileStream file;
-    MemoryStream mm(NULL, 0);
     try
     {
-        Template temp(args);
+        StringStream mem;
         file.openReadOnly(fileName);
-        mm.readFromFile(file);
-        temp.readTemplate(mm, out, 0);
+        file.writeTo(mem, file.length());
+        mem.rewind();
+
+        WriteBufferedStream bufferedOut(out);
+        Template temp(args);
+        if (args)
+        {
+            cgi::Query query(args);
+            temp.selectedFragment = query.get("fragment");
+        }
+        temp.readTemplate(mem, &bufferedOut, 0);
     }catch (StreamException &e)
     {
         out->writeString(e.msg);
