@@ -34,16 +34,13 @@
 // ------------------------------------------------
 void URLSource::stream(Channel *ch)
 {
-    String url, tmpUrl;
+    String url;
     while (ch->thread.active && !peercastInst->isQuitting)
     {
-        tmpUrl = url;
         if (url.isEmpty())
             url = baseurl;
 
         url = streamURL(ch, url.cstr());
-        if (url == tmpUrl)
-            sys->sleep(2000);
     }
 }
 
@@ -241,8 +238,7 @@ int URLSource::getSourceRateAvg()
                 fileType = ChanInfo::getTypeFromStr(str::extension_without_dot(fileName).c_str());
             }
 
-            if (ch->info.bitrate)
-                ch->readDelay = true;
+            ch->readDelay = true;
 
             if (fileType == ChanInfo::T_PLS)
                 pls = new PlayList(PlayList::T_PLS, 1000);
