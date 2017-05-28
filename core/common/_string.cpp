@@ -520,7 +520,7 @@ void String::clear()
 // -----------------------------------
 void String::append(const char *s)
 {
-    if ((strlen(s)+strlen(data)) < (MAX_LEN-1))
+    if ((strlen(s)+strlen(data)) < MAX_LEN)
         strcat_s(data, MAX_LEN, s);
 }
 
