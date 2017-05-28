@@ -60,17 +60,11 @@ static int base64chartoval(char input)
 }
 
 // -----------------------------------
-bool String::isValidURL()
-{
-    return (_strnicmp(data,"http://",7)==0) || (_strnicmp(data,"mailto:",7)==0);
-}
-
-// -----------------------------------
 void String::setFromTime(unsigned int t)
 {
-    time_t tmp = t;
     char p[26];
-    ctime_s(p, 26, &tmp);
+    time_t t2 = t;
+    ctime_s(p, sizeof(p), &t2);
     if (p)
         strcpy_s(data, MAX_LEN, p);
     else
@@ -436,21 +430,6 @@ void String::ASCII2META(const char *in, bool safe)
     *op = 0;
 }
 
-#ifdef WIN32
-// -----------------------------------
-void String::ASCII2SJIS(const char *in) //JP-EX
-{
-    char *op = data;
-    char *p;
-    if (utf8_decode(in, &p)<0)
-    {
-        strcpy_s(op, MAX_LEN, in);
-        return;
-    }
-    strcpy_s(op, MAX_LEN, p);
-    free(p);
-}
-#endif
 // -----------------------------------
 void String::convertTo(TYPE t)
 {
@@ -604,7 +583,7 @@ void String::sprintf(const char* fmt, ...)
     va_list ap;
 
     va_start(ap, fmt);
-    _vsnprintf_s(this->data, ::String::MAX_LEN, _TRUNCATE, fmt, ap);
+    _vsnprintf_s(this->data, MAX_LEN, _TRUNCATE, fmt, ap);
     va_end(ap);
 }
 
@@ -615,8 +594,30 @@ String String::format(const char* fmt, ...)
     String result;
 
     va_start(ap, fmt);
-    _vsnprintf_s(result.data, ::String::MAX_LEN, _TRUNCATE, fmt, ap);
+    _vsnprintf_s(result.data, MAX_LEN, _TRUNCATE, fmt, ap);
     va_end(ap);
 
     return result;
 }
+
+// -----------------------------------
+bool String::isValidURL()
+{
+    return (_strnicmp(data, "http://", 7) == 0) || (_strnicmp(data, "mailto:", 7) == 0);
+}
+
+#ifdef WIN32
+// -----------------------------------
+void String::ASCII2SJIS(const char *in) //JP-EX
+{
+    char *op = data;
+    char *p;
+    if (utf8_decode(in, &p) < 0)
+    {
+        strcpy_s(op, MAX_LEN, in);
+        return;
+    }
+    strcpy_s(op, MAX_LEN, p);
+    free(p);
+}
+#endif
