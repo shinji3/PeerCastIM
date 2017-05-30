@@ -157,7 +157,7 @@ public:
     {
         writeTimeout = t;
     }
-    virtual void    setBlocking(bool) {}
+    virtual void    setBlocking(bool) = 0;
 
     static unsigned int getIP(const char *);
     static bool         getHostname(char *, size_t, unsigned int); //JP-MOD
