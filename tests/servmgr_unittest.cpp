@@ -3,8 +3,6 @@
 
 #include "servmgr.h"
 
-#include "mockpeercast.h"
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace ServMgrFixture

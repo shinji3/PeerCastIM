@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "mockpeercast.h"
 #include "cstream.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

@@ -4,8 +4,6 @@
 #include "atom.h"
 #include "channel.h"
 
-#include "mockpeercast.h"
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace ChanHitFixture

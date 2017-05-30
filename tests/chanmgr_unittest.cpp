@@ -5,8 +5,6 @@
 #include "version2.h"
 #include "md5.h"
 
-#include "mockpeercast.h"
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace ChanMgrFixture

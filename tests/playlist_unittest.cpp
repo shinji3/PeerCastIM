@@ -4,8 +4,6 @@
 #include "playlist.h"
 #include "sstream.h"
 
-#include "mockpeercast.h"
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace PlayListFixture
