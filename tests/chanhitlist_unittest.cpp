@@ -14,12 +14,15 @@ namespace ChanHitListFixture
     {
     public:
 
-        ChanHitListFixture()
+        TEST_CLASS_INITIALIZE(ClassInitialize)
         {
             peercastApp = new MockPeercastApplication();
             peercastInst = new MockPeercastInstance();
             peercastInst->init();
+        }
 
+        ChanHitListFixture()
+        {
             hitlist = new ChanHitList();
 
             host.fromStrIP("209.209.209.209", 7144);

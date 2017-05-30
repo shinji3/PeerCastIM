@@ -56,9 +56,8 @@ namespace StringTest
                 buf.append('A');
             }
 
-            // バッファーは 256 バイトあるので、NUL の分を考慮しても 255 文字
-            // まで入りそうなものだが、入るのは 254 文字まで。
-            Assert::AreEqual(254, (int)strlen(buf.data));
+            // バッファーは 256 バイトあるので、NUL の分を考慮しても 255 文字まで入る。
+            Assert::AreEqual(255, (int)strlen(buf.data));
         }
 
         TEST_METHOD(StringTest_appendString) {

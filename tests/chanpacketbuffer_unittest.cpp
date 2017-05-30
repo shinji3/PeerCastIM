@@ -12,7 +12,7 @@ namespace ChanPacketBufferFixture
     {
     public:
 
-        ChanPacketBufferFixture()
+        TEST_CLASS_INITIALIZE(ClassInitialize)
         {
             peercastApp = new MockPeercastApplication();
             peercastInst = new MockPeercastInstance();

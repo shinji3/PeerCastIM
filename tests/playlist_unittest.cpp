@@ -14,14 +14,17 @@ namespace PlayListFixture
     {
     public:
 
-        PlayListFixture()
-            : pls(PlayList::T_PLS, 1)
-            , asx(PlayList::T_ASX, 1)
+        TEST_CLASS_INITIALIZE(ClassInitialize)
         {
             peercastApp = new MockPeercastApplication();
             peercastInst = new MockPeercastInstance();
             peercastInst->init();
         }
+
+        PlayListFixture()
+            : pls(PlayList::T_PLS, 1)
+            , asx(PlayList::T_ASX, 1)
+        {}
 
         PlayList pls;
         PlayList asx;

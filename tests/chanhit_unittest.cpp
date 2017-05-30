@@ -14,13 +14,16 @@ namespace ChanHitFixture
     {
     public:
 
-        ChanHitFixture()
-            : hit(new ChanHit())
+        TEST_CLASS_INITIALIZE(ClassInitialize)
         {
             peercastApp = new MockPeercastApplication();
             peercastInst = new MockPeercastInstance();
             peercastInst->init();
+        }
 
+        ChanHitFixture()
+            : hit(new ChanHit())
+        {
             hit->init();
         }
 
