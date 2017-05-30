@@ -216,15 +216,15 @@ void LogBuffer::escapeHTML(char* dest, char* src)
         switch (*src)
         {
         case '&':
-            strcpy_s(dest, sizeof(dest), "&amp;");
+            strcpy_s(dest, 6, "&amp;");
             dest += 5;
             break;
         case '<':
-            strcpy_s(dest, sizeof(dest), "&lt;");
+            strcpy_s(dest, 5, "&lt;");
             dest += 4;
             break;
         case '>':
-            strcpy_s(dest, sizeof(dest), "&gt;");
+            strcpy_s(dest, 5, "&gt;");
             dest += 4;
             break;
         default:
