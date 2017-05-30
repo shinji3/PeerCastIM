@@ -25,10 +25,10 @@ int  StringStream::read(void *buf, int count)
     if (m_pos == m_buffer.size())
         throw StreamException("End of stream");
 
-    size_t bytesRead = (std::min)(static_cast<size_t>(count), m_buffer.size() - m_pos);
+    int bytesRead = (std::min)(count, static_cast<int>(m_buffer.size() - m_pos));
     memcpy(buf, m_buffer.c_str() + m_pos, bytesRead);;
     m_pos += bytesRead;
-    return static_cast<int>(bytesRead);
+    return bytesRead;
 }
 
 void StringStream::write(const void *buf, int count)
