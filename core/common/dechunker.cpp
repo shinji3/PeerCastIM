@@ -65,7 +65,7 @@ int  Dechunker::read(void *buf, int aSize)
 
 void Dechunker::getNextChunk()
 {
-    size_t size = 0;
+    int size = 0;
 
     // チャンクサイズを読み込む。
     while (true)
@@ -97,7 +97,7 @@ void Dechunker::getNextChunk()
     Defer cleanup([=]() { delete[] buf; });
     size_t r;
 
-    r = m_stream.read(buf, static_cast<int>(size));
+    r = m_stream.read(buf, size);
     if (r != size)
     {
         throw StreamException("Premature end");
