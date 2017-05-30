@@ -45,7 +45,7 @@ int  Dechunker::read(void *buf, int aSize)
 
     while (true)
     {
-        if ((int)m_buffer.size() >= size)
+        if (m_buffer.size() >= size)
         {
             while (size > 0)
             {
@@ -53,7 +53,7 @@ int  Dechunker::read(void *buf, int aSize)
                 m_buffer.pop_front();
                 size--;
             }
-            int r = (int)(p - (char*)buf);
+            int r = static_cast<int>(p - static_cast<char*>(buf));
             updateTotals(r, 0);
             return r;
         } else {
@@ -97,7 +97,7 @@ void Dechunker::getNextChunk()
     Defer cleanup([=]() { delete[] buf; });
     size_t r;
 
-    r = m_stream.read(buf, (int)size);
+    r = m_stream.read(buf, static_cast<int>(size));
     if (r != size)
     {
         throw StreamException("Premature end");
