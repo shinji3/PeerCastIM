@@ -208,11 +208,11 @@ public:
     void    writeString(const char *);
     void    writeString(const std::string& s)
     {
-        write(s.data(), (int)s.size());
+        write(s.data(), static_cast<int>(s.size()));
     }
     void    writeString(const String& s)
     {
-        write(s.c_str(), (int)s.size());
+        write(s.c_str(), static_cast<int>(s.size()));
     }
     void    writeStringF(const char *, ...);
 
@@ -266,8 +266,8 @@ public:
             double tdiff = now - m_lastUpdate;
             if (tdiff >= 1.0)
             {
-                m_bytesInPerSec     = (unsigned)((m_totalBytesIn - m_lastBytesIn) / tdiff);
-                m_bytesOutPerSec    = (unsigned)((m_totalBytesOut - m_lastBytesOut) / tdiff);
+                m_bytesInPerSec     = static_cast<unsigned>((m_totalBytesIn - m_lastBytesIn) / tdiff);
+                m_bytesOutPerSec    = static_cast<unsigned>((m_totalBytesOut - m_lastBytesOut) / tdiff);
 
                 m_bytesInPerSecAvg  = Exp * m_bytesInPerSecAvg + (1-Exp) * m_bytesInPerSec;
                 m_bytesOutPerSecAvg = Exp * m_bytesOutPerSecAvg + (1-Exp) * m_bytesOutPerSec;
@@ -288,8 +288,8 @@ public:
         unsigned int    bytesInPerSec() { update(); return m_bytesInPerSec; }
         unsigned int    bytesOutPerSec() { update(); return m_bytesOutPerSec; }
 
-        unsigned int    bytesInPerSecAvg() { update(); return (unsigned)m_bytesInPerSecAvg; }
-        unsigned int    bytesOutPerSecAvg() { update(); return (unsigned)m_bytesOutPerSecAvg; }
+        unsigned int    bytesInPerSecAvg() { update(); return static_cast<unsigned>(m_bytesInPerSecAvg); }
+        unsigned int    bytesOutPerSecAvg() { update(); return static_cast<unsigned>(m_bytesOutPerSecAvg); }
 
         unsigned int    m_totalBytesIn, m_totalBytesOut;
         unsigned int    m_lastBytesIn, m_lastBytesOut;
@@ -493,7 +493,7 @@ public:
     {
         if (buf.size() > 0)
         {
-            stream->write(buf.c_str(), (int)buf.size());
+            stream->write(buf.c_str(), static_cast<int>(buf.size()));
             buf.clear();
         }
     }
