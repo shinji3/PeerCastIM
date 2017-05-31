@@ -446,10 +446,10 @@ std::string unescape_html(const std::string& input)
                 continue;
             } else if (isDecimal(ref))
             {
-                codepoint = (uint32_t)std::stoll(ref.substr(1));
+                codepoint = static_cast<uint32_t>(std::stoll(ref.substr(1)));
             } else if (isHexadecimal(ref))
             {
-                codepoint = (uint32_t)std::stoll(ref.substr(2), 0, 16);
+                codepoint = static_cast<uint32_t>(std::stoll(ref.substr(2), 0, 16));
             } else
             {
                 try
@@ -514,7 +514,7 @@ std::string escape_javascript(const std::string& input)
         {
             res += '\\';
             res += c;
-        } else if (iscntrl((unsigned char)c))
+        } else if (iscntrl(static_cast<unsigned char>(c)))
         {
             char buf[3];
 
