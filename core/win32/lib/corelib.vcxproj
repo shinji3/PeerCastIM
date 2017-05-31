@@ -555,6 +555,7 @@
     <ClCompile Include="..\..\common\peercast.cpp" />
     <ClCompile Include="..\..\common\playlist.cpp" />
     <ClCompile Include="..\..\common\public.cpp" />
+    <ClCompile Include="..\..\common\regexp.cpp" />
     <ClCompile Include="..\..\common\servent.cpp" />
     <ClCompile Include="..\..\common\servhs.cpp" />
     <ClCompile Include="..\..\common\servmgr.cpp" />
@@ -612,10 +613,12 @@
     <ClInclude Include="..\..\common\notif.h" />
     <ClInclude Include="..\..\common\nsv.h" />
     <ClInclude Include="..\..\common\ogg.h" />
+    <ClInclude Include="..\..\common\oniguruma.h" />
     <ClInclude Include="..\..\common\pcp.h" />
     <ClInclude Include="..\..\common\peercast.h" />
     <ClInclude Include="..\..\common\playlist.h" />
     <ClInclude Include="..\..\common\public.h" />
+    <ClInclude Include="..\..\common\regexp.h" />
     <ClInclude Include="..\..\common\servent.h" />
     <ClInclude Include="..\..\common\servmgr.h" />
     <ClInclude Include="..\..\common\socket.h" />

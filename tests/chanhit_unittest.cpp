@@ -73,7 +73,7 @@ namespace ChanHitFixture
             // Assert::AreEqual(false, hit->chfull);
             // Assert::AreEqual(false, hit->ratefull);
 
-            Assert::AreEqual(NULL, (int)hit->next);
+            Assert::IsNull(hit->next);
 
             // Assert::AreEqual(0, hit->status);
             // Assert::AreEqual(0, hit->servent_id);

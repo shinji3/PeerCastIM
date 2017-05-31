@@ -14,40 +14,40 @@ namespace RegexpFixture
         TEST_METHOD(RegexpFixture_nomatch)
         {
             Regexp pat("abc");
-            Assert::AreEqual(0, pat.exec("hoge").size());
+            Assert::AreEqual(0, (int)pat.exec("hoge").size());
         }
 
         TEST_METHOD(RegexpFixture_match)
         {
             Regexp pat("abc");
-            Assert::AreEqual(1, pat.exec("abc").size());
-            Assert::AreEqual("abc", pat.exec("abc")[0]);
+            Assert::AreEqual(1, (int)pat.exec("abc").size());
+            Assert::AreEqual("abc", pat.exec("abc")[0].c_str());
         }
 
         TEST_METHOD(RegexpFixture_captures)
         {
             Regexp pat("(.)(.)(.)");
             auto captures = pat.exec("abc");
-            Assert::AreEqual(4, captures.size());
-            Assert::AreEqual("abc", captures[0]);
-            Assert::AreEqual("a", captures[1]);
-            Assert::AreEqual("b", captures[2]);
-            Assert::AreEqual("c", captures[3]);
+            Assert::AreEqual(4, (int)captures.size());
+            Assert::AreEqual("abc", captures[0].c_str());
+            Assert::AreEqual("a", captures[1].c_str());
+            Assert::AreEqual("b", captures[2].c_str());
+            Assert::AreEqual("c", captures[3].c_str());
         }
 
         TEST_METHOD(RegexpFixture_caretMatchesLineBeginning)
         {
             Regexp pat("^a");
             auto captures = pat.exec("b\na");
-            Assert::AreEqual(1, captures.size());
-            Assert::AreEqual("a", captures[0]);
+            Assert::AreEqual(1, (int)captures.size());
+            Assert::AreEqual("a", captures[0].c_str());
         }
 
         TEST_METHOD(RegexpFixture_backslashCapitalADoesntMatchLineBeginning)
         {
             Regexp pat("\\Aa");
             auto captures = pat.exec("b\na");
-            Assert::AreEqual(0, captures.size());
+            Assert::AreEqual(0, (int)captures.size());
         }
 
     };

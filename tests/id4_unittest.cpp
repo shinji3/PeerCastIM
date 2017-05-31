@@ -49,11 +49,11 @@ namespace ID4Fixture
 
             if (*p == 0xab) {
                 // ビッグ
-                Assert::AreEqual((int)ID4('abcd'), (int)("abcd"));
+                Assert::AreEqual(ID4('abcd').getValue(), ID4("abcd").getValue());
             }
             else if (*p == 0xcd) {
                 // リトル
-                Assert::AreNotEqual((int)ID4('abcd'), (int)("abcd"));
+                Assert::AreNotEqual(ID4('abcd').getValue(), ID4("abcd").getValue());
             }
             else {
                 // 何も信じられない。
