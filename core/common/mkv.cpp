@@ -30,7 +30,7 @@ void MKVStream::sendPacket(ChanPacket::TYPE type, const byte_string& data, bool 
     ChanPacket pack;
     pack.type = type;
     pack.pos  = ch->streamPos;
-    pack.len  = (unsigned)data.size();
+    pack.len  = static_cast<unsigned>(data.size());
     pack.cont = continuation;
     memcpy(pack.data, data.data(), data.size());
 
@@ -45,7 +45,7 @@ void MKVStream::sendPacket(ChanPacket::TYPE type, const byte_string& data, bool 
 
 bool MKVStream::hasKeyFrame(const byte_string& cluster)
 {
-    MemoryStream in(const_cast<unsigned char*>(cluster.data()), (int)cluster.size());
+    MemoryStream in(const_cast<unsigned char*>(cluster.data()), static_cast<int>(cluster.size()));
 
     VInt id   = VInt::read(in);
     VInt size = VInt::read(in);
@@ -61,7 +61,7 @@ bool MKVStream::hasKeyFrame(const byte_string& cluster)
 
         if (id.toName() == "SimpleBlock")
         {
-            MemoryStream mem((void*)blockData.data(), (int)blockData.size());
+            MemoryStream mem((void*)blockData.data(), static_cast<int>(blockData.size()));
 
             VInt trackno = VInt::read(mem);
             if (trackno.uint() == m_videoTrackNumber)
@@ -101,7 +101,7 @@ void MKVStream::rateLimit(uint64_t timecode)
     // Timecode は単調増加ではないが、少しのジッターはバッファーが吸収
     // してくれるだろう。
 
-    unsigned int secondsFromStart = (unsigned)(timecode * m_timecodeScale / 1000000000);
+    unsigned int secondsFromStart = static_cast<unsigned>(timecode * m_timecodeScale / 1000000000);
     unsigned int ctime = sys->getTime();
 
     if (m_startTime + secondsFromStart > ctime) // if this is into the future
@@ -128,7 +128,7 @@ void MKVStream::sendCluster(const byte_string& cluster, Channel* ch)
             continuation = false;
     }
 
-    MemoryStream in((void*) cluster.data(), (int)cluster.size());
+    MemoryStream in((void*) cluster.data(), static_cast<int>(cluster.size()));
 
     VInt id   = VInt::read(in);
     VInt size = VInt::read(in);
@@ -171,7 +171,7 @@ void MKVStream::sendCluster(const byte_string& cluster, Channel* ch)
             size_t pos = 0;
             while (pos < buffer.size())
             {
-                int next = (int)(std::min)(pos + 15*1024, buffer.size());
+                int next = static_cast<int>((std::min)(pos + 15*1024, buffer.size()));
                 sendPacket(ChanPacket::T_DATA, buffer.substr(pos, next-pos), continuation, ch);
                 continuation = true;
                 pos = next;
@@ -180,7 +180,7 @@ void MKVStream::sendCluster(const byte_string& cluster, Channel* ch)
         } else {
             buffer += id.bytes + size.bytes;
             buffer.append(payload.begin(), payload.end());
-            MemoryStream mem((void*)buffer.c_str(), (int)buffer.size());
+            MemoryStream mem((void*)buffer.c_str(), static_cast<int>(buffer.size()));
             mem.rewind();
             VInt id = VInt::read(mem);
         }
@@ -207,7 +207,7 @@ void MKVStream::readTracks(const std::string& data)
 
         if (id.toName() == "TrackEntry")
         {
-            int end = mem.getPosition() + (int)size.uint();
+            int end = mem.getPosition() + static_cast<int>(size.uint());
             int trackno = -1;
             int tracktype = -1;
 
@@ -221,7 +221,7 @@ void MKVStream::readTracks(const std::string& data)
                 else if (id.toName() == "TrackType")
                     tracktype = (uint8_t) mem.readChar();
                 else
-                    mem.skip((int)size.uint());
+                    mem.skip(static_cast<int>(size.uint()));
             }
 
             if (tracktype == 1)
@@ -231,7 +231,7 @@ void MKVStream::readTracks(const std::string& data)
             }
         }else
         {
-            mem.skip((int)size.uint());
+            mem.skip(static_cast<int>(size.uint()));
         }
     }
 }
