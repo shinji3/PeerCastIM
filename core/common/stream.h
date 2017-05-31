@@ -141,6 +141,8 @@ public:
         return cnt;
     }
 
+    std::string readLine();
+
     std::string read(int remaining)
     {
         std::string res;

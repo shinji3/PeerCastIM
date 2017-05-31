@@ -32,6 +32,14 @@ namespace MemoryStreamFixture
             Assert::AreEqual(e, true);
         }
 
+        TEST_METHOD(StringStreamFixture_initializeFromString)
+        {
+            StringStream s("hoge");
+
+            Assert::AreEqual(0, s.getPosition());
+            Assert::AreEqual(4, s.getLength());
+        }
+
         TEST_METHOD(StringStreamFixture_writeAdvancesPositionAndLength)
         {
             StringStream s;

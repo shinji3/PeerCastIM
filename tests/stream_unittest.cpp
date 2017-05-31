@@ -628,5 +628,35 @@ namespace StreamFixture
             Assert::AreEqual(0, (int)s.lastBytesOut());
         }
 
+        TEST_METHOD(StreamFixture_readLineStdString)
+        {
+            mem.str("abc");
+            ASSERT_THROW(mem.readLine(), StreamException);
+
+            mem.str("abc\ndef");
+            Assert::AreEqual("abc", mem.readLine());
+
+            mem.str("abc\r\ndef");
+            Assert::AreEqual("abc", mem.readLine());
+
+            // CR Ç≈ÇÕí‚é~ÇµÇ»Ç¢
+            mem.str("abc\rdef");
+
+            bool e = false;
+            try
+            {
+                mem.readLine();
+            }
+            catch (StreamException)
+            {
+                e = true;
+            }
+            Assert::AreEqual(e, true);
+
+            // çsíÜÇÃ CR ÇÕçÌèúÇ≥ÇÍÇÈ
+            mem.str("abc\rdef\r\n");
+            Assert::AreEqual("abcdef", mem.readLine());
+        }
+
     };
 }
