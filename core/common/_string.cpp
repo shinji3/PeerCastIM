@@ -504,7 +504,7 @@ void String::setUnquote(const char *p, TYPE t)
     if (slen > 2)
     {
         if (slen >= MAX_LEN) slen = MAX_LEN;
-        strncpy_s(data, slen - 1, p + 1, _TRUNCATE);
+        strncpy_s(data, slen-1, p+1, _TRUNCATE);
     }else
         clear();
     type = t;
