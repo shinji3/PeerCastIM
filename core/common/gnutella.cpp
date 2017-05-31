@@ -234,7 +234,7 @@ void GnuPacket::initFind(const char *str, XML *xml, int maxTTL)
 
     if (str)
     {
-        int slen = (int)strlen(str);
+        int slen = static_cast<int>(strlen(str));
         mem.write((void *)str, slen+1); // string
     }else
         mem.writeChar(0);       // null string
@@ -691,7 +691,7 @@ bool GnuStream::readHit(Stream &data, ChanHit &ch, int hops, GnuID &id)
                 char *ag = sn->findAttr("agent");
                 if (ag)
                 {
-                    strncpy_s(agentStr, 16, ag, _TRUNCATE);
+                    strncpy_s(agentStr, sizeof(agentStr), ag, _TRUNCATE);
                 }
                 maxPreviewTime = sn->findAttrInt("preview");
             }
