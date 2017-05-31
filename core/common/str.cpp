@@ -88,18 +88,18 @@ std::string group_digits(const std::string& in, const std::string& separator)
 {
     std::string tail;
 
-    auto end = (int)in.find('.'); // end of integral part
+    auto end = in.find('.'); // end of integral part
     if (end != string::npos)
         tail = in.substr(end);
     else
-        end = (int)in.size();
+        end = in.size();
 
     std::string res;
     std::string integer = in.substr(0, end);
     std::reverse(integer.begin(), integer.end());
     std::string delim = separator;
     std::reverse(delim.begin(), delim.end());
-    for (int i = 0; i < end; i++)
+    for (size_t i = 0; i < end; i++)
     {
         if (i != 0 && i%3 == 0)
             res += delim;
@@ -216,7 +216,7 @@ std::string upcase(const std::string& input)
     std::string res;
     for (auto c : input)
     {
-        if (isalpha((unsigned char)c))
+        if (isalpha(static_cast<unsigned char>(c)))
             res += toupper(c);
         else
             res += c;
@@ -229,7 +229,7 @@ std::string downcase(const std::string& input)
     std::string res;
     for (auto c : input)
     {
-        if (isalpha((unsigned char)c))
+        if (isalpha(static_cast<unsigned char>(c)))
             res += tolower(c);
         else
             res += c;
@@ -244,7 +244,7 @@ std::string capitalize(const std::string& input)
 
     for (auto c : input)
     {
-        if (isalpha((unsigned char)c))
+        if (isalpha(static_cast<unsigned char>(c)))
         {
             if (prevWasAlpha)
                 res += tolower(c);
@@ -290,7 +290,7 @@ std::string ascii_dump(const std::string& in, const std::string& replacement)
 
     for (auto c : in)
     {
-        if (std::isprint((unsigned char)c))
+        if (std::isprint(static_cast<unsigned char>(c)))
             res += c;
         else
             res += replacement;
