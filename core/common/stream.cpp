@@ -42,7 +42,7 @@ void MemoryStream::convertFromBase64()
         rl -= 4;
     }
     *out = 0;
-    len = (int)(out-buf);
+    len = static_cast<int>(out-buf);
 }
 
 // -------------------------------------
@@ -319,7 +319,7 @@ void Stream::write(const char *fmt, va_list ap)
 {
     char tmp[4096];
     vsprintf_s(tmp, sizeof(tmp), fmt, ap);
-    write(tmp, (int)strlen(tmp));
+    write(tmp, static_cast<int>(strlen(tmp)));
 }
 
 // -------------------------------------
@@ -334,7 +334,7 @@ void Stream::writeStringF(const char *fmt, ...)
 // -------------------------------------
 void Stream::writeString(const char *str)
 {
-    write(str, (int)strlen(str));
+    write(str, static_cast<int>(strlen(str)));
 }
 
 // -------------------------------------
