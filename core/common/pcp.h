@@ -23,7 +23,6 @@
 
 #include "id.h"
 #include "cstream.h"
-#include "channel.h"
 
 // ------------------------------------------------
 
@@ -190,11 +189,7 @@ public:
     , forMe(false)
     , streamPos(0)
     , group(0)
-    , servent_id(0)
-    , ttl(0)
     {
-        chanID.clear();
-        bcID.clear();
     }
 
     void initPacketSettings()
@@ -212,7 +207,6 @@ public:
     unsigned int    streamPos;
     int             group;
     int             servent_id;
-    int             ttl;
 };
 
 // ----------------------------------------------
@@ -235,7 +229,6 @@ public:
 
     bool    sendPacket(ChanPacket &, GnuID &) override;
     void    flush(Stream &) override;
-    unsigned int flushUb(Stream &, unsigned int) override;
     void    readHeader(Stream &, Channel *) override;
     int     readPacket(Stream &, Channel *) override;
     void    readEnd(Stream &, Channel *) override;
@@ -247,8 +240,7 @@ public:
     int             procAtom(AtomStream &, ID4, int, int, BroadcastState &);
     int             readAtom(AtomStream &, BroadcastState &);
     void            readChanAtoms(AtomStream &, int, BroadcastState &);
-//  void            readHostAtoms(AtomStream &, int, BroadcastState &);
-    void            readHostAtoms(AtomStream &, int, BroadcastState &, ChanHit &, bool flg = true);
+    void            readHostAtoms(AtomStream &, int, BroadcastState &);
     void            readPushAtoms(AtomStream &, int, BroadcastState &);
 
     void            readPktAtoms(Channel *, AtomStream &, int, BroadcastState &);
