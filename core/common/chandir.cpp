@@ -10,7 +10,6 @@
 #include "critsec.h"
 #include "uri.h"
 #include "servmgr.h"
-#include "str.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
@@ -83,13 +82,13 @@ ChannelDirectory::ChannelDirectory()
 int ChannelDirectory::numChannels()
 {
     CriticalSection cs(m_lock);
-    return (int)m_channels.size();
+    return static_cast<int>(m_channels.size());
 }
 
 int ChannelDirectory::numFeeds()
 {
     CriticalSection cs(m_lock);
-    return (int)m_feeds.size();
+    return static_cast<int>(m_feeds.size());
 }
 
 // index.txt を指す URL である url からチャンネルリストを読み込み、out
@@ -150,9 +149,8 @@ static bool getFeed(std::string url, std::vector<ChannelEntry>& out)
                 text += line;
                 text += '\n';
             }
-        } catch (SockException& e) {
+        } catch (SockException&) {
             // end of body reached.
-            LOG_ERROR("%s", e.msg);
         }
 
         try {
@@ -254,7 +252,7 @@ bool ChannelDirectory::writeFeedVariable(Stream& out, const String& varName, int
 {
     CriticalSection cs(m_lock);
 
-    if (!(index >= 0 && index < (int)m_feeds.size())) {
+    if (!(index >= 0 && (size_t)index < m_feeds.size())) {
         // empty string
         return true;
     }
