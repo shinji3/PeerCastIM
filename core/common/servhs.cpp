@@ -143,7 +143,7 @@ void Servent::handshakeJRPC(HTTP &http)
     http.writeLineF("%s %s", HTTP_HS_CONTENT, "application/json");
     http.writeLine("");
 
-    http.write(response.c_str(), (int)response.size());
+    http.write(response.c_str(), static_cast<int>(response.size()));
 }
 
 // -----------------------------------
@@ -243,8 +243,8 @@ void Servent::handshakeGET(HTTP &http)
 
         if (pwdArg && songArg)
         {
-            int slen = (int)strlen(fn);
-            for (int i=0; i<slen; i++)
+            size_t slen = strlen(fn);
+            for (size_t i=0; i<slen; i++)
                 if (fn[i]=='&') fn[i] = 0;
 
             Channel *c=chanMgr->channel;
@@ -504,62 +504,6 @@ void Servent::handshakeSOURCE(char * in, bool isHTTP)
 }
 
 // -----------------------------------
-void Servent::handshakeHEAD(HTTP &http, bool isHTTP)
-{
-    char *in = http.cmdLine;
-    char *str = in + 4;
-
-    if (str = stristr(str, "/stream/"))
-    {
-        int cnt = 0;
-
-        str += 8;
-        while (*str && (('0' <= *str && *str <= '9') || ('A' <= *str && *str <= 'F') || ('a' <= *str && *str <= 'f')))
-            ++cnt, ++str;
-
-        if (cnt == 32 && !strncmp(str, ".wmv", 4))
-        {
-            // interpret "HEAD /stream/[0-9a-fA-F]{32}.wmv" as GET
-            LOG_DEBUG("INFO: interpret as GET");
-
-            char *fn = in+5;
-
-            char *pt = strstr(fn,HTTP_PROTO1);
-            if (pt)
-                pt[-1] = 0;
-
-            if (!sock->host.isLocalhost())
-                if (!isAllowed(ALLOW_DIRECT) || !isFiltered(ServFilter::F_DIRECT))
-                    throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-            triggerChannel(fn+8,ChanInfo::SP_HTTP,isPrivate());
-
-            return;
-        }
-    }
-
-    if (http.isRequest(servMgr->password))
-    {
-        if (!isAllowed(ALLOW_BROADCAST))
-            throw HTTPException(HTTP_SC_UNAVAILABLE,503);
-
-        loginPassword.set(servMgr->password);    // pwd already checked
-
-        sock->writeLine("OK2");
-        sock->writeLine("icy-caps:11");
-        sock->writeLine("");
-        LOG_DEBUG("ShoutCast client");
-
-        handshakeICY(Channel::SRC_SHOUTCAST,isHTTP);
-        sock = NULL;    // socket is taken over by channel, so don`t close it
-
-    }else
-    {
-        throw HTTPException(HTTP_SC_BADREQUEST,400);
-    }
-}
-
-// -----------------------------------
 void Servent::handshakeHTTP(HTTP &http, bool isHTTP)
 {
     if (http.isRequest("GET /"))
@@ -593,9 +537,6 @@ void Servent::handshakeHTTP(HTTP &http, bool isHTTP)
         // Icecast •ú‘—
 
         handshakeSOURCE(http.cmdLine, isHTTP);
-    } else if (http.isRequest("HEAD")) // for android client
-    {
-        handshakeHEAD(http, isHTTP);
     }else if (http.isRequest(servMgr->password)) // FIXME: check for empty password!
     {
         // ShoutCast broadcast
@@ -703,7 +644,7 @@ void Servent::handshakePLS(ChanInfo &info, bool doneHandshake)
     if (!doneHandshake)
         while (sock->readLine(in, 128));
 
-    if (getLocalTypeURL(url, info.contentType))
+    if (getLocalURL(url))
     {
         PlayList::TYPE type = PlayList::getPlayListType(info.contentType);
 
@@ -756,7 +697,7 @@ bool Servent::getLocalURL(char *str)
 
     h.toStr(ipStr);
 
-    sprintf_s(str, sizeof(str), "http://%s", ipStr);
+    sprintf_s(str, 29, "http://%s", ipStr);
     return true;
 }
 
@@ -788,38 +729,9 @@ bool Servent::handshakeHTTPBasicAuth(HTTP &http)
 }
 
 // -----------------------------------
-bool Servent::getLocalTypeURL(char *str, ChanInfo::TYPE type)
-{
-    if (!sock)
-        throw StreamException("Not connected");
-
-    char ipStr[64];
-
-    Host h;
-
-    if (sock->host.localIP())
-        h = sock->getLocalHost();
-    else
-        h = servMgr->serverHost;
-
-    h.port = servMgr->serverHost.port;
-
-    h.toStr(ipStr);
-    switch(type) {
-        case ChanInfo::T_WMA:
-        case ChanInfo::T_WMV:
-            sprintf_s(str, sizeof(str),"mms://%s",ipStr);
-            break;
-        default:
-            sprintf_s(str, sizeof(str),"http://%s",ipStr);
-    }
-    return true;
-}
-
-// -----------------------------------
 bool Servent::handshakeAuth(HTTP &http, const char *args, bool local)
 {
-    char user[1024], pass[1024];
+    char user[64], pass[64];
     user[0] = pass[0] = 0;
 
     const char *pwd  = getCGIarg(args, "pass=");
@@ -1035,10 +947,8 @@ void Servent::CMD_add_bcid(char *cmd, HTTP& http, HTML& html, String& jumpStr)
 
 void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
 {
-    //servMgr->numFilters = 0;
+    servMgr->numFilters = 0;
     ServFilter *currFilter = servMgr->filters;
-    bool beginfilt = false;
-
     servMgr->channelDirectory.clearFeeds();
     servMgr->publicDirectoryEnabled = false;
 
@@ -1048,18 +958,12 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
     int allowServer1 = 0;
     int allowServer2 = 0;
     int newPort = servMgr->serverHost.port;
-    int enableGetName = 0;
-    int allowConnectPCST = 0;
-    int disableAutoBumpIfDirect = 0; //JP-MOD
-    int asxDetailedMode = 0; //JP-MOD
 
     char arg[MAX_CGI_LEN];
     char curr[MAX_CGI_LEN];
     char *cp = cmd;
     while (cp=nextCGIarg(cp, curr, arg))
     {
-        LOG_DEBUG("ARG: %s = %s", curr, arg);
-
         // server
         if (strcmp(curr, "servername") == 0)
             servMgr->serverName = cgi::unescape(arg);
@@ -1075,7 +979,7 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
 
             chanMgr->icyMetaInterval = iv;
         }else if (strcmp(curr, "passnew") == 0)
-            strcpy_s(servMgr->password, sizeof(servMgr->password), arg);
+            strcpy_s(servMgr->password, _countof(servMgr->password), arg);
         else if (strcmp(curr, "root") == 0)
             servMgr->isRoot = getCGIargBOOL(arg);
         else if (strcmp(curr, "brroot") == 0)
@@ -1088,8 +992,8 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
             servMgr->forceIP = arg;
         else if (strcmp(curr, "htmlPath") == 0)
         {
-            strcpy_s(servMgr->htmlPath, sizeof(servMgr->htmlPath), "html/");
-            strcat_s(servMgr->htmlPath, sizeof(servMgr->htmlPath), arg);
+            strcpy_s(servMgr->htmlPath, _countof(servMgr->htmlPath), "html/");
+            strcat_s(servMgr->htmlPath, _countof(servMgr->htmlPath), arg);
         }else if (strcmp(curr, "djmsg") == 0)
         {
             String msg;
@@ -1109,8 +1013,8 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
         // connections
         else if (strcmp(curr, "maxcin") == 0)
             servMgr->maxControl = getCGIargINT(arg);
-        //else if (strcmp(curr, "maxsin") == 0)
-        //    servMgr->maxServIn = getCGIargINT(arg);
+        else if (strcmp(curr, "maxsin") == 0)
+            servMgr->maxServIn = getCGIargINT(arg);
 
         else if (strcmp(curr, "maxup") == 0)
             servMgr->maxBitrateOut = getCGIargINT(arg);
@@ -1122,11 +1026,6 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
             chanMgr->maxRelaysPerChannel = getCGIargINT(arg);
         else if (strncmp(curr, "filt_", 5) == 0)
         {
-            if (!beginfilt) {
-                servMgr->numFilters = 0;
-                beginfilt = true;
-            }
-
             char *fs = curr+5;
 
             if (strncmp(fs, "ip", 2) == 0)        // ip must be first
@@ -1138,7 +1037,6 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
                 {
                     servMgr->numFilters++;
                     servMgr->filters[servMgr->numFilters].init();   // clear new entry
-                    LOG_DEBUG("numFilters = %d", servMgr->numFilters);
                 }
             }else if (strncmp(fs, "bn", 2) == 0)
                 currFilter->flags |= ServFilter::F_BAN;
@@ -1174,15 +1072,6 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
                 String str(arg, String::T_ESC);
                 str.convertTo(String::T_ASCII);
                 servMgr->rootHost = str;
-            }
-        }
-        else if (strcmp(curr,"yp2")==0)
-        {
-            if (!PCP_FORCE_YP)
-            {
-                String str(arg,String::T_ESC);
-                str.convertTo(String::T_ASCII);
-                servMgr->rootHost2 = str;
             }
         }
         else if (strcmp(curr, "deadhitage") == 0)
@@ -1227,45 +1116,11 @@ void Servent::CMD_apply(char *cmd, HTTP& http, HTML& html, String& jumpStr)
             allowServer2 |= atoi(arg) ? (ALLOW_HTML) : 0;
         else if (strcmp(curr, "allowBroadcast2") == 0)
             allowServer2 |= atoi(arg) ? (ALLOW_BROADCAST) : 0;
-
-        // JP-EX
-        else if (strcmp(curr, "autoRelayKeep") ==0)
-            servMgr->autoRelayKeep = getCGIargINT(arg);
-        else if (strcmp(curr, "autoMaxRelaySetting") ==0)
-            servMgr->autoMaxRelaySetting = getCGIargINT(arg);
-        else if (strcmp(curr, "autoBumpSkipCount") ==0)
-            servMgr->autoBumpSkipCount = getCGIargINT(arg);
-        else if (strcmp(curr, "kickPushStartRelays") ==0)
-            servMgr->kickPushStartRelays = getCGIargINT(arg);
-        else if (strcmp(curr, "kickPushInterval") ==0)
-            servMgr->kickPushInterval = getCGIargINT(arg);
-        else if (strcmp(curr, "allowConnectPCST") ==0)
-            allowConnectPCST = atoi(arg) ? 1 : 0;
-        else if (strcmp(curr, "enableGetName") ==0)
-            enableGetName = atoi(arg)? 1 : 0;
-        else if (strcmp(curr, "autoPort0Kick") ==0)
-            servMgr->autoPort0Kick = getCGIargBOOL(arg);
-        else if (strcmp(curr, "allowOnlyVP") ==0)
-            servMgr->allowOnlyVP = getCGIargBOOL(arg);
-        else if (strcmp(curr, "kickKeepTime") ==0)
-            servMgr->kickKeepTime = getCGIargINT(arg);
-        else if (strcmp(curr, "maxRelaysIndexTxt") ==0)        // for PCRaw (relay)
-            servMgr->maxRelaysIndexTxt = getCGIargINT(arg);
-        else if (strcmp(curr, "disableAutoBumpIfDirect") ==0) //JP-MOD
-            disableAutoBumpIfDirect = atoi(arg) ? 1 : 0;
-        else if (strcmp(curr, "asxDetailedMode") ==0) //JP-MOD
-            asxDetailedMode = getCGIargINT(arg);
     }
 
     servMgr->showLog = showLog;
     servMgr->allowServer1 = allowServer1;
     servMgr->allowServer2 = allowServer2;
-    servMgr->enableGetName = enableGetName;
-    servMgr->allowConnectPCST = allowConnectPCST;
-    servMgr->disableAutoBumpIfDirect = disableAutoBumpIfDirect; //JP-MOD
-    servMgr->asxDetailedMode = asxDetailedMode; //JP-MOD
-    if (!(servMgr->allowServer1 & ALLOW_HTML) && !(servMgr->allowServer2 & ALLOW_HTML))
-        servMgr->allowServer1 |= ALLOW_HTML;
 
     if (servMgr->serverHost.port != newPort)
     {
@@ -1338,9 +1193,6 @@ void Servent::CMD_fetch(char *cmd, HTTP& http, HTML& html, String& jumpStr)
             info.contentTypeStr = ChanInfo::getTypeStr(type);
             info.MIMEType = ChanInfo::getMIMEType(type);
             info.streamExt = ChanInfo::getTypeExt(type);
-        }else if (strcmp(curr, "bcstClap") == 0) //JP-MOD
-        {
-            info.ppFlags |= ServMgr::bcstClap;
         }
     }
 
@@ -1386,7 +1238,7 @@ void Servent::CMD_hitlist(char *cmd, HTTP& http, HTML& html, String& jumpStr)
         if (chl->isUsed())
         {
             char tmp[64];
-            sprintf_s(tmp, sizeof(tmp), "c%d=", index);
+            sprintf_s(tmp, _countof(tmp), "c%d=", index);
             if (cmpCGIarg(cmd, tmp, "1"))
             {
                 Channel *c;
@@ -1450,7 +1302,7 @@ void Servent::CMD_connect(char *cmd, HTTP& http, HTML& html, String& jumpStr)
     Servent *s = servMgr->servents;
     {
         char tmp[64];
-        sprintf_s(tmp, sizeof(tmp), "c%d=", s->serventIndex);
+        sprintf_s(tmp, _countof(tmp), "c%d=", s->serventIndex);
         if (cmpCGIarg(cmd, tmp, "1"))
         {
             if (hasCGIarg(cmd, "stop"))
@@ -1482,10 +1334,7 @@ void Servent::CMD_stop(char *cmd, HTTP& http, HTML& html, String& jumpStr)
 
     Channel *c = chanMgr->findChannelByID(id);
     if (c)
-    {
         c->thread.active = false;
-        c->thread.finish = true;
-    }
 
     sys->sleep(500);
     jumpStr.sprintf("/%s/channels.html", servMgr->htmlPath);
@@ -1643,63 +1492,6 @@ void Servent::CMD_login(char *cmd, HTTP& http, HTML& html, String& jumpStr)
     http.writeLine("");
 }
 
-void Servent::CMD_setmeta(char *cmd, HTTP& http, HTML& html, String& jumpStr)
-{
-    char arg[MAX_CGI_LEN];
-    char curr[MAX_CGI_LEN];
-
-    char *cp = cmd;
-    while (cp=nextCGIarg(cp,curr,arg))
-    {
-        if (strcmp(curr,"name")==0)
-        {
-            String chname;
-            chname.set(arg,String::T_ESC);
-            chname.convertTo(String::T_ASCII);
-
-            Channel *c = chanMgr->findChannelByName(chname.cstr());
-            if (c && (c->isActive()) && (c->status == Channel::S_BROADCASTING)){
-                ChanInfo newInfo = c->info;
-                newInfo.ppFlags = ServMgr::bcstNone; //JP-MOD
-                while (cmd=nextCGIarg(cmd,curr,arg))
-                {
-                    String chmeta;
-                    chmeta.set(arg,String::T_ESC);
-                    chmeta.convertTo(String::T_ASCII);
-                    if (strcmp(curr,"desc")==0)
-                        newInfo.desc = chmeta.cstr();
-                    else if (strcmp(curr,"url")==0)
-                        newInfo.url = chmeta.cstr();
-                    else if (strcmp(curr,"genre")==0)
-                        newInfo.genre = chmeta.cstr();
-                    else if (strcmp(curr,"comment")==0)
-                        newInfo.comment = chmeta.cstr();
-                    else if (strcmp(curr,"bcstClap")==0) //JP-MOD
-                        newInfo.ppFlags |= ServMgr::bcstClap;
-                    else if (strcmp(curr,"t_contact")==0)
-                        newInfo.track.contact = chmeta.cstr();
-                    else if (strcmp(curr,"t_title")==0)
-                        newInfo.track.title = chmeta.cstr();
-                    else if (strcmp(curr,"t_artist")==0)
-                        newInfo.track.artist = chmeta.cstr();
-                    else if (strcmp(curr,"t_album")==0)
-                        newInfo.track.album = chmeta.cstr();
-                    else if (strcmp(curr,"t_genre")==0)
-                        newInfo.track.genre = chmeta.cstr();
-                }
-                c->updateInfo(newInfo);
-                char idstr[64];
-                newInfo.id.toStr(idstr);
-                jumpStr.sprintf("/%s/relayinfo.html?id=%s", servMgr->htmlPath, idstr);
-            }
-        }
-    }
-    if (jumpStr.isEmpty())
-    {
-        jumpStr.sprintf("%s", "/");
-    }
-}
-
 void Servent::handshakeCMD(char *cmd)
 {
     String jumpStr;
@@ -1778,9 +1570,6 @@ void Servent::handshakeCMD(char *cmd)
         }else if (cmpCGIarg(cmd, "cmd=", "login"))
         {
             CMD_login(cmd, http, html, jumpStr);
-        }else if (cmpCGIarg(cmd, "cmd=", "setmeta"))
-        {
-            CMD_setmeta(cmd, http, html, jumpStr);
         }else{
             jumpStr.sprintf("/%s/index.html", servMgr->htmlPath);
         }
@@ -1900,26 +1689,13 @@ void Servent::handshakeXML()
     }
     rn->add(hc);
 
-    // calculate content-length
-    DummyStream ds;
-    xml.write(ds);
-
-    // set line-feed code to CRLF (for HTTP header)
-    bool bWriteCRLF = sock->writeCRLF;
-    sock->writeCRLF = true;
-
-    // write HTTP response header
     sock->writeLine(HTTP_SC_OK);
     sock->writeLineF("%s %s", HTTP_HS_SERVER, PCX_AGENT);
     sock->writeLineF("%s %s", HTTP_HS_CONTENT, MIME_XML);
-    sock->writeLineF("%s %d", HTTP_HS_LENGTH, ds.getLength());
     sock->writeLine("Connection: close");
+
     sock->writeLine("");
 
-    // revert setting
-    sock->writeCRLF = bWriteCRLF;
-
-    // write HTTP body
     xml.write(*sock);
 }
 
@@ -1956,7 +1732,7 @@ void Servent::readICYHeader(HTTP &http, ChanInfo &info, char *pwd, size_t plen)
     {
         if (pwd)
             if (strlen(arg) < 64)
-                strcpy_s(pwd, sizeof(pwd), arg);
+                strcpy_s(pwd, 64, arg);
     }else if (http.isHeader("content-type"))
     {
         if (stristr(arg, MIME_OGG))
@@ -2010,7 +1786,7 @@ void Servent::handshakeWMHTTPPush(HTTP& http, const std::string& path)
 {
     // At this point, http has read all the headers.
 
-    ASSERT(http.headers.get("CONTENT-TYPE") == "application/x-wms-pushsetup");
+    ASSERT(http.headers["CONTENT-TYPE"] == "application/x-wms-pushsetup");
     LOG_DEBUG("%s", nlohmann::json(http.headers.m_headers).dump().c_str());
 
     int size = std::atoi(http.headers.get("Content-Length").c_str());
@@ -2049,7 +1825,7 @@ void Servent::handshakeWMHTTPPush(HTTP& http, const std::string& path)
     http.readHeaders();
     LOG_DEBUG("Setup: %s", nlohmann::json(http.headers.m_headers).dump().c_str());
 
-    ASSERT(http.headers.get("CONTENT-TYPE") == "application/x-wms-pushstart");
+    ASSERT(http.headers["CONTENT-TYPE"] == "application/x-wms-pushstart");
 
     // -----------------------------------------
 
@@ -2165,12 +1941,12 @@ void Servent::handshakeICY(Channel::SRC_TYPE type, bool isHTTP)
 
     while (http.nextHeader())
     {
-        LOG_DEBUG("ICY %.100s", http.cmdLine);
-        readICYHeader(http, info, loginPassword.cstr(), loginPassword.MAX_LEN);
+        LOG_DEBUG("ICY %s", http.cmdLine);
+        readICYHeader(http, info, loginPassword.cstr(), String::MAX_LEN);
     }
 
     // check password before anything else, if needed
-    if (!loginPassword.isSame(servMgr->password))
+    if (loginPassword != servMgr->password)
     {
         if (!sock->host.isLocalhost() || !loginPassword.isEmpty())
             throw HTTPException(HTTP_SC_UNAUTHORIZED, 401);
@@ -2213,23 +1989,13 @@ void Servent::handshakeLocalFile(const char *fn)
 {
     String fileName;
 
-    if (servMgr->getModulePath) //JP-EX
-    {
-        peercastApp->getDirectory();
-        fileName = servMgr->modulePath;
-    }else
-        fileName = peercastApp->getPath();
-
+    fileName = peercastApp->getPath();
     fileName.append(fn);
 
     LOG_DEBUG("Writing HTML file: %s", fileName.cstr());
 
-    HTTP http(*sock);
-    HTML html("", *sock);
-
-    char *args = strstr(fileName.cstr(), "?");
-    if (args)
-        *args++=0;
+    WriteBufferedStream bufferedSock(sock);
+    HTML html("", bufferedSock);
 
     if (fileName.contains(".htm"))
     {
