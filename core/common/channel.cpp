@@ -1638,7 +1638,7 @@ void Channel::getStreamPath(char *str)
 
     getIDStr(idStr);
 
-    sprintf_s(str, _countof(str), "/stream/%s%s", idStr, info.getTypeExt());
+    sprintf_s(str, 288, "/stream/%s%s", idStr, info.getTypeExt());
 }
 
 // -----------------------------------
