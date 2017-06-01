@@ -295,7 +295,7 @@ void ChannelData::setData(Channel *c){
 	sjis = c->getName();
 	sjis.convertTo(String::T_SJIS);
 
-	strncpy_s(name, 256, sjis, _TRUNCATE);
+	strncpy_s(name, _countof(name), sjis, _TRUNCATE);
 	channel_id = c->channel_id;
 	bitRate = c->info.bitrate;
 	lastPlayStart = c->info.lastPlayStart;
