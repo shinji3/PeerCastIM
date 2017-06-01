@@ -36,16 +36,13 @@ ChanHitList::ChanHitList()
     , lastHitTime(0)
     , next(nullptr)
 {
-    info.init();
 }
 
 // -----------------------------------
 ChanHitList::~ChanHitList()
 {
-    chanMgr->hitlistlock.on();
     while (hit)
         hit = deleteHit(hit);
-    chanMgr->hitlistlock.off();
 }
 
 // -----------------------------------
@@ -73,11 +70,9 @@ void ChanHit::init()
 
     numListeners = 0;
     numRelays = 0;
-    clap_pp = 0; //JP-MOD
 
     dead = tracker = firewalled = stable = yp = false;
     recv = cin = direct = relay = true;
-    relayfull = chfull = ratefull = false;
 
     direct = 0;
     numHops = 0;
@@ -85,9 +80,6 @@ void ChanHit::init()
     lastContact = 0;
 
     version = 0;
-
-    status = 0;
-    servent_id = 0;
 
     sessionID.clear();
     chanID.clear();
@@ -141,101 +133,6 @@ void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, unsig
 }
 
 // -----------------------------------
-void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, bool isFull, unsigned int bitrate, Channel* ch, unsigned int oldp, unsigned int newp)
-{
-    init();
-
-    firewalled = (servMgr->getFirewall() != ServMgr::FW_OFF);
-    numListeners = numl;
-    numRelays = numr;
-    upTime = uptm;
-    stable = servMgr->totalStreams>0;
-    sessionID = servMgr->sessionID;
-    recv = connected;
-
-    direct = !servMgr->directFull();
-//  relay = !servMgr->relaysFull();
-    cin = !servMgr->controlInFull();
-
-    relayfull = servMgr->relaysFull();
-    chfull = isFull;
-
-    Channel *c = chanMgr->channel;
-    int noRelay = 0;
-    unsigned int needRate = 0;
-    unsigned int allRate = 0;
-    while(c){
-        if (c->isPlaying()){
-            allRate += c->info.bitrate * c->localRelays();
-            if ((c != ch) && (c->localRelays() == 0)){
-                if(!isIndexTxt(c))    // for PCRaw (relay)
-                    noRelay++;
-                needRate+=c->info.bitrate;
-            }
-        }
-        c = c->next;
-    }
-    unsigned int numRelay = servMgr->numStreams(Servent::T_RELAY,false);
-    int diff = servMgr->maxRelays - numRelay;
-    if (ch->localRelays()){
-        if (noRelay > diff){
-            noRelay = diff;
-        }
-    } else {
-        noRelay = 0;
-        needRate = 0;
-    }
-
-//    ratefull = servMgr->bitrateFull(needRate+bitrate);
-    ratefull = (servMgr->maxBitrateOut < allRate + needRate + ch->info.bitrate);
-
-    if (!isIndexTxt(ch))
-        relay =    (!relayfull) && (!chfull) && (!ratefull) && (numRelay + noRelay < servMgr->maxRelays);
-    else
-        relay =    (!chfull) && (!ratefull); // for PCRaw (relay)
-
-/*    if (relayfull){
-        LOG_DEBUG("Reject by relay full");
-    }
-    if (chfull){
-        LOG_DEBUG("Reject by channel full");
-    }
-    if (ratefull){
-        LOG_DEBUG("Reject by rate: Max=%d Now=%d Need=%d ch=%d", servMgr->maxBitrateOut, allRate, needRate, ch->info.bitrate);
-    }*/
-
-    host = servMgr->serverHost;
-
-    version = PCP_CLIENT_VERSION;
-    versionVP = PCP_CLIENT_VERSION_VP;
-
-    strncpy_s(versionExPrefix, _countof(versionExPrefix), PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
-    versionExNumber = PCP_CLIENT_VERSION_EX_NUMBER;
-
-    status = ch->status;
-
-    rhost[0] = Host(host.ip,host.port);
-    rhost[1] = Host(ClientSocket::getIP(NULL),host.port);
-
-    if (firewalled)
-        rhost[0].port = 0;
-
-    oldestPos = oldp;
-    newestPos = newp;
-
-    uphost.ip = ch->sourceHost.host.ip;
-    uphost.port = ch->sourceHost.host.port;
-    uphostHops  = 1;
-}
-
-// -----------------------------------
-void ChanHit::initLocal_pp(bool isStealth, int numClaps) //JP-MOD
-{
-    numListeners = numListeners && !isStealth ? 1 : 0;
-    clap_pp = numClaps;
-}
-
-// -----------------------------------
 static int flags1(ChanHit* hit)
 {
     int fl1 = 0;
@@ -251,46 +148,39 @@ static int flags1(ChanHit* hit)
 // -----------------------------------
 void ChanHit::writeAtoms(AtomStream &atom, GnuID &chanID)
 {
-    bool addChan=chanID.isSet();
-    bool uphostdata=(uphost.ip != 0);
+    bool addChan = chanID.isSet();
 
-    int fl1 = 0; 
-    if (recv) fl1 |= PCP_HOST_FLAGS1_RECV;
-    if (relay) fl1 |= PCP_HOST_FLAGS1_RELAY;
-    if (direct) fl1 |= PCP_HOST_FLAGS1_DIRECT;
-    if (cin) fl1 |= PCP_HOST_FLAGS1_CIN;
-    if (tracker) fl1 |= PCP_HOST_FLAGS1_TRACKER;
-    if (firewalled) fl1 |= PCP_HOST_FLAGS1_PUSH;
-
-    atom.writeParent(PCP_HOST,13  + (addChan?1:0) + (uphostdata?3:0) + (versionExNumber?2:0) + (clap_pp?1:0/*JP-MOD*/));
-
-    if (addChan)
-        atom.writeBytes(PCP_HOST_CHANID,chanID.id,16);
-    atom.writeBytes(PCP_HOST_ID,sessionID.id,16);
-    atom.writeInt(PCP_HOST_IP,rhost[0].ip);
-    atom.writeShort(PCP_HOST_PORT,rhost[0].port);
-    atom.writeInt(PCP_HOST_IP,rhost[1].ip);
-    atom.writeShort(PCP_HOST_PORT,rhost[1].port);
-    atom.writeInt(PCP_HOST_NUML,numListeners);
-    atom.writeInt(PCP_HOST_NUMR,numRelays);
-    atom.writeInt(PCP_HOST_UPTIME,upTime);
-    atom.writeInt(PCP_HOST_VERSION,version);
-    atom.writeInt(PCP_HOST_VERSION_VP,versionVP);
-    if (versionExNumber){
-        atom.writeBytes(PCP_HOST_VERSION_EX_PREFIX,versionExPrefix,2);
-        atom.writeShort(PCP_HOST_VERSION_EX_NUMBER,versionExNumber);
-    }
-    atom.writeChar(PCP_HOST_FLAGS1,fl1);
-    atom.writeInt(PCP_HOST_OLDPOS,oldestPos);
-    atom.writeInt(PCP_HOST_NEWPOS,newestPos);
-    if (uphostdata){
-        atom.writeInt(PCP_HOST_UPHOST_IP,uphost.ip);
-        atom.writeInt(PCP_HOST_UPHOST_PORT,uphost.port);
-        atom.writeInt(PCP_HOST_UPHOST_HOPS,uphostHops);
-    }
-    if (clap_pp){    //JP-MOD
-        atom.writeInt(PCP_HOST_CLAP_PP,clap_pp);
-    }
+    atom.writeParent(PCP_HOST,
+                     13  +
+                     (addChan ? 1 : 0) +
+                     (uphost.ip != 0 ? 3 : 0) +
+                     (versionExNumber != 0 ? 2 : 0));
+        if (addChan)
+            atom.writeBytes(PCP_HOST_CHANID, chanID.id, 16);
+        atom.writeBytes(PCP_HOST_ID, sessionID.id, 16);
+        atom.writeInt(PCP_HOST_IP, rhost[0].ip);
+        atom.writeShort(PCP_HOST_PORT, rhost[0].port);
+        atom.writeInt(PCP_HOST_IP, rhost[1].ip);
+        atom.writeShort(PCP_HOST_PORT, rhost[1].port);
+        atom.writeInt(PCP_HOST_NUML, numListeners);
+        atom.writeInt(PCP_HOST_NUMR, numRelays);
+        atom.writeInt(PCP_HOST_UPTIME, upTime);
+        atom.writeInt(PCP_HOST_VERSION, version);
+        atom.writeInt(PCP_HOST_VERSION_VP, versionVP);
+        if (versionExNumber)
+        {
+            atom.writeBytes(PCP_HOST_VERSION_EX_PREFIX, versionExPrefix, 2);
+            atom.writeShort(PCP_HOST_VERSION_EX_NUMBER, versionExNumber);
+        }
+        atom.writeChar(PCP_HOST_FLAGS1, flags1(this));
+        atom.writeInt(PCP_HOST_OLDPOS, oldestPos);
+        atom.writeInt(PCP_HOST_NEWPOS, newestPos);
+        if (uphost.ip != 0)
+        {
+            atom.writeInt(PCP_HOST_UPHOST_IP, uphost.ip);
+            atom.writeInt(PCP_HOST_UPHOST_PORT, uphost.port);
+            atom.writeInt(PCP_HOST_UPHOST_HOPS, uphostHops);
+        }
 }
 
 // -----------------------------------
@@ -299,44 +189,7 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
     char buf[1024];
 
     if (var == "rhost0")
-    {
-        if (servMgr->enableGetName) //JP-EX s
-        {
-            char buf2[256];
-            if (firewalled) 
-            {
-                if (numRelays==0) 
-                    strcpy_s(buf, _countof(buf),"<font color=red>");
-                else 
-                    strcpy_s(buf, _countof(buf),"<font color=orange>");
-            }
-            else {
-                if (!relay){
-                    if (numRelays==0){
-                        strcpy_s(buf, _countof(buf),"<font color=purple>");
-                    } else {
-                        strcpy_s(buf, _countof(buf),"<font color=blue>");
-                    }
-                } else {
-                    strcpy_s(buf, _countof(buf),"<font color=green>");
-                }
-            }
-
-            rhost[0].toStr(buf2);
-            strcat_s(buf, _countof(buf), buf2);
-
-            char h_name[128];
-            if (ClientSocket::getHostname(h_name,sizeof(h_name),rhost[0].ip)) // BOFëŒçÙÇ¡Ç€Ç¢
-            {
-                strcat_s(buf, _countof(buf), "[");
-                strcat_s(buf, _countof(buf), h_name);
-                strcat_s(buf, _countof(buf), "]");
-            }
-            strcat_s(buf, _countof(buf),"</font>");
-        } //JP-EX e
-        else
-            rhost[0].toStr(buf);
-    }
+        rhost[0].toStr(buf);
     else if (var == "rhost1")
         rhost[1].toStr(buf);
     else if (var == "numHops")
@@ -358,37 +211,18 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
         else
             timeStr.set("-");
         strcpy_s(buf, _countof(buf), timeStr.cstr());
-    }else if (var == "isFirewalled"){
+    }else if (var == "isFirewalled")
         sprintf_s(buf, _countof(buf), "%d", firewalled?1:0);
-    }else if (var == "version"){
-        sprintf_s(buf, _countof(buf), "%d", version);
-    }else if (var == "agent"){
-        if (version){
-            if (versionExNumber){
-                sprintf_s(buf, _countof(buf), "v0.%d(%c%c%04d)", version, versionExPrefix[0], versionExPrefix[1], versionExNumber);
-            } else if (versionVP){
-                sprintf_s(buf, _countof(buf),"v0.%d(VP%04d)", version, versionVP);
-            } else {
-                sprintf_s(buf, _countof(buf),"v0.%d", version);
-            }
-        } else {
-            strcpy_s(buf, _countof(buf), "0");
-        }
-    }
-    else if (var == "check")
+    else if (var == "version")
     {
-        char buf2[256];
-        strcpy_s(buf, _countof(buf), "<a href=\"#\" onclick=\"checkip('");
-        rhost[0].IPtoStr(buf2);
-        strcat_s(buf, _countof(buf), buf2);
-        strcat_s(buf, _countof(buf), "')\">_</a>");
+        std::string ver = versionString();
+        if (ver.empty())
+            sprintf_s(buf, _countof(buf), "-");
+        else
+            sprintf_s(buf, _countof(buf), "%s", ver.c_str());
     }
-    else if (var == "uphost")        // tree
-        uphost.toStr(buf);
-    else if (var == "uphostHops")    // tree
-        sprintf_s(buf, _countof(buf),"%d",uphostHops);
-    else if (var == "canRelay")        // tree
-        sprintf_s(buf, _countof(buf), "%d",relay);
+    else if (var == "tracker")
+        sprintf_s(buf, _countof(buf), "%d", tracker);
     else
         return false;
 
@@ -470,27 +304,6 @@ int ChanHitList::contactTrackers(bool connected, int numl, int nums, int uptm)
     return 0;
 }
 
-void ChanHitList::clearHits(bool flg)
-{
-    ChanHit *c = hit, *prev = NULL;
-
-    while(c){
-        if (flg || (c->numHops != 0)){
-            ChanHit *next = c->next;
-            if (prev)
-                prev->next = next;
-            else
-                hit = next;
-
-            delete c;
-            c = next;
-        } else {
-            prev = c;
-            c = c->next;
-        }
-    }
-}
-
 // -----------------------------------
 ChanHit *ChanHitList::deleteHit(ChanHit *ch)
 {
@@ -522,13 +335,7 @@ ChanHit *ChanHitList::addHit(ChanHit &h)
     char ip0str[64], ip1str[64];
     h.rhost[0].toStr(ip0str);
     h.rhost[1].toStr(ip1str);
-    char uphostStr[64];
-    h.uphost.toStr(uphostStr);
-    if (h.uphost.ip){
-        LOG_DEBUG("Add hit: F%dT%dR%d %s/%s <- %s(%d)",h.firewalled,h.tracker,h.relay,ip0str,ip1str,uphostStr, h.uphostHops);
-    } else {
-        LOG_DEBUG("Add hit: F%dT%dR%d %s/%s",h.firewalled,h.tracker,h.relay,ip0str,ip1str);
-    }
+    LOG_DEBUG("Add hit: %s/%s", ip0str, ip1str);
 
     // dont add our own hits
     if (servMgr->sessionID.isSame(h.sessionID))
@@ -540,14 +347,13 @@ ChanHit *ChanHitList::addHit(ChanHit &h)
     ChanHit *ch = hit;
     while (ch)
     {
-        if ((ch->rhost[0].ip == h.rhost[0].ip) && (ch->rhost[0].port == h.rhost[0].port))
-            if (((ch->rhost[1].ip == h.rhost[1].ip) && (ch->rhost[1].port == h.rhost[1].port)) || (!ch->rhost[1].isValid()))
+        if ((ch->rhost[0].ip == h.rhost[0].ip) &&
+            (ch->rhost[0].port == h.rhost[0].port))
+            if (((ch->rhost[1].ip == h.rhost[1].ip) && (ch->rhost[1].port == h.rhost[1].port)) ||
+                (!ch->rhost[1].isValid()))
             {
                 if (!ch->dead)
                 {
-                    if (ch->numHops > 0 && h.numHops == 0)
-                        // downstream hit recieved as RelayHost
-                        return ch;
                     ChanHit *next = ch->next;
                     *ch = h;
                     ch->next = next;
@@ -592,38 +398,22 @@ int ChanHitList::clearDeadHits(unsigned int timeout, bool clearTrackers)
     int cnt = 0;
     unsigned int ctime = sys->getTime();
 
-//  LOG_DEBUG("clearDeadHits HITLISTLOCK ON-------------");
-    chanMgr->hitlistlock.on();
     ChanHit *ch = hit;
     while (ch)
     {
         if (ch->host.ip)
         {
-            if (ch->dead || ((ctime-ch->time) > timeout) && (clearTrackers || (!clearTrackers & !ch->tracker)))
+            bool oldEnough = (ctime - ch->time) > timeout;
+            if (ch->dead ||
+                (oldEnough && (clearTrackers || !ch->tracker)))
             {
-//              ch = deleteHit(ch);
-
-                if (ch->firewalled){
-//                    LOG_DEBUG("kickKeepTime = %d, %d", servMgr->kickKeepTime, ctime-ch->time);
-                    if ( (servMgr->kickKeepTime == 0) || ((ctime-ch->time) > servMgr->kickKeepTime) ){
-                        ch = deleteHit(ch);
-                    } else {
-                        ch->numHops = 0;
-                        ch->numListeners = 0;
-                        ch = ch->next;
-                    }
-                } else {
-                    ch = deleteHit(ch);
-                }
-
+                ch = deleteHit(ch);
                 continue;
             }else
                 cnt++;
         }
         ch = ch->next;
     }
-//  LOG_DEBUG("clearDeadHits HITLISTLOCK OFF-------------");
-    chanMgr->hitlistlock.off();
     return cnt;
 }
 
@@ -675,7 +465,7 @@ int ChanHitList::numHits()
     ChanHit *ch = hit;
     while (ch)
     {
-        if (ch->host.ip && !ch->dead && ch->numHops)
+        if (ch->host.ip && !ch->dead)
             cnt++;
         ch = ch->next;
     }
@@ -690,8 +480,8 @@ int ChanHitList::numListeners()
     ChanHit *ch = hit;
     while (ch)
     {
-        if (ch->host.ip && !ch->dead && ch->numHops)
-            cnt += (unsigned int)ch->numListeners > 3 ? 3 : ch->numListeners;
+        if (ch->host.ip && !ch->dead)
+            cnt += ch->numListeners;
         ch = ch->next;
     }
 
@@ -699,24 +489,9 @@ int ChanHitList::numListeners()
 }
 
 // -----------------------------------
-int ChanHitList::numClaps()    //JP-MOD
-{
-    int cnt = 0;
-    ChanHit *ch = hit;
-    while (ch)
-    {
-        if (ch->host.ip && !ch->dead && ch->numHops && (ch->clap_pp & 1)){
-            cnt++;
-        }
-        ch=ch->next;
-    }
-
-    return cnt;
-}
-// -----------------------------------
 int ChanHitList::numRelays()
 {
-    int cnt=0;
+    int cnt = 0;
     ChanHit *ch = hit;
     while (ch)
     {
@@ -841,7 +616,7 @@ int ChanHitList::pickHits(ChanHitSearch &chs)
         {
             if (!chs.excludeID.isSame(c->sessionID))
             if ((chs.waitDelay == 0) || ((ctime-c->lastContact) >= chs.waitDelay))
-            if ((c->numHops <= best.numHops))  // (c->time >= best.time))
+            if ((c->numHops < best.numHops))  // (c->time >= best.time))
             if (c->relay || (!c->relay && chs.useBusyRelays))
             if (c->cin || (!c->cin && chs.useBusyControls))
             {
@@ -871,7 +646,7 @@ int ChanHitList::pickHits(ChanHitSearch &chs)
                             best = *c;
                             best.host = best.rhost[1];  // use lan ip
                         }
-                    }else if (c->firewalled == chs.useFirewalled && (!bestP || !bestP->relay))
+                    }else if (c->firewalled == chs.useFirewalled)
                     {
                         bestP = c;
                         best = *c;
@@ -898,6 +673,151 @@ int ChanHitList::pickHits(ChanHitSearch &chs)
 }
 
 // -----------------------------------
+void ChanHitSearch::init()
+{
+    matchHost.init();
+    waitDelay = 0;
+    useFirewalled = false;
+    trackersOnly = false;
+    useBusyRelays = true;
+    useBusyControls = true;
+    excludeID.clear();
+    numResults = 0;
+}
+
+// -----------------------------------
+void ChanHit::initLocal(int numl, int numr, int, int uptm, bool connected, bool isFull, unsigned int bitrate, Channel* ch, unsigned int oldp, unsigned int newp)
+{
+    init();
+
+    firewalled = (servMgr->getFirewall() != ServMgr::FW_OFF);
+    numListeners = numl;
+    numRelays = numr;
+    upTime = uptm;
+    stable = servMgr->totalStreams>0;
+    sessionID = servMgr->sessionID;
+    recv = connected;
+
+    direct = !servMgr->directFull();
+//  relay = !servMgr->relaysFull();
+    cin = !servMgr->controlInFull();
+
+    relayfull = servMgr->relaysFull();
+    chfull = isFull;
+
+    Channel *c = chanMgr->channel;
+    int noRelay = 0;
+    unsigned int needRate = 0;
+    unsigned int allRate = 0;
+    while(c){
+        if (c->isPlaying()){
+            allRate += c->info.bitrate * c->localRelays();
+            if ((c != ch) && (c->localRelays() == 0)){
+                if(!isIndexTxt(c))    // for PCRaw (relay)
+                    noRelay++;
+                needRate+=c->info.bitrate;
+            }
+        }
+        c = c->next;
+    }
+    unsigned int numRelay = servMgr->numStreams(Servent::T_RELAY,false);
+    int diff = servMgr->maxRelays - numRelay;
+    if (ch->localRelays()){
+        if (noRelay > diff){
+            noRelay = diff;
+        }
+    } else {
+        noRelay = 0;
+        needRate = 0;
+    }
+
+//    ratefull = servMgr->bitrateFull(needRate+bitrate);
+    ratefull = (servMgr->maxBitrateOut < allRate + needRate + ch->info.bitrate);
+
+    if (!isIndexTxt(ch))
+        relay =    (!relayfull) && (!chfull) && (!ratefull) && (numRelay + noRelay < servMgr->maxRelays);
+    else
+        relay =    (!chfull) && (!ratefull); // for PCRaw (relay)
+
+/*    if (relayfull){
+        LOG_DEBUG("Reject by relay full");
+    }
+    if (chfull){
+        LOG_DEBUG("Reject by channel full");
+    }
+    if (ratefull){
+        LOG_DEBUG("Reject by rate: Max=%d Now=%d Need=%d ch=%d", servMgr->maxBitrateOut, allRate, needRate, ch->info.bitrate);
+    }*/
+
+    host = servMgr->serverHost;
+
+    version = PCP_CLIENT_VERSION;
+    versionVP = PCP_CLIENT_VERSION_VP;
+
+    strncpy_s(versionExPrefix, _countof(versionExPrefix), PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
+    versionExNumber = PCP_CLIENT_VERSION_EX_NUMBER;
+
+    status = ch->status;
+
+    rhost[0] = Host(host.ip,host.port);
+    rhost[1] = Host(ClientSocket::getIP(NULL),host.port);
+
+    if (firewalled)
+        rhost[0].port = 0;
+
+    oldestPos = oldp;
+    newestPos = newp;
+
+    uphost.ip = ch->sourceHost.host.ip;
+    uphost.port = ch->sourceHost.host.port;
+    uphostHops  = 1;
+}
+
+// -----------------------------------
+void ChanHit::initLocal_pp(bool isStealth, int numClaps) //JP-MOD
+{
+    numListeners = numListeners && !isStealth ? 1 : 0;
+    clap_pp = numClaps;
+}
+
+// -----------------------------------
+void ChanHitList::clearHits(bool flg)
+{
+    ChanHit *c = hit, *prev = NULL;
+
+    while(c){
+        if (flg || (c->numHops != 0)){
+            ChanHit *next = c->next;
+            if (prev)
+                prev->next = next;
+            else
+                hit = next;
+
+            delete c;
+            c = next;
+        } else {
+            prev = c;
+            c = c->next;
+        }
+    }
+}
+// -----------------------------------
+int ChanHitList::numClaps()    //JP-MOD
+{
+    int cnt = 0;
+    ChanHit *ch = hit;
+    while (ch)
+    {
+        if (ch->host.ip && !ch->dead && ch->numHops && (ch->clap_pp & 1)){
+            cnt++;
+        }
+        ch=ch->next;
+    }
+
+    return cnt;
+}
+
+// -----------------------------------
 int ChanHitList::pickSourceHits(ChanHitSearch &chs)
 {
     if (pickHits(chs) && chs.best[0].numHops == 0) return 1;
@@ -915,21 +835,6 @@ unsigned int ChanHitList::getSeq()
 }
 
 // -----------------------------------
-void ChanHitSearch::init()
-{
-    matchHost.init();
-    waitDelay = 0;
-    useFirewalled = false;
-    trackersOnly = false;
-    useBusyRelays = true;
-    useBusyControls = true;
-    excludeID.clear();
-    numResults = 0;
-
-    //seed = sys->getTime();
-    //srand(seed);
-}
-
 int ChanHitSearch::getRelayHost(Host host1, Host host2, GnuID exID, ChanHitList *chl)
 {
     int cnt = 0;
