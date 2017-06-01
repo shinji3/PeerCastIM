@@ -2655,7 +2655,7 @@ void Servent::sendRawMetaChannel(int interval)
                                     title.convertTo(String::T_META);
                                     url.convertTo(String::T_META);
 
-                                    sprintf_s(tmp, sizeof(tmp), "StreamTitle='%s';StreamUrl='%s';\0", title.cstr(), url.cstr());
+                                    sprintf_s(tmp, _countof(tmp), "StreamTitle='%s';StreamUrl='%s';\0", title.cstr(), url.cstr());
                                     int len = (((int)strlen(tmp) + 15+1) / 16);
                                     sock->writeChar(len);
                                     sock->write(tmp, len*16);
@@ -3032,9 +3032,9 @@ bool    Servent::writeVariable(Stream &s, const String &var)
     char buf[1024];
 
     if (var == "type")
-        strcpy_s(buf, sizeof(buf), getTypeStr());
+        strcpy_s(buf, _countof(buf), getTypeStr());
     else if (var == "status")
-        strcpy_s(buf, sizeof(buf), getStatusStr());
+        strcpy_s(buf, _countof(buf), getStatusStr());
     else if (var == "address")
     {
         if (servMgr->enableGetName) //JP-EX s
@@ -3076,30 +3076,30 @@ bool    Servent::writeVariable(Stream &s, const String &var)
                     }
                 }
             }
-            strcpy_s(buf, sizeof(buf),"");
+            strcpy_s(buf, _countof(buf),"");
             if (ishit == true)
             {
                 if (isfw == true)
                 {
                     if (numRelay== 0)
-                        strcat_s(buf, sizeof(buf),"<font color=red>");
+                        strcat_s(buf, _countof(buf),"<font color=red>");
                     else 
-                        strcat_s(buf, sizeof(buf),"<font color=orange>");
+                        strcat_s(buf, _countof(buf),"<font color=orange>");
                 }
                 else
-                    strcat_s(buf, sizeof(buf),"<font color=green>");
+                    strcat_s(buf, _countof(buf),"<font color=green>");
             }
-            strcat_s(buf, sizeof(buf),h_ip);
+            strcat_s(buf, _countof(buf),h_ip);
             char h_name[128];
             if (ClientSocket::getHostname(h_name,h.ip))
             {
-                strcat_s(buf, sizeof(buf),"[");
-                strcat_s(buf, sizeof(buf),h_name);
-                strcat_s(buf, sizeof(buf),"]");
+                strcat_s(buf, _countof(buf),"[");
+                strcat_s(buf, _countof(buf),h_name);
+                strcat_s(buf, _countof(buf),"]");
             }
             if (ishit == true) 
             {
-                strcat_s(buf, sizeof(buf),"</font>");
+                strcat_s(buf, _countof(buf),"</font>");
             }
         } //JP-EX e*/
 
@@ -3120,47 +3120,47 @@ bool    Servent::writeVariable(Stream &s, const String &var)
                     hit = hit->next;
                 }
             }
-            strcpy_s(buf, sizeof(buf), "");
+            strcpy_s(buf, _countof(buf), "");
             if (isfw){
                 if (numRelay == 0){
-                    strcat_s(buf, sizeof(buf),"<font color=red>");
+                    strcat_s(buf, _countof(buf),"<font color=red>");
                 } else {
-                    strcat_s(buf, sizeof(buf),"<font color=orange>");
+                    strcat_s(buf, _countof(buf),"<font color=orange>");
                 }
             } else {
                 if (!isRelay){
                     if (numRelay==0){
-                        strcpy_s(buf, sizeof(buf),"<font color=purple>");
+                        strcpy_s(buf, _countof(buf),"<font color=purple>");
                     } else {
-                        strcpy_s(buf, sizeof(buf),"<font color=blue>");
+                        strcpy_s(buf, _countof(buf),"<font color=blue>");
                     }
                 } else {
-                    strcpy_s(buf, sizeof(buf),"<font color=green>");
+                    strcpy_s(buf, _countof(buf),"<font color=green>");
                 }
             }
-            strcat_s(buf, sizeof(buf),h_ip);
+            strcat_s(buf, _countof(buf),h_ip);
             char h_name[128];
             if (ClientSocket::getHostname(h_name,sizeof(h_name),h.ip)) //JP-MOD(BOFëŒçÙ)
             {
-                strcat_s(buf, sizeof(buf),"[");
-                strcat_s(buf, sizeof(buf),h_name);
-                strcat_s(buf, sizeof(buf),"]");
+                strcat_s(buf, _countof(buf),"[");
+                strcat_s(buf, _countof(buf),h_name);
+                strcat_s(buf, _countof(buf),"]");
             }
-            strcat_s(buf, sizeof(buf),"</font>");
+            strcat_s(buf, _countof(buf),"</font>");
         }
         else 
             getHost().toStr(buf);
     }
     else if (var == "agent")
-        strcpy_s(buf, sizeof(buf), agent.cstr());
+        strcpy_s(buf, _countof(buf), agent.cstr());
     else if (var == "bitrate")
     {
         if (sock)
         {
             unsigned int tot = sock->bytesInPerSec() + sock->bytesOutPerSec();
-            sprintf_s(buf, sizeof(buf), "%.1f", BYTES_TO_KBPS(tot));
+            sprintf_s(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(tot));
         }else
-            strcpy_s(buf, sizeof(buf), "0");
+            strcpy_s(buf, _countof(buf), "0");
     }else if (var == "uptime")
     {
         String uptime;
@@ -3168,24 +3168,24 @@ bool    Servent::writeVariable(Stream &s, const String &var)
             uptime.setFromStopwatch(sys->getTime()-lastConnect);
         else
             uptime.set("-");
-        strcpy_s(buf, sizeof(buf), uptime.cstr());
+        strcpy_s(buf, _countof(buf), uptime.cstr());
     }else if (var.startsWith("gnet."))
     {
         float ctime = (float)(sys->getTime()-lastConnect);
         if (var == "gnet.packetsIn")
-            sprintf_s(buf, sizeof(buf), "%d", gnuStream.packetsIn);
+            sprintf_s(buf, _countof(buf), "%d", gnuStream.packetsIn);
         else if (var == "gnet.packetsInPerSec")
-            sprintf_s(buf, sizeof(buf), "%.1f", ctime>0?((float)gnuStream.packetsIn)/ctime:0);
+            sprintf_s(buf, _countof(buf), "%.1f", ctime>0?((float)gnuStream.packetsIn)/ctime:0);
         else if (var == "gnet.packetsOut")
-            sprintf_s(buf, sizeof(buf), "%d", gnuStream.packetsOut);
+            sprintf_s(buf, _countof(buf), "%d", gnuStream.packetsOut);
         else if (var == "gnet.packetsOutPerSec")
-            sprintf_s(buf, sizeof(buf), "%.1f", ctime>0?((float)gnuStream.packetsOut)/ctime:0);
+            sprintf_s(buf, _countof(buf), "%.1f", ctime>0?((float)gnuStream.packetsOut)/ctime:0);
         else if (var == "gnet.normQueue")
-            sprintf_s(buf, sizeof(buf), "%d", outPacketsNorm.numPending());
+            sprintf_s(buf, _countof(buf), "%d", outPacketsNorm.numPending());
         else if (var == "gnet.priQueue")
-            sprintf_s(buf, sizeof(buf), "%d", outPacketsPri.numPending());
+            sprintf_s(buf, _countof(buf), "%d", outPacketsPri.numPending());
         else if (var == "gnet.flowControl")
-            sprintf_s(buf, sizeof(buf), "%d", flowControl?1:0);
+            sprintf_s(buf, _countof(buf), "%d", flowControl?1:0);
         else if (var == "gnet.routeTime")
         {
             int nr = seenIDs.numUsed();
@@ -3195,9 +3195,9 @@ bool    Servent::writeVariable(Stream &s, const String &var)
             tstr.setFromStopwatch(tim);
 
             if (nr)
-                strcpy_s(buf, sizeof(buf), tstr.cstr());
+                strcpy_s(buf, _countof(buf), tstr.cstr());
             else
-                strcpy_s(buf, sizeof(buf), "-");
+                strcpy_s(buf, _countof(buf), "-");
         }
         else
             return false;

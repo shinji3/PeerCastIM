@@ -318,7 +318,7 @@ std::string Stream::readLine()
 void Stream::write(const char *fmt, va_list ap)
 {
     char tmp[4096];
-    vsprintf_s(tmp, sizeof(tmp), fmt, ap);
+    vsprintf_s(tmp, _countof(tmp), fmt, ap);
     write(tmp, static_cast<int>(strlen(tmp)));
 }
 

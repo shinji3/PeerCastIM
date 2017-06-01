@@ -15,7 +15,7 @@ namespace MemoryStreamFixture
             : one_byte_mm(1),
             hoge_mm(data, 4)
         {
-            strcpy_s(data, sizeof(data), "hoge");
+            strcpy_s(data, _countof(data), "hoge");
             one_byte_mm.write("A", 1);
             one_byte_mm.rewind();
         }

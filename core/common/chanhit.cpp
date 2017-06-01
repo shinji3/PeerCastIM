@@ -306,33 +306,33 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
             if (firewalled) 
             {
                 if (numRelays==0) 
-                    strcpy_s(buf, sizeof(buf),"<font color=red>");
+                    strcpy_s(buf, _countof(buf),"<font color=red>");
                 else 
-                    strcpy_s(buf, sizeof(buf),"<font color=orange>");
+                    strcpy_s(buf, _countof(buf),"<font color=orange>");
             }
             else {
                 if (!relay){
                     if (numRelays==0){
-                        strcpy_s(buf, sizeof(buf),"<font color=purple>");
+                        strcpy_s(buf, _countof(buf),"<font color=purple>");
                     } else {
-                        strcpy_s(buf, sizeof(buf),"<font color=blue>");
+                        strcpy_s(buf, _countof(buf),"<font color=blue>");
                     }
                 } else {
-                    strcpy_s(buf, sizeof(buf),"<font color=green>");
+                    strcpy_s(buf, _countof(buf),"<font color=green>");
                 }
             }
 
             rhost[0].toStr(buf2);
-            strcat_s(buf, sizeof(buf), buf2);
+            strcat_s(buf, _countof(buf), buf2);
 
             char h_name[128];
             if (ClientSocket::getHostname(h_name,sizeof(h_name),rhost[0].ip)) // BOFëŒçÙÇ¡Ç€Ç¢
             {
-                strcat_s(buf, sizeof(buf), "[");
-                strcat_s(buf, sizeof(buf), h_name);
-                strcat_s(buf, sizeof(buf), "]");
+                strcat_s(buf, _countof(buf), "[");
+                strcat_s(buf, _countof(buf), h_name);
+                strcat_s(buf, _countof(buf), "]");
             }
-            strcat_s(buf, sizeof(buf),"</font>");
+            strcat_s(buf, _countof(buf),"</font>");
         } //JP-EX e
         else
             rhost[0].toStr(buf);
@@ -340,16 +340,16 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
     else if (var == "rhost1")
         rhost[1].toStr(buf);
     else if (var == "numHops")
-        sprintf_s(buf, sizeof(buf), "%d", numHops);
+        sprintf_s(buf, _countof(buf), "%d", numHops);
     else if (var == "numListeners")
-        sprintf_s(buf, sizeof(buf), "%d", numListeners);
+        sprintf_s(buf, _countof(buf), "%d", numListeners);
     else if (var == "numRelays")
-        sprintf_s(buf, sizeof(buf), "%d", numRelays);
+        sprintf_s(buf, _countof(buf), "%d", numRelays);
     else if (var == "uptime")
     {
         String timeStr;
         timeStr.setFromStopwatch(upTime);
-        strcpy_s(buf, sizeof(buf), timeStr.cstr());
+        strcpy_s(buf, _countof(buf), timeStr.cstr());
     }else if (var == "update")
     {
         String timeStr;
@@ -357,38 +357,38 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
             timeStr.setFromStopwatch(sys->getTime()-time);
         else
             timeStr.set("-");
-        strcpy_s(buf, sizeof(buf), timeStr.cstr());
+        strcpy_s(buf, _countof(buf), timeStr.cstr());
     }else if (var == "isFirewalled"){
-        sprintf_s(buf, sizeof(buf), "%d", firewalled?1:0);
+        sprintf_s(buf, _countof(buf), "%d", firewalled?1:0);
     }else if (var == "version"){
-        sprintf_s(buf, sizeof(buf), "%d", version);
+        sprintf_s(buf, _countof(buf), "%d", version);
     }else if (var == "agent"){
         if (version){
             if (versionExNumber){
-                sprintf_s(buf, sizeof(buf), "v0.%d(%c%c%04d)", version, versionExPrefix[0], versionExPrefix[1], versionExNumber);
+                sprintf_s(buf, _countof(buf), "v0.%d(%c%c%04d)", version, versionExPrefix[0], versionExPrefix[1], versionExNumber);
             } else if (versionVP){
-                sprintf_s(buf, sizeof(buf),"v0.%d(VP%04d)", version, versionVP);
+                sprintf_s(buf, _countof(buf),"v0.%d(VP%04d)", version, versionVP);
             } else {
-                sprintf_s(buf, sizeof(buf),"v0.%d", version);
+                sprintf_s(buf, _countof(buf),"v0.%d", version);
             }
         } else {
-            strcpy_s(buf, sizeof(buf), "0");
+            strcpy_s(buf, _countof(buf), "0");
         }
     }
     else if (var == "check")
     {
         char buf2[256];
-        strcpy_s(buf, sizeof(buf), "<a href=\"#\" onclick=\"checkip('");
+        strcpy_s(buf, _countof(buf), "<a href=\"#\" onclick=\"checkip('");
         rhost[0].IPtoStr(buf2);
-        strcat_s(buf, sizeof(buf), buf2);
-        strcat_s(buf, sizeof(buf), "')\">_</a>");
+        strcat_s(buf, _countof(buf), buf2);
+        strcat_s(buf, _countof(buf), "')\">_</a>");
     }
     else if (var == "uphost")        // tree
         uphost.toStr(buf);
     else if (var == "uphostHops")    // tree
-        sprintf_s(buf, sizeof(buf),"%d",uphostHops);
+        sprintf_s(buf, _countof(buf),"%d",uphostHops);
     else if (var == "canRelay")        // tree
-        sprintf_s(buf, sizeof(buf), "%d",relay);
+        sprintf_s(buf, _countof(buf), "%d",relay);
     else
         return false;
 

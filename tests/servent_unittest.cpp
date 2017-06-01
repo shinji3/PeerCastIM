@@ -189,7 +189,7 @@ namespace ServentFixture
         {
             MockClientSocket* mock;
 
-            strcpy_s(servMgr->password, sizeof(servMgr->password), "Passw0rd");
+            strcpy_s(servMgr->password, _countof(servMgr->password), "Passw0rd");
 
             // --------------------------------------------
             s.sock = mock = new MockClientSocket();

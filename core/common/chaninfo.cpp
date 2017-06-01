@@ -649,24 +649,24 @@ XML::Node *ChanInfo::createQueryXML()
     buf[0]=0;
     if (!nameHTML.isEmpty())
     {
-        strcat_s(buf, sizeof(buf), " name=\"");
-        strcat_s(buf, sizeof(buf), nameHTML.cstr());
-        strcat_s(buf, sizeof(buf), "\"");
+        strcat_s(buf, _countof(buf), " name=\"");
+        strcat_s(buf, _countof(buf), nameHTML.cstr());
+        strcat_s(buf, _countof(buf), "\"");
     }
 
     if (!genreHTML.isEmpty())
     {
-        strcat_s(buf, sizeof(buf), " genre=\"");
-        strcat_s(buf, sizeof(buf), genreHTML.cstr());
-        strcat_s(buf, sizeof(buf), "\"");
+        strcat_s(buf, _countof(buf), " genre=\"");
+        strcat_s(buf, _countof(buf), genreHTML.cstr());
+        strcat_s(buf, _countof(buf), "\"");
     }
 
     if (id.isSet())
     {
         id.toStr(idStr);
-        strcat_s(buf, sizeof(buf), " id=\"");
-        strcat_s(buf, sizeof(buf), idStr);
-        strcat_s(buf, sizeof(buf), "\"");
+        strcat_s(buf, _countof(buf), " id=\"");
+        strcat_s(buf, _countof(buf), idStr);
+        strcat_s(buf, _countof(buf), "\"");
     }
 
     return new XML::Node("channel %s", buf);

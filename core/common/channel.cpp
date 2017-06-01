@@ -1638,7 +1638,7 @@ void Channel::getStreamPath(char *str)
 
     getIDStr(idStr);
 
-    sprintf_s(str, sizeof(str), "/stream/%s%s", idStr, info.getTypeExt());
+    sprintf_s(str, _countof(str), "/stream/%s%s", idStr, info.getTypeExt());
 }
 
 // -----------------------------------
@@ -1673,36 +1673,36 @@ bool Channel::writeVariable(Stream &out, const String &var)
     {
         utf8 = info.name;
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy_s(buf, sizeof(buf), utf8.cstr());
+        strcpy_s(buf, _countof(buf), utf8.cstr());
     }else if (var == "bitrate")
     {
-        sprintf_s(buf, sizeof(buf), "%d", info.bitrate);
+        sprintf_s(buf, _countof(buf), "%d", info.bitrate);
     }else if (var == "srcrate")
     {
         if (sourceData)
         {
             unsigned int tot = sourceData->getSourceRate();
-            sprintf_s(buf, sizeof(buf), "%.1f", BYTES_TO_KBPS(tot));
+            sprintf_s(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(tot));
         }else
-            strcpy_s(buf, sizeof(buf), "0");
+            strcpy_s(buf, _countof(buf), "0");
     }else if (var == "genre")
     {
         utf8 = info.genre;
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy_s(buf, sizeof(buf), utf8.cstr());
+        strcpy_s(buf, _countof(buf), utf8.cstr());
     }else if (var == "desc")
     {
         utf8 = info.desc;
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy_s(buf, sizeof(buf), utf8.cstr());
+        strcpy_s(buf, _countof(buf), utf8.cstr());
     }else if (var == "comment")
     {
         utf8 = info.comment;
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy_s(buf, sizeof(buf), utf8.cstr());
+        strcpy_s(buf, _countof(buf), utf8.cstr());
     }else if (var == "bcstClap") //JP-MOD
     {
-        strcpy_s(buf, sizeof(buf), info.ppFlags & ServMgr::bcstClap ? "1":"0");
+        strcpy_s(buf, _countof(buf), info.ppFlags & ServMgr::bcstClap ? "1":"0");
     }else if (var == "uptime")
     {
         String uptime;
@@ -1710,36 +1710,36 @@ bool Channel::writeVariable(Stream &out, const String &var)
             uptime.setFromStopwatch(sys->getTime()-info.lastPlayStart);
         else
             uptime.set("-");
-        strcpy_s(buf, sizeof(buf), uptime.cstr());
+        strcpy_s(buf, _countof(buf), uptime.cstr());
     }
     else if (var == "type")
-        sprintf_s(buf, sizeof(buf), "%s", info.getTypeStr());
+        sprintf_s(buf, _countof(buf), "%s", info.getTypeStr());
     else if (var == "ext")
-        sprintf_s(buf, sizeof(buf), "%s", info.getTypeExt());
+        sprintf_s(buf, _countof(buf), "%s", info.getTypeExt());
     else if (var == "proto") {
         switch(info.contentType) {
         case ChanInfo::T_WMA:
         case ChanInfo::T_WMV:
-            sprintf_s(buf, sizeof(buf), "mms://");
+            sprintf_s(buf, _countof(buf), "mms://");
             break;
         default:
-            sprintf_s(buf, sizeof(buf), "http://");
+            sprintf_s(buf, _countof(buf), "http://");
         }
     }
     else if (var == "localRelays")
-        sprintf_s(buf, sizeof(buf), "%d", localRelays());
+        sprintf_s(buf, _countof(buf), "%d", localRelays());
     else if (var == "localListeners")
-        sprintf_s(buf, sizeof(buf), "%d", localListeners());
+        sprintf_s(buf, _countof(buf), "%d", localListeners());
     else if (var == "totalRelays")
-        sprintf_s(buf, sizeof(buf), "%d", totalRelays());
+        sprintf_s(buf, _countof(buf), "%d", totalRelays());
     else if (var == "totalListeners")
-        sprintf_s(buf, sizeof(buf), "%d", totalListeners());
+        sprintf_s(buf, _countof(buf), "%d", totalListeners());
     else if (var == "totalClaps") //JP-MOD
-        sprintf_s(buf, sizeof(buf), "%d", totalClaps());
+        sprintf_s(buf, _countof(buf), "%d", totalClaps());
     else if (var == "status")
-        sprintf_s(buf, sizeof(buf), "%s", getStatusStr());
+        sprintf_s(buf, _countof(buf), "%s", getStatusStr());
     else if (var == "keep")
-        sprintf_s(buf, sizeof(buf), "%s", stayConnected?"Yes":"No");
+        sprintf_s(buf, _countof(buf), "%s", stayConnected?"Yes":"No");
     else if (var == "id")
         info.id.toStr(buf);
     else if (var.startsWith("track."))
@@ -1756,27 +1756,27 @@ bool Channel::writeVariable(Stream &out, const String &var)
             utf8 = info.track.contact;
 
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy_s(buf, sizeof(buf),utf8.cstr());
+        strcpy_s(buf, _countof(buf),utf8.cstr());
 
     }else if (var == "contactURL")
-        sprintf_s(buf, sizeof(buf), "%s", info.url.cstr());
+        sprintf_s(buf, _countof(buf), "%s", info.url.cstr());
     else if (var == "streamPos")
-        sprintf_s(buf, sizeof(buf), "%d", streamPos);
+        sprintf_s(buf, _countof(buf), "%d", streamPos);
     else if (var == "sourceType")
-        strcpy_s(buf, sizeof(buf), getSrcTypeStr());
+        strcpy_s(buf, _countof(buf), getSrcTypeStr());
     else if (var == "sourceProtocol")
-        strcpy_s(buf, sizeof(buf), ChanInfo::getProtocolStr(info.srcProtocol));
+        strcpy_s(buf, _countof(buf), ChanInfo::getProtocolStr(info.srcProtocol));
     else if (var == "sourceURL")
     {
         if (sourceURL.isEmpty())
             sourceHost.host.toStr(buf);
         else
-            strcpy_s(buf, sizeof(buf), sourceURL.cstr());
+            strcpy_s(buf, _countof(buf), sourceURL.cstr());
     }
     else if (var == "headPos")
-        sprintf_s(buf, sizeof(buf), "%d", headPack.pos);
+        sprintf_s(buf, _countof(buf), "%d", headPack.pos);
     else if (var == "headLen")
-        sprintf_s(buf, sizeof(buf), "%d", headPack.len);
+        sprintf_s(buf, _countof(buf), "%d", headPack.len);
     else if (var == "numHits")
     {
         ChanHitList *chl = chanMgr->findHitListByID(info.id);
@@ -1790,9 +1790,9 @@ bool Channel::writeVariable(Stream &out, const String &var)
                 hit = hit->next;
             }
         }
-        sprintf_s(buf, sizeof(buf),"%d",numHits);
+        sprintf_s(buf, _countof(buf),"%d",numHits);
     } else if (var == "isBroadcast")
-        strcpy_s(buf, sizeof(buf), (type == T_BROADCAST) ? "1":"0");
+        strcpy_s(buf, _countof(buf), (type == T_BROADCAST) ? "1":"0");
     else
         return false;
 

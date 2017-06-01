@@ -64,7 +64,7 @@ void String::setFromTime(unsigned int t)
 {
     char p[26];
     time_t t2 = t;
-    ctime_s(p, sizeof(p), &t2);
+    ctime_s(p, _countof(p), &t2);
     if (p)
         strcpy_s(data, MAX_LEN, p);
     else

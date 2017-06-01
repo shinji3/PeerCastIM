@@ -305,7 +305,7 @@ static int convert_string(const char *fromcode, const char *tocode,
 	s = malloc(fromlen + 1);
 	if (!s)
 		return -1;
-	strcpy_s(s, sizeof(s), from);
+	strcpy_s(s, _countof(s), from);
 	*to = s;
 	for (; *s; s++)
 		if (*s & ~0x7f)

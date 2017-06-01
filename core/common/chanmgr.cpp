@@ -361,22 +361,22 @@ bool ChanMgr::writeVariable(Stream &out, const String &var)
 {
     char buf[1024];
     if (var == "numHitLists")
-        sprintf_s(buf, sizeof(buf), "%d", numHitLists());
+        sprintf_s(buf, _countof(buf), "%d", numHitLists());
 
     else if (var == "numChannels")
-        sprintf_s(buf, sizeof(buf), "%d", numChannels());
+        sprintf_s(buf, _countof(buf), "%d", numChannels());
     else if (var == "djMessage")
     {
         String utf8 = broadcastMsg;
         utf8.convertTo(String::T_UNICODESAFE);
-        strcpy_s(buf, sizeof(buf), utf8.cstr());
+        strcpy_s(buf, _countof(buf), utf8.cstr());
     }
     else if (var == "icyMetaInterval")
-        sprintf_s(buf, sizeof(buf), "%d", icyMetaInterval);
+        sprintf_s(buf, _countof(buf), "%d", icyMetaInterval);
     else if (var == "maxRelaysPerChannel")
-        sprintf_s(buf, sizeof(buf), "%d", maxRelaysPerChannel);
+        sprintf_s(buf, _countof(buf), "%d", maxRelaysPerChannel);
     else if (var == "hostUpdateInterval")
-        sprintf_s(buf, sizeof(buf), "%d", hostUpdateInterval);
+        sprintf_s(buf, _countof(buf), "%d", hostUpdateInterval);
     else if (var == "broadcastID")
         broadcastID.toStr(buf);
     else
@@ -870,7 +870,7 @@ void ChanMgr::playChannel(ChanInfo &info)
 {
     char str[128], fname[256], idStr[128];
 
-    sprintf_s(str, sizeof(str), "http://127.0.0.1:%d", servMgr->serverHost.port);
+    sprintf_s(str, _countof(str), "http://127.0.0.1:%d", servMgr->serverHost.port);
     info.id.toStr(idStr);
 
     PlayList::TYPE type;
@@ -883,18 +883,18 @@ void ChanMgr::playChannel(ChanInfo &info)
         if (servMgr->getModulePath) //JP-EX
         {
             peercastApp->getDirectory();
-            sprintf_s(fname, sizeof(fname), "%s/%s.asx", servMgr->modulePath, idStr);    
+            sprintf_s(fname, _countof(fname), "%s/%s.asx", servMgr->modulePath, idStr);    
         }else
-            sprintf_s(fname, sizeof(fname), "%s/%s.asx", peercastApp->getPath(), idStr);
+            sprintf_s(fname, _countof(fname), "%s/%s.asx", peercastApp->getPath(), idStr);
     }else if (info.contentType == ChanInfo::T_OGM)
     {
         type = PlayList::T_RAM;
         if (servMgr->getModulePath) //JP-EX
         {
             peercastApp->getDirectory();
-            sprintf_s(fname, sizeof(fname), "%s/play.ram", servMgr->modulePath);
+            sprintf_s(fname, _countof(fname), "%s/play.ram", servMgr->modulePath);
         }else
-            sprintf_s(fname, sizeof(fname), "%s/play.ram", peercastApp->getPath());
+            sprintf_s(fname, _countof(fname), "%s/play.ram", peercastApp->getPath());
 
     }else
     {
@@ -902,9 +902,9 @@ void ChanMgr::playChannel(ChanInfo &info)
         if (servMgr->getModulePath) //JP-EX
         {
             peercastApp->getDirectory();
-            sprintf_s(fname, sizeof(fname), "%s/play.pls", servMgr->modulePath);
+            sprintf_s(fname, _countof(fname), "%s/play.pls", servMgr->modulePath);
         }else
-            sprintf_s(fname, sizeof(fname), "%s/play.pls", peercastApp->getPath());
+            sprintf_s(fname, _countof(fname), "%s/play.pls", peercastApp->getPath());
     }
 
     PlayList *pls = new PlayList(type, 1);

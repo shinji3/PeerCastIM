@@ -55,7 +55,7 @@ void HTTP::readRequest()
 //-----------------------------------------
 void HTTP::initRequest(const char *r)
 {
-    strcpy_s(cmdLine, sizeof(cmdLine), r);
+    strcpy_s(cmdLine, _countof(cmdLine), r);
     parseRequestLine();
 }
 

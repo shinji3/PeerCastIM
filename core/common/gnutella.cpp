@@ -532,8 +532,8 @@ GnuStream::R_TYPE GnuStream::processPacket(GnuPacket &in, Servent *serv, GnuID &
                 {
                     char flstr[64];
                     flstr[0]=0;
-                    if (hit.firewalled) strcat_s(flstr, sizeof(flstr), "Push, ");
-                    if (hit.tracker) strcat_s(flstr, sizeof(flstr), "Tracker, ");
+                    if (hit.firewalled) strcat_s(flstr, _countof(flstr), "Push, ");
+                    if (hit.tracker) strcat_s(flstr, _countof(flstr), "Tracker, ");
 
 #if 0
                     if ((spd == 0) && (!isBroadcastHit))
@@ -691,7 +691,7 @@ bool GnuStream::readHit(Stream &data, ChanHit &ch, int hops, GnuID &id)
                 char *ag = sn->findAttr("agent");
                 if (ag)
                 {
-                    strncpy_s(agentStr, sizeof(agentStr), ag, _TRUNCATE);
+                    strncpy_s(agentStr, _countof(agentStr), ag, _TRUNCATE);
                 }
                 maxPreviewTime = sn->findAttrInt("preview");
             }
