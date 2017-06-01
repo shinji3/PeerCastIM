@@ -4,7 +4,6 @@
 #include "peercast.h"
 #include "version2.h" // PCP_BROADCAST_FLAGS
 #include "md5.h"
-#include "win32/seh.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
@@ -19,7 +18,6 @@ void ChanMgr::startSearch(ChanInfo &info)
     clearHitLists();
     numFinds = 0;
     lastHit = 0;
-//  lastSearch = 0;
     searchActive = true;
 }
 
@@ -167,22 +165,6 @@ Channel *ChanMgr::findChannelByID(const GnuID &id)
 }
 
 // -----------------------------------
-Channel *ChanMgr::findChannelByChannelID(int id)
-{
-    int cnt=0;
-    Channel *ch = channel;
-    while (ch)
-    {
-        if (ch->isActive()){
-            if (ch->channel_id == id){
-                return ch;
-            }
-        }
-        ch = ch->next;
-    }
-    return NULL;
-}
-// -----------------------------------
 int ChanMgr::findChannels(ChanInfo &info, Channel **chlist, int max)
 {
     int cnt = 0;
@@ -248,15 +230,9 @@ Channel *ChanMgr::findAndRelay(ChanInfo &info)
     char idStr[64];
     info.id.toStr(idStr);
     LOG_CHANNEL("Searching for: %s (%s)", idStr, info.name.cstr());
-
-    if(!isIndexTxt(&info))    // for PCRaw (popup)
-        peercastApp->notifyMessage(ServMgr::NT_PEERCAST,"Finding channel...");
+    //peercast::notifyMessage(ServMgr::NT_PEERCAST, "チャンネルを検索中...");
 
     Channel *c = NULL;
-
-    WLockBlock wb(&(chanMgr->channellock));
-
-    wb.on();
 
     c = findChannelByNameID(info);
 
@@ -268,38 +244,22 @@ Channel *ChanMgr::findAndRelay(ChanInfo &info)
             c->setStatus(Channel::S_SEARCHING);
             c->startGet();
         }
-    } else if (!(c->thread.active)){
-        c->thread.active = true;
-        c->thread.finish = false;
-        c->info.lastPlayStart = 0; // reconnect
-        c->info.lastPlayEnd = 0;
-        if (c->finthread){
-            c->finthread->finish = true;
-            c->finthread = NULL;
-        }
-        if (c->status != Channel::S_CONNECTING && c->status != Channel::S_SEARCHING){
-            c->setStatus(Channel::S_SEARCHING);
-            c->startGet();
-        }
     }
-
-    wb.off();
 
     for (int i = 0; i < 600; i++)    // search for 1 minute.
     {
-        wb.on();
         c = findChannelByNameID(info);
 
         if (!c)
         {
-//          peercastApp->notifyMessage(ServMgr::NT_PEERCAST,"Channel not found");
+            peercast::notifyMessage(ServMgr::NT_PEERCAST, "チャンネル "+chName(info)+" は見付かりませんでした。");
             return NULL;
         }
 
-        if (c->isPlaying() && (c->info.contentType != ChanInfo::T_UNKNOWN))
+        // if (c->isPlaying() && (c->info.contentType != ChanInfo::T_UNKNOWN))
+        //     break;
+        if (c->isPlaying()) // UNKNOWN でもかまわないことにする。
             break;
-
-        wb.off();
 
         sys->sleep(100);
     }
@@ -325,7 +285,7 @@ ChanMgr::ChanMgr()
 
     icyIndex = 0;
     icyMetaInterval = 8192;
-    maxRelaysPerChannel = 1;
+    maxRelaysPerChannel = 0;
 
     searchInfo.init();
 
@@ -347,7 +307,6 @@ ChanMgr::ChanMgr()
     lastQuery = 0;
 
     lastYPConnect = 0;
-    lastYPConnect2 = 0;
 }
 
 // -----------------------------------
@@ -366,11 +325,7 @@ bool ChanMgr::writeVariable(Stream &out, const String &var)
     else if (var == "numChannels")
         sprintf_s(buf, _countof(buf), "%d", numChannels());
     else if (var == "djMessage")
-    {
-        String utf8 = broadcastMsg;
-        utf8.convertTo(String::T_UNICODESAFE);
-        strcpy_s(buf, _countof(buf), utf8.cstr());
-    }
+        strcpy_s(buf, _countof(buf), broadcastMsg.cstr());
     else if (var == "icyMetaInterval")
         sprintf_s(buf, _countof(buf), "%d", icyMetaInterval);
     else if (var == "maxRelaysPerChannel")
@@ -493,8 +448,6 @@ void ChanMgr::setBroadcastMsg(String &msg)
 // -----------------------------------
 void ChanMgr::clearHitLists()
 {
-//  LOG_DEBUG("clearHitLists HITLISTLOCK ON-------------");
-    chanMgr->hitlistlock.on();
     while (hitlist)
     {
         peercastApp->delChannel(&hitlist->info);
@@ -505,8 +458,6 @@ void ChanMgr::clearHitLists()
 
         hitlist = next;
     }
-//  LOG_DEBUG("clearHitLists HITLISTLOCK OFF-------------");
-    chanMgr->hitlistlock.off();
 }
 
 // -----------------------------------
@@ -525,10 +476,6 @@ Channel *ChanMgr::deleteChannel(Channel *delchan)
                 prev->next = next;
             else
                 channel = next;
-
-            if (delchan->sourceStream){
-                delchan->sourceStream->parent = NULL;
-            }
 
             delete delchan;
 
@@ -579,7 +526,6 @@ int ChanMgr::pickHits(ChanHitSearch &chs)
         if (chl->isUsed())
             if (chl->pickHits(chs))
             {
-                chl->info.id;
                 return 1;
             }
         chl = chl->next;
@@ -654,9 +600,8 @@ void ChanMgr::clearDeadHits(bool clearTrackers)
     if (servMgr->isRoot)
         interval = 1200;        // mainly for old 0.119 clients
     else
-        interval = hostUpdateInterval+120;
+        interval = 180;
 
-    chanMgr->hitlistlock.on();
     ChanHitList *chl = hitlist, *prev = NULL;
     while (chl)
     {
@@ -686,7 +631,6 @@ void ChanMgr::clearDeadHits(bool clearTrackers)
         prev = chl;
         chl = chl->next;
     }
-    chanMgr->hitlistlock.off();
 }
 
 // -----------------------------------
@@ -783,35 +727,6 @@ ChanHit *ChanMgr::addHit(ChanHit &h)
 }
 
 // -----------------------------------
-bool ChanMgr::findParentHit(ChanHit &p)
-{
-    ChanHitList *hl=NULL;
-
-    chanMgr->hitlistlock.on();
-
-    hl = findHitListByID(p.chanID);
-
-    if (hl)
-    {
-        ChanHit *ch = hl->hit;
-        while (ch)
-        {
-            if (!ch->dead && (ch->rhost[0].ip == p.uphost.ip)
-                && (ch->rhost[0].port == p.uphost.port))
-            {
-                chanMgr->hitlistlock.off();
-                return 1;
-            }
-            ch = ch->next;
-        }
-    }
-
-    chanMgr->hitlistlock.off();
-
-    return 0;
-}
-
-// -----------------------------------
 class ChanFindInfo : public ThreadInfo
 {
 public:
@@ -820,7 +735,7 @@ public:
 };
 
 // -----------------------------------
-THREAD_PROC findAndPlayChannelProcMain(ThreadInfo *th)
+THREAD_PROC findAndPlayChannelProc(ThreadInfo *th)
 {
     ChanFindInfo *cfi = (ChanFindInfo *)th;
 
@@ -849,12 +764,6 @@ THREAD_PROC findAndPlayChannelProcMain(ThreadInfo *th)
 }
 
 // -----------------------------------
-THREAD_PROC findAndPlayChannelProc(ThreadInfo *thread)
-{
-    SEH_THREAD(findAndPlayChannelProcMain, findAndPlayChannel);
-}
-
-// -----------------------------------
 void ChanMgr::findAndPlayChannel(ChanInfo &info, bool keep)
 {
     ChanFindInfo *cfi = new ChanFindInfo;
@@ -863,6 +772,7 @@ void ChanMgr::findAndPlayChannel(ChanInfo &info, bool keep)
     cfi->func = findAndPlayChannelProc;
 
     sys->startThread(cfi);
+    sys->setThreadName(cfi, "findAndPlayChannelProc");
 }
 
 // -----------------------------------
@@ -870,7 +780,7 @@ void ChanMgr::playChannel(ChanInfo &info)
 {
     char str[128], fname[256], idStr[128];
 
-    sprintf_s(str, _countof(str), "http://127.0.0.1:%d", servMgr->serverHost.port);
+    sprintf_s(str, _countof(str), "http://localhost:%d", servMgr->serverHost.port);
     info.id.toStr(idStr);
 
     PlayList::TYPE type;
@@ -880,31 +790,15 @@ void ChanMgr::playChannel(ChanInfo &info)
         type = PlayList::T_ASX;
         // WMP seems to have a bug where it doesn`t re-read asx files if they have the same name
         // so we prepend the channel id to make it unique - NOTE: should be deleted afterwards.
-        if (servMgr->getModulePath) //JP-EX
-        {
-            peercastApp->getDirectory();
-            sprintf_s(fname, _countof(fname), "%s/%s.asx", servMgr->modulePath, idStr);    
-        }else
-            sprintf_s(fname, _countof(fname), "%s/%s.asx", peercastApp->getPath(), idStr);
+        sprintf_s(fname, _countof(fname), "%s/%s.asx", peercastApp->getPath(), idStr);
     }else if (info.contentType == ChanInfo::T_OGM)
     {
         type = PlayList::T_RAM;
-        if (servMgr->getModulePath) //JP-EX
-        {
-            peercastApp->getDirectory();
-            sprintf_s(fname, _countof(fname), "%s/play.ram", servMgr->modulePath);
-        }else
-            sprintf_s(fname, _countof(fname), "%s/play.ram", peercastApp->getPath());
-
+        sprintf_s(fname, _countof(fname), "%s/play.ram", peercastApp->getPath());
     }else
     {
         type = PlayList::T_SCPLS;
-        if (servMgr->getModulePath) //JP-EX
-        {
-            peercastApp->getDirectory();
-            sprintf_s(fname, _countof(fname), "%s/play.pls", servMgr->modulePath);
-        }else
-            sprintf_s(fname, _countof(fname), "%s/play.pls", peercastApp->getPath());
+        sprintf_s(fname, _countof(fname), "%s/play.pls", peercastApp->getPath());
     }
 
     PlayList *pls = new PlayList(type, 1);
@@ -931,4 +825,50 @@ std::string ChanMgr::authSecret(const GnuID& id)
 std::string ChanMgr::authToken(const GnuID& id)
 {
     return md5::hexdigest(authSecret(id));
+}
+
+// -----------------------------------
+Channel *ChanMgr::findChannelByChannelID(int id)
+{
+    int cnt=0;
+    Channel *ch = channel;
+    while (ch)
+    {
+        if (ch->isActive()){
+            if (ch->channel_id == id){
+                return ch;
+            }
+        }
+        ch = ch->next;
+    }
+    return NULL;
+}
+
+// -----------------------------------
+bool ChanMgr::findParentHit(ChanHit &p)
+{
+    ChanHitList *hl=NULL;
+
+    chanMgr->hitlistlock.on();
+
+    hl = findHitListByID(p.chanID);
+
+    if (hl)
+    {
+        ChanHit *ch = hl->hit;
+        while (ch)
+        {
+            if (!ch->dead && (ch->rhost[0].ip == p.uphost.ip)
+                && (ch->rhost[0].port == p.uphost.port))
+            {
+                chanMgr->hitlistlock.off();
+                return 1;
+            }
+            ch = ch->next;
+        }
+    }
+
+    chanMgr->hitlistlock.off();
+
+    return 0;
 }
