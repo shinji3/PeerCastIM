@@ -20,6 +20,7 @@
 #define _CHANMGR_H
 
 #include "channel.h"
+#include "varwriter.h"
 
 // ----------------------------------
 class ChanMgr : public VariableWriter
@@ -120,7 +121,6 @@ public:
     unsigned int    autoQuery;
     unsigned int    prefetchTime;
     unsigned int    lastYPConnect;
-    unsigned int    lastYPConnect2;
     unsigned int    icyIndex;
 
     unsigned int    hostUpdateInterval;
@@ -128,7 +128,6 @@ public:
 
     GnuID           currFindAndPlayChannel;
 
-    WLock           channellock;
     WLock           hitlistlock;
 };
 

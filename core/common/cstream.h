@@ -28,7 +28,6 @@
 
 class Channel;
 class ChanPacket;
-class ChanPacketv;
 class Stream;
 
 // ----------------------------------
@@ -62,11 +61,8 @@ public:
         pos  = 0;
         sync = 0;
         cont = false;
-        skip = false;
-        priority = 0;
     }
 
-    void    init(ChanPacketv &p);
     void    init(TYPE type, const void *data, unsigned int length, unsigned int position);
 
     void    writeRaw(Stream &);
@@ -80,99 +76,7 @@ public:
     unsigned int    pos;
     unsigned int    sync;
     bool            cont; // true if this is a continuation packet
-    bool            skip;
-    int             priority;
     char            data[MAX_DATALEN];
-};
-
-// ----------------------------------
-class ChanPacketv
-{
-public:
-    enum
-    {
-        BSIZE = 0x100
-    };
-
-    ChanPacketv() 
-    {
-        init();
-    }
-
-    ~ChanPacketv()
-    {
-        free();
-    }
-
-    void free()
-    {
-        if (data) {
-            delete [] data;
-            data = NULL;
-            datasize = 0;
-        }
-    }
-
-    void reset()
-    {
-        free();
-        init();
-    }
-
-    void    init()
-    {
-        type = ChanPacket::T_UNKNOWN;
-        len = 0;
-        pos = 0;
-        sync = 0;
-        cont = false;
-        skip = false;
-        priority = 0;
-        data = NULL;
-        datasize = 0;
-    }
-
-    void init(ChanPacket &p)
-    {
-        if (data && (datasize < p.len || datasize > p.len + BSIZE * 4)) {
-            free();
-            data = NULL;
-            datasize = 0;
-        }
-        type = p.type;
-        len = p.len;
-        pos = p.pos;
-        sync = p.sync;
-        cont = p.cont;
-        skip = p.skip;
-        priority = p.priority;
-        if (!data) {
-            datasize = (len & ~(BSIZE - 1)) + BSIZE;
-            data = new char[datasize];
-        }
-        memcpy(data, p.data, len);
-    }
-
-    void init(ChanPacketv &p)
-    {
-        ChanPacket tp;
-        tp.init(p);
-        init(tp);
-    }
-
-    void    writeRaw(Stream &);
-    void    writePeercast(Stream &);
-    void    readPeercast(Stream &);
-
-    ChanPacket::TYPE type;
-    unsigned int     len;
-    unsigned int     pos;
-    unsigned int     sync;
-    bool             cont; // true if this is a continuation packet
-    bool             skip;
-    int              priority;
-    char             *data;
-    unsigned int     datasize;
 };
 
 // ----------------------------------
@@ -181,7 +85,7 @@ class ChanPacketBuffer
 public:
     enum {
         MAX_PACKETS = 64,
-        NUM_SAFEPACKETS = 60
+        NUM_SAFEPACKETS = 56
     };
 
     ChanPacketBuffer()
@@ -197,21 +101,17 @@ public:
         accept = 0;
         lastWriteTime = 0;
         lock.off();
-
-        lastSkipTime = 0;
     }
 
     int     copyFrom(ChanPacketBuffer &, unsigned in);
 
     bool    writePacket(ChanPacket &, bool = false);
     void    readPacket(ChanPacket &);
-    void    readPacketPri(ChanPacket &);
 
     bool    willSkip();
 
     int     numPending() { return writePos - readPos; }
 
-    unsigned int    getFirstDataPos();
     unsigned int    getLatestPos();
     unsigned int    getOldestPos();
     unsigned int    findOldestPos(unsigned int);
@@ -247,14 +147,12 @@ public:
         return { lens, cs, ncs };
     }
 
-    ChanPacket             packets[MAX_PACKETS];
+    ChanPacket              packets[MAX_PACKETS];
     volatile unsigned int   lastPos, firstPos, safePos;
     volatile unsigned int   readPos, writePos;
     unsigned int            accept;
     unsigned int            lastWriteTime;
     WLock                   lock;
-
-    unsigned int            lastSkipTime;
 };
 
 // ----------------------------------
@@ -267,9 +165,6 @@ public:
     , isPlaying(false)
     , fwState(0)
     , lastUpdate(0)
-    , lastCheckTime(0)
-    , lastClapped(0) //JP-MOD
-    , parent(NULL)
     {}
 
     virtual ~ChannelStream() {}
@@ -292,10 +187,6 @@ public:
     bool            isPlaying;
     int             fwState;
     unsigned int    lastUpdate;
-    unsigned int    lastCheckTime;
-    unsigned int    lastClapped; //JP-MOD
-
-    Channel *parent;
 };
 
 #endif

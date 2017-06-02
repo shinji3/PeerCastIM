@@ -238,7 +238,6 @@ public:
     int          localListeners();
     int          localRelays();
 
-    int          totalClaps();    //JP-MOD
     int          totalListeners();
     int          totalRelays();
 
@@ -263,13 +262,10 @@ public:
     ::String            sourceURL;
 
     bool                bump, stayConnected;
-    bool                stealth; //JP-MOD
     int                 icyMetaInterval;
     unsigned int        streamPos;
     unsigned int        skipCount; //JP-EX
     bool                readDelay;
-    int                 overrideMaxRelaysPerChannel; //JP-MOD
-    bool                bClap; //JP-MOD
 
     TYPE                type;
     ChannelSource       *sourceData;
@@ -278,7 +274,6 @@ public:
 
     MP3Header           mp3Head;
     ThreadInfo          thread;
-    ThreadInfo          *finthread;
 
     unsigned int        lastIdleTime;
     STATUS              status;
@@ -298,10 +293,8 @@ public:
 
     int                 channel_id;
     ChanHit             chDisp;
-    ChanHit             trackerHit;
     bool                bumped;
     unsigned int        lastSkipTime;
-    unsigned int        lastStopTime;
 
     int                 maxRelays; // チャンネル固有のリレー最大数(コンストラクタで初期化)
 };
@@ -311,8 +304,6 @@ public:
 // for PCRaw start.
 bool isIndexTxt(ChanInfo *info);
 bool isIndexTxt(Channel *ch);
-int numMaxRelaysIndexTxt(Channel *ch);
-int canStreamIndexTxt(Channel *ch);
 // for PCRaw end
 
 #endif
