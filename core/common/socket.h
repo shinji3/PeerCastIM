@@ -128,14 +128,10 @@ public:
     ClientSocket()
     {
         readTimeout = 30000;
-        writeTimeout = 30000;
-#ifdef WIN32
-        skipCount = 0;
-        lastSkipTime = 0;
-#endif
+        writeTimeout = 5000;
     }
 
-    ~ClientSocket(){
+    virtual ~ClientSocket(){
 #ifdef WIN32
         bufList.clear();
 #endif
@@ -171,9 +167,6 @@ public:
 
 #ifdef WIN32
     SocketBufferList    bufList;
-    virtual void bufferingWrite(const void *, int) = 0;
-    unsigned int skipCount;
-    unsigned int lastSkipTime;
 #endif
 
     unsigned int    readTimeout, writeTimeout;

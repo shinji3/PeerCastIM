@@ -49,9 +49,5 @@ public:
         outgoing.write(p, len);
     }
 
-    void bufferingWrite(const void *p, int l) override
-    {
-    }
-
     StringStream incoming, outgoing;
 };
