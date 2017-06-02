@@ -107,7 +107,13 @@ class PeercastSource : public ChannelSource
 {
 public:
 
+    PeercastSource() : m_channel(NULL) {}
     void    stream(Channel *) override;
+    int     getSourceRate() override;
+    int     getSourceRateAvg() override;
+    ChanHit pickFromHitList(Channel *ch, ChanHit &oldHit);
+
+    Channel*        m_channel;
 };
 
 // ----------------------------------
@@ -152,7 +158,7 @@ public:
 
     Channel();
     void    reset();
-    void    endThread(bool flg);
+    void    endThread();
 
     void    startMP3File(char *);
     void    startGet();
@@ -203,10 +209,6 @@ public:
     bool    isIdle() { return isActive() && (status==S_IDLE); }
 
     static THREAD_PROC stream(ThreadInfo *);
-    static THREAD_PROC streamMain(ThreadInfo *);
-
-    static THREAD_PROC waitFinish(ThreadInfo *);
-    static THREAD_PROC waitFinishMain(ThreadInfo *);
 
     void         setStatus(STATUS s);
     const char   *getSrcTypeStr() { return srcTypes[srcType]; }
@@ -240,6 +242,7 @@ public:
     int          totalListeners();
     int          totalRelays();
 
+    std::string  authSecret();
     static std::string renderHexDump(const std::string& in);
 
     ::String            mount;

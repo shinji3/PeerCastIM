@@ -68,7 +68,8 @@ const char *Channel::srcTypes[] =
     "PEERCAST",
     "SHOUTCAST",
     "ICECAST",
-    "URL"
+    "URL",
+    "HTTPPUSH",
 };
 
 // -----------------------------------
@@ -89,69 +90,17 @@ const char *Channel::statusMsgs[] =
     "NOTFOUND"
 };
 
-
-// for PCRaw start.
-bool isIndexTxt(ChanInfo *info)
-{
-    size_t len;
-
-    if(    info &&
-        info->contentType == ChanInfo::T_RAW &&
-        info->bitrate <= 32 &&
-        (len = strlen(info->name.cstr())) >= 9 &&
-        !memcmp(info->name.cstr(), "index", 5) &&
-        !memcmp(info->name.cstr()+len-4, ".txt", 4))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-bool isIndexTxt(Channel *ch)
-{
-    if(ch && !ch->isBroadcasting() && isIndexTxt(&ch->info))
-        return true;
-    else
-        return false;
-}
-
-int numMaxRelaysIndexTxt(Channel *ch)
-{
-    return ((servMgr->maxRelaysIndexTxt < 1) ? 1 : servMgr->maxRelaysIndexTxt);
-}
-
-int canStreamIndexTxt(Channel *ch)
-{
-    int ret;
-
-    // 自分が配信している場合は関係ない
-    if(!ch || ch->isBroadcasting())
-        return -1;
-
-    ret = numMaxRelaysIndexTxt(ch) - ch->localRelays();
-    if(ret < 0)
-        ret = 0;
-
-    return ret;
-}
-// for PCRaw end.
-
-int channel_count=1;
 // -----------------------------------------------------------------------------
 // Initialise the channel to its default settings of unallocated and reset.
 // -----------------------------------------------------------------------------
-Channel::Channel() : maxRelays(0)
+Channel::Channel()
 {
     next = NULL;
     reset();
-    channel_id = channel_count++;
 }
 
 // -----------------------------------------------------------------------------
-void Channel::endThread(bool flg)
+void Channel::endThread()
 {
     if (pushSock)
     {
@@ -172,15 +121,11 @@ void Channel::endThread(bool flg)
         sourceData = NULL;
     }
 
-    if (flg == true){
-        reset();
+    reset();
 
-        chanMgr->channellock.on();
-        chanMgr->deleteChannel(this);
-        chanMgr->channellock.off();
+    chanMgr->deleteChannel(this);
 
-        sys->endThread(&thread);
-    }
+    sys->endThread(&thread);
 }
 
 // -----------------------------------------------------------------------------
@@ -237,14 +182,9 @@ void Channel::reset()
     mount.clear();
     bump = false;
     stayConnected = false;
-    stealth = false; //JP-MOD
-    overrideMaxRelaysPerChannel = -1; //JP-MOD
-    bClap = false; //JP-MOD
 
     icyMetaInterval = 0;
     streamPos = 0;
-    skipCount = 0; //JP-EX
-    lastSkipTime = 0;
 
     insertMeta.init();
 
@@ -255,7 +195,7 @@ void Channel::reset()
     rawData.init();
     rawData.accept = ChanPacket::T_HEAD | ChanPacket::T_DATA;
 
-    setStatus(S_NONE);
+    status = S_NONE;
     type = T_NONE;
 
     readDelay = false;
@@ -272,11 +212,6 @@ void Channel::reset()
 
     startTime = 0;
     syncTime = 0;
-
-    channel_id = 0;
-    finthread = NULL;
-
-    trackerHit.init();
 }
 
 // -----------------------------------
@@ -299,28 +234,10 @@ bool    Channel::checkIdle()
 }
 
 // -----------------------------------
+// チャンネルごとのリレー数制限に達しているか。
 bool    Channel::isFull()
 {
-    // for PCRaw (relay) start.
-    if(isIndexTxt(this))
-    {
-        int ret = canStreamIndexTxt(this);
-        
-        if(ret > 0)
-            return false;
-        else if(ret == 0)
-            return true;
-    }
-    // for PCRaw (relay) end.
-
-    // チャンネル固有のリレー上限設定があるか
-    if (maxRelays > 0)
-    {
-        return localRelays() >= maxRelays;
-    } else
-    {
-        return chanMgr->maxRelaysPerChannel ? localRelays() >= chanMgr->maxRelaysPerChannel : false;
-    }
+    return chanMgr->maxRelaysPerChannel ? localRelays() >= chanMgr->maxRelaysPerChannel : false;
 }
 
 // -----------------------------------
@@ -353,13 +270,6 @@ int Channel::totalListeners()
     if (chl)
         tot += chl->numListeners();
     return tot;
-}
-
-// -----------------------------------
-int Channel::totalClaps()    //JP-MOD
-{
-    ChanHitList *chl = chanMgr->findHitListByID(info.id);
-    return chl ? chl->numClaps() : 0;
 }
 
 // -----------------------------------
@@ -418,7 +328,7 @@ void Channel::sleepUntil(double time)
 // -----------------------------------
 void Channel::checkReadDelay(unsigned int len)
 {
-    if (readDelay)
+    if (readDelay && info.bitrate > 0)
     {
         unsigned int time = (len*1000)/((info.bitrate*1024)/8);
         sys->sleep(time);
@@ -426,16 +336,16 @@ void Channel::checkReadDelay(unsigned int len)
 }
 
 // -----------------------------------
-THREAD_PROC Channel::streamMain(ThreadInfo *thread)
+THREAD_PROC Channel::stream(ThreadInfo *thread)
 {
-//    thread->lock();
-
     Channel *ch = (Channel *)thread->data;
 
-    LOG_CHANNEL("Channel started");
+    sys->setThreadName(thread, "CHANNEL");
 
-    while (thread->active && !peercastInst->isQuitting && !thread->finish)
+    while (thread->active && !peercastInst->isQuitting)
     {
+        LOG_CHANNEL("Channel started");
+
         ChanHitList *chl = chanMgr->findHitList(ch->info);
         if (!chl)
             chanMgr->addHitList(ch->info);
@@ -443,11 +353,9 @@ THREAD_PROC Channel::streamMain(ThreadInfo *thread)
         ch->sourceData->stream(ch);
 
         LOG_CHANNEL("Channel stopped");
-        ch->rawData.init();
 
         if (!ch->stayConnected)
         {
-            thread->active = false;
             break;
         }else
         {
@@ -459,68 +367,17 @@ THREAD_PROC Channel::streamMain(ThreadInfo *thread)
             LOG_DEBUG("Channel sleeping for %d seconds", diff);
             for (unsigned int i=0; i<diff; i++)
             {
-                if (ch->info.lastPlayEnd == 0) // reconnected
+                if (!thread->active || peercastInst->isQuitting)
                     break;
-                if (!thread->active || peercastInst->isQuitting){
-                    thread->active = false;
-                    break;
-                }
                 sys->sleep(1000);
             }
         }
     }
 
-    LOG_DEBUG("thread.active = %d, thread.finish = %d",
-        ch->thread.active, ch->thread.finish);
+    ch->endThread();
 
-    if (!thread->finish){
-        ch->endThread(false);
-
-        if (!ch->finthread){
-            ch->finthread = new ThreadInfo();
-            ch->finthread->func = waitFinish;
-            ch->finthread->data = ch;
-            sys->startThread(ch->finthread);
-        }
-    } else {
-        ch->endThread(true);
-    }
     return 0;
 }
-
-// -----------------------------------
-THREAD_PROC    Channel::stream(ThreadInfo *thread)
-{
-    SEH_THREAD(streamMain, Channel::stream);
-}    
-
-// -----------------------------------
-THREAD_PROC Channel::waitFinishMain(ThreadInfo *thread)
-{
-    Channel *ch = (Channel*)thread->data;
-    LOG_DEBUG("Wait channel finish");
-
-    while(!(ch->thread.finish) && !thread->finish){
-        sys->sleep(1000);
-    }
-
-    if (ch->thread.finish){
-        LOG_DEBUG("channel finish");
-        ch->endThread(true);
-    } else {
-        LOG_DEBUG("channel restart");
-    }
-
-    delete thread;
-    return 0;
-}
-
-// -----------------------------------
-THREAD_PROC Channel::waitFinish(ThreadInfo *thread)
-{
-    SEH_THREAD(waitFinishMain, Channel::waitFinish);
-}
-
 
 // -----------------------------------
 bool Channel::acceptGIV(ClientSocket *givSock)
@@ -546,9 +403,6 @@ void Channel::connectFetch()
         sock->setReadTimeout(30000);
         sock->setWriteTimeout(30000);
         LOG_CHANNEL("Channel using longer timeouts");
-    } else {
-        sock->setReadTimeout(5000);
-        sock->setWriteTimeout(5000);
     }
 
     sock->open(sourceHost.host);
@@ -568,7 +422,6 @@ int Channel::handshakeFetch()
     sock->writeLineF("GET /channel/%s HTTP/1.0", idStr);
     sock->writeLineF("%s %d", PCX_HS_POS, streamPos);
     sock->writeLineF("%s %d", PCX_HS_PCP, 1);
-    sock->writeLineF("%s %d", PCX_HS_PORT, servMgr->serverHost.port);
 
     sock->writeLine("");
 
@@ -595,10 +448,8 @@ int Channel::handshakeFetch()
     if ((r != 200) && (r != 503))
         return r;
 
-    if (!servMgr->keepDownstreams) {
-        if (rawData.getLatestPos() > streamPos)
-            rawData.init();
-    }
+    if (rawData.getLatestPos() > streamPos)
+        rawData.init();
 
     AtomStream atom(*sock);
 
@@ -612,46 +463,100 @@ int Channel::handshakeFetch()
         Servent::handshakeOutgoingPCP(atom, rhost, remoteID, agent, sourceHost.yp|sourceHost.tracker);
     }
 
-    if (r == 503) return 503;
     return 0;
+}
+
+// -----------------------------------
+int PeercastSource::getSourceRate()
+{
+    if (m_channel && m_channel->sock)
+        return m_channel->sock->bytesInPerSec();
+    else
+        return 0;
+}
+
+// -----------------------------------
+int PeercastSource::getSourceRateAvg()
+{
+    if (m_channel && m_channel->sock)
+        return m_channel->sock->stat.bytesInPerSecAvg();
+    else
+        return 0;
+}
+
+// -----------------------------------
+ChanHit PeercastSource::pickFromHitList(Channel *ch, ChanHit &oldHit)
+{
+    ChanHit res = oldHit;
+    ChanHitList *chl = NULL;
+
+    chl = chanMgr->findHitList(ch->info);
+    if (chl)
+    {
+        ChanHitSearch chs;
+
+        // find local hit
+        chs.init();
+        chs.matchHost = servMgr->serverHost;
+        chs.waitDelay = MIN_RELAY_RETRY;
+        chs.excludeID = servMgr->sessionID;
+        if (chl->pickHits(chs))
+            res = chs.best[0];
+
+        // else find global hit
+        if (!res.host.ip)
+        {
+            chs.init();
+            chs.waitDelay = MIN_RELAY_RETRY;
+            chs.excludeID = servMgr->sessionID;
+            if (chl->pickHits(chs))
+                res = chs.best[0];
+        }
+
+        // else find local tracker
+        if (!res.host.ip)
+        {
+            chs.init();
+            chs.matchHost = servMgr->serverHost;
+            chs.waitDelay = MIN_TRACKER_RETRY;
+            chs.excludeID = servMgr->sessionID;
+            chs.trackersOnly = true;
+            if (chl->pickHits(chs))
+                res = chs.best[0];
+        }
+
+        // else find global tracker
+        if (!res.host.ip)
+        {
+            chs.init();
+            chs.waitDelay = MIN_TRACKER_RETRY;
+            chs.excludeID = servMgr->sessionID;
+            chs.trackersOnly = true;
+            if (chl->pickHits(chs))
+                res = chs.best[0];
+        }
+    }
+    return res;
+}
+
+// -----------------------------------
+static std::string chName(ChanInfo& info)
+{
+    if (info.name.str().empty())
+        return info.id.str().substr(0,7) + "...";
+    else
+        return info.name.str();
 }
 
 // -----------------------------------
 void PeercastSource::stream(Channel *ch)
 {
+    m_channel = ch;
+
     int numYPTries=0;
-    int numYPTries2=0;
-    bool next_yp = false;
-    bool tracker_check = (ch->trackerHit.host.ip != 0);
-    int connFailCnt = 0;
-    int keepDownstreamTime = 7;
-
-    if (isIndexTxt(&ch->info))
-        keepDownstreamTime = 30;
-
-    ch->lastStopTime = 0;
-    ch->bumped = false;
-
     while (ch->thread.active)
     {
-        ch->skipCount = 0; //JP-EX
-        ch->lastSkipTime = 0;
-        
-        ChanHitList *chl = NULL;
-
         ch->sourceHost.init();
-
-        if (connFailCnt >= 3 && (ch->localListeners() == 0) && (!ch->stayConnected) && !ch->isBroadcasting()) {
-            ch->lastIdleTime = sys->getTime();
-            ch->setStatus(Channel::S_IDLE);
-            ch->skipCount = 0;
-            ch->lastSkipTime = 0;
-            break;
-        }
-
-        if (!servMgr->keepDownstreams && !ch->bumped) {
-            ch->trackerHit.lastContact = sys->getTime() - 30 + (rand() % 30);
-        }
 
         ch->setStatus(Channel::S_SEARCHING);
         LOG_CHANNEL("Channel searching for hit..");
@@ -665,179 +570,78 @@ void PeercastSource::stream(Channel *ch)
                 break;
             }
 
-            chanMgr->hitlistlock.on();
-
-            chl = chanMgr->findHitList(ch->info);
-            if (chl)
+            if (ch->designatedHost.host.ip != 0)
             {
-                ChanHitSearch chs;
-
-                // find local hit 
-                if (!ch->sourceHost.host.ip){
-                    chs.init();
-                    chs.matchHost = servMgr->serverHost;
-                    chs.waitDelay = MIN_RELAY_RETRY;
-                    chs.excludeID = servMgr->sessionID;
-                    if (chl->pickSourceHits(chs)){
-                        ch->sourceHost = chs.best[0];
-                        LOG_DEBUG("use local hit");
-                    }
-                }
-                
-                // else find global hit
-                if (!ch->sourceHost.host.ip)
-                {
-                    chs.init();
-                    chs.waitDelay = MIN_RELAY_RETRY;
-                    chs.excludeID = servMgr->sessionID;
-                    if (chl->pickSourceHits(chs)){
-                        ch->sourceHost = chs.best[0];
-                        LOG_DEBUG("use global hit");
-                    }
-                }
-
-                // else find local tracker
-                if (!ch->sourceHost.host.ip)
-                {
-                    chs.init();
-                    chs.matchHost = servMgr->serverHost;
-                    chs.waitDelay = MIN_TRACKER_RETRY;
-                    chs.excludeID = servMgr->sessionID;
-                    chs.trackersOnly = true;
-                    if (chl->pickSourceHits(chs)){
-                        ch->sourceHost = chs.best[0];
-                        LOG_DEBUG("use local tracker");
-                    }
-                }
-
-                // else find global tracker
-                if (!ch->sourceHost.host.ip)
-                {
-                    chs.init();
-                    chs.waitDelay = MIN_TRACKER_RETRY;
-                    chs.excludeID = servMgr->sessionID;
-                    chs.trackersOnly = true;
-                    if (chl->pickSourceHits(chs)){
-                        ch->sourceHost = chs.best[0];
-                        tracker_check = true;
-                        ch->trackerHit = chs.best[0];
-                        LOG_DEBUG("use global tracker");
-                    }
-                }
-
-                // find tracker
-                unsigned int ctime = sys->getTime();
-                if (!ch->sourceHost.host.ip && tracker_check && ch->trackerHit.host.ip){
-                    if (ch->trackerHit.lastContact + 30 < ctime){
-                        ch->sourceHost = ch->trackerHit;
-                        ch->trackerHit.lastContact = ctime;
-                        LOG_DEBUG("use saved tracker");
-                    }
-                }
+                ch->sourceHost = ch->designatedHost;
+                ch->designatedHost.init();
+                break;
             }
 
-            chanMgr->hitlistlock.off();
+            ch->sourceHost = pickFromHitList(ch, ch->sourceHost);
 
-            if (servMgr->keepDownstreams && ch->lastStopTime
-                && ch->lastStopTime < sys->getTime() - keepDownstreamTime)
+            // consult channel directory
+            if (!ch->sourceHost.host.ip)
             {
-                ch->lastStopTime = 0;
-                LOG_DEBUG("------------ disconnect all downstreams");
-                ChanPacket pack;
-                MemoryStream mem(pack.data,sizeof(pack.data));
-                AtomStream atom(mem);
-                atom.writeInt(PCP_QUIT,PCP_ERROR_QUIT+PCP_ERROR_OFFAIR);
-                pack.len = mem.pos;
-                pack.type = ChanPacket::T_PCP;
-                GnuID noID;
-                noID.clear();
-                servMgr->broadcastPacket(pack,ch->info.id,ch->remoteID,noID,Servent::T_RELAY);
+                std::string trackerIP = servMgr->channelDirectory.findTracker(ch->info.id);
+                if (!trackerIP.empty())
+                {
+                    peercast::notifyMessage(ServMgr::NT_PEERCAST, "チャンネルフィードで "+chName(ch->info)+" のトラッカーが見付かりました。");
 
-                chanMgr->hitlistlock.on();
-                ChanHitList *hl = chanMgr->findHitList(ch->info);
-                if (hl){
-                    hl->clearHits(false);
+                    ch->sourceHost.host.fromStrIP(trackerIP.c_str(), DEFAULT_PORT);
+                    ch->sourceHost.rhost[0].fromStrIP(trackerIP.c_str(), DEFAULT_PORT);
+                    ch->sourceHost.tracker = true;
+
+                    auto chl = chanMgr->findHitList(ch->info);
+                    if (chl)
+                        chl->addHit(ch->sourceHost);
+                    break;
                 }
-                chanMgr->hitlistlock.off();
             }
 
             // no trackers found so contact YP
-            if (!tracker_check && !ch->sourceHost.host.ip)
+            if (!ch->sourceHost.host.ip)
             {
-                next_yp = false;
                 if (servMgr->rootHost.isEmpty())
-                    goto yp2;
+                    break;
 
                 if (numYPTries >= 3)
-                    goto yp2;
-
-                if  ((!servMgr->rootHost2.isEmpty()) && (numYPTries > numYPTries2))
-                    goto yp2;
+                    break;
 
                 unsigned int ctime=sys->getTime();
                 if ((ctime-chanMgr->lastYPConnect) > MIN_YP_RETRY)
                 {
-                    ch->sourceHost.host.fromStrName(servMgr->rootHost.cstr(),DEFAULT_PORT);
+                    ch->sourceHost.host.fromStrName(servMgr->rootHost.cstr(), DEFAULT_PORT);
                     ch->sourceHost.yp = true;
                     chanMgr->lastYPConnect=ctime;
-                    numYPTries++;
                 }
-                if (numYPTries < 3)
-                    next_yp = true;
             }
-
-yp2:
-            // no trackers found so contact YP2
-            if (!tracker_check && !ch->sourceHost.host.ip)
-            {
-//                next_yp = false;
-                if (servMgr->rootHost2.isEmpty())
-                    goto yp0;
-
-                if (numYPTries2 >= 3)
-                    goto yp0;
-
-                unsigned int ctime=sys->getTime();
-                if ((ctime-chanMgr->lastYPConnect2) > MIN_YP_RETRY)
-                {
-                    ch->sourceHost.host.fromStrName(servMgr->rootHost2.cstr(),DEFAULT_PORT);
-                    ch->sourceHost.yp = true;
-                    chanMgr->lastYPConnect2=ctime;
-                    numYPTries2++;
-                }
-                if (numYPTries2 < 3)
-                    next_yp = true;
-            }
-yp0:
-            if (!tracker_check && !ch->sourceHost.host.ip && !next_yp) break;
 
             sys->sleepIdle();
-
-        }while((ch->sourceHost.host.ip==0) && (ch->thread.active));
+        }while ((ch->sourceHost.host.ip==0) && (ch->thread.active));
 
         if (!ch->sourceHost.host.ip)
         {
             LOG_ERROR("Channel giving up");
-            ch->setStatus(Channel::S_ERROR);
             break;
         }
 
         if (ch->sourceHost.yp)
         {
-            LOG_CHANNEL("Channel contacting YP, try %d",numYPTries);
+            numYPTries++;
+            LOG_CHANNEL("Channel contacting YP, try %d", numYPTries);
+            peercast::notifyMessage(ServMgr::NT_PEERCAST, "チャンネル "+chName(ch->info)+" をYPに問い合わせています...");
         }else
         {
             LOG_CHANNEL("Channel found hit");
             numYPTries=0;
-            numYPTries2=0;
         }
 
         if (ch->sourceHost.host.ip)
         {
-            bool isTrusted = ch->sourceHost.tracker | ch->sourceHost.yp;
+            //bool isTrusted = ch->sourceHost.tracker | ch->sourceHost.yp;
 
-            //if (ch->sourceHost.tracker)
-            //    peercastApp->notifyMessage(ServMgr::NT_PEERCAST,"Contacting tracker, please wait...");
+            if (ch->sourceHost.tracker)
+                peercast::notifyMessage(ServMgr::NT_PEERCAST, "チャンネル "+chName(ch->info)+" をトラッカーに問い合わせています...");
 
             char ipstr[64];
             ch->sourceHost.host.toStr(ipstr);
@@ -849,11 +653,9 @@ yp0:
                 type = "(YP)";
 
             int error=-1;
-            int got503 = 0;
             try
             {
                 ch->setStatus(Channel::S_CONNECTING);
-                ch->sourceHost.lastContact = sys->getTime();
 
                 if (!ch->sock)
                 {
@@ -862,24 +664,8 @@ yp0:
                 }
 
                 error = ch->handshakeFetch();
-                if (error == 503) {
-                    got503 = 1;
-                    error = 0;
-                }
                 if (error)
                     throw StreamException("Handshake error");
-                if (ch->sourceHost.tracker) connFailCnt = 0;
-
-                if (servMgr->autoMaxRelaySetting) //JP-EX
-                {    
-                    double setMaxRelays = ch->info.bitrate?servMgr->maxBitrateOut/(ch->info.bitrate*1.3):0;
-                    if ((unsigned int)setMaxRelays == 0)
-                        servMgr->maxRelays = 1;
-                    else if ((unsigned int)setMaxRelays > servMgr->autoMaxRelaySetting)
-                        servMgr->maxRelays = servMgr->autoMaxRelaySetting;
-                    else
-                        servMgr->maxRelays = (unsigned int)setMaxRelays;
-                }
 
                 ch->sourceStream = ch->createSource();
 
@@ -888,54 +674,21 @@ yp0:
                     throw StreamException("Stream error");
 
                 error = 0;      // no errors, closing normally.
-//              ch->setStatus(Channel::S_CLOSING);            
-                ch->setStatus(Channel::S_IDLE);
+                ch->setStatus(Channel::S_CLOSING);
 
                 LOG_CHANNEL("Channel closed normally");
             }catch (StreamException &e)
             {
                 ch->setStatus(Channel::S_ERROR);
                 LOG_ERROR("Channel to %s %s : %s", ipstr, type, e.msg);
-                if (!servMgr->allowConnectPCST) //JP-EX
-                {
-                    if (ch->info.srcProtocol == ChanInfo::SP_PEERCAST)
-                        ch->thread.active = false;
-                }
-                //if (!ch->sourceHost.tracker || ((error != 503) && ch->sourceHost.tracker))
-                if (!ch->sourceHost.tracker || (!got503 && ch->sourceHost.tracker))
+                // FIXME: トラッカーに切断されるとヒットリストから消えてしまう。
+                // if (!ch->sourceHost.tracker || ((error != 503) && ch->sourceHost.tracker))
+                if (!ch->sourceHost.tracker)
                     chanMgr->deadHit(ch->sourceHost);
-                if (ch->sourceHost.tracker && error == -1) {
-                    LOG_ERROR("can't connect to tracker");
-                    connFailCnt++;
-                }
-            }
-
-            unsigned int ctime = sys->getTime();
-            if (ch->rawData.lastWriteTime) {
-                ch->lastStopTime = ch->rawData.lastWriteTime;
-                if (isIndexTxt(ch) && ctime - ch->lastStopTime < 60)
-                    ch->lastStopTime = ctime;
-            }
-
-            if (tracker_check && ch->sourceHost.tracker)
-                ch->trackerHit.lastContact = ctime - 30 + (rand() % 30);
-
-            // broadcast source host
-            if (!got503 && !error && ch->sourceHost.host.ip) { // if closed normally
-                ChanPacket pack;
-                MemoryStream mem(pack.data,sizeof(pack.data));
-                AtomStream atom(mem);
-                ch->sourceHost.writeAtoms(atom, ch->info.id);
-                pack.len = mem.pos;
-                pack.type = ChanPacket::T_PCP;
-                GnuID noID;
-                noID.clear();
-                servMgr->broadcastPacket(pack,ch->info.id,ch->remoteID,noID,Servent::T_RELAY);
-                LOG_DEBUG("stream: broadcast sourceHost");
             }
 
             // broadcast quit to any connected downstream servents
-            if (!servMgr->keepDownstreams || !got503 && (ch->sourceHost.tracker || !error)) {
+            {
                 ChanPacket pack;
                 MemoryStream mem(pack.data, sizeof(pack.data));
                 AtomStream atom(mem);
@@ -943,16 +696,7 @@ yp0:
                 pack.len = mem.pos;
                 pack.type = ChanPacket::T_PCP;
                 GnuID noID;
-                noID.clear();
-                servMgr->broadcastPacket(pack,ch->info.id,ch->remoteID,noID,Servent::T_RELAY);
-                LOG_DEBUG("------------ broadcast quit to all downstreams");
-
-                chanMgr->hitlistlock.on();
-                ChanHitList *hl = chanMgr->findHitList(ch->info);
-                if (hl){
-                    hl->clearHits(false);
-                }
-                chanMgr->hitlistlock.off();
+                servMgr->broadcastPacket(pack, ch->info.id, ch->remoteID, noID, Servent::T_RELAY);
             }
 
             if (ch->sourceStream)
@@ -982,29 +726,15 @@ yp0:
             if (error == 404)
             {
                 LOG_ERROR("Channel not found");
-                //if (!next_yp){
-                if ((ch->sourceHost.yp && !next_yp) || ch->sourceHost.tracker) {
-                    chanMgr->hitlistlock.on();
-                    ChanHitList *hl = chanMgr->findHitList(ch->info);
-                    if (hl){
-                        hl->clearHits(true);
-                    }
-                    chanMgr->hitlistlock.off();
-
-                    if(!isIndexTxt(&ch->info))    // for PCRaw (popup)
-                        peercastApp->notifyMessage(ServMgr::NT_PEERCAST,"Channel not found");
-                    return;
-                }
+                return;
             }
         }
 
         ch->lastIdleTime = sys->getTime();
         ch->setStatus(Channel::S_IDLE);
-        ch->skipCount = 0; //JP-EX
-        ch->lastSkipTime = 0;
         while ((ch->checkIdle()) && (ch->thread.active))
         {
-            sys->sleepIdle();
+            sys->sleep(200);
         }
 
         sys->sleepIdle();
@@ -1212,36 +942,35 @@ void Channel::broadcastTrackerUpdate(GnuID &svID, bool force)
         if (!chl)
             throw StreamException("Broadcast channel has no hitlist");
 
-        int numListeners = stealth ? -1 : totalListeners(); //JP-MOD リスナー数隠蔽機能
-        int numRelays = stealth ? -1 : totalRelays(); //JP-MOD リレー数隠蔽機能
+        int numListeners = totalListeners();
+        int numRelays = totalRelays();
 
         unsigned int oldp = rawData.getOldestPos();
         unsigned int newp = rawData.getLatestPos();
 
-        hit.initLocal(numListeners, numRelays, info.numSkips, info.getUptime(), isPlaying(), false, 0, this, oldp, newp);
+        hit.initLocal(numListeners, numRelays, info.numSkips, info.getUptime(), isPlaying(), oldp, newp, this->sourceHost.host);
         hit.tracker = true;
 
-        atom.writeParent(PCP_BCST,10);
-            atom.writeChar(PCP_BCST_GROUP,PCP_BCST_GROUP_ROOT);
-            atom.writeChar(PCP_BCST_HOPS,0);
-            atom.writeChar(PCP_BCST_TTL,11);
-            atom.writeBytes(PCP_BCST_FROM,servMgr->sessionID.id,16);
-            atom.writeInt(PCP_BCST_VERSION,PCP_CLIENT_VERSION);
-            atom.writeInt(PCP_BCST_VERSION_VP,PCP_CLIENT_VERSION_VP);
-            atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX,PCP_CLIENT_VERSION_EX_PREFIX,2);
-            atom.writeShort(PCP_BCST_VERSION_EX_NUMBER,PCP_CLIENT_VERSION_EX_NUMBER);
-            atom.writeParent(PCP_CHAN,4);
-                atom.writeBytes(PCP_CHAN_ID,info.id.id,16);
-                atom.writeBytes(PCP_CHAN_BCID,chanMgr->broadcastID.id,16);
+        atom.writeParent(PCP_BCST, 10);
+            atom.writeChar(PCP_BCST_GROUP, PCP_BCST_GROUP_ROOT);
+            atom.writeChar(PCP_BCST_HOPS, 0);
+            atom.writeChar(PCP_BCST_TTL, 7);
+            atom.writeBytes(PCP_BCST_FROM, servMgr->sessionID.id, 16);
+            atom.writeInt(PCP_BCST_VERSION, PCP_CLIENT_VERSION);
+            atom.writeInt(PCP_BCST_VERSION_VP, PCP_CLIENT_VERSION_VP);
+            atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX, PCP_CLIENT_VERSION_EX_PREFIX, 2);
+            atom.writeShort(PCP_BCST_VERSION_EX_NUMBER, PCP_CLIENT_VERSION_EX_NUMBER);
+            atom.writeParent(PCP_CHAN, 4);
+                atom.writeBytes(PCP_CHAN_ID, info.id.id, 16);
+                atom.writeBytes(PCP_CHAN_BCID, chanMgr->broadcastID.id, 16);
                 info.writeInfoAtoms(atom);
                 info.writeTrackAtoms(atom);
-            hit.writeAtoms(atom,info.id);
+            hit.writeAtoms(atom, info.id);
 
         pack.len = mem.pos;
         pack.type = ChanPacket::T_PCP;
 
         GnuID noID;
-        noID.clear();
         int cnt = servMgr->broadcastPacket(pack, noID, servMgr->sessionID, svID, Servent::T_COUT);
 
         if (cnt)
@@ -1268,52 +997,59 @@ bool    Channel::sendPacketUp(ChanPacket &pack, GnuID &cid, GnuID &sid, GnuID &d
 // -----------------------------------
 void Channel::updateInfo(const ChanInfo &newInfo)
 {
-    if (info.update(newInfo))
+    String oldComment = info.comment;
+    if (!info.update(newInfo))
+        return;
+
+    if (!oldComment.isSame(info.comment))
     {
-        if (isBroadcasting())
-        {
-            unsigned int ctime = sys->getTime();
-            if ((ctime-lastMetaUpdate) > 30)
-            {
-                lastMetaUpdate = ctime;
+        // Shift_JIS かも知れない文字列を UTF8 に変換したい。
+        String newComment = info.comment;
+        newComment.convertTo(String::T_UNICODE);
 
-                ChanPacket pack;
-
-                MemoryStream mem(pack.data,sizeof(pack));
-
-                AtomStream atom(mem);
-
-                atom.writeParent(PCP_BCST,10);
-                    atom.writeChar(PCP_BCST_HOPS,0);
-                    atom.writeChar(PCP_BCST_TTL,7);
-                    atom.writeChar(PCP_BCST_GROUP,PCP_BCST_GROUP_RELAYS);
-                    atom.writeBytes(PCP_BCST_FROM,servMgr->sessionID.id,16);
-                    atom.writeInt(PCP_BCST_VERSION,PCP_CLIENT_VERSION);
-                    atom.writeInt(PCP_BCST_VERSION_VP,PCP_CLIENT_VERSION_VP);
-                    atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX,PCP_CLIENT_VERSION_EX_PREFIX,2);
-                    atom.writeShort(PCP_BCST_VERSION_EX_NUMBER,PCP_CLIENT_VERSION_EX_NUMBER);
-                    atom.writeBytes(PCP_BCST_CHANID,info.id.id,16);
-                    atom.writeParent(PCP_CHAN,3);
-                        atom.writeBytes(PCP_CHAN_ID,info.id.id,16);
-                        info.writeInfoAtoms(atom);
-                        info.writeTrackAtoms(atom);
-
-                pack.len = mem.pos;
-                pack.type = ChanPacket::T_PCP;
-                GnuID noID;
-                noID.clear();
-                servMgr->broadcastPacket(pack,info.id,servMgr->sessionID,noID,Servent::T_RELAY);
-
-                broadcastTrackerUpdate(noID);
-            }
-        }
-
-        ChanHitList *chl = chanMgr->findHitList(info);
-        if (chl)
-            chl->info = info;
-
-        peercastApp->channelUpdate(&info);
+        peercast::notifyMessage(ServMgr::NT_PEERCAST, info.name.str() + "「" + newComment.str() + "」");
     }
+
+    if (isBroadcasting())
+    {
+        unsigned int ctime = sys->getTime();
+        if ((ctime - lastMetaUpdate) > 30)
+        {
+            lastMetaUpdate = ctime;
+
+            ChanPacket pack;
+            MemoryStream mem(pack.data, sizeof(pack));
+            AtomStream atom(mem);
+
+            atom.writeParent(PCP_BCST, 10);
+                atom.writeChar(PCP_BCST_HOPS, 0);
+                atom.writeChar(PCP_BCST_TTL, 7);
+                atom.writeChar(PCP_BCST_GROUP, PCP_BCST_GROUP_RELAYS);
+                atom.writeBytes(PCP_BCST_FROM, servMgr->sessionID.id, 16);
+                atom.writeInt(PCP_BCST_VERSION, PCP_CLIENT_VERSION);
+                atom.writeInt(PCP_BCST_VERSION_VP, PCP_CLIENT_VERSION_VP);
+                atom.writeBytes(PCP_BCST_VERSION_EX_PREFIX, PCP_CLIENT_VERSION_EX_PREFIX, 2);
+                atom.writeShort(PCP_BCST_VERSION_EX_NUMBER, PCP_CLIENT_VERSION_EX_NUMBER);
+                atom.writeBytes(PCP_BCST_CHANID, info.id.id, 16);
+                atom.writeParent(PCP_CHAN, 3);
+                    atom.writeBytes(PCP_CHAN_ID, info.id.id, 16);
+                    info.writeInfoAtoms(atom);
+                    info.writeTrackAtoms(atom);
+
+            pack.len = mem.pos;
+            pack.type = ChanPacket::T_PCP;
+            GnuID noID;
+            servMgr->broadcastPacket(pack, info.id, servMgr->sessionID, noID, Servent::T_RELAY);
+
+            broadcastTrackerUpdate(noID);
+        }
+    }
+
+    ChanHitList *chl = chanMgr->findHitList(info);
+    if (chl)
+        chl->info = info;
+
+    peercastApp->channelUpdate(&info);
 }
 
 // -----------------------------------
@@ -1327,10 +1063,7 @@ ChannelStream *Channel::createSource()
     if (info.srcProtocol == ChanInfo::SP_PEERCAST)
     {
         LOG_CHANNEL("Channel is Peercast");
-        if (servMgr->allowConnectPCST) //JP-EX
-            source = new PeercastStream();
-        else
-            throw StreamException("Channel is not allowed");
+        source = new PeercastStream();
     }
     else if (info.srcProtocol == ChanInfo::SP_PCP)
     {
@@ -1342,8 +1075,20 @@ ChannelStream *Channel::createSource()
     {
         LOG_CHANNEL("Channel is MMS");
         source = new MMSStream();
-    }else
+    }else if (info.srcProtocol == ChanInfo::SP_WMHTTP)
     {
+        switch (info.contentType)
+        {
+            case ChanInfo::T_WMA:
+            case ChanInfo::T_WMV:
+                LOG_CHANNEL("Channel is WMHTTP");
+                source = new WMHTTPStream();
+                break;
+            default:
+                throw StreamException("Channel is WMHTTP - but not WMA/WMV");
+                break;
+        }
+    }else{
         switch (info.contentType)
         {
             case ChanInfo::T_MP3:
@@ -1356,7 +1101,8 @@ ChannelStream *Channel::createSource()
                 break;
             case ChanInfo::T_WMA:
             case ChanInfo::T_WMV:
-                throw StreamException("Channel is WMA/WMV - but not MMS");
+                LOG_CHANNEL("Channel is MMS");
+                source = new MMSStream();
                 break;
             case ChanInfo::T_FLV:
                 LOG_CHANNEL("Channel is FLV");
@@ -1367,6 +1113,14 @@ ChannelStream *Channel::createSource()
                 LOG_CHANNEL("Channel is OGG");
                 source = new OGGStream();
                 break;
+            case ChanInfo::T_MKV:
+                LOG_CHANNEL("Channel is MKV");
+                source = new MKVStream();
+                break;
+            case ChanInfo::T_WEBM:
+                LOG_CHANNEL("Channel is WebM");
+                source = new MKVStream();
+                break;
             default:
                 LOG_CHANNEL("Channel is Raw");
                 source = new RawStream();
@@ -1374,19 +1128,14 @@ ChannelStream *Channel::createSource()
         }
     }
 
-    source->parent = this;
-
     return source;
 }
 
 // -----------------------------------
 bool    Channel::checkBump()
 {
-    unsigned int maxIdleTime = 30;
-    if (isIndexTxt(this)) maxIdleTime = 60;
-
     if (!isBroadcasting() && (!sourceHost.tracker))
-        if (rawData.lastWriteTime && ((sys->getTime() - rawData.lastWriteTime) > maxIdleTime))
+        if (rawData.lastWriteTime && ((sys->getTime() - rawData.lastWriteTime) > 30))
         {
             LOG_ERROR("Channel Auto bumped");
             bump = true;
@@ -1403,8 +1152,6 @@ bool    Channel::checkBump()
 // -----------------------------------
 int Channel::readStream(Stream &in, ChannelStream *source)
 {
-    //sys->sleep(300);
-
     int error = 0;
 
     info.numSkips = 0;
@@ -1417,11 +1164,6 @@ int Channel::readStream(Stream &in, ChannelStream *source)
 
     bool wasBroadcasting=false;
 
-    unsigned int receiveStartTime = 0;
-
-    unsigned int ptime = 0;
-    unsigned int upsize = 0;
-
     try
     {
         while (thread.active && !peercastInst->isQuitting)
@@ -1429,14 +1171,15 @@ int Channel::readStream(Stream &in, ChannelStream *source)
             if (checkIdle())
             {
                 LOG_DEBUG("Channel idle");
+                peercast::notifyMessage(ServMgr::NT_PEERCAST, "チャンネル "+chName(info)+" がアイドル状態になりました。");
                 break;
             }
 
             if (checkBump())
             {
                 LOG_DEBUG("Channel bumped");
+                peercast::notifyMessage(ServMgr::NT_PEERCAST, "チャンネル "+chName(info)+" をバンプしました。");
                 error = -1;
-                bumped = true;
                 break;
             }
 
@@ -1446,57 +1189,32 @@ int Channel::readStream(Stream &in, ChannelStream *source)
                 break;
             }
 
-            if (in.readReady())
+            if (in.readReady(sys->idleSleepTime))
             {
                 error = source->readPacket(in, this);
 
                 if (error)
                     break;
 
-                //if (rawData.writePos > 0)
-                if (rawData.lastWriteTime > 0 || rawData.lastSkipTime > 0)
+                if (rawData.writePos > 0)
                 {
                     if (isBroadcasting())
                     {
-                        if ((sys->getTime() - lastTrackerUpdate) >= chanMgr->hostUpdateInterval)
+                        if ((sys->getTime() - lastTrackerUpdate) >= 120)
                         {
                             GnuID noID;
-                            noID.clear();
                             broadcastTrackerUpdate(noID);
                         }
                         wasBroadcasting = true;
                     }else
                     {
-/*                        if (status != Channel::S_RECEIVING){
-                            receiveStartTime = sys->getTime();
-                        } else if (receiveStartTime && receiveStartTime + 10 > sys->getTime()){
-                            chanMgr->hitlistlock.on();
-                            ChanHitList *hl = chanMgr->findHitList(info);
-                            if (hl){
-                                hl->clearHits(true);
-                            }
-                            chanMgr->hitlistlock.off();
-                            receiveStartTime = 0;
-                        }*/
+                        if (!isReceiving())
+                            peercast::notifyMessage(ServMgr::NT_PEERCAST, info.name.str() + "を受信中です。");
                         setStatus(Channel::S_RECEIVING);
-                        bumped = false;
                     }
-                    //source->updateStatus(this);
+                    source->updateStatus(this);
                 }
             }
-            if (rawData.lastWriteTime > 0 || rawData.lastSkipTime > 0)
-                source->updateStatus(this);
-
-            unsigned int t = sys->getTime();
-            if (t != ptime) {
-                ptime = t;
-                upsize = Servent::MAX_OUTWARD_SIZE;
-            }
-
-            unsigned int len = source->flushUb(in, upsize);
-            upsize -= len;
-
-            sys->sleepIdle();
         }
     }catch (StreamException &e)
     {
@@ -1504,24 +1222,11 @@ int Channel::readStream(Stream &in, ChannelStream *source)
         error = -1;
     }
 
-    if (!servMgr->keepDownstreams) {
-        if (status == Channel::S_RECEIVING){
-            chanMgr->hitlistlock.on();
-            ChanHitList *hl = chanMgr->findHitList(info);
-            if (hl){
-                hl->clearHits(false);
-            }
-            chanMgr->hitlistlock.off();
-        }
-    }
-
-//    setStatus(S_CLOSING);
-    setStatus(S_IDLE);
+    setStatus(S_CLOSING);
 
     if (wasBroadcasting)
     {
         GnuID noID;
-        noID.clear();
         broadcastTrackerUpdate(noID, true);
     }
 
@@ -1549,66 +1254,61 @@ int PeercastStream::readPacket(Stream &in, Channel *ch)
 {
     ChanPacket pack;
 
+    pack.readPeercast(in);
+
+    MemoryStream mem(pack.data, pack.len);
+
+    switch(pack.type)
     {
-
-        pack.readPeercast(in);
-
-        MemoryStream mem(pack.data,pack.len);
-
-        switch(pack.type)
-        {
-            case ChanPacket::T_HEAD:
-                // update sync pos
-                ch->headPack = pack;
-                pack.pos = ch->streamPos;
-                ch->newPacket(pack);
-                ch->streamPos+=pack.len;
-                break;
-            case ChanPacket::T_DATA:
-                pack.pos = ch->streamPos;
-                ch->newPacket(pack);
-                ch->streamPos+=pack.len;
-                break;
-            case ChanPacket::T_META:
-                ch->insertMeta.fromMem(pack.data,pack.len);
+        case ChanPacket::T_HEAD:
+            // update sync pos
+            ch->headPack = pack;
+            pack.pos = ch->streamPos;
+            ch->newPacket(pack);
+            ch->streamPos += pack.len;
+            break;
+        case ChanPacket::T_DATA:
+            pack.pos = ch->streamPos;
+            ch->newPacket(pack);
+            ch->streamPos += pack.len;
+            break;
+        case ChanPacket::T_META:
+            ch->insertMeta.fromMem(pack.data, pack.len);
+            if (pack.len)
+            {
+                XML xml;
+                xml.read(mem);
+                XML::Node *n = xml.findNode("channel");
+                if (n)
                 {
-                    if (pack.len)
-                    {
-                        XML xml;
-                        xml.read(mem);
-                        XML::Node *n = xml.findNode("channel");                    
-                        if (n)
-                        {
-                            ChanInfo newInfo = ch->info;
-                            newInfo.updateFromXML(n);
-                            ChanHitList *chl = chanMgr->findHitList(ch->info);
-                            if (chl)
-                                newInfo.updateFromXML(n);
-                            ch->updateInfo(newInfo);
-                        }
-                    }
+                    ChanInfo newInfo = ch->info;
+                    newInfo.updateFromXML(n);
+                    ChanHitList *chl = chanMgr->findHitList(ch->info);
+                    if (chl)
+                        newInfo.updateFromXML(n);
+                    ch->updateInfo(newInfo);
                 }
-                break;
+            }
+            break;
 #if 0
-            case ChanPacket::T_SYNC:
+        case ChanPacket::T_SYNC:
+            {
+                unsigned int s = mem.readLong();
+                if ((s-ch->syncPos) != 1)
                 {
-                    unsigned int s = mem.readLong();
-                    if ((s-ch->syncPos) != 1)
+                    LOG_CHANNEL("Ch.%d SKIP: %d to %d (%d)", ch->index, ch->syncPos, s, ch->info.numSkips);
+                    if (ch->syncPos)
                     {
-                        LOG_CHANNEL("Ch.%d SKIP: %d to %d (%d)",ch->index,ch->syncPos,s,ch->info.numSkips);
-                        if (ch->syncPos)
-                        {
-                            ch->info.numSkips++;
-                            if (ch->info.numSkips>50)
-                                throw StreamException("Bumped - Too many skips");
-                        }
+                        ch->info.numSkips++;
+                        if (ch->info.numSkips>50)
+                            throw StreamException("Bumped - Too many skips");
                     }
-
-                    ch->syncPos = s;
                 }
-                break;
+
+                ch->syncPos = s;
+            }
+            break;
 #endif
-        }
     }
 
     return 0;
@@ -1682,27 +1382,24 @@ bool Channel::writeVariable(Stream &out, const String &var)
         if (sourceData)
         {
             unsigned int tot = sourceData->getSourceRate();
-            sprintf_s(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(tot));
+            sprintf_s(buf, _countof(buf), "%.0f", BYTES_TO_KBPS(tot));
         }else
             strcpy_s(buf, _countof(buf), "0");
     }else if (var == "genre")
     {
         utf8 = info.genre;
-        utf8.convertTo(String::T_UNICODESAFE);
+        utf8.convertTo(String::T_UNICODE);
         strcpy_s(buf, _countof(buf), utf8.cstr());
     }else if (var == "desc")
     {
         utf8 = info.desc;
-        utf8.convertTo(String::T_UNICODESAFE);
+        utf8.convertTo(String::T_UNICODE);
         strcpy_s(buf, _countof(buf), utf8.cstr());
     }else if (var == "comment")
     {
         utf8 = info.comment;
-        utf8.convertTo(String::T_UNICODESAFE);
+        utf8.convertTo(String::T_UNICODE);
         strcpy_s(buf, _countof(buf), utf8.cstr());
-    }else if (var == "bcstClap") //JP-MOD
-    {
-        strcpy_s(buf, _countof(buf), info.ppFlags & ServMgr::bcstClap ? "1":"0");
     }else if (var == "uptime")
     {
         String uptime;
@@ -1713,19 +1410,22 @@ bool Channel::writeVariable(Stream &out, const String &var)
         strcpy_s(buf, _countof(buf), uptime.cstr());
     }
     else if (var == "type")
-        sprintf_s(buf, _countof(buf), "%s", info.getTypeStr());
+        strcpy_s(buf, _countof(buf), info.getTypeStr());
+    else if (var == "typeLong")
+    {
+        std::string s = std::string() + info.getTypeStr() + " (" + info.getMIMEType() + "; " + info.getTypeExt() + ")";
+
+        if (info.contentTypeStr == "")
+            s += " [contentTypeStr empty]"; // これが起こるのは何かがおかしい
+        if (info.MIMEType == "")
+            s += " [no styp]";
+        if (info.streamExt == "")
+            s += " [no sext]";
+
+        strcpy_s(buf, _countof(buf), s.c_str());
+    }
     else if (var == "ext")
         sprintf_s(buf, _countof(buf), "%s", info.getTypeExt());
-    else if (var == "proto") {
-        switch(info.contentType) {
-        case ChanInfo::T_WMA:
-        case ChanInfo::T_WMV:
-            sprintf_s(buf, _countof(buf), "mms://");
-            break;
-        default:
-            sprintf_s(buf, _countof(buf), "http://");
-        }
-    }
     else if (var == "localRelays")
         sprintf_s(buf, _countof(buf), "%d", localRelays());
     else if (var == "localListeners")
@@ -1734,8 +1434,6 @@ bool Channel::writeVariable(Stream &out, const String &var)
         sprintf_s(buf, _countof(buf), "%d", totalRelays());
     else if (var == "totalListeners")
         sprintf_s(buf, _countof(buf), "%d", totalListeners());
-    else if (var == "totalClaps") //JP-MOD
-        sprintf_s(buf, _countof(buf), "%d", totalClaps());
     else if (var == "status")
         sprintf_s(buf, _countof(buf), "%s", getStatusStr());
     else if (var == "keep")
@@ -1755,13 +1453,12 @@ bool Channel::writeVariable(Stream &out, const String &var)
         else if (var == "track.contactURL")
             utf8 = info.track.contact;
 
-        utf8.convertTo(String::T_UNICODESAFE);
-        strcpy_s(buf, _countof(buf),utf8.cstr());
-
+        utf8.convertTo(String::T_UNICODE);
+        strcpy_s(buf, _countof(buf), utf8.cstr());
     }else if (var == "contactURL")
         sprintf_s(buf, _countof(buf), "%s", info.url.cstr());
     else if (var == "streamPos")
-        sprintf_s(buf, _countof(buf), "%d", streamPos);
+        strcpy_s(buf, _countof(buf), str::group_digits(std::to_string(streamPos), ",").c_str());
     else if (var == "sourceType")
         strcpy_s(buf, _countof(buf), getSrcTypeStr());
     else if (var == "sourceProtocol")
@@ -1769,30 +1466,68 @@ bool Channel::writeVariable(Stream &out, const String &var)
     else if (var == "sourceURL")
     {
         if (sourceURL.isEmpty())
-            sourceHost.host.toStr(buf);
+        {
+            if (srcType == SRC_HTTPPUSH)
+                strcpy_s(buf, _countof(buf), sock->host.str().c_str());
+            else
+            {
+                std::string s;
+                s += sourceHost.str(true);
+                if (sourceHost.uphost.ip)
+                {
+                    s += " recv. from ";
+                    s += sourceHost.uphost.str();
+                }
+                strcpy_s(buf, _countof(buf), s.c_str());
+            }
+        }
         else
             strcpy_s(buf, _countof(buf), sourceURL.cstr());
     }
     else if (var == "headPos")
-        sprintf_s(buf, _countof(buf), "%d", headPack.pos);
+        strcpy_s(buf, _countof(buf), str::group_digits(std::to_string(headPack.pos), ",").c_str());
     else if (var == "headLen")
-        sprintf_s(buf, _countof(buf), "%d", headPack.len);
-    else if (var == "numHits")
+        strcpy_s(buf, _countof(buf), str::group_digits(std::to_string(headPack.len), ",").c_str());
+    else if (var == "buffer")
+    {
+        std::string s;
+        String time;
+        auto lastWritten = (double) sys->getTime() - rawData.lastWriteTime;
+        if (lastWritten < 5)
+            time = "< 5 sec";
+        else
+            time.setFromStopwatch(static_cast<unsigned>(lastWritten));
+        auto stat = rawData.getStatistics();
+        auto& lens = stat.packetLengths;
+        double byterate = (sourceData) ? sourceData->getSourceRateAvg() : 0.0;
+        auto sum = std::accumulate(lens.begin(), lens.end(), 0);
+
+        s += str::format("Length: %s bytes (%.2f sec)\n", str::group_digits(std::to_string(sum)).c_str(), sum / byterate);
+        s += str::format("Packets: %lu (c %d / nc %d)\n", lens.size(), stat.continuations, stat.nonContinuations);
+        if (lens.size() > 0)
+        {
+            auto pmax = std::max_element(lens.begin(), lens.end());
+            auto pmin = std::min_element(lens.begin(), lens.end());
+            s += str::format("Packet length min/avg/max: %u/%lu/%u\n",
+                             *pmin, sum/lens.size(), *pmax);
+        }
+        s += str::format("Last written: %s", time.str().c_str());
+        // s += str::format("First/Safe/Last/Read/Write: %u/%u/%u/%u/%u",
+        //                  rawData.firstPos, rawData.safePos, rawData.lastPos, rawData.readPos, rawData.writePos);
+        strcpy_s(buf, _countof(buf), s.c_str());
+    }
+    else if (var == "headDump")
+    {
+        out.writeString(renderHexDump(std::string(headPack.data, headPack.data + headPack.len)));
+        return true;
+    }else if (var == "numHits")
     {
         ChanHitList *chl = chanMgr->findHitListByID(info.id);
-        int numHits = 0;
-        if (chl){
-//            numHits = chl->numHits();
-            ChanHit *hit;
-            hit = chl->hit;
-            while(hit){
-                numHits++;
-                hit = hit->next;
-            }
-        }
-        sprintf_s(buf, _countof(buf),"%d",numHits);
-    } else if (var == "isBroadcast")
-        strcpy_s(buf, _countof(buf), (type == T_BROADCAST) ? "1":"0");
+        sprintf_s(buf, _countof(buf), "%d", (chl) ? chl->numHits() : 0);
+    }else if (var == "authToken")
+        sprintf_s(buf, _countof(buf), "%s", chanMgr->authToken(info.id).c_str());
+    else if (var == "plsExt")
+        sprintf_s(buf, _countof(buf), "%s", info.getPlayListExt());
     else
         return false;
 
@@ -1826,3 +1561,31 @@ bool Channel::writeVariable(Stream &out, const String &var)
                 //int cnt = chanMgr->broadcastPacketUp(pack, noID, servMgr->sessionID);
                 //LOG_DEBUG("Sent message to %d clients", cnt);
 #endif
+
+// for PCRaw start.
+bool isIndexTxt(ChanInfo *info)
+{
+    size_t len;
+
+    if(    info &&
+        info->contentType == ChanInfo::T_RAW &&
+        info->bitrate <= 32 &&
+        (len = strlen(info->name.cstr())) >= 9 &&
+        !memcmp(info->name.cstr(), "index", 5) &&
+        !memcmp(info->name.cstr()+len-4, ".txt", 4))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool isIndexTxt(Channel *ch)
+{
+    if(ch && !ch->isBroadcasting() && isIndexTxt(&ch->info))
+        return true;
+    else
+        return false;
+}
