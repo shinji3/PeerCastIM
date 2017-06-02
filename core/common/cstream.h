@@ -196,7 +196,6 @@ public:
         readPos = writePos = 0;
         accept = 0;
         lastWriteTime = 0;
-        for (int i = 0; i < MAX_PACKETS; i++) packets[i].reset();
         lock.off();
 
         lastSkipTime = 0;
@@ -248,7 +247,7 @@ public:
         return { lens, cs, ncs };
     }
 
-    ChanPacketv             packets[MAX_PACKETS];
+    ChanPacket             packets[MAX_PACKETS];
     volatile unsigned int   lastPos, firstPos, safePos;
     volatile unsigned int   readPos, writePos;
     unsigned int            accept;
