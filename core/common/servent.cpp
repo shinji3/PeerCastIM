@@ -100,7 +100,6 @@ bool    Servent::isFiltered(int f)
     return servMgr->isFiltered(f, h);
 }
 
-int servent_count = 1;
 // -----------------------------------
 bool Servent::canStream(Channel *ch)
 {
@@ -112,63 +111,37 @@ bool Servent::canStream(Channel *ch)
 
     if (!isPrivate())
     {
-        if  (!ch->isPlaying() || ch->isFull() || ((type == T_DIRECT) && servMgr->directFull()))
-            return false;
-
-        if (!isIndexTxt(ch) && (type == T_RELAY) && (servMgr->relaysFull()))
-            return false;
-
-        Channel *c = chanMgr->channel;
-        int noRelay = 0;
-        unsigned int needRate = 0;
-        unsigned int allRate = 0;
-        while(c){
-            if (c->isPlaying()){
-                int nlr = c->localRelays();
-                allRate += c->info.bitrate * nlr;
-                if ((c != ch) && (nlr == 0)){
-                    if(!isIndexTxt(c))    // for PCRaw (relay)
-                        noRelay++;
-                    needRate+=c->info.bitrate;
-                }
-            }
-            c = c->next;
-        }
-        unsigned int numRelay = servMgr->numStreams(Servent::T_RELAY,false);
-         int diff = servMgr->maxRelays - numRelay;
-        if (ch->localRelays()){
-            if (noRelay > diff){
-                noRelay = diff;
-            }
-        } else {
-            noRelay = 0;
-            needRate = 0;
-        }
-
-        LOG_DEBUG("Relay check: Max=%d Now=%d Need=%d ch=%d",
-            servMgr->maxBitrateOut, allRate, needRate, ch->info.bitrate);
-        //        if  (    !ch->isPlaying()
-        //                || ch->isFull()
-        //                || (allRate + needRate + ch->info.bitrate > servMgr->maxBitrateOut)
-        //                || ((type == T_RELAY) && servMgr->relaysFull() && force_off)    // for PCRaw (relay) (force_off)
-        //                || ((type == T_RELAY) && (((servMgr->numStreams(Servent::T_RELAY,false) + noRelay) >= servMgr->maxRelays)) && force_off)    // for PCRaw (relay) (force_off)
-        //                || ((type == T_DIRECT) && servMgr->directFull())
-        //        ){
-
-        if (allRate + needRate + ch->info.bitrate > servMgr->maxBitrateOut)
+        if  (servMgr->bitrateFull(ch->getBitrate()))
         {
-            LOG_DEBUG("Relay check: NG");
+            LOG_DEBUG("Unable to stream because there is not enough bandwidth left");
             return false;
         }
 
-        if (!isIndexTxt(ch) && (type == T_RELAY) && (numRelay + noRelay >= servMgr->maxRelays))
+        if ((type == T_RELAY) && servMgr->relaysFull())
         {
-            LOG_DEBUG("Relay check: NG");
+            LOG_DEBUG("Unable to stream because server already has max. number of relays");
+            return false;
+        }
+
+        if ((type == T_DIRECT) && servMgr->directFull())
+        {
+            LOG_DEBUG("Unable to stream because server already has max. number of directs");
+            return false;
+        }
+
+        if (!ch->isPlaying())
+        {
+            LOG_DEBUG("Unable to stream because channel is not playing");
+            return false;
+        }
+
+        if ((type == T_RELAY) && ch->isFull())
+        {
+            LOG_DEBUG("Unable to stream because channel already has max. number of relays");
             return false;
         }
     }
 
-    LOG_DEBUG("Relay check: OK");
     return true;
 }
 
@@ -182,10 +155,6 @@ Servent::Servent(int index)
     , next(NULL)
 {
     reset();
-    servent_id = servent_count++;
-    lastSkipTime = 0;
-    lastSkipCount = 0;
-    waitPort = 0;
 }
 
 // -----------------------------------
@@ -207,37 +176,6 @@ void    Servent::kill()
         pcp->kill();
         delete pcp;
     }
-
-    chanMgr->hitlistlock.on();
-    ChanHitList *chl = chanMgr->findHitListByID(chanID);
-    if (chl) {
-        ChanHit *chh = chl->hit;
-        ChanHit *prev = NULL;
-        while (chh) {
-            if (chh->servent_id == this->servent_id){
-                if ((servMgr->kickKeepTime != 0) && (chh->firewalled == 1)){
-                    chh->numHops = 0;
-                    chh->numListeners = 0;
-                    chh->numRelays = 0;
-                    prev = chh;
-                    chh = chh->next;
-                } else {
-                    ChanHit *next = chh->next;
-                    if (prev)
-                        prev->next = next;
-                    else
-                        chl->hit = next;
-
-                    delete chh;
-                    chh = next;
-                }
-            } else {
-                prev = chh;
-                chh = chh->next;
-            }
-        }
-    }
-    chanMgr->hitlistlock.off();
 
     if (sock)
     {
@@ -300,7 +238,6 @@ void Servent::reset()
     loginPassword.clear();
     loginMount.clear();
 
-    bytesPerSecond = 0;
     priorityConnect = false;
     pushSock = NULL;
     sendHeader = true;
@@ -312,10 +249,6 @@ void Servent::reset()
 
     status = S_NONE;
     type = T_NONE;
-
-    channel_id = 0;
-
-    serventHit.init();
 }
 
 // -----------------------------------
@@ -390,7 +323,7 @@ bool Servent::outputPacket(GnuPacket &p, bool pri)
     return r;
 }
 
-// -----------------------------------
+// ------------------------------------------------------------------
 // ソケットでの待ち受けを行う SERVER サーバントを開始する。成功すれば
 // true を返す。
 bool Servent::initServer(Host &h)
@@ -443,7 +376,6 @@ void Servent::initIncoming(ClientSocket *s, unsigned int a)
         allow = a;
         thread.data = this;
         thread.func = incomingProc;
-        thread.finish = false;
 
         setStatus(S_PROTOCOL);
 
@@ -632,7 +564,6 @@ void Servent::handshakeOut()
     bool versionValid = false;
 
     GnuID clientID;
-    clientID.clear();
 
     while (http.nextHeader())
     {
@@ -678,7 +609,6 @@ void Servent::handshakeIn()
     bool diffRootVer = false;
 
     GnuID clientID;
-    clientID.clear();
 
     while (http.nextHeader())
     {
@@ -802,7 +732,6 @@ bool    Servent::pingHost(Host &rhost, GnuID &rsid)
                 atom.writeBytes(PCP_HELO_SESSIONID, servMgr->sessionID.id, 16);
 
             GnuID sid;
-            sid.clear();
 
             int numc, numd;
             ID4 id = atom.read(numc, numd);
@@ -846,8 +775,6 @@ bool    Servent::pingHost(Host &rhost, GnuID &rsid)
     return true;
 }
 
-WLock canStreamLock;
-
 // -----------------------------------
 bool Servent::handshakeStream(ChanInfo &chanInfo)
 {
@@ -855,7 +782,6 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
 
     bool gotPCP=false;
     unsigned int reqPos=0;
-    unsigned short listenPort = 0;
 
     nsSwitchNum=0;
 
@@ -869,8 +795,6 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
             gotPCP = atoi(arg)!=0;
         else if (http.isHeader(PCX_HS_POS))
             reqPos = atoi(arg);
-        else if (http.isHeader(PCX_HS_PORT))
-            listenPort = (unsigned short)atoi(arg);
         else if (http.isHeader("icy-metadata"))
             addMetadata = atoi(arg) > 0;
         else if (http.isHeader(HTTP_HS_AGENT))
@@ -906,137 +830,19 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
     bool chanFound=false;
     bool chanReady=false;
 
-    ChanHit *sourceHit = NULL;
-
     Channel *ch = chanMgr->findChannelByID(chanInfo.id);
     if (ch)
     {
         sendHeader = true;
-        if (reqPos || !isIndexTxt(&chanInfo))
+        if (reqPos)
         {
             streamPos = ch->rawData.findOldestPos(reqPos);
-            //streamPos = ch->rawData.getLatestPos();
         }else
         {
             streamPos = ch->rawData.getLatestPos();
         }
 
-        chanID = chanInfo.id;
-        serventHit.host.ip = getHost().ip;
-        serventHit.host.port = listenPort;
-        if (serventHit.host.globalIP())
-            serventHit.rhost[0] = serventHit.host;
-        else
-            serventHit.rhost[1] = serventHit.host;
-        serventHit.chanID = chanID;
-
-        canStreamLock.on();
-         chanReady = canStream(ch);
-        if (0 && !chanReady && ch->isPlaying())
-        {
-            if (ch->info.getUptime() > 60
-                && servMgr->numStreams(chanID, Servent::T_RELAY, false) == 0)
-            {
-                sourceHit = &ch->sourceHost;  // send source host info
-
-                if (listenPort)
-                {
-                    // connect "this" host later
-                    chanMgr->addHit(serventHit);
-                }
-
-                char tmp[50];
-                getHost().toStr(tmp);
-                LOG_DEBUG("Bump channel, hand over sourceHost to %s", tmp);
-                ch->bump = true;
-            }
-            else if (servMgr->kickUnrelayableHost(chanID, serventHit) != 0)
-            {
-                chanReady = canStream(ch);
-                if (!chanReady)
-                    LOG_DEBUG("*** Kicked unrelayable host, but still cannot stream");
-            }
-        }
-        if (!chanReady) type = T_INCOMING;
-        thread.active = chanReady;
-        setStatus(S_CONNECTED);
-        canStreamLock.off();
-        channel_id = ch->channel_id;
-
-        //JP-Patch add-s
-        if (servMgr->isCheckPushStream())
-        {
-            if (chanReady == true)
-            {
-                Host h = getHost();
-
-                if (!h.isLocalhost()) 
-                {
-                    do 
-                    {
-                        if (strstr(agent.cstr(),"PeerCast/0.119") != NULL) 
-                        {                        
-                            char strip[256];
-                            h.toStr(strip);
-                            LOG_ERROR("Block v0.119 Servent : %s (%s)",strip,agent.cstr());
-                            chanReady = false;
-                            break;
-                        }
-
-/*                        ChanHitList *hits[ChanMgr::MAX_HITLISTS];
-                        int numHits=0;
-                        for(int i=0; i<ChanMgr::MAX_HITLISTS; i++)
-                        {
-                            ChanHitList *chl = &chanMgr->hitlists[i];
-                            if (chl->isUsed())
-                                hits[numHits++] = chl;
-                        }
-                        bool isfw = false;
-                        int numRelay = 0;
-                        for(int i=0; i<numHits; i++)
-                        {
-                            ChanHitList *chl = hits[i];
-                            if (chl->isUsed())
-                            {
-                                for (int j=0; j<ChanHitList::MAX_HITS; j++)
-                                {
-                                    ChanHit *hit = &chl->hits[j];
-                                    if (hit->host.isValid() && (h.ip == hit->host.ip)) 
-                                    {
-                                        if (hit->firewalled)
-                                            isfw = true;
-                                        numRelay = hit->numRelays;
-                                    }
-                                }
-                            }
-                        }
-                        if ((isfw == true) && (numRelay == 0))
-                        {
-                            char strip[256];
-                            h.toStr(strip);
-                            LOG_ERROR("Block firewalled Servent : %s",strip);
-                            chanReady = false;
-                        }*/
-
-                        ChanHitList *chl = chanMgr->findHitList(chanInfo);
-                        ChanHit *hit = (chl ? chl->hit : NULL);
-                        while(hit){
-                            if (hit->host.isValid() && (h.ip == hit->host.ip))
-                            {
-                                if ((hit->firewalled) && (hit->numRelays == 0)){
-                                    char strip[256];
-                                    h.toStr(strip);
-                                    LOG_ERROR("Block firewalled Servent : %s",strip);
-                                    chanReady = false;
-                                }
-                            }
-                            hit = hit->next;
-                        }
-                    }while (0);
-                }        
-            }
-        }
-        //JP-Patch add-e
+        chanReady = canStream(ch);
     }
 
     ChanHitList *chl = chanMgr->findHitList(chanInfo);
@@ -1069,12 +875,9 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
     {
         if (outputProtocol == ChanInfo::SP_PCP)
         {
-            char tbuf[8196];
-            MemoryStream mem(tbuf, sizeof(tbuf));
-            mem.writeLine(HTTP_SC_UNAVAILABLE);
-            mem.writeLineF("%s %s",HTTP_HS_CONTENT,MIME_XPCP);
-            mem.writeLine("");
-            sock->write(tbuf, mem.getPosition());
+            sock->writeLine(HTTP_SC_UNAVAILABLE);
+            sock->writeLineF("%s %s", HTTP_HS_CONTENT, MIME_XPCP);
+            sock->writeLine("");
 
             handshakeIncomingPCP(atom, rhost, remoteID, agent);
 
@@ -1085,23 +888,9 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
 
             ChanHitSearch chs;
 
-            mem.rewind();
-            AtomStream atom2(mem);
-
             int error = PCP_ERROR_QUIT+PCP_ERROR_UNAVAILABLE;
 
-            if (sourceHit) {
-                sourceHit->writeAtoms(atom2, chanInfo.id);
-                char tmp[50];
-                sourceHit->host.toStr(tmp);
-                LOG_DEBUG("relay info(sourceHit): %s", tmp);
-            }
-
-            chanMgr->hitlistlock.on();
-
-            chl = chanMgr->findHitList(chanInfo);
-
-            if (chl && !sourceHit)
+            if (chl)
             {
                 ChanHit best;
 
@@ -1118,10 +907,8 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
                         chs.matchHost = servMgr->serverHost;
                         chs.waitDelay = 2;
                         chs.excludeID = remoteID;
-                        if (chl->pickHits(chs)){
+                        if (chl->pickHits(chs))
                             best = chs.best[0];
-                            LOG_DEBUG("find best hit this network if local IP");
-                        }
                     }
 
                     // find best hit on same network
@@ -1131,45 +918,25 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
                         chs.matchHost = rhost;
                         chs.waitDelay = 2;
                         chs.excludeID = remoteID;
-                        if (chl->pickHits(chs)){
+                        if (chl->pickHits(chs))
                             best = chs.best[0];
-                            LOG_DEBUG("find best hit on same network");
-                        }
-
                     }
 
                     // find best hit on other networks
-/*                    if (!best.host.ip)
+                    if (!best.host.ip)
                     {
                         chs.init();
                         chs.waitDelay = 2;
                         chs.excludeID = remoteID;
-                        if (chl->pickHits(chs)){
+                        if (chl->pickHits(chs))
                             best = chs.best[0];
-                            LOG_DEBUG("find best hit on other networks");
-                        }
-
-                    }*/
+                    }
 
                     if (!best.host.ip)
                         break;
 
-                    best.writeAtoms(atom2, chanInfo.id);
+                    best.writeAtoms(atom, chanInfo.id);
                     cnt++;
-                }
-
-                if (!best.host.ip){
-                    char tmp[50];
-//                    chanMgr->hitlistlock.on();
-                    int rhcnt = chs.getRelayHost(servMgr->serverHost, rhost, remoteID, chl);
-//                    chanMgr->hitlistlock.off();
-                    for (int i = 0; i < rhcnt; i++){
-                        chs.best[i].writeAtoms(atom2, chanInfo.id);
-                        chs.best[i].host.toStr(tmp);
-                        LOG_DEBUG("relay info: %s hops = %d", tmp, chs.best[i].numHops);
-                        best.host.ip = chs.best[i].host.ip;
-                    }
-                    cnt += rhcnt;
                 }
 
                 if (cnt)
@@ -1228,7 +995,7 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
 
                     if (best.host.ip)
                     {
-                        best.writeAtoms(atom2, chanInfo.id);
+                        best.writeAtoms(atom, chanInfo.id);
                         LOG_DEBUG("Sent 1 tracker hit to %s", ripStr);
                     }else if (rhost.port)
                     {
@@ -1247,24 +1014,9 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
                     }
                 }
             }
-            chanMgr->hitlistlock.off();
-
             // return not available yet code
-            atom2.writeInt(PCP_QUIT, error);
-            sock->write(tbuf, mem.getPosition());
+            atom.writeInt(PCP_QUIT, error);
             result = false;
-
-            /*
-            char c[512];
-            // wait disconnect from other host
-            try{
-                while(sock->read(c, sizeof(c))){
-                    sys->sleep(10);
-                }
-            }catch(StreamException &e){
-                LOG_DEBUG("RelayInfoWait: %s",e.msg);
-            }
-            */
         }else
         {
             LOG_DEBUG("Sending channel unavailable");
@@ -1314,6 +1066,7 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
                     case ChanInfo::T_MOV:
                         sock->writeLine("Connection: close");
                         sock->writeLine("Content-Length: 10000000");
+                        sock->writeLineF("%s %s", HTTP_HS_CONTENT, MIME_MOV);
                         break;
                 }
                 sock->writeLineF("%s %s", HTTP_HS_CONTENT, chanInfo.getMIMEType());
@@ -1330,17 +1083,10 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
                     sock->writeLineF("%s %s", HTTP_HS_CONTENT, MIME_MMS);
                 }else
                 {
-                    if (agent.contains("Android"))
-                    {
-                        LOG_DEBUG("INFO: Android client detected.");
-                        sock->writeLineF("%s %s", HTTP_HS_CONTENT, MIME_WMV);
-                    } else
-                    {
-                        sock->writeLine("Content-Type: application/vnd.ms.wms-hdr.asfv1");
-                        if (ch)
-                            sock->writeLineF("Content-Length: %d",ch->headPack.len);
-                        sock->writeLine("Connection: Keep-Alive");
-                    }
+                    sock->writeLine("Content-Type: application/vnd.ms.wms-hdr.asfv1");
+                    if (ch)
+                        sock->writeLineF("Content-Length: %d", ch->headPack.len);
+                    sock->writeLine("Connection: Keep-Alive");
                 }
             } else if (outputProtocol == ChanInfo::SP_PCP)
             {
@@ -1358,13 +1104,6 @@ bool Servent::handshakeStream(ChanInfo &chanInfo)
         {
             handshakeIncomingPCP(atom, rhost, remoteID, agent);
             atom.writeInt(PCP_OK, 0);
-            if (rhost.globalIP())
-                serventHit.rhost[0] = rhost;
-            else
-                serventHit.rhost[1] = rhost;
-            serventHit.sessionID = remoteID;
-            serventHit.numHops = 1;
-            chanMgr->addHit(serventHit);
         }
     }
 
@@ -1642,10 +1381,14 @@ void Servent::processRoot()
     }
 }
 
-// -----------------------------------
-int Servent::givProcMain(ThreadInfo *thread)
+// ------------------------------------------------------------------
+// Pushリレーサーバントのメインプロシージャ。こちらからリモートホスト
+// へ接続に行くが、その後は着信したかのように振る舞い、要求を受け付け
+// る。
+int Servent::givProc(ThreadInfo *thread)
 {
-//  thread->lock();
+    sys->setThreadName(thread, "Servent GIV");
+
     Servent *sv = (Servent*)thread->data;
     try
     {
@@ -1661,15 +1404,6 @@ int Servent::givProcMain(ThreadInfo *thread)
     return 0;
 }
 
-// ------------------------------------------------------------------
-// Pushリレーサーバントのメインプロシージャ。こちらからリモートホスト
-// へ接続に行くが、その後は着信したかのように振る舞い、要求を受け付け
-// る。
-int Servent::givProc(ThreadInfo *thread)
-{
-    SEH_THREAD(givProcMain, Servent::givProc);
-}
-
 // -----------------------------------
 void Servent::handshakeOutgoingPCP(AtomStream &atom, Host &rhost, GnuID &rid, String &agent, bool isTrusted)
 {
@@ -1677,20 +1411,16 @@ void Servent::handshakeOutgoingPCP(AtomStream &atom, Host &rhost, GnuID &rid, St
     bool testFW = (servMgr->getFirewall() == ServMgr::FW_UNKNOWN);
     bool sendBCID = isTrusted && chanMgr->isBroadcasting();
 
-    char tbuf[1024];
-    MemoryStream mem(tbuf, sizeof(tbuf));
-    AtomStream atom2(mem);
-    atom2.writeParent(PCP_HELO,3 + (testFW?1:0) + (nonFW?1:0) + (sendBCID?1:0));
-        atom2.writeString(PCP_HELO_AGENT, PCX_AGENT);
-        atom2.writeInt(PCP_HELO_VERSION, PCP_CLIENT_VERSION);
-        atom2.writeBytes(PCP_HELO_SESSIONID, servMgr->sessionID.id,16);
+    atom.writeParent(PCP_HELO, 3 + (testFW?1:0) + (nonFW?1:0) + (sendBCID?1:0));
+        atom.writeString(PCP_HELO_AGENT, PCX_AGENT);
+        atom.writeInt(PCP_HELO_VERSION, PCP_CLIENT_VERSION);
+        atom.writeBytes(PCP_HELO_SESSIONID, servMgr->sessionID.id, 16);
         if (nonFW)
-            atom2.writeShort(PCP_HELO_PORT, servMgr->serverHost.port);
+            atom.writeShort(PCP_HELO_PORT, servMgr->serverHost.port);
         if (testFW)
-            atom2.writeShort(PCP_HELO_PING, servMgr->serverHost.port);
+            atom.writeShort(PCP_HELO_PING, servMgr->serverHost.port);
         if (sendBCID)
-            atom2.writeBytes(PCP_HELO_BCID, chanMgr->broadcastID.id,16);
-    atom.io.write(tbuf, mem.getPosition());
+            atom.writeBytes(PCP_HELO_BCID, chanMgr->broadcastID.id, 16);
 
     LOG_DEBUG("PCP outgoing waiting for OLEH..");
 
@@ -1706,7 +1436,6 @@ void Servent::handshakeOutgoingPCP(AtomStream &atom, Host &rhost, GnuID &rid, St
     char arg[64];
 
     GnuID clientID;
-    clientID.clear();
     rid.clear();
     int version = 0;
     int disable = 0;
@@ -1759,7 +1488,7 @@ void Servent::handshakeOutgoingPCP(AtomStream &atom, Host &rhost, GnuID &rid, St
                 {
                     char ipstr[64];
                     thisHost.toStr(ipstr);
-                    LOG_DEBUG("Got new ip: %s",ipstr);
+                    LOG_DEBUG("Got new ip: %s", ipstr);
                     servMgr->serverHost.ip = thisHost.ip;
                 }
             }
@@ -1817,9 +1546,6 @@ void Servent::handshakeIncomingPCP(AtomStream &atom, Host &rhost, GnuID &rid, St
 
     GnuID bcID;
     GnuID clientID;
-
-    bcID.clear();
-    clientID.clear();
 
     rhost.port = 0;
 
@@ -1892,39 +1618,32 @@ void Servent::handshakeIncomingPCP(AtomStream &atom, Host &rhost, GnuID &rid, St
         }
     }
 
-    char tbuf[1024];
-    MemoryStream mem(tbuf, sizeof(tbuf));
-    AtomStream atom2(mem);
-    atom2.writeParent(PCP_OLEH, 5);
-        atom2.writeString(PCP_HELO_AGENT, PCX_AGENT);
-        atom2.writeBytes(PCP_HELO_SESSIONID, servMgr->sessionID.id, 16);
-        atom2.writeInt(PCP_HELO_VERSION, PCP_CLIENT_VERSION);
-        atom2.writeInt(PCP_HELO_REMOTEIP, rhost.ip);
-        atom2.writeShort(PCP_HELO_PORT, rhost.port);
+    atom.writeParent(PCP_OLEH, 5);
+        atom.writeString(PCP_HELO_AGENT, PCX_AGENT);
+        atom.writeBytes(PCP_HELO_SESSIONID, servMgr->sessionID.id, 16);
+        atom.writeInt(PCP_HELO_VERSION, PCP_CLIENT_VERSION);
+        atom.writeInt(PCP_HELO_REMOTEIP, rhost.ip);
+        atom.writeShort(PCP_HELO_PORT, rhost.port);
 
     if (version)
     {
         if (version < PCP_CLIENT_MINVERSION)
         {
-            atom2.writeInt(PCP_QUIT, PCP_ERROR_QUIT+PCP_ERROR_BADAGENT);
-            atom.io.write(tbuf, mem.getPosition());
+            atom.writeInt(PCP_QUIT, PCP_ERROR_QUIT+PCP_ERROR_BADAGENT);
             throw StreamException("Agent is not valid");
         }
     }
 
     if (!rid.isSet())
     {
-        atom2.writeInt(PCP_QUIT, PCP_ERROR_QUIT+PCP_ERROR_NOTIDENTIFIED);
-        atom.io.write(tbuf, mem.getPosition());
+        atom.writeInt(PCP_QUIT, PCP_ERROR_QUIT+PCP_ERROR_NOTIDENTIFIED);
         throw StreamException("Remote host not identified");
     }
 
     if (servMgr->isRoot)
     {
-        servMgr->writeRootAtoms(atom2, false);
+        servMgr->writeRootAtoms(atom, false);
     }
-
-    atom.io.write(tbuf, mem.getPosition());
 
     LOG_DEBUG("PCP Incoming handshake complete.");
 }
@@ -2017,10 +1736,10 @@ void Servent::processIncomingPCP(bool suggestOthers)
                     break;
 
                 GnuID noID;
-                noID.clear();
                 best.writeAtoms(atom, noID);
                 cnt++;
             }
+
             if (cnt)
             {
                 LOG_DEBUG("Sent %d tracker(s) to %s", cnt, rstr);
@@ -2037,7 +1756,6 @@ void Servent::processIncomingPCP(bool suggestOthers)
                 {
                     best = chs.best[0];
                     GnuID noID;
-                    noID.clear();
                     int cnt = servMgr->broadcastPushRequest(best, rhost, noID, Servent::T_CIN);
                     LOG_DEBUG("Broadcasted tracker push request to %d clients for %s", cnt, rstr);
                 }
@@ -2086,9 +1804,10 @@ void Servent::processIncomingPCP(bool suggestOthers)
 }
 
 // -----------------------------------
-int Servent::outgoingProcMain(ThreadInfo *thread)
+int Servent::outgoingProc(ThreadInfo *thread)
 {
-//  thread->lock();
+    sys->setThreadName(thread, "COUT");
+
     LOG_DEBUG("COUT started");
 
     Servent *sv = (Servent*)thread->data;
@@ -2123,7 +1842,6 @@ int Servent::outgoingProcMain(ThreadInfo *thread)
                 }
 
                 GnuID noID;
-                noID.clear();
                 ChanHitList *chl = chanMgr->findHitListByID(noID);
                 if (chl)
                 {
@@ -2199,7 +1917,6 @@ int Servent::outgoingProcMain(ThreadInfo *thread)
                 sv->pcpStream->init(sv->remoteID);
 
                 BroadcastState bcs;
-                bcs.servent_id = sv->servent_id;
                 error = 0;
                 while (!error && sv->thread.active && !sv->sock->eof() && servMgr->autoServe)
                 {
@@ -2258,20 +1975,16 @@ int Servent::outgoingProcMain(ThreadInfo *thread)
     return 0;
 }
 
-// -----------------------------------
-int Servent::outgoingProc(ThreadInfo *thread)
+// -------------------------------------------------------------
+// SERVER サーバントから起動されたサーバントのメインプロシージャ
+int Servent::incomingProc(ThreadInfo *thread)
 {
-    SEH_THREAD(outgoingProcMain, Servent::outgoingProc);
-}
-// -----------------------------------
-int Servent::incomingProcMain(ThreadInfo *thread)
-{
-//    thread->lock();
-
     Servent *sv = (Servent*)thread->data;
 
     char ipStr[64];
     sv->sock->host.toStr(ipStr);
+
+    sys->setThreadName(thread, String::format("INCOMING %s", ipStr));
 
     try
     {
@@ -2283,8 +1996,12 @@ int Servent::incomingProcMain(ThreadInfo *thread)
             sv->sock->writeLine(e.msg);
             if (e.code == 401)
                 sv->sock->writeLine("WWW-Authenticate: Basic realm=\"PeerCast\"");
+            sv->sock->writeLineF("Content-Type: text/plain; charset=utf-8");
+            sv->sock->writeLineF("Content-Length: %zu", strlen(e.msg));
             sv->sock->writeLine("");
+            sv->sock->writeString(e.msg);
         }catch (StreamException &) {}
+
         LOG_ERROR("Incoming from %s: %s", ipStr, e.msg);
     }catch (StreamException &e)
     {
@@ -2296,12 +2013,6 @@ int Servent::incomingProcMain(ThreadInfo *thread)
     return 0;
 }
 
-// -------------------------------------------------------------
-// SERVER サーバントから起動されたサーバントのメインプロシージャ
-int Servent::incomingProc(ThreadInfo *thread)
-{
-    SEH_THREAD(incomingProcMain, Servent::incomingProc);
-}
 // -----------------------------------
 void Servent::processServent()
 {
@@ -2336,9 +2047,6 @@ void Servent::processStream(bool doneHandshake, ChanInfo &chanInfo)
             throw StreamException("Channel not ready");
 
         servMgr->totalStreams++;
-
-        Host host = sock->host;
-        host.port = 0;  // force to 0 so we ignore the incoming port
 
         Channel *ch = chanMgr->findChannelByID(chanID);
         if (!ch)
@@ -2415,6 +2123,8 @@ bool Servent::waitForChannelHeader(ChanInfo &info)
 // -----------------------------------
 void Servent::sendRawChannel(bool sendHead, bool sendData)
 {
+    WriteBufferedStream bsock(sock);
+
     try
     {
         sock->setWriteTimeout(DIRECT_WRITE_TIMEOUT*1000);
@@ -2429,8 +2139,11 @@ void Servent::sendRawChannel(bool sendHead, bool sendData)
 
         if (sendHead)
         {
-            ch->headPack.writeRaw(*sock);
+            ch->headPack.writeRaw(bsock);
             streamPos = ch->headPack.pos + ch->headPack.len;
+            auto ncpos = ch->rawData.getLatestNonContinuationPos();
+            if (ncpos && streamPos < ncpos)
+                streamPos = ncpos;
             LOG_DEBUG("Sent %d bytes header ", ch->headPack.len);
         }
 
@@ -2439,6 +2152,7 @@ void Servent::sendRawChannel(bool sendHead, bool sendData)
             unsigned int streamIndex = ch->streamIndex;
             unsigned int connectTime = sys->getTime();
             unsigned int lastWriteTime = connectTime;
+            bool         skipContinuation = true;
 
             while ((thread.active) && sock->active())
             {
@@ -2454,7 +2168,7 @@ void Servent::sendRawChannel(bool sendHead, bool sendData)
                     }
 
                     ChanPacket rawPack;
-                    if (ch->rawData.findPacket(streamPos, rawPack))
+                    while (ch->rawData.findPacket(streamPos, rawPack))
                     {
                         if (syncPos != rawPack.sync)
                             LOG_ERROR("Send skip: %d", rawPack.sync-syncPos);
@@ -2462,24 +2176,28 @@ void Servent::sendRawChannel(bool sendHead, bool sendData)
 
                         if ((rawPack.type == ChanPacket::T_DATA) || (rawPack.type == ChanPacket::T_HEAD))
                         {
-                            rawPack.writeRaw(*sock);
-                            lastWriteTime = sys->getTime();
+                            if (!skipContinuation || !rawPack.cont)
+                            {
+                                skipContinuation = false;
+                                rawPack.writeRaw(bsock);
+                                lastWriteTime = sys->getTime();
+                            }else{
+                                LOG_DEBUG("raw: skip continuation %s packet pos=%d", rawPack.type==ChanPacket::T_DATA?"DATA":"HEAD", rawPack.pos);
+                            }
                         }
 
                         if (rawPack.pos < streamPos)
                             LOG_DEBUG("raw: skip back %d", rawPack.pos - streamPos);
-                        streamPos = rawPack.pos+rawPack.len;
-                    } else if (sock->readReady()) {
-                        char c;
-                        int error = sock->readUpto(&c, 1);
-                        if (error == 0) sock->close();
+                        streamPos = rawPack.pos + rawPack.len;
                     }
                 }
 
                 if ((sys->getTime() - lastWriteTime) > DIRECT_WRITE_TIMEOUT)
                     throw TimeoutException();
 
-                sys->sleepIdle();
+                bsock.flush();
+                sys->sleep(200);
+                //sys->sleepIdle();
             }
         }
     }catch (StreamException &e)
@@ -2487,85 +2205,6 @@ void Servent::sendRawChannel(bool sendHead, bool sendData)
         LOG_ERROR("Stream channel: %s", e.msg);
     }
 }
-
-#if 0
-// -----------------------------------
-void Servent::sendRawMultiChannel(bool sendHead, bool sendData)
-{
-    try
-    {
-        unsigned int chanStreamIndex[ChanMgr::MAX_CHANNELS];
-        unsigned int chanStreamPos[ChanMgr::MAX_CHANNELS];
-        GnuID chanIDs[ChanMgr::MAX_CHANNELS];
-        int numChanIDs=0;
-        for (int i=0; i<ChanMgr::MAX_CHANNELS; i++)
-        {
-            Channel *ch = &chanMgr->channels[i];
-            if (ch->isPlaying())
-                chanIDs[numChanIDs++]=ch->info.id;
-        }
-
-        setStatus(S_CONNECTED);
-
-        if (sendHead)
-        {
-            for (int i=0; i<numChanIDs; i++)
-            {
-                Channel *ch = chanMgr->findChannelByID(chanIDs[i]);
-                if (ch)
-                {
-                    LOG_DEBUG("Starting RawMulti stream: %s", ch->info.name.cstr());
-                    ch->headPack.writeRaw(*sock);
-                    chanStreamPos[i] = ch->headPack.pos + ch->headPack.len;
-                    chanStreamIndex[i] = ch->streamIndex;
-                    LOG_DEBUG("Sent %d bytes header", ch->headPack.len);
-                }
-            }
-        }
-
-        if (sendData)
-        {
-            unsigned int connectTime=sys->getTime();
-
-            while ((thread.active) && sock->active())
-            {
-                for (int i=1; i<numChanIDs; i++)
-                {
-                    Channel *ch = chanMgr->findChannelByID(chanIDs[i]);
-                    if (ch)
-                    {
-                        if (chanStreamIndex[i] != ch->streamIndex)
-                        {
-                            chanStreamIndex[i] = ch->streamIndex;
-                            chanStreamPos[i] = ch->headPack.pos;
-                            LOG_DEBUG("sendRawMulti got new stream index for chan %d", i);
-                        }
-
-                        ChanPacket rawPack;
-                        if (ch->rawData.findPacket(chanStreamPos[i], rawPack))
-                        {
-                            if ((rawPack.type == ChanPacket::T_DATA) || (rawPack.type == ChanPacket::T_HEAD))
-                                rawPack.writeRaw(*sock);
-
-                            if (rawPack.pos < chanStreamPos[i])
-                                LOG_DEBUG("raw: skip back %d", rawPack.pos-chanStreamPos[i]);
-                            chanStreamPos[i] = rawPack.pos+rawPack.len;
-
-                            //LOG("raw at %d: %d %d", streamPos, ch->rawData.getStreamPos(ch->rawData.firstPos), ch->rawData.getStreamPos(ch->rawData.lastPos));
-                        }
-                    }
-                    break;
-                }
-
-                sys->sleepIdle();
-            }
-        }
-    }catch (StreamException &e)
-    {
-        LOG_ERROR("Stream channel: %s", e.msg);
-    }
-}
-#endif
 
 // -----------------------------------
 void Servent::sendRawMetaChannel(int interval)
@@ -2655,8 +2294,8 @@ void Servent::sendRawMetaChannel(int interval)
                                     title.convertTo(String::T_META);
                                     url.convertTo(String::T_META);
 
-                                    sprintf_s(tmp, _countof(tmp), "StreamTitle='%s';StreamUrl='%s';\0", title.cstr(), url.cstr());
-                                    int len = (((int)strlen(tmp) + 15+1) / 16);
+                                    sprintf_s(tmp, _countof(tmp), "StreamTitle='%s';StreamUrl='%s';", title.cstr(), url.cstr());
+                                    int len = ((static_cast<int>(strlen(tmp)) + 15+1) / 16);
                                     sock->writeChar(len);
                                     sock->write(tmp, len*16);
 
@@ -2738,20 +2377,15 @@ void Servent::sendPeercastChannel()
     }
 }
 
-//WLock canStreamLock;
-
 // -----------------------------------
 void Servent::sendPCPChannel()
 {
-    bool skipCheck = false;
-    unsigned int ptime = 0;
-    int npacket = 0, upsize = 0;
-
     Channel *ch = chanMgr->findChannelByID(chanID);
     if (!ch)
         throw StreamException("Channel not found");
 
-    AtomStream atom(*sock);
+    WriteBufferedStream bsock(sock);
+    AtomStream atom(bsock);
 
     pcpStream = new PCPStream(remoteID);
     int error=0;
@@ -2760,146 +2394,94 @@ void Servent::sendPCPChannel()
     {
         LOG_DEBUG("Starting PCP stream of channel at %d", streamPos);
 
-//      setStatus(S_CONNECTED);
+        setStatus(S_CONNECTED);
 
-        //canStreamLock.on();
-        //thread.active = canStream(ch);
-        //setStatus(S_CONNECTED);
-        //canStreamLock.off();
+        atom.writeParent(PCP_CHAN, 3 + ((sendHeader)?1:0));
+            atom.writeBytes(PCP_CHAN_ID, chanID.id, 16);
+            ch->info.writeInfoAtoms(atom);
+            ch->info.writeTrackAtoms(atom);
+            if (sendHeader)
+            {
+                atom.writeParent(PCP_CHAN_PKT, 3);
+                    atom.writeID4(PCP_CHAN_PKT_TYPE, PCP_CHAN_PKT_HEAD);
+                    atom.writeInt(PCP_CHAN_PKT_POS, ch->headPack.pos);
+                    atom.writeBytes(PCP_CHAN_PKT_DATA, ch->headPack.data, ch->headPack.len);
 
-        lastSkipTime = 0;
-        lastSkipCount = 0;
-        waitPort = 0;
-
-        if (thread.active){
-            atom.writeParent(PCP_CHAN,3 + ((sendHeader)?1:0));
-                atom.writeBytes(PCP_CHAN_ID,chanID.id,16);
-                ch->info.writeInfoAtoms(atom);
-                ch->info.writeTrackAtoms(atom);
-                if (sendHeader)
-                {
-                    atom.writeParent(PCP_CHAN_PKT,3);
-                    atom.writeID4(PCP_CHAN_PKT_TYPE,PCP_CHAN_PKT_HEAD);
-                    atom.writeInt(PCP_CHAN_PKT_POS,ch->headPack.pos);
-                    atom.writeBytes(PCP_CHAN_PKT_DATA,ch->headPack.data,ch->headPack.len);
-
-                    if (streamPos == 0)
-                        streamPos = ch->headPack.pos+ch->headPack.len;
-                    LOG_DEBUG("Sent %d bytes header",ch->headPack.len);
-                }
-        }
+                streamPos = ch->headPack.pos+ch->headPack.len;
+                LOG_DEBUG("Sent %d bytes header", ch->headPack.len);
+            }
 
         unsigned int streamIndex = ch->streamIndex;
-
-        ChanPacket rawPack;
-        char pbuf[ChanPacket::MAX_DATALEN*3];
-        MemoryStream mems(pbuf,sizeof(pbuf));
-        AtomStream atom2(mems);
 
         while (thread.active)
         {
             Channel *ch = chanMgr->findChannelByID(chanID);
 
-            if (ch)
+            if (!ch)
             {
-
-                if (streamIndex != ch->streamIndex)
-                {
-                    streamIndex = ch->streamIndex;
-                    streamPos = ch->headPack.pos;
-                    LOG_DEBUG("sendPCPStream got new stream index");
-                }
-
-                mems.rewind();
-
-                if (ch->rawData.findPacket(streamPos, rawPack))
-                {
-                    if ((streamPos < rawPack.pos) && !rawPack.skip){
-                        if (skipCheck){
-                            char tmp[32];
-                            getHost().IPtoStr(tmp);
-                            LOG_NETWORK("##### send skipping ##### %d (%d, %d) -> %s", (rawPack.pos - streamPos), streamPos, rawPack.pos, tmp);
-
-                            if (sys->getTime() == lastSkipTime) {
-                                LOG_DEBUG("##### skip all buffer");
-                                streamPos = ch->rawData.getLatestPos();
-                                continue;
-                            }
-
-                            lastSkipTime = sys->getTime();
-                            lastSkipCount++;
-                        } else {
-                            skipCheck = true;
-                        }
-                    }
-
-                    if (rawPack.type == ChanPacket::T_HEAD)
-                    {
-                        atom2.writeParent(PCP_CHAN,2);
-                            atom2.writeBytes(PCP_CHAN_ID,chanID.id,16);
-                            atom2.writeParent(PCP_CHAN_PKT,3);
-                                atom2.writeID4(PCP_CHAN_PKT_TYPE,PCP_CHAN_PKT_HEAD);
-                                atom2.writeInt(PCP_CHAN_PKT_POS,rawPack.pos);
-                                atom2.writeBytes(PCP_CHAN_PKT_DATA,rawPack.data,rawPack.len);
-
-                        sock->write(pbuf, mems.getPosition());
-                    }else if (rawPack.type == ChanPacket::T_DATA)
-                    {
-                        atom2.writeParent(PCP_CHAN,2);
-                            atom2.writeBytes(PCP_CHAN_ID,chanID.id,16);
-                            atom2.writeParent(PCP_CHAN_PKT,3);
-                                atom2.writeID4(PCP_CHAN_PKT_TYPE,PCP_CHAN_PKT_DATA);
-                                atom2.writeInt(PCP_CHAN_PKT_POS,rawPack.pos);
-                                atom2.writeBytes(PCP_CHAN_PKT_DATA,rawPack.data,rawPack.len);
-
-#ifdef WIN32
-                        sock->bufferingWrite(pbuf, mems.getPosition());
-                        lastSkipTime = sock->bufList.lastSkipTime;
-                        lastSkipCount = sock->bufList.skipCount;
-#else
-                        sock->write(pbuf, mems.getPosition());
-#endif
-                    }
-
-                    if (rawPack.pos < streamPos)
-                        LOG_DEBUG("pcp: skip back %d", rawPack.pos-streamPos);
-
-                    //LOG_DEBUG("Sending %d-%d (%d, %d, %d)", rawPack.pos, rawPack.pos+rawPack.len, ch->streamPos, ch->rawData.getLatestPos(), ch->rawData.getOldestPos());
-
-                    streamPos = rawPack.pos + rawPack.len;
-                }
-            } else {
-                throw StreamException("Channel not found");
+                error = PCP_ERROR_QUIT + PCP_ERROR_OFFAIR;
+                break;
             }
 
-#ifdef WIN32
-            sock->bufferingWrite(NULL, 0);
-            lastSkipTime = sock->bufList.lastSkipTime;
-            lastSkipCount = sock->bufList.skipCount;
-#endif
+            if (streamIndex != ch->streamIndex)
+            {
+                streamIndex = ch->streamIndex;
+                streamPos = ch->headPack.pos;
+                LOG_DEBUG("sendPCPStream got new stream index");
+            }
+
+            ChanPacket rawPack;
+
+            // FIXME: ストリームインデックスの変更を確かめずにどんどん読み出して大丈夫？
+            while (ch->rawData.findPacket(streamPos, rawPack))
+            {
+                if (rawPack.type == ChanPacket::T_HEAD)
+                {
+                    atom.writeParent(PCP_CHAN, 2);
+                        atom.writeBytes(PCP_CHAN_ID, chanID.id, 16);
+                        atom.writeParent(PCP_CHAN_PKT, 3);
+                            atom.writeID4(PCP_CHAN_PKT_TYPE, PCP_CHAN_PKT_HEAD);
+                            atom.writeInt(PCP_CHAN_PKT_POS, rawPack.pos);
+                            atom.writeBytes(PCP_CHAN_PKT_DATA, rawPack.data, rawPack.len);
+                }else if (rawPack.type == ChanPacket::T_DATA)
+                {
+                    if (rawPack.cont)
+                    {
+                        atom.writeParent(PCP_CHAN, 2);
+                            atom.writeBytes(PCP_CHAN_ID, chanID.id, 16);
+                            atom.writeParent(PCP_CHAN_PKT, 4);
+                                atom.writeID4(PCP_CHAN_PKT_TYPE, PCP_CHAN_PKT_DATA);
+                                atom.writeInt(PCP_CHAN_PKT_POS, rawPack.pos);
+                                atom.writeChar(PCP_CHAN_PKT_CONTINUATION, true);
+                                atom.writeBytes(PCP_CHAN_PKT_DATA, rawPack.data, rawPack.len);
+                    }else
+                    {
+                        atom.writeParent(PCP_CHAN, 2);
+                            atom.writeBytes(PCP_CHAN_ID, chanID.id, 16);
+                            atom.writeParent(PCP_CHAN_PKT, 3);
+                                atom.writeID4(PCP_CHAN_PKT_TYPE, PCP_CHAN_PKT_DATA);
+                                atom.writeInt(PCP_CHAN_PKT_POS, rawPack.pos);
+                                atom.writeBytes(PCP_CHAN_PKT_DATA, rawPack.data, rawPack.len);
+                    }
+                }
+
+                if (rawPack.pos < streamPos)
+                    LOG_DEBUG("pcp: skip back %d", rawPack.pos-streamPos);
+
+                //LOG_DEBUG("Sending %d-%d (%d, %d, %d)", rawPack.pos, rawPack.pos+rawPack.len, ch->streamPos, ch->rawData.getLatestPos(), ch->rawData.getOldestPos());
+
+                streamPos = rawPack.pos + rawPack.len;
+            }
+            bsock.flush();
+
             BroadcastState bcs;
-            bcs.servent_id = servent_id;
-//            error = pcpStream->readPacket(*sock,bcs);
+            // どうしてここで bsock を使ったら動かないのか理解していない。
+            error = pcpStream->readPacket(*sock, bcs);
+            if (error)
+                throw StreamException("PCP exception");
 
-            unsigned int t = sys->getTime();
-            if (t != ptime) {
-                ptime = t;
-                npacket = MAX_PROC_PACKETS;
-                upsize = MAX_OUTWARD_SIZE;
-            }
-
-            int len = pcpStream->flushUb(*sock, upsize);
-            upsize -= len;
-
-            while (npacket > 0 && sock->readReady()) {
-                npacket--;
-                error = pcpStream->readPacket(*sock,bcs);
-                if (error)
-                    throw StreamException("PCP exception");
-            }
-
-            sys->sleepIdle();
-
+            sys->sleep(200);
+            //sys->sleepIdle();
         }
 
         LOG_DEBUG("PCP channel stream closed normally.");
@@ -2910,22 +2492,22 @@ void Servent::sendPCPChannel()
 
     try
     {
-        pcpStream->flush(*sock);
         atom.writeInt(PCP_QUIT, error);
     }catch (StreamException &) {}
 }
 
-// -----------------------------------
-int Servent::serverProcMain(ThreadInfo *thread)
+// -----------------------------------------------------------------
+// ソケットでの待ち受けを行う SERVER サーバントのメインプロシージャ。
+int Servent::serverProc(ThreadInfo *thread)
 {
-//    thread->lock();
-
     Servent *sv = (Servent*)thread->data;
 
     try
     {
         if (!sv->sock)
             throw StreamException("Server has no socket");
+
+        sys->setThreadName(thread, String::format("LISTEN %hu", sv->sock->host.port));
 
         sv->setStatus(S_LISTENING);
 
@@ -2937,75 +2519,38 @@ int Servent::serverProcMain(ThreadInfo *thread)
         else
             LOG_DEBUG("Server started: %s", servIP);
 
-        while ((thread->active) && (sv->sock->active()))
+        while (thread->active && sv->sock->active())
         {
-            if (servMgr->numActiveOnPort(sv->sock->host.port) < servMgr->maxServIn)
+            if (!sv->sock->readReady(100))
+                continue;
+
+            if (servMgr->numActiveOnPort(sv->sock->host.port) >= servMgr->maxServIn)
             {
-                ClientSocket *cs = sv->sock->accept();
-
-                // 不正なソースアドレス(IPv4マルチキャスト)を除外
-                if (cs && (((cs->host.ip >> 24) & 0xF0) == 0xE0))
-                {
-                    char ip[64];
-                    cs->host.toStr(ip);
-                    cs->close();
-                    LOG_ERROR("reject incoming multicast address: %s", ip);
-                    peercastApp->notifyMessage(ServMgr::NT_PEERCAST, "reject multicast address");
-                } else
-                if (cs)
-                {
-                    // countermeasure against DoS Atk
-                    if (cs->host.ip != (0x7F000001)) // bypass loopback
-                    {
-                        // check blacklist
-                        addrCont clientAddr(cs->host.ip);
-                        servMgr->IP_blacklist->lock();
-                        if (servMgr->IP_blacklist->find(clientAddr))
-                        {
-                            // blacklisted
-                            servMgr->IP_blacklist->unlock();
-
-                            LOG_DEBUG("REFUSED: %d.%d.%d.%d", (cs->host.ip >> 24), (cs->host.ip >> 16) & 0xFF, (cs->host.ip >> 8) & 0xFF, cs->host.ip & 0xFF);
-                            cs->close();
-                            sys->sleep(100);
-
-                            continue;
-                        }
-
-                        servMgr->IP_blacklist->unlock();
-                        LOG_DEBUG("ACCEPT: %d.%d.%d.%d", (cs->host.ip >> 24), (cs->host.ip >> 16) & 0xFF, (cs->host.ip >> 8) & 0xFF, cs->host.ip & 0xFF);
-
-
-                        // check graylist
-                        servMgr->IP_graylist->lock();
-                        size_t idx;
-                        if (servMgr->IP_graylist->find(clientAddr, &idx))
-                        {
-                            // update
-                            ++(servMgr->IP_graylist->at(idx));
-                            LOG_DEBUG("UPDATE: %d.%d.%d.%d", (cs->host.ip >> 24), (cs->host.ip >> 16) & 0xFF, (cs->host.ip >> 8) & 0xFF, cs->host.ip & 0xFF);
-                        } else
-                        {
-                            // graylisted
-                            servMgr->IP_graylist->push_back(clientAddr);
-                            LOG_DEBUG("GRAYED: %d.%d.%d.%d", (cs->host.ip >> 24), (cs->host.ip >> 16) & 0xFF, (cs->host.ip >> 8) & 0xFF, cs->host.ip & 0xFF);
-                        }
-                        servMgr->IP_graylist->unlock();
-                    }
-
-                    LOG_DEBUG("accepted incoming");
-                    Servent *ns = servMgr->allocServent();
-                    if (ns)
-                    {
-                        servMgr->lastIncoming = sys->getTime();
-                        ns->servPort = sv->sock->host.port;
-                        ns->networkID = servMgr->networkID;
-                        ns->initIncoming(cs,sv->allow);
-                    }else
-                        LOG_ERROR("Out of servents");
-                }
+                sys->sleep(100);
+                continue;
             }
-            sys->sleep(10);
+
+            ClientSocket *cs = sv->sock->accept();
+            if (!cs)
+            {
+                LOG_ERROR("accept failed");
+                continue;
+            }
+
+            LOG_DEBUG("accepted incoming");
+            Servent *ns = servMgr->allocServent();
+            if (!ns)
+            {
+                LOG_ERROR("Out of servents");
+                cs->close();
+                delete cs;
+                continue;
+            }
+
+            servMgr->lastIncoming = sys->getTime();
+            ns->servPort = sv->sock->host.port;
+            ns->networkID = servMgr->networkID;
+            ns->initIncoming(cs, sv->allow);
         }
     }catch (StreamException &e)
     {
@@ -3019,13 +2564,6 @@ int Servent::serverProcMain(ThreadInfo *thread)
     return 0;
 }
 
-// -----------------------------------------------------------------
-// ソケットでの待ち受けを行う SERVER サーバントのメインプロシージャ。
-int Servent::serverProc(ThreadInfo *thread)
-{
-    SEH_THREAD(serverProcMain, Servent::serverProc);
-}
- 
 // -----------------------------------
 bool    Servent::writeVariable(Stream &s, const String &var)
 {
@@ -3036,121 +2574,7 @@ bool    Servent::writeVariable(Stream &s, const String &var)
     else if (var == "status")
         strcpy_s(buf, _countof(buf), getStatusStr());
     else if (var == "address")
-    {
-        if (servMgr->enableGetName) //JP-EX s
-        {
-            getHost().toStr(buf);
-            char h_ip[64];
-            Host h = getHost();
-            h.toStr(h_ip);
-
-/*            ChanHitList *hits[ChanMgr::MAX_HITLISTS];
-            int numHits=0;
-            for(int i=0; i<ChanMgr::MAX_HITLISTS; i++)
-            {
-                ChanHitList *chl = &chanMgr->hitlists[i];
-                if (chl->isUsed())
-                    hits[numHits++] = chl;
-            }
-            bool ishit,isfw;
-            ishit = isfw = false;
-            int numRelay = 0;
-            if (numHits) 
-            {
-                for(int k=0; k<numHits; k++)
-                {
-                    ChanHitList *chl = hits[k];
-                    if (chl->isUsed())
-                    {
-                        for (int j=0; j<ChanHitList::MAX_HITS; j++)
-                        {
-                            ChanHit *hit = &chl->hits[j];
-                            if (hit->host.isValid() && (h.ip == hit->host.ip))
-                            {
-                                ishit = true;
-                                if (hit->firewalled)
-                                    isfw = true;
-                                numRelay += hit->numRelays;
-                            }
-                        }
-                    }
-                }
-            }
-            strcpy_s(buf, _countof(buf),"");
-            if (ishit == true)
-            {
-                if (isfw == true)
-                {
-                    if (numRelay== 0)
-                        strcat_s(buf, _countof(buf),"<font color=red>");
-                    else 
-                        strcat_s(buf, _countof(buf),"<font color=orange>");
-                }
-                else
-                    strcat_s(buf, _countof(buf),"<font color=green>");
-            }
-            strcat_s(buf, _countof(buf),h_ip);
-            char h_name[128];
-            if (ClientSocket::getHostname(h_name,h.ip))
-            {
-                strcat_s(buf, _countof(buf),"[");
-                strcat_s(buf, _countof(buf),h_name);
-                strcat_s(buf, _countof(buf),"]");
-            }
-            if (ishit == true) 
-            {
-                strcat_s(buf, _countof(buf),"</font>");
-            }
-        } //JP-EX e*/
-
-
-            bool isfw = false;
-            bool isRelay = true;
-            int numRelay = 0;
-            ChanHitList *chl = chanMgr->findHitListByID(chanID);
-            if (chl){
-                ChanHit *hit = chl->hit;
-                while(hit){
-                    if (hit->host.isValid() && (h.ip == hit->host.ip)){
-                        isfw = hit->firewalled;
-                        isRelay = hit->relay;
-                        numRelay = hit->numRelays;
-                        break;
-                    }
-                    hit = hit->next;
-                }
-            }
-            strcpy_s(buf, _countof(buf), "");
-            if (isfw){
-                if (numRelay == 0){
-                    strcat_s(buf, _countof(buf),"<font color=red>");
-                } else {
-                    strcat_s(buf, _countof(buf),"<font color=orange>");
-                }
-            } else {
-                if (!isRelay){
-                    if (numRelay==0){
-                        strcpy_s(buf, _countof(buf),"<font color=purple>");
-                    } else {
-                        strcpy_s(buf, _countof(buf),"<font color=blue>");
-                    }
-                } else {
-                    strcpy_s(buf, _countof(buf),"<font color=green>");
-                }
-            }
-            strcat_s(buf, _countof(buf),h_ip);
-            char h_name[128];
-            if (ClientSocket::getHostname(h_name,sizeof(h_name),h.ip)) //JP-MOD(BOF対策)
-            {
-                strcat_s(buf, _countof(buf),"[");
-                strcat_s(buf, _countof(buf),h_name);
-                strcat_s(buf, _countof(buf),"]");
-            }
-            strcat_s(buf, _countof(buf),"</font>");
-        }
-        else 
-            getHost().toStr(buf);
-    }
+        getHost().toStr(buf);
     else if (var == "agent")
         strcpy_s(buf, _countof(buf), agent.cstr());
     else if (var == "bitrate")
@@ -3160,7 +2584,15 @@ bool    Servent::writeVariable(Stream &s, const String &var)
             unsigned int tot = sock->bytesInPerSec() + sock->bytesOutPerSec();
             sprintf_s(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(tot));
         }else
-            strcpy_s(buf, _countof(buf), "0");
+            strcpy_s(buf, _countof(buf), "0.0");
+    }else if (var == "bitrateAvg")
+    {
+        if (sock)
+        {
+            unsigned int tot = sock->stat.bytesInPerSecAvg() + sock->stat.bytesOutPerSecAvg();
+            sprintf_s(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(tot));
+        }else
+            strcpy_s(buf, _countof(buf), "0.0");
     }else if (var == "uptime")
     {
         String uptime;
