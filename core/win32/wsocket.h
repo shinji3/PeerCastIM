@@ -30,59 +30,59 @@
 class WSAClientSocket : public ClientSocket
 {
 public:
-	static void	init();
+    static void	init();
 
     WSAClientSocket()
-	:sockNum(0)
-	,writeCnt(0)
-	,rbPos(0)
-	,rbDataSize(0)
+        :sockNum(0)
+        , writeCnt(0)
+        , rbPos(0)
+        , rbDataSize(0)
     {
     }
 
-	~WSAClientSocket(){
-		bufList.clear();
-	}
+    ~WSAClientSocket() {
+        bufList.clear();
+    }
 
-	virtual void	open(Host &);
-	virtual int		read(void *, int);
-	virtual int		readUpto(void *, int);
-	virtual void	write(const void *, int);
-	virtual void	bind(Host &);
-	virtual void	connect();
-	virtual void	close();
-	virtual ClientSocket * accept();
-	virtual bool	active() { return sockNum != 0; }
-	virtual bool	readReady(int timeoutMilliseconds);
-	virtual Host 	getLocalHost();
-	virtual void	setBlocking(bool);
-	void	setReuse(bool);
-	void	setNagle(bool);
-	void	setLinger(int);
-	void	setBufSize(int size);
+    virtual void	open(Host &);
+    virtual int		read(void *, int);
+    virtual int		readUpto(void *, int);
+    virtual void	write(const void *, int);
+    virtual void	bind(Host &);
+    virtual void	connect();
+    virtual void	close();
+    virtual ClientSocket * accept();
+    virtual bool	active() { return sockNum != 0; }
+    virtual bool	readReady(int timeoutMilliseconds);
+    virtual Host 	getLocalHost();
+    virtual void	setBlocking(bool);
+    void	setReuse(bool);
+    void	setNagle(bool);
+    void	setLinger(int);
+    void	setBufSize(int size);
 
-	static	struct in_addr		*resolveHost(const char *);
+    static	struct in_addr		*resolveHost(const char *);
 
-	void	checkTimeout(bool,bool);
-	void	checkTimeout2(bool,bool);
+    void	checkTimeout(bool, bool);
+    void	checkTimeout2(bool, bool);
 
-	virtual void	bufferingWrite(const void*, int);
-	void	checkBuffering(bool, bool);
+    virtual void	bufferingWrite(const void*, int);
+    void	checkBuffering(bool, bool);
 
-	unsigned int writeCnt;
-	SOCKET sockNum;
-	struct sockaddr_in remoteAddr;
+    unsigned int writeCnt;
+    SOCKET sockNum;
+    struct sockaddr_in remoteAddr;
 
-	enum {RBSIZE = 8192};
-	char apReadBuf[RBSIZE];
-	int rbPos;
-	int rbDataSize;
+    enum { RBSIZE = 8192 };
+    char apReadBuf[RBSIZE];
+    int rbPos;
+    int rbDataSize;
 
-	WLock sockLock;
+    WLock sockLock;
 };
 
 
 
 
 #endif
- 
+
