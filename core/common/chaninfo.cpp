@@ -555,7 +555,7 @@ void ChanInfo::readInfoAtoms(AtomStream &atom, int numc)
             atom.readString(streamExt.data, sizeof(streamExt.data), d);
         }else if (id == PCP_CHAN_INFO_PPFLAGS) //JP-MOD
         {
-            ppFlags = (unsigned int)atom.readInt();
+            ppFlags = static_cast<unsigned>(atom.readInt());
         }else
             atom.skip(c, d);
     }
