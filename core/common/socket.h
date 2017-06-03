@@ -131,7 +131,7 @@ public:
         writeTimeout = 5000;
     }
 
-    virtual ~ClientSocket(){
+    virtual ~ClientSocket() {
 #ifdef WIN32
         bufList.clear();
 #endif
