@@ -49,7 +49,7 @@ void    Stats::update()
     unsigned int ctime = sys->getTime();
 
     unsigned int diff = ctime - lastUpdate;
-    if (diff >= /* 5 */ 1)
+    if (diff >= 5)
     {
         for (int i=0; i<Stats::MAX; i++)
         {
