@@ -40,9 +40,6 @@ static const int PCP_CLIENT_MINVERSION  = 1200;
 
 #define PCP_CLIENT_VERSION_EX_PREFIX "IM"
 static const int PCP_CLIENT_VERSION_EX_NUMBER = 51;
-
-#define PCP_CLIENT_DIST_URL "http://pecaim.net/"
-#define PCP_CLIENT_VERSION_URL "version.pecaim.net"
 // ------------------------------------------------
 
 #endif
