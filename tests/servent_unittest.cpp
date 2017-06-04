@@ -10,6 +10,7 @@
 #include "servmgr.h"
 
 #include "mockclientsocket.h"
+#include "win32\wsocket.h"
 
 using namespace cgi;
 
@@ -29,7 +30,15 @@ namespace ServentFixture
         }
 
         ServentFixture()
-            : s(0) {}
+            : s(0) {
+            WSAClientSocket::init();
+        }
+
+        ~ServentFixture()
+        {
+            WSACleanup();
+        }
+
         Servent s;
 
         TEST_METHOD(ServentFixture_initialState)
