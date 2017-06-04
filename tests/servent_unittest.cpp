@@ -21,6 +21,13 @@ namespace ServentFixture
     {
     public:
 
+        TEST_CLASS_INITIALIZE(ClassInitialize)
+        {
+            peercastApp = new MockPeercastApplication();
+            peercastInst = new MockPeercastInstance();
+            peercastInst->init();
+        }
+
         ServentFixture()
             : s(0) {}
         Servent s;
@@ -99,7 +106,7 @@ namespace ServentFixture
 
             s.handshakeHTTP(http, true);
 
-            Assert::AreEqual("HTTP/1.0 302 Found\r\nLocation: /html/ja/index.html\r\n\r\n",
+            Assert::AreEqual("HTTP/1.0 302 Found\r\nLocation: /html/en/index.html\r\n\r\n",
                 mock->outgoing.str().c_str());
         }
 
@@ -113,7 +120,7 @@ namespace ServentFixture
 
             s.handshakeIncoming();
 
-            Assert::AreEqual("HTTP/1.0 302 Found\r\nLocation: /html/ja/index.html\r\n\r\n",
+            Assert::AreEqual("HTTP/1.0 302 Found\r\nLocation: /html/en/index.html\r\n\r\n",
                 mock->outgoing.str().c_str());
         }
 

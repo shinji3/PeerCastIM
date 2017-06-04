@@ -100,7 +100,7 @@ namespace ChanHitListFixture
                 root->write(mem, 0);
                 mem.buf[mem.pos] = '\0';
 
-                Assert::AreEqual("<hits hosts=\"0\" listeners=\"0\" relays=\"0\" firewalled=\"0\" closest=\"0\" furthest=\"0\" newest=\"0\">\n<host ip=\"209.209.209.209:7144\" hops=\"0\" listeners=\"0\" relays=\"0\" uptime=\"0\" push=\"0\" relay=\"1\" direct=\"0\" cin=\"1\" stable=\"0\" version=\"0\" update=\"0\" tracker=\"0\"/>\n</hits>\n", mem.buf);
+                Assert::AreEqual("<hits hosts=\"1\" listeners=\"0\" relays=\"0\" firewalled=\"0\" closest=\"0\" furthest=\"0\" newest=\"0\">\n<host ip=\"209.209.209.209:7144\" hops=\"0\" listeners=\"0\" relays=\"0\" uptime=\"0\" push=\"0\" relay=\"1\" direct=\"0\" cin=\"1\" stable=\"0\" version=\"0\" update=\"0\" tracker=\"0\"/>\n</hits>\n", mem.buf);
                 delete root;
             }
 
@@ -111,7 +111,7 @@ namespace ChanHitListFixture
                 root->write(mem, 0);
                 mem.buf[mem.pos] = '\0';
 
-                Assert::AreEqual("<hits hosts=\"0\" listeners=\"0\" relays=\"0\" firewalled=\"0\" closest=\"0\" furthest=\"0\" newest=\"0\"/>\n", mem.buf);
+                Assert::AreEqual("<hits hosts=\"1\" listeners=\"0\" relays=\"0\" firewalled=\"0\" closest=\"0\" furthest=\"0\" newest=\"0\"/>\n", mem.buf);
                 delete root;
             }
 
