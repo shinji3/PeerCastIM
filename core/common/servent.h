@@ -51,12 +51,6 @@ public:
         MAX_OUTPACKETS = 32 // max. output packets per queue (normal/priority)
     };
 
-    enum
-    {
-        MAX_PROC_PACKETS = 300,
-        MAX_OUTWARD_SIZE = 1024 * 10
-    };
-
     enum TYPE
     {
         T_NONE,             // Not allocated
@@ -86,12 +80,12 @@ public:
         S_FREE
     };
 
-    enum PROTOCOL
-    {
-        P_UNKNOWN,
-        P_GNUTELLA06,
-        P_PCP
-    };
+    // enum PROTOCOL
+    // {
+    //     P_UNKNOWN,
+    //     P_GNUTELLA06,
+    //     P_PCP
+    // };
 
     enum SORT
     {
@@ -143,20 +137,15 @@ public:
 
     // static funcs that do the actual work in the servent thread
     static THREAD_PROC  serverProc(ThreadInfo *);
-    static THREAD_PROC  serverProcMain(ThreadInfo *);
     static THREAD_PROC  outgoingProc(ThreadInfo *);
-    static THREAD_PROC  outgoingProcMain(ThreadInfo *);
     static THREAD_PROC  incomingProc(ThreadInfo *);
-    static THREAD_PROC  incomingProcMain(ThreadInfo *);
     static THREAD_PROC  givProc(ThreadInfo *);
-    static THREAD_PROC  givProcMain(ThreadInfo *);
     static THREAD_PROC  pcpProc(ThreadInfo *);
     static THREAD_PROC  fetchProc(ThreadInfo *);
 
     static bool pingHost(Host &, GnuID &);
 
     bool    getLocalURL(char *);
-    bool    getLocalTypeURL(char *, ChanInfo::TYPE);
 
     // various types of handshaking are needed
     void    handshakePLS(ChanHitList **, int, bool);
@@ -184,7 +173,6 @@ public:
     void    handshakePOST(HTTP &http);
     void    handshakeGIV(const char*);
     void    handshakeSOURCE(char * in, bool isHTTP);
-    void    handshakeHEAD(HTTP &http, bool isHTTP);
 
     void    handshakeHTTPPush(const std::string& args);
     void    handshakeWMHTTPPush(HTTP& http, const std::string& path);
@@ -219,7 +207,6 @@ public:
     void    triggerChannel(char *, ChanInfo::PROTOCOL, bool);
     void    sendPeercastChannel();
     void    sendRawChannel(bool, bool);
-//  void    sendRawMultiChannel(bool, bool);
     void    sendRawMetaChannel(int);
     void    sendPCPChannel();
     void    checkPCPComms(Channel *, AtomStream &);
@@ -291,7 +278,6 @@ public:
 
     GnuPacketBuffer     outPacketsNorm, outPacketsPri;
 
-    unsigned int        bytesPerSecond;
     bool                flowControl;
 
     Servent             *next;
@@ -302,7 +288,6 @@ public:
     int                 servent_id;
     unsigned int        lastSkipTime;
     unsigned int        lastSkipCount;
-    unsigned int        waitPort;
 
     ChanHit             serventHit;
 
@@ -326,7 +311,6 @@ private:
     void CMD_reg(char *cmd, HTTP& http, HTML& html, String& jumpStr);
     void CMD_relay(char *cmd, HTTP& http, HTML& html, String& jumpStr);
     void CMD_save(char *cmd, HTTP& http, HTML& html, String& jumpStr);
-    void CMD_setmeta(char *cmd, HTTP& http, HTML& html, String& jumpStr);
     void CMD_shutdown(char *cmd, HTTP& http, HTML& html, String& jumpStr);
     void CMD_stop(char *cmd, HTTP& http, HTML& html, String& jumpStr);
     void CMD_stopserv(char *cmd, HTTP& http, HTML& html, String& jumpStr);
