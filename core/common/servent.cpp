@@ -34,7 +34,6 @@
 #include "atom.h"
 #include "pcp.h"
 #include "version2.h"
-#include "win32/seh.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
