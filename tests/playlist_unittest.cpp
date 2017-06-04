@@ -46,15 +46,14 @@ namespace PlayListFixture
         {
             Assert::AreEqual(0, pls.numURLs);
 
-            pls.addURL("http://127.0.0.1:7144/stream/00000000000000000000000000000000.flv", "A ch", "http://jbbs.shitaraba.net/bbs/read.cgi/internet/7144/0000000000/");
+            pls.addURL("http://127.0.0.1:7144/stream/00000000000000000000000000000000.flv", "A ch");
 
             Assert::AreEqual(1, pls.numURLs);
             Assert::AreEqual("http://127.0.0.1:7144/stream/00000000000000000000000000000000.flv", pls.urls[0].cstr());
             Assert::AreEqual("A ch", pls.titles[0].cstr());
-            Assert::AreEqual("http://jbbs.shitaraba.net/bbs/read.cgi/internet/7144/0000000000/", pls.contacturls[0].cstr());
 
             // cannot add beyond maxURLs
-            pls.addURL("http://127.0.0.1:7144/stream/FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.flv", "B ch", "http://jbbs.shitaraba.net/bbs/read.cgi/internet/7144/FFFFFFFFFF/");
+            pls.addURL("http://127.0.0.1:7144/stream/FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.flv", "B ch");
 
             Assert::AreEqual(1, pls.numURLs);
         }
@@ -103,7 +102,7 @@ namespace PlayListFixture
             asx.write(mem);
             Assert::AreEqual("<ASX Version=\"3.0\">\r\n"
                 "<ENTRY>\r\n"
-                "<REF href = \"http://127.0.0.1:7144/stream/01234567890123456789012345678901.wmv?auth=44d5299e57ad9274fee7960a9fa60bfd\" />\r\n"
+                "<REF href=\"http://127.0.0.1:7144/stream/01234567890123456789012345678901.wmv?auth=44d5299e57ad9274fee7960a9fa60bfd\" />\r\n"
                 "</ENTRY>\r\n"
                 "</ASX>\r\n",
                 mem.str().c_str());

@@ -45,23 +45,20 @@ public:
         type = t;
         urls = new ::String[max];
         titles = new ::String[max];
-        contacturls = new ::String[max]; //JP-MOD
     }
 
     ~PlayList()
     {
         delete [] urls;
         delete [] titles;
-        delete [] contacturls; //JP-MOD
     }
 
-    void    addURL(const char *url, const char *tit, const char *contacturl/*JP-MOD*/)
+    void    addURL(const char *url, const char *tit)
     {
         if (numURLs < maxURLs)
         {
             urls[numURLs].set(url);
             titles[numURLs].set(tit);
-            contacturls[numURLs].set(contacturl); //JP-MOD
             numURLs++;
         }
     }
@@ -106,7 +103,6 @@ public:
     TYPE        type;
     int         numURLs, maxURLs;
     ::String    *urls, *titles;
-    ::String    *contacturls; //JP-MOD
 };
 
 #endif

@@ -18,51 +18,12 @@
 // ------------------------------------------------
 
 #include "playlist.h"
-#include "servmgr.h"
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
-
-// -----------------------------------
-#define isHTMLSPECIAL(a) ((a == '&') || (a == '\"') || (a == '\'') || (a == '<') || (a == '>'))
-static void SJIStoSJISSAFE(char *string, size_t size)
-{
-    size_t pos;
-    for(pos = 0;
-        (string[pos] != '\0') && (pos < size);
-        ++pos)
-    {
-        if(isHTMLSPECIAL(string[pos]))
-            string[pos] = ' ';
-    }
-}
-
-// -----------------------------------
-static void WriteASXInfo(Stream &out, String &title, String &contacturl, String::TYPE tEncoding = String::T_UNICODESAFE) //JP-MOD
-{
-    if(!title.isEmpty())
-    {
-        String titleEncode;
-        titleEncode = title;
-        titleEncode.convertTo(tEncoding);
-        if(tEncoding == String::T_SJIS)
-            SJIStoSJISSAFE(titleEncode.cstr(), String::MAX_LEN);
-        out.writeLineF("<TITLE>%s</TITLE>", titleEncode.cstr());
-    }
-
-    if(!contacturl.isEmpty())
-    {
-        String contacturlEncode;
-        contacturlEncode = contacturl;
-        contacturlEncode.convertTo(tEncoding);
-        if(tEncoding == String::T_SJIS)
-            SJIStoSJISSAFE(contacturlEncode.cstr(), String::MAX_LEN);
-        out.writeLineF("<MOREINFO HREF = \"%s\" />", contacturlEncode.cstr());
-    }
-}
 
 // -----------------------------------
 void PlayList::readASX(Stream &in)
@@ -88,7 +49,7 @@ void PlayList::readASX(Stream &in)
                     char *hr = rf->findAttr("href");
                     if (hr)
                     {
-                        addURL(hr, "", "");
+                        addURL(hr, "");
                         //LOG("asx url %s", hr);
                     }
                 }
@@ -108,7 +69,7 @@ void PlayList::readSCPLS(Stream &in)
         {
             char *p = strstr(tmp, "=");
             if (p)
-                addURL(p+1, "", "");
+                addURL(p+1, "");
         }
     }
 }
@@ -120,7 +81,7 @@ void PlayList::readPLS(Stream &in)
     while (in.readLine(tmp, sizeof(tmp)))
     {
         if (tmp[0] != '#')
-            addURL(tmp, "", "");
+            addURL(tmp, "");
     }
 }
 
@@ -158,23 +119,10 @@ void PlayList::writeRAM(Stream &out)
 void PlayList::writeASX(Stream &out)
 {
     out.writeLine("<ASX Version=\"3.0\">");
-
-    String::TYPE tEncoding = String::T_SJIS;
-    if (servMgr->asxDetailedMode == 2)
-    {
-        out.writeLine("<PARAM NAME = \"Encoding\" VALUE = \"utf-8\" />"); //JP-MOD Memo: UTF-8 cannot be used in some recording software.
-        tEncoding = String::T_UNICODESAFE;
-    }
-
-    if (servMgr->asxDetailedMode)
-        WriteASXInfo(out, titles[0], contacturls[0], tEncoding); //JP-MOD
-
     for (int i=0; i<numURLs; i++)
     {
         out.writeLine("<ENTRY>");
-        if (servMgr->asxDetailedMode)
-            WriteASXInfo(out, titles[i], contacturls[i], tEncoding); //JP-MOD
-        out.writeLineF("<REF href = \"%s\" />", urls[i].cstr());
+        out.writeLineF("<REF href=\"%s\" />", urls[i].cstr());
         out.writeLine("</ENTRY>");
     }
     out.writeLine("</ASX>");
@@ -192,7 +140,7 @@ void PlayList::addChannel(const char *path, ChanInfo &info)
 
     sprintf_s(url.cstr(), ::String::MAX_LEN, "%s/stream/%s%s?auth=%s",
             path, nid, info.getTypeExt(), chanMgr->authToken(info.id).c_str());
-    addURL(url.cstr(), info.name, info.url);
+    addURL(url.cstr(), info.name);
 }
 
 // -----------------------------------
