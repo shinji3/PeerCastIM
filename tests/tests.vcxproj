@@ -215,7 +215,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onig_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onigmo_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\core\win32\lib\$(OutDir);..\core\lib\win32</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -231,7 +231,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onig_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onigmo_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\core\win32\lib\$(OutDir);..\core\lib\win32</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -247,7 +247,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onig_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onigmo_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\core\win32\lib\$(OutDir);..\core\lib\win64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -263,7 +263,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onig_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onigmo_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\core\win32\lib\$(OutDir);..\core\lib\win64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -283,7 +283,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onig_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onigmo_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\core\win32\lib\$(OutDir);..\core\lib\win32</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -303,7 +303,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onig_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onigmo_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\core\win32\lib\$(OutDir);..\core\lib\win32</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -323,7 +323,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onig_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onigmo_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\core\win32\lib\$(OutDir);..\core\lib\win32</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -343,7 +343,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onig_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onigmo_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\core\win32\lib\$(OutDir);..\core\lib\win64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -363,7 +363,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onig_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onigmo_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\core\win32\lib\$(OutDir);..\core\lib\win64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -383,7 +383,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onig_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdiplus.lib;comsuppw.lib;Wininet.lib;corelib.lib;onigmo_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\core\win32\lib\$(OutDir);..\core\lib\win64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
