@@ -12,8 +12,9 @@ Environment::Environment()
 Environment::Environment(char *src[])
     : Environment()
 {
-    for (int i = 0; src[i] != NULL; i++)
-        m_vars.push_back(src[i]);
+    char *m_var = *src;
+    for (int i = 0; m_var[i] != NULL; i++)
+        m_vars.push_back(&m_var[i]);
 }
 
 Environment::~Environment()
