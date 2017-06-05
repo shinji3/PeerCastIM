@@ -368,10 +368,10 @@
     <ClInclude Include="..\..\common\regexp.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\oniguruma.h">
+    <ClInclude Include="..\..\common\env.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\env.h">
+    <ClInclude Include="..\..\common\onigmo.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
   </ItemGroup>
