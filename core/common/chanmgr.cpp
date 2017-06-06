@@ -221,7 +221,11 @@ static std::string chName(ChanInfo& info)
     if (info.name.str().empty())
         return info.id.str().substr(0,7) + "...";
     else
-        return info.name.str();
+    {
+        String newName = info.name;
+        newName.convertTo(String::T_SJIS);
+        return newName.str();
+    }
 }
 
 // -----------------------------------
