@@ -21,17 +21,9 @@ namespace EnvironmentFixture
 
         TEST_METHOD(EnvironmentFixture_constructor)
         {
-            size_t env_str_size;
-            LPWCH wenv_str = GetEnvironmentStrings();
-            size_t wenv_str_size = wcslen(wenv_str) + 1;
-            char *env_str = new char[wenv_str_size];
+            Environment e(environ);
 
-            wcstombs_s(&env_str_size, env_str, wenv_str_size, wenv_str, _TRUNCATE);
-            Environment e(&env_str);
             Assert::AreNotEqual(0, (int)e.size());
-
-            delete[] env_str;
-            FreeEnvironmentStrings(wenv_str);
         }
 
         TEST_METHOD(EnvironmentFixture_hasKey)
