@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-接続 - PeerCast - 
+ヘッドパケット - PeerCast - 
 {@if servMgr.serverName}
 {$servMgr.serverName}
 {@else}
@@ -124,35 +124,7 @@ notifyMe();
 <td width="14.286%"><div align="center"><a href="logout.html">ログアウト</a></div></td>
 </tr>
 </table>
-<DIV class="reloader" data-url="connections.html?fragment=content" data-interval="{$servMgr.refreshHTML}">
-{@fragment content}
-<FORM action=/admin method=get>
-<TABLE width="95%" align=center border=0>
-<TBODY>
-<TR align=middle bgColor=#cccccc class="normal">
-<TD><B>タイプ<B></B></B></TD>
-<TD><B>状態</B></TD>
-<TD><B>時間</B></TD>
-<TD><B>IP:ポート</B></TD>
-<TD><B>エージェント</B></TD>
-<TD><B>Kbps</B></TD>
-<TD><B>Avg. bitrate</B></TD>
-</TR>
-{@loop servMgr.numServents}
-<tr class="normal" {@if loop.indexEven} bgColor=#eeeeee {@else} bgColor=#dddddd {@end}>
-<TD>{$loop.servent.type}</TD>
-<TD>{$loop.servent.status}</TD>
-<TD>{$loop.servent.uptime}</TD>
-<TD>{$loop.servent.address}</TD>
-<TD>{$loop.servent.agent}</TD>
-<TD align=right>{$loop.servent.bitrate}</TD>
-<TD align=right>{$loop.servent.bitrateAvg}</TD>
-</TR>
-{@end} </TBODY>
-</TABLE>
-</FORM>
-{@end}
-</DIV>
+<pre style="text-align: left; width: 40.5em">{$page.channel.headDump}</pre>
 <hr size="1">
 <div align="center" class="normal-small"> &copy; 2005 peercast.org</div>
 </div>

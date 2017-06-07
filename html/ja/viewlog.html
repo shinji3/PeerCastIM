@@ -1,90 +1,149 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<!-- saved from url=(0040)http://localhost:8144/admin?page=viewlog -->
-<html><!-- InstanceBegin template="/Templates/peercast-jp.dwt" codeOutsideHTMLIsLocked="false" -->
+<html>
 <head>
-<!-- InstanceBeginEditable name="title" -->
-<title>PeerCast on {$servMgr.serverIP}:{$servMgr.serverPort}</title>
-<!-- InstanceEndEditable --> 
+<title>
+ログ表示 - PeerCast - 
+{@if servMgr.serverName}
+{$servMgr.serverName}
+{@else}
+{$servMgr.serverIP}:{$servMgr.serverPort}
+{@end}
+</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link href="peercast.css" rel="stylesheet" type="text/css">
-<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script src="/assets/js/jquery-3.2.1.min.js"></script>
+<script src="js/reloader.js"></script>
 </head>
-
 <body bgcolor="#DDDDDD">
+<div class="reloader" data-url="?fragment=notifications" data-interval="{$servMgr.refreshHTML}">
+{@fragment notifications}
+<script>
+var notifications = [];
+var t = {!sys.time};
+var r = {!servMgr.refreshHTML};
+{@loop notificationBuffer.numNotifications}
+{@if !loop.notification.isRead}
+if (t - {$loop.notification.unixTime} <= (2*r))
+notifications.push({ time: "{\loop.notification.time}", type: "{\loop.notification.type}", message: "{\loop.notification.message}" });
+{@end}
+{@end}
+// {$notificationBuffer.markAsRead}
+function notifyMe() {
+if (!("Notification" in window)) {
+alert("This browser does not support system notifications");
+}
+else if (Notification.permission === "granted") {
+for (var i = 0; i < notifications.length; i++) {
+spawnNotification(notifications[i].message, "/assets/images/small-logo.png", notifications[i].type);
+}
+}
+else if (Notification.permission !== 'denied') {
+Notification.requestPermission(function (permission) {
+if (permission === "granted") {
+for (var i = 0; i < notifications.length; i++) {
+spawnNotification(notifications[i].message, "/assets/images/small-logo.png", notifications[i].type);
+}
+}
+});
+}
+}
+function spawnNotification(theBody,theIcon,theTitle) {
+var options = {
+body: theBody,
+icon: theIcon
+}
+var n = new Notification(theTitle,options);
+setTimeout(n.close.bind(n), 5000);
+}
+notifyMe();
+</script>
+{@end}
+</div>
 <div align="center">
-  <table width="100%" height="100%" border="1" align="center" cellpadding="5" cellspacing="0" bordercolor="#999999" bgcolor="#FFFFFF">
-    <tr> 
-      <td align="center" valign="top">
+<table width="100%" height="100%" border="1" align="center" cellpadding="5" cellspacing="0" bordercolor="#999999" bgcolor="#FFFFFF">
+<tr>
+<td class="container" align="center" valign="top">
 <div align="center">
 <div align="center">
-            <table width="100%" border="0">
-              <tr> 
-                <td nowrap>
+<table width="100%" border="0">
+<tr>
+<td nowrap>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                    <tr> 
-                      <td valign="middle" nowrap> <table border="0" align="center" cellpadding="1" cellspacing="0">
-                          <tr> 
-                            <td rowspan="2" valign="middle"><a href="http://www.peercast.org"><img src="images/small-logo.png" alt="www.peercast.org" border="0"></a></td>
-                            <td valign="bottom"><div align="left"><span class="titlelinksBig">peercast</span></div></td>
-                          </tr>
-                          <tr> 
-                            <td valign="top"><div align="center"><span class="normal-small">{$servMgr.version}</span> 
-                              </div></td>
-                          </tr>
-                        </table>
-                        <div align="center"><span class="titlelinksBig"> </span> 
-                        </div></td>
-                      <td>
-					  {@if servMgr.upgradeURL} 
-	  				    <div align="center" class="normal">
-                        <a href="{$servMgr.upgradeURL}" target="_blank"><strong><font color="#FF0000"> 新バージョンがダウンロードできるようになりました。!!! </font></strong></a>
-						</div>
-					  {@else}
-	  				    <div align="center" class="normal-small">
-					  	{$servMgr.rootMsg}
-						</div>						
-                      {@end} 
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div align="center"></div>
-          <table width="100%" border="1" cellpadding="1" cellspacing="0">
-            <tr class="normal"> 
-              <td><div align="center"><a href="index.html">情報</a></div></td>
-              <td><div align="center"><a href="http://yp.peercast.org/?host={$servMgr.serverLocalIP}:{$servMgr.serverPort1}" target="_blank">Yellow 
-                  Pages</a></div></td>
-              <td><div align="center"><a href="relays.html">リレー</a></div></td>
-              <td><div align="center"><a href="broadcast.html">配信</a></div></td>
-              <td><div align="center"><a href="connections.html">コネクション</a></div></td>
-              <td><div align="center"><a href="settings.html">設定</a></div></td>
-              <td><div align="center"><a href="viewlog.html">ログ表示</a></div></td>
-              <td><div align="center"><a href="logout.html">ログアウト</a></div></td>
-            </tr>
-          </table>
-          <br>
-          <!-- InstanceBeginEditable name="content" -->
-          <div align="left" class="normal"> 
-            <p class="normal"><A 
-href="/admin?cmd=clearlog">ログを消去<BR>
-              </A><A 
-href="#bottom">末尾へ</A><a name="top"></a><br>
-              <br>
-              <span class="normal-small">{$sys.log.dumpHTML}</span><A 
-href="#top"><BR>
-              <span class="normal">先頭へ</span></A><span class="normal"><A 
-name=bottom></A> </span></p>
-            </div>
-<!-- InstanceEndEditable --> 
-          <hr size="1">
-          <div align="center" class="normal-small"> &copy; 2005 <a href="http://www.peercast.org" target="_blank">peercast.org</a> 
-          </div>
-        </div></td>
-    </tr>
-  </table>
+<tr>
+<td valign="middle" nowrap>
+<table border="0" align="center" cellpadding="1" cellspacing="0">
+<tr>
+<td rowspan="2" valign="middle"><img src="/assets/images/small-logo.png" alt="www.peercast.org" border="0"></td>
+<td valign="bottom" style="padding: 0; padding-left: 2px">
+<span class="titlelinksBig">Peercast</span>
+</td>
+</tr>
+<tr>
+<td valign="top" style="line-height: 0.8em; padding: 0; text-align: center">
+<a href="https://github.com/plonk/peercast-yt">
+<span class="normal-small" style="font-size: 11px">{$servMgr.version}</span>
+</a>
+</td>
+</tr>
+</table>
+<div align="center"><span class="titlelinksBig"> </span>
+</div></td>
+<td style="padding: 0" align="right">
+{@if servMgr.upgradeURL}
+<div align="center" class="normal">
+<a href="{$servMgr.upgradeURL}" target="_blank">
+<strong>
+<font color="#FF0000">
+クライアントをアップグレードしてください。ここをクリックで最新バージョンをダウンロード。
+</font>
+</strong>
+</a>
+</div>
+{@else}
+{@if servMgr.rootMsg}
+<span title="ルートサーバーからのメッセージ" class="root-message normal-small" align="center">
+{$servMgr.rootMsg}
+</span>
+{@end}
+{@end}
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</div>
+<table class="navbar" width="100%" border="1" cellpadding="1" cellspacing="0">
+<tr class="normal">
+<td width="14.286%"><div align="center"><a href="index.html">情報</a></div></td>
+<td width="14.286%"><div align="center"><a href="channels.html">チャンネル</a></div></td>
+<td width="14.286%"><div align="center"><a href="notifications.html">通知</a></div></td>
+<td width="14.286%"><div align="center"><a href="connections.html">接続</a></div></td>
+<td width="14.286%"><div align="center"><a href="settings.html">設定</a></div></td>
+<td width="14.286%"><div align="center"><a href="viewlog.html">ログ表示</a></div></td>
+<td width="14.286%"><div align="center"><a href="logout.html">ログアウト</a></div></td>
+</tr>
+</table>
+<div align="left" class="normal">
+<p class="normal">
+<A href="/admin?cmd=clearlog">ログをクリア<BR></A>
+<A href="#bottom">最下部を表示</A><a name="top"></a><br>
+<br>
+<span class="normal-small">{!sys.log.dumpHTML}</span>
+<A href="#top"><BR>
+<span class="normal">最上部を表示</span>
+</A>
+<span class="normal">
+<A name=bottom></A>
+</span>
+</p>
+</div>
+<hr size="1">
+<div align="center" class="normal-small"> &copy; 2005 peercast.org</div>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </body>
-<!-- InstanceEnd --></html>
+</html>
