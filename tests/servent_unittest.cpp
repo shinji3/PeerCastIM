@@ -115,7 +115,7 @@ namespace ServentFixture
 
             s.handshakeHTTP(http, true);
 
-            Assert::AreEqual("HTTP/1.0 302 Found\r\nLocation: /html/en/index.html\r\n\r\n",
+            Assert::AreEqual("HTTP/1.0 302 Found\r\nLocation: /html/ja/index.html\r\n\r\n",
                 mock->outgoing.str().c_str());
         }
 
@@ -129,7 +129,7 @@ namespace ServentFixture
 
             s.handshakeIncoming();
 
-            Assert::AreEqual("HTTP/1.0 302 Found\r\nLocation: /html/en/index.html\r\n\r\n",
+            Assert::AreEqual("HTTP/1.0 302 Found\r\nLocation: /html/ja/index.html\r\n\r\n",
                 mock->outgoing.str().c_str());
         }
 
@@ -161,7 +161,7 @@ namespace ServentFixture
             MockClientSocket* mock;
 
             s.sock = mock = new MockClientSocket();
-            mock->incoming.str("GET /html/en/index.html HTTP/1.0\r\n\r\n");
+            mock->incoming.str("GET /html/ja/index.html HTTP/1.0\r\n\r\n");
 
             s.handshakeIncoming();
 

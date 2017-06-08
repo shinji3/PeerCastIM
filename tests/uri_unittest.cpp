@@ -27,13 +27,13 @@ namespace URIFixture
 
         TEST_METHOD(URIFixture_httpSchemeWithPortQueryAndFragment)
         {
-            URI u("http://localhost:7144/html/en/index.html?name=%E4%BA%88%E5%AE%9A%E5%9C%B0#top");
+            URI u("http://localhost:7144/html/ja/index.html?name=%E4%BA%88%E5%AE%9A%E5%9C%B0#top");
 
             Assert::IsTrue(u.isValid());
             Assert::AreEqual("http", u.scheme().c_str());
             Assert::AreEqual("localhost", u.host().c_str());
             Assert::AreEqual(7144, u.port());
-            Assert::AreEqual("/html/en/index.html", u.path().c_str());
+            Assert::AreEqual("/html/ja/index.html", u.path().c_str());
             Assert::AreEqual("name=%E4%BA%88%E5%AE%9A%E5%9C%B0", u.query().c_str()); // é©ìÆìIÇ… unescape ÇÕÇ≥ÇÍÇ»Ç¢ÅB
             Assert::AreEqual("top", u.fragment().c_str());
         }

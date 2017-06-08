@@ -110,7 +110,7 @@ namespace ServMgrFixture
             // AUTH_TYPE           authType;
             Assert::AreEqual((int)ServMgr::AUTH_COOKIE, (int)m.authType);
             // char                htmlPath[128];
-            Assert::AreEqual("html/en", m.htmlPath);
+            Assert::AreEqual("html/ja", m.htmlPath);
             // int                 serventNum;
             Assert::AreEqual(0, m.serventNum);
             // String              chanLog;
