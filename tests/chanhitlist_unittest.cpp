@@ -33,7 +33,7 @@ namespace ChanHitListFixture
             hit.rhost[1] = local;
         }
 
-        void TearDown()
+        ~ChanHitListFixture()
         {
             delete hitlist;
         }

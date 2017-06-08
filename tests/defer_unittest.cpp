@@ -16,6 +16,12 @@ namespace DeferFixture
             y = false;
         }
 
+        void makeTrueAlways()
+        {
+            Defer makeTrue([=]() { y = true; });
+            throw std::runtime_error("Oops!");
+        }
+
         bool y;
 
         TEST_METHOD(DeferFixture_makeTrue)
@@ -34,8 +40,7 @@ namespace DeferFixture
             bool e = false;
             try
             {
-                Defer makeTrue([=]() { y = true; });
-                throw std::runtime_error("Oops!");
+                makeTrueAlways();
             }
             catch (std::runtime_error)
             {

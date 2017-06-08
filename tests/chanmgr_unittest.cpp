@@ -29,6 +29,7 @@ namespace ChanMgrFixture
         {
             delete x;
         }
+
         ChanMgr* x;
 
         TEST_METHOD(ChanMgrFixture_constants)

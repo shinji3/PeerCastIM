@@ -32,7 +32,6 @@ namespace ChanHitFixture
 
         ChanHit* hit;
 
-
         // ‰Šúó‘Ô‚ğŠm‚©‚ß‚é‚¾‚¯B
         TEST_METHOD(ChanHitFixture_initialState)
         {

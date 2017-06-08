@@ -16,6 +16,7 @@ namespace HTTPFixture
             : http(mem)
         {
         }
+
         StringStream mem;
         HTTP http;
 
