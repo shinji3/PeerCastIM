@@ -369,7 +369,7 @@ namespace ServentFixture
             Assert::AreEqual(0, (int)s.sock->host.ip);
             Assert::IsFalse(s.sock->host.isLocalhost());
 
-            strcpy(servMgr->password, "Passw0rd");
+            strcpy_s(servMgr->password, _countof(servMgr->password), "Passw0rd");
 
             HTTP http(*mock);
             http.initRequest("GET / HTTP/1.0");
@@ -388,7 +388,7 @@ namespace ServentFixture
             Assert::AreEqual(0, (int)s.sock->host.ip);
             Assert::IsFalse(s.sock->host.isLocalhost());
 
-            strcpy(servMgr->password, "hoge");
+            strcpy_s(servMgr->password, _countof(servMgr->password), "hoge");
 
             HTTP http(*mock);
             http.initRequest("GET / HTTP/1.0");
@@ -407,7 +407,7 @@ namespace ServentFixture
             s.sock->host.ip = 127 << 24 | 1;
             Assert::IsTrue(s.sock->host.isLocalhost());
 
-            strcpy(servMgr->password, "Passw0rd");
+            strcpy_s(servMgr->password, _countof(servMgr->password), "Passw0rd");
 
             HTTP http(*mock);
             http.initRequest("GET / HTTP/1.0");
@@ -426,7 +426,7 @@ namespace ServentFixture
             s.sock->host.ip = 127 << 24 | 1;
             Assert::IsTrue(s.sock->host.isLocalhost());
 
-            strcpy(servMgr->password, "hoge");
+            strcpy_s(servMgr->password, _countof(servMgr->password), "hoge");
 
             HTTP http(*mock);
             http.initRequest("GET / HTTP/1.0");
@@ -444,7 +444,7 @@ namespace ServentFixture
 
             Assert::IsFalse(s.sock->host.isLocalhost());
 
-            strcpy(servMgr->password, "Passw0rd");
+            strcpy_s(servMgr->password, _countof(servMgr->password), "Passw0rd");
 
             HTTP http(*mock);
             http.initRequest("GET / HTTP/1.0");
