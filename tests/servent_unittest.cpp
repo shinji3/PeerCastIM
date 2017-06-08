@@ -359,5 +359,100 @@ namespace ServentFixture
             Assert::IsFalse(s.hasValidAuthToken("?auth=44d5299e57ad9274fee7960a9fa60bfd"));
         }
 
+        TEST_METHOD(ServentFixture_handshakeHTTPBasicAuth_nonlocal_correctpass)
+        {
+            MockClientSocket* mock;
+            Defer reclaim([&]() { delete mock; });
+
+            s.sock = mock = new MockClientSocket();
+
+            Assert::AreEqual(0, (int)s.sock->host.ip);
+            Assert::IsFalse(s.sock->host.isLocalhost());
+
+            strcpy(servMgr->password, "Passw0rd");
+
+            HTTP http(*mock);
+            http.initRequest("GET / HTTP/1.0");
+            mock->incoming.str("Authorization: BASIC OlBhc3N3MHJk\r\n\r\n");
+
+            Assert::IsTrue(s.handshakeHTTPBasicAuth(http));
+        }
+
+        TEST_METHOD(ServentFixture_handshakeHTTPBasicAuth_nonlocal_wrongpass)
+        {
+            MockClientSocket* mock;
+            Defer reclaim([&]() { delete mock; });
+
+            s.sock = mock = new MockClientSocket();
+
+            Assert::AreEqual(0, (int)s.sock->host.ip);
+            Assert::IsFalse(s.sock->host.isLocalhost());
+
+            strcpy(servMgr->password, "hoge");
+
+            HTTP http(*mock);
+            http.initRequest("GET / HTTP/1.0");
+            mock->incoming.str("Authorization: BASIC OlBhc3N3MHJk\r\n\r\n");
+
+            Assert::IsFalse(s.handshakeHTTPBasicAuth(http));
+        }
+
+        TEST_METHOD(ServentFixture_handshakeHTTPBasicAuth_local_correctpass)
+        {
+            MockClientSocket* mock;
+            Defer reclaim([&]() { delete mock; });
+
+            s.sock = mock = new MockClientSocket();
+
+            s.sock->host.ip = 127 << 24 | 1;
+            Assert::IsTrue(s.sock->host.isLocalhost());
+
+            strcpy(servMgr->password, "Passw0rd");
+
+            HTTP http(*mock);
+            http.initRequest("GET / HTTP/1.0");
+            mock->incoming.str("Authorization: BASIC OlBhc3N3MHJk\r\n\r\n");
+
+            Assert::IsTrue(s.handshakeHTTPBasicAuth(http));
+        }
+
+        TEST_METHOD(ServentFixture_handshakeHTTPBasicAuth_local_wrongpass)
+        {
+            MockClientSocket* mock;
+            Defer reclaim([&]() { delete mock; });
+
+            s.sock = mock = new MockClientSocket();
+
+            s.sock->host.ip = 127 << 24 | 1;
+            Assert::IsTrue(s.sock->host.isLocalhost());
+
+            strcpy(servMgr->password, "hoge");
+
+            HTTP http(*mock);
+            http.initRequest("GET / HTTP/1.0");
+            mock->incoming.str("Authorization: BASIC OlBhc3N3MHJk\r\n\r\n");
+
+            Assert::IsTrue(s.handshakeHTTPBasicAuth(http));
+        }
+
+        TEST_METHOD(ServentFixture_handshakeHTTPBasicAuth_noauthorizationheader)
+        {
+            MockClientSocket* mock;
+            Defer reclaim([&]() { delete mock; });
+
+            s.sock = mock = new MockClientSocket();
+
+            Assert::IsFalse(s.sock->host.isLocalhost());
+
+            strcpy(servMgr->password, "Passw0rd");
+
+            HTTP http(*mock);
+            http.initRequest("GET / HTTP/1.0");
+            mock->incoming.str("\r\n");
+
+            Assert::IsFalse(s.handshakeHTTPBasicAuth(http));
+            Assert::AreEqual("HTTP/1.0 401 Unauthorized\r\nWWW-Authenticate: Basic realm=\"PeerCast Admin\"\r\n\r\n", mock->outgoing.str().c_str());
+        }
+
     };
 }

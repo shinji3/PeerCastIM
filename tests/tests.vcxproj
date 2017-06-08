@@ -421,6 +421,7 @@
     <ClCompile Include="defer_unittest.cpp" />
     <ClCompile Include="environment_unittest.cpp" />
     <ClCompile Include="filesystemmapper_unittest.cpp" />
+    <ClCompile Include="flvtag_unittest.cpp" />
     <ClCompile Include="gnuid_unittest.cpp" />
     <ClCompile Include="hostgraph_unittest.cpp" />
     <ClCompile Include="host_unittest.cpp" />
