@@ -83,7 +83,7 @@ ServMgr::ServMgr()
     forceIP.clear();
 
     strcpy_s(connectHost, _countof(connectHost), "connect1.peercast.org");
-    strcpy_s(htmlPath, _countof(htmlPath), "html/en");
+    strcpy_s(htmlPath, _countof(htmlPath), "html/ja");
 
     rootHost = "yp.peercast.org";
 

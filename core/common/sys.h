@@ -31,7 +31,7 @@
 extern char *stristr(const char *s1, const char *s2);
 extern char *trimstr(char *s);
 
-#define MAX_CGI_LEN 1024
+#define MAX_CGI_LEN 512
 
 #include "_string.h"
 #include "varwriter.h"
@@ -149,7 +149,7 @@ public:
 };
 
 // ------------------------------------
-typedef uintptr_t THREAD_HANDLE;
+typedef unsigned int THREAD_HANDLE;
 #define THREAD_PROC int WINAPI
 #define vsnprintf _vsnprintf
 
@@ -223,14 +223,15 @@ private:
 public:
     WLock()
     {
-        const pthread_mutexattr_t mattr =
-        {
+        pthread_mutexattr_t mattr;
+
+        pthread_mutexattr_init(&mattr);
+
 #ifdef __APPLE__
-            PTHREAD_MUTEX_RECURSIVE
+        pthread_mutexattr_settype(&mattr, PTHREAD_MUTEX_RECURSIVE);
 #else
-            PTHREAD_MUTEX_RECURSIVE_NP
+        pthread_mutexattr_settype(&mattr, PTHREAD_MUTEX_RECURSIVE_NP);
 #endif
-         };
 
         pthread_mutex_init( &mutex, &mattr );
     }
