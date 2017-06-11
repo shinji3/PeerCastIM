@@ -422,6 +422,7 @@
     <ClCompile Include="environment_unittest.cpp" />
     <ClCompile Include="filesystemmapper_unittest.cpp" />
     <ClCompile Include="flvtag_unittest.cpp" />
+    <ClCompile Include="globalfunctions_unittest.cpp" />
     <ClCompile Include="gnuid_unittest.cpp" />
     <ClCompile Include="hostgraph_unittest.cpp" />
     <ClCompile Include="host_unittest.cpp" />
@@ -430,6 +431,7 @@
     <ClCompile Include="http_unittest.cpp" />
     <ClCompile Include="id4_unittest.cpp" />
     <ClCompile Include="idstring_unittest.cpp" />
+    <ClCompile Include="inifilebase_unittest.cpp" />
     <ClCompile Include="jrpcapi_unittest.cpp" />
     <ClCompile Include="map_unittest.cpp" />
     <ClCompile Include="md5_unittest.cpp" />
