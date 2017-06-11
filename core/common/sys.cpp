@@ -93,7 +93,7 @@ char *trimstr(char *s1)
 
     s1 = s1+strlen(s1);
 
-    while (*--s1)
+    while (--s1 >= s)
         if ((*s1 != ' ') && (*s1 != '\t'))
             break;
 
@@ -239,8 +239,7 @@ void LogBuffer::escapeHTML(char* dest, char* src)
 // ---------------------------
 void LogBuffer::dumpHTML(Stream &out)
 {
-    WLockBlock lb(&lock);
-    lb.on();
+    lock.on();
 
     unsigned int nl = currLine;
     unsigned int sp = 0;
@@ -279,7 +278,7 @@ void LogBuffer::dumpHTML(Stream &out)
     }
     delete[] escaped;
 
-    lb.off();
+    lock.off();
 }
 
 // ---------------------------

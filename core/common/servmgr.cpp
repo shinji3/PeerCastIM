@@ -1841,14 +1841,8 @@ int ServMgr::idleProc(ThreadInfo *thread)
 {
     sys->setThreadName(thread, "IDLE");
 
-    //unsigned int lastPasvFind=0;
-    //unsigned int lastBroadcast=0;
-
     // nothing much to do for the first couple of seconds, so just hang around.
     sys->sleep(2000);
-
-    //unsigned int lastBWcheck=0;
-    //unsigned int bytesIn=0, bytesOut=0;
 
     unsigned int lastBroadcastConnect = 0;
     unsigned int lastRootBroadcast = 0;
@@ -1863,7 +1857,7 @@ int ServMgr::idleProc(ThreadInfo *thread)
 
         if (!servMgr->forceIP.isEmpty())
         {
-            if ((ctime-lastForceIPCheck) > 60)
+            if ((ctime - lastForceIPCheck) > 60)
             {
                 if (servMgr->checkForceIP())
                 {
@@ -1876,7 +1870,7 @@ int ServMgr::idleProc(ThreadInfo *thread)
 
         if (chanMgr->isBroadcasting())
         {
-            if ((ctime-lastBroadcastConnect) > 30)
+            if ((ctime - lastBroadcastConnect) > 30)
             {
                 servMgr->connectBroadcaster();
                 lastBroadcastConnect = ctime;
@@ -1886,13 +1880,13 @@ int ServMgr::idleProc(ThreadInfo *thread)
         if (servMgr->isRoot)
         {
             // 1時間着信がなかったら終了する。…なぜ？
-            if ((servMgr->lastIncoming) && ((ctime-servMgr->lastIncoming) > 60*60))
+            if ((servMgr->lastIncoming) && (((int64_t)ctime - servMgr->lastIncoming) > 60*60))
             {
                 peercastInst->saveSettings();
                 sys->exit();
             }
 
-            if ((ctime-lastRootBroadcast) > chanMgr->hostUpdateInterval)
+            if ((ctime - lastRootBroadcast) > chanMgr->hostUpdateInterval)
             {
                 servMgr->broadcastRootSettings(true);
                 lastRootBroadcast = ctime;
