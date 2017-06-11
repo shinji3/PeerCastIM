@@ -276,7 +276,7 @@ void WSAClientSocket::checkTimeout(bool r, bool w)
     }
     else {
         char str[32];
-        sprintf_s(str, _countof(str), "%d", err);
+        snprintf(str, _countof(str), "%d", err);
         throw SockException(str);
     }
 }
@@ -468,7 +468,7 @@ void WSAClientSocket::bufferingWrite(const void *p, int l)
                 }
                 else {
                     char str[32];
-                    sprintf_s(str, _countof(str), "%d", err);
+                    snprintf(str, _countof(str), "%d", err);
                     throw SockException(str);
                 }
             }
@@ -511,7 +511,7 @@ void WSAClientSocket::bufferingWrite(const void *p, int l)
                         else {
                             bufList.clear();
                             char str[32];
-                            sprintf_s(str, _countof(str), "%d", err);
+                            snprintf(str, _countof(str), "%d", err);
                             throw SockException(str);
                         }
                     }
@@ -588,7 +588,7 @@ void WSAClientSocket::checkBuffering(bool r, bool w)
     }
     else {
         char str[32];
-        sprintf_s(str, _countof(str), "%d", err);
+        snprintf(str, _countof(str), "%d", err);
         throw SockException(str);
     }
 }

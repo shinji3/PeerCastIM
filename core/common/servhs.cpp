@@ -697,7 +697,7 @@ bool Servent::getLocalURL(char *str)
 
     h.toStr(ipStr);
 
-    sprintf_s(str, 29, "http://%s", ipStr);
+    snprintf(str, 29, "http://%s", ipStr);
     return true;
 }
 
@@ -1246,7 +1246,7 @@ void Servent::CMD_hitlist(char *cmd, HTTP& http, HTML& html, String& jumpStr)
         if (chl->isUsed())
         {
             char tmp[64];
-            sprintf_s(tmp, _countof(tmp), "c%d=", index);
+            snprintf(tmp, _countof(tmp), "c%d=", index);
             if (cmpCGIarg(cmd, tmp, "1"))
             {
                 Channel *c;
@@ -1310,7 +1310,7 @@ void Servent::CMD_connect(char *cmd, HTTP& http, HTML& html, String& jumpStr)
     Servent *s = servMgr->servents;
     {
         char tmp[64];
-        sprintf_s(tmp, _countof(tmp), "c%d=", s->serventIndex);
+        snprintf(tmp, _countof(tmp), "c%d=", s->serventIndex);
         if (cmpCGIarg(cmd, tmp, "1"))
         {
             if (hasCGIarg(cmd, "stop"))

@@ -83,15 +83,15 @@ void String::setFromStopwatch(unsigned int t)
     day = (t/86400);
 
     if (day)
-        sprintf_s(data, MAX_LEN, "%d day, %d hour", day, hour);
+        snprintf(data, MAX_LEN, "%d day, %d hour", day, hour);
     else if (hour)
-        sprintf_s(data, MAX_LEN, "%d hour, %d min", hour, min);
+        snprintf(data, MAX_LEN, "%d hour, %d min", hour, min);
     else if (min)
-        sprintf_s(data, MAX_LEN, "%d min, %d sec", min, sec);
+        snprintf(data, MAX_LEN, "%d min, %d sec", min, sec);
     else if (sec)
-        sprintf_s(data, MAX_LEN, "%d sec", sec);
+        snprintf(data, MAX_LEN, "%d sec", sec);
     else
-        sprintf_s(data, MAX_LEN, "-");
+        snprintf(data, MAX_LEN, "-");
 
     type = T_ASCII;
 }
@@ -273,7 +273,7 @@ void String::ASCII2HTML(const char *in)
             *op++ = c;
         }else
         {
-            sprintf_s(op, MAX_LEN - (op - data), "&#x%02X;", (int)c);
+            snprintf(op, MAX_LEN - (op - data), "&#x%02X;", (int)c);
             op += 6;
         }
         if (op >= oe)
@@ -299,7 +299,7 @@ void String::ASCII2ESC(const char *in, bool safe)
             if (safe)
                 *op++ = '%';
             *op = 0;
-            sprintf_s(op, MAX_LEN - (op - data), "%02X", (int)c);
+            snprintf(op, MAX_LEN - (op - data), "%02X", (int)c);
             op += 2;
         }
         if (op >= oe)

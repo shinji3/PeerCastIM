@@ -2100,19 +2100,19 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
         str.setFromStopwatch(getUptime());
         strcpy_s(buf, _countof(buf), str.cstr());
     }else if (var == "numRelays")
-        sprintf_s(buf, _countof(buf), "%d", numStreams(Servent::T_RELAY, true));
+        snprintf(buf, _countof(buf), "%d", numStreams(Servent::T_RELAY, true));
     else if (var == "numDirect")
-        sprintf_s(buf, _countof(buf), "%d", numStreams(Servent::T_DIRECT, true));
+        snprintf(buf, _countof(buf), "%d", numStreams(Servent::T_DIRECT, true));
     else if (var == "totalConnected")
-        sprintf_s(buf, _countof(buf), "%d", totalConnected());
+        snprintf(buf, _countof(buf), "%d", totalConnected());
     else if (var == "numServHosts")
-        sprintf_s(buf, _countof(buf), "%d", numHosts(ServHost::T_SERVENT));
+        snprintf(buf, _countof(buf), "%d", numHosts(ServHost::T_SERVENT));
     else if (var == "numServents")
-        sprintf_s(buf, _countof(buf), "%d", numServents());
+        snprintf(buf, _countof(buf), "%d", numServents());
     else if (var == "serverName")
-        sprintf_s(buf, _countof(buf), "%s", serverName.cstr());
+        snprintf(buf, _countof(buf), "%s", serverName.cstr());
     else if (var == "serverPort")
-        sprintf_s(buf, _countof(buf), "%d", serverHost.port);
+        snprintf(buf, _countof(buf), "%d", serverHost.port);
     else if (var == "serverIP")
         serverHost.IPtoStr(buf);
     else if (var == "ypAddress")
@@ -2120,47 +2120,47 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
     else if (var == "password")
         strcpy_s(buf, _countof(buf), password);
     else if (var == "isFirewalled")
-        sprintf_s(buf, _countof(buf), "%d", getFirewall()==FW_ON?1:0);
+        snprintf(buf, _countof(buf), "%d", getFirewall()==FW_ON?1:0);
     else if (var == "firewallKnown")
-        sprintf_s(buf, _countof(buf), "%d", getFirewall()==FW_UNKNOWN?0:1);
+        snprintf(buf, _countof(buf), "%d", getFirewall()==FW_UNKNOWN?0:1);
     else if (var == "rootMsg")
         strcpy_s(buf, _countof(buf), rootMsg);
     else if (var == "isRoot")
-        sprintf_s(buf, _countof(buf), "%d", isRoot?1:0);
+        snprintf(buf, _countof(buf), "%d", isRoot?1:0);
     else if (var == "isPrivate")
-        sprintf_s(buf, _countof(buf), "%d", (PCP_BROADCAST_FLAGS&1)?1:0);
+        snprintf(buf, _countof(buf), "%d", (PCP_BROADCAST_FLAGS&1)?1:0);
     else if (var == "forceYP")
-        sprintf_s(buf, _countof(buf), "%d", PCP_FORCE_YP?1:0);
+        snprintf(buf, _countof(buf), "%d", PCP_FORCE_YP?1:0);
     else if (var == "refreshHTML")
-        sprintf_s(buf, _countof(buf), "%d", refreshHTML?refreshHTML:0x0fffffff);
+        snprintf(buf, _countof(buf), "%d", refreshHTML?refreshHTML:0x0fffffff);
     else if (var == "maxRelays")
-        sprintf_s(buf, _countof(buf), "%d", maxRelays);
+        snprintf(buf, _countof(buf), "%d", maxRelays);
     else if (var == "maxDirect")
-        sprintf_s(buf, _countof(buf), "%d", maxDirect);
+        snprintf(buf, _countof(buf), "%d", maxDirect);
     else if (var == "maxBitrateOut")
-        sprintf_s(buf, _countof(buf), "%d", maxBitrateOut);
+        snprintf(buf, _countof(buf), "%d", maxBitrateOut);
     else if (var == "maxControlsIn")
-        sprintf_s(buf, _countof(buf), "%d", maxControl);
+        snprintf(buf, _countof(buf), "%d", maxControl);
     else if (var == "maxServIn")
-        sprintf_s(buf, _countof(buf), "%d", maxServIn);
+        snprintf(buf, _countof(buf), "%d", maxServIn);
     else if (var == "numFilters")
-        sprintf_s(buf, _countof(buf), "%d", numFilters+1);
+        snprintf(buf, _countof(buf), "%d", numFilters+1);
     else if (var == "maxPGNUIn")
-        sprintf_s(buf, _countof(buf), "%d", maxGnuIncoming);
+        snprintf(buf, _countof(buf), "%d", maxGnuIncoming);
     else if (var == "minPGNUIn")
-        sprintf_s(buf, _countof(buf), "%d", minGnuIncoming);
+        snprintf(buf, _countof(buf), "%d", minGnuIncoming);
     else if (var == "numActive1")
-        sprintf_s(buf, _countof(buf), "%d", numActiveOnPort(serverHost.port));
+        snprintf(buf, _countof(buf), "%d", numActiveOnPort(serverHost.port));
     else if (var == "numActive2")
-        sprintf_s(buf, _countof(buf), "%d", numActiveOnPort(serverHost.port+1));
+        snprintf(buf, _countof(buf), "%d", numActiveOnPort(serverHost.port+1));
     else if (var == "numPGNU")
-        sprintf_s(buf, _countof(buf), "%d", numConnected(Servent::T_PGNU));
+        snprintf(buf, _countof(buf), "%d", numConnected(Servent::T_PGNU));
     else if (var == "numCIN")
-        sprintf_s(buf, _countof(buf), "%d", numConnected(Servent::T_CIN));
+        snprintf(buf, _countof(buf), "%d", numConnected(Servent::T_CIN));
     else if (var == "numCOUT")
-        sprintf_s(buf, _countof(buf), "%d", numConnected(Servent::T_COUT));
+        snprintf(buf, _countof(buf), "%d", numConnected(Servent::T_COUT));
     else if (var == "numIncoming")
-        sprintf_s(buf, _countof(buf), "%d", numActive(Servent::T_INCOMING));
+        snprintf(buf, _countof(buf), "%d", numActive(Servent::T_INCOMING));
     else if (var == "numValidBCID")
     {
         int cnt = 0;
@@ -2170,14 +2170,14 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
             cnt++;
             bcid=bcid->next;
         }
-        sprintf_s(buf, _countof(buf), "%d", cnt);
+        snprintf(buf, _countof(buf), "%d", cnt);
     }
 
     else if (var == "disabled")
-        sprintf_s(buf, _countof(buf), "%d", isDisabled);
+        snprintf(buf, _countof(buf), "%d", isDisabled);
 
     else if (var == "serverPort1")
-        sprintf_s(buf, _countof(buf), "%d", serverHost.port);
+        snprintf(buf, _countof(buf), "%d", serverHost.port);
     else if (var == "serverLocalIP")
     {
         Host lh(ClientSocket::getIP(NULL), 0);
@@ -2187,7 +2187,7 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
     }else if (var == "upgradeURL")
         strcpy_s(buf, _countof(buf), servMgr->downloadURL);
     else if (var == "serverPort2")
-        sprintf_s(buf, _countof(buf), "%d", serverHost.port+1);
+        snprintf(buf, _countof(buf), "%d", serverHost.port+1);
     else if (var.startsWith("allow."))
     {
         if (var == "allow.HTML1")
@@ -2233,19 +2233,19 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
             strcpy_s(buf, _countof(buf), "0");
     }else if (var == "numExternalChannels")
     {
-        sprintf_s(buf, _countof(buf), "%d", channelDirectory.numChannels());
+        snprintf(buf, _countof(buf), "%d", channelDirectory.numChannels());
     }else if (var == "numChannelFeedsPlusOne")
     {
-        sprintf_s(buf, _countof(buf), "%d", channelDirectory.numFeeds() + 1);
+        snprintf(buf, _countof(buf), "%d", channelDirectory.numFeeds() + 1);
     }else if (var == "numChannelFeeds")
     {
-        sprintf_s(buf, _countof(buf), "%d", channelDirectory.numFeeds());
+        snprintf(buf, _countof(buf), "%d", channelDirectory.numFeeds());
     }else if (var.startsWith("channelDirectory."))
     {
         return channelDirectory.writeVariable(out, var + strlen("channelDirectory."));
     }else if (var == "publicDirectoryEnabled")
     {
-        sprintf_s(buf, _countof(buf), "%d", publicDirectoryEnabled);
+        snprintf(buf, _countof(buf), "%d", publicDirectoryEnabled);
     }else if (var == "test")
     {
         out.writeUTF8(0x304b);

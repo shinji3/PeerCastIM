@@ -119,7 +119,7 @@ void	APICALL MyPeercastApp ::getDirectory()
 	char path_buffer[256],drive[32],dir[128];
 	GetModuleFileName(NULL,path_buffer,255);
     _splitpath_s(path_buffer, drive, _countof(drive), dir, sizeof(dir), NULL, 0, NULL, 0);
-	sprintf_s(servMgr->modulePath, _countof(servMgr->modulePath),"%s%s",drive,dir);
+	snprintf(servMgr->modulePath, _countof(servMgr->modulePath),"%s%s",drive,dir);
 }
 // --------------------------------- JP-EX
 bool	APICALL MyPeercastApp ::clearTemp()
@@ -180,7 +180,7 @@ void LOG2(const char *fmt,...)
 	va_list ap;
 	va_start(ap, fmt);
 	char str[4096];
-	vsprintf_s(str, _countof(str),fmt,ap);
+	vsnprintf(str, _countof(str),fmt,ap);
 	OutputDebugString(str);
 	va_end(ap);	
 }
@@ -951,7 +951,7 @@ void addRelayedChannelsMenu(HMENU cm)
 				strcat_s(name, _countof(name),"...");
 
 
-			sprintf_s(str, _countof(str),"%s  (%d kb/s %s)",name,c->info.bitrate,ChanInfo::getTypeStr(c->info.contentType));
+			snprintf(str, _countof(str),"%s  (%d kb/s %s)",name,c->info.bitrate,ChanInfo::getTypeStr(c->info.contentType));
 			//InsertMenu(cm,0,MF_BYPOSITION,RELAY_CMD+i,str);
 		}
 		c=c->next;
@@ -1008,7 +1008,7 @@ void addAllChannelsMenu(HMENU cm)
 		if (strlen(sjis.cstr()) > 32) //JP-Patch
 			strcat_s(name, _countof(name),"...");
 
-		sprintf_s(str, _countof(str),"%s  (%d kb/s %s)",name,ch->info.bitrate,ChanInfo::getTypeStr(ch->info.contentType));
+		snprintf(str, _countof(str),"%s  (%d kb/s %s)",name,ch->info.bitrate,ChanInfo::getTypeStr(ch->info.contentType));
 
 		HMENU opMenu = CreatePopupMenu();
 		InsertMenu(opMenu,0,MF_BYPOSITION,INFO_CMD+numActive,"Info");
@@ -1057,7 +1057,7 @@ void flipNotifyPopup(int id, ServMgr::NOTIFY_TYPE nt)
 static void showHTML(const char *file)
 {
 	char url[256];
-	sprintf_s(url, _countof(url),"%s/%s",servMgr->htmlPath,file);					
+	snprintf(url, _countof(url),"%s/%s",servMgr->htmlPath,file);					
 
 //	sys->callLocalURL(url,servMgr->serverHost.port);
 	sys->callLocalURL(url,	// for PCRaw (url)
@@ -1325,11 +1325,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					sys->getURL("http://yp.peercast.org/");
 					break;
 				case ID_POPUP_YELLOWPAGES1:
-					sprintf_s(buf, _countof(buf), "http://%s",servMgr->rootHost.cstr());
+					snprintf(buf, _countof(buf), "http://%s",servMgr->rootHost.cstr());
 					sys->getURL(buf);
 					break;
 				case ID_POPUP_YELLOWPAGES2:
-					sprintf_s(buf, _countof(buf), "http://%s",servMgr->rootHost2.cstr());
+					snprintf(buf, _countof(buf), "http://%s",servMgr->rootHost2.cstr());
 					sys->getURL(buf);
 					break;
 
@@ -1541,7 +1541,7 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 				SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LPARAM)genre.cstr()); // x64‘Î‰ž
 				//SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LONG)genre.cstr()); //JP-Patch
 
-				sprintf_s(str, _countof(str),"%d kb/s %s",chanInfo.bitrate,ChanInfo::getTypeStr(chanInfo.contentType));
+				snprintf(str, _countof(str),"%d kb/s %s",chanInfo.bitrate,ChanInfo::getTypeStr(chanInfo.contentType));
 				SendDlgItemMessage(hDlg,IDC_FORMAT,WM_SETTEXT,0,(LPARAM)str); // x64‘Î‰ž
 				//SendDlgItemMessage(hDlg,IDC_FORMAT,WM_SETTEXT,0,(LONG)str);
 
@@ -1613,7 +1613,7 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 					}
 				case IDC_DETAILS:
 					{
-						sprintf_s(str, _countof(str),"admin?page=chaninfo&id=%s&relay=%d",idstr,chanInfoIsRelayed);
+						snprintf(str, _countof(str),"admin?page=chaninfo&id=%s&relay=%d",idstr,chanInfoIsRelayed);
 						sys->callLocalURL(str,servMgr->serverHost.port);
 						return TRUE;
 					}

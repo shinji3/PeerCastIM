@@ -193,11 +193,11 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
     else if (var == "rhost1")
         rhost[1].toStr(buf);
     else if (var == "numHops")
-        sprintf_s(buf, _countof(buf), "%d", numHops);
+        snprintf(buf, _countof(buf), "%d", numHops);
     else if (var == "numListeners")
-        sprintf_s(buf, _countof(buf), "%d", numListeners);
+        snprintf(buf, _countof(buf), "%d", numListeners);
     else if (var == "numRelays")
-        sprintf_s(buf, _countof(buf), "%d", numRelays);
+        snprintf(buf, _countof(buf), "%d", numRelays);
     else if (var == "uptime")
     {
         String timeStr;
@@ -212,17 +212,17 @@ bool    ChanHit::writeVariable(Stream &out, const String &var)
             timeStr.set("-");
         strcpy_s(buf, _countof(buf), timeStr.cstr());
     }else if (var == "isFirewalled")
-        sprintf_s(buf, _countof(buf), "%d", firewalled?1:0);
+        snprintf(buf, _countof(buf), "%d", firewalled?1:0);
     else if (var == "version")
     {
         std::string ver = versionString();
         if (ver.empty())
-            sprintf_s(buf, _countof(buf), "-");
+            snprintf(buf, _countof(buf), "-");
         else
-            sprintf_s(buf, _countof(buf), "%s", ver.c_str());
+            snprintf(buf, _countof(buf), "%s", ver.c_str());
     }
     else if (var == "tracker")
-        sprintf_s(buf, _countof(buf), "%d", tracker);
+        snprintf(buf, _countof(buf), "%d", tracker);
     else
         return false;
 
