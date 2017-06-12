@@ -14,15 +14,12 @@
 body { margin: 0; }
 .paper {
 background-color: #eee;
-/* max-width: 750px; */
 margin: 0;
 padding: 0.5em
 }
 object { color: white; font-size: 14px; }
 .message { color: white; font-size: 14px; }
 video {
-/* max-width: calc(100vw - 400px); */
-/* max-width: calc(100% - 320px); */
 width: 100%;
 }
 /* FlowPlayer */
@@ -57,12 +54,14 @@ href="{$page.channel.contactURL}">
 {@else}
 コンタクトURL
 {@end}
+-
+<a href="/admin?cmd=bump&amp;id={$page.channel.id}">バンプ</a>
 {@if page.channel.type == "FLV"}
 -
 {@if page.player != "flash"}
-<a href="?id={$page.channel.id}&amp;player=flash" title="Request Flash-based player">Flash</a>
+<a href="?id={$page.channel.id}&amp;player=flash" title="Flashベースのプレーヤーにチェンジ">Flash</a>
 {@else}
-<a href="?id={$page.channel.id}" title="Request HTML5 player">HTML5</a>
+<a href="?id={$page.channel.id}" title="HTML5プレーヤーにチェンジ">HTML5</a>
 {@end}
 {@end}
 </div>
