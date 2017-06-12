@@ -118,7 +118,7 @@ void	APICALL MyPeercastApp ::getDirectory()
 {
 	char path_buffer[256],drive[32],dir[128];
 	GetModuleFileName(NULL,path_buffer,255);
-    _splitpath_s(path_buffer, drive, _countof(drive), dir, sizeof(dir), NULL, 0, NULL, 0);
+    _splitpath_s(path_buffer, drive, _countof(drive), dir, _countof(dir), NULL, 0, NULL, 0);
 	snprintf(servMgr->modulePath, _countof(servMgr->modulePath),"%s%s",drive,dir);
 }
 // --------------------------------- JP-EX
