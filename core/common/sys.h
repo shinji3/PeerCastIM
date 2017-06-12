@@ -151,7 +151,6 @@ public:
 // ------------------------------------
 typedef uintptr_t THREAD_HANDLE;
 #define THREAD_PROC int WINAPI
-#define vsnprintf _vsnprintf
 
 // ------------------------------------
 class WLock

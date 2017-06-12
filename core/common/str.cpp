@@ -177,7 +177,7 @@ std::string format(const char* fmt, ...)
     va_copy(aq, ap);
     int size = _vscprintf(fmt, ap);
     char *data = new char[size + 1];
-    _vsnprintf_s(data, size + 1, _TRUNCATE, fmt, aq);
+    vsnprintf(data, size + 1, fmt, aq);
     va_end(aq);
     va_end(ap);
 

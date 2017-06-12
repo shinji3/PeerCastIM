@@ -583,7 +583,7 @@ void String::sprintf(const char* fmt, ...)
     va_list ap;
 
     va_start(ap, fmt);
-    _vsnprintf_s(this->data, MAX_LEN, _TRUNCATE, fmt, ap);
+    vsnprintf(this->data, MAX_LEN, fmt, ap);
     va_end(ap);
 }
 
@@ -594,7 +594,7 @@ String String::format(const char* fmt, ...)
     String result;
 
     va_start(ap, fmt);
-    _vsnprintf_s(result.data, MAX_LEN, _TRUNCATE, fmt, ap);
+    vsnprintf(result.data, MAX_LEN, fmt, ap);
     va_end(ap);
 
     return result;
