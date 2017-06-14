@@ -40,9 +40,9 @@ std::string unescape(const std::string& in)
 
     while (i < in.size()) {
         if (in[i] == '%') {
-            char c;
-            sscanf_s(in.substr(i + 1, 2).c_str(), "%hhx", &c);
-            res += c;
+            int c;
+            sscanf_s(in.substr(i + 1, 2).c_str(), "%x", &c);
+            res += (char) c;
             i += 3;
         } else if (in[i] == '+') {
             res += ' ';
