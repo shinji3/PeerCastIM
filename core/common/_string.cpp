@@ -16,6 +16,8 @@
 // GNU General Public License for more details.
 // ------------------------------------------------
 
+#include <time.h> // for ctime
+
 #include "_string.h"
 #include "jis.h"
 #include "stream.h"
@@ -23,7 +25,6 @@
 #ifdef WIN32
 #include "utf8.h" //JP-Patch
 #endif
-#include <time.h>
 
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"

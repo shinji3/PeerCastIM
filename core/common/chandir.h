@@ -1,8 +1,6 @@
 #ifndef _CHANDIR_H
 #define _CHANDIR_H
 
-#undef ERROR
-
 #include <cstdlib>
 #include <vector>
 #include <stdexcept> // runtime_error
@@ -75,21 +73,21 @@ class ChannelFeed
 {
 public:
     enum class Status {
-        UNKNOWN,
-        OK,
-        ERROR,
+        kUnknown,
+        kOk,
+        kError
     };
 
     ChannelFeed()
         : url("")
-        , status(Status::UNKNOWN)
+        , status(Status::kUnknown)
         , isPublic(false)
     {
     }
 
     ChannelFeed(std::string aUrl)
         : url(aUrl)
-        , status(Status::UNKNOWN)
+        , status(Status::kUnknown)
         , isPublic(false)
     {
     }
