@@ -139,7 +139,7 @@ public:
         MAX_INCOMING = 6,           // max. number of public incoming servents to use
         MAX_TRYOUT   = 10,          // max. number of outgoing servents to try connect
         MIN_CONNECTED = 3,          // min. amount of connected hosts that should be kept
-        MIN_RELAYS = 1,
+        MIN_RELAYS = 2,
 
         MAX_FILTERS = 50,
 
@@ -392,6 +392,8 @@ public:
     bool                publicDirectoryEnabled;
 
     String              serverName;
+
+    std::string         genrePrefix;
 
     char modulePath[256]; //JP-EX
     int enableGetName; //JP-EX
