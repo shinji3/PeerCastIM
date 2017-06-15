@@ -105,10 +105,14 @@ static const char* monthNames[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "J
 
 std::string rfc1123Time(time_t t)
 {
-    tm tm;
     char fmt[30], buf[30];
+    tm tm;
 
+#if _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _BSD_SOURCE || _SVID_SOURCE || _POSIX_SOURCE
+    gmtime_r(&t, &tm);
+#else
     gmtime_s(&tm, &t);
+#endif
     strftime(fmt, sizeof(fmt), "%%s, %d %%s %Y %H:%M:%S GMT", &tm);
     std::snprintf(buf, sizeof(buf), fmt, daysOfWeek[tm.tm_wday], monthNames[tm.tm_mon]);
 
