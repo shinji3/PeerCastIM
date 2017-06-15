@@ -289,17 +289,17 @@ void XML::Node::write(Stream &out, int level)
     char *name = getAttrValue(0);
 
     out.write("<", 1);
-    out.write(name, (int)strlen(name));
+    out.write(name, static_cast<int>(strlen(name)));
 
     for (int i=1; i<numAttr; i++)
     {
         out.write(" ", 1);
         char *at = getAttrName(i);
-        out.write(at, (int)strlen(at));
+        out.write(at, static_cast<int>(strlen(at)));
 
         out.write("=\"", 2);
         char *av = getAttrValue(i);
-        out.write(av, (int)strlen(av));
+        out.write(av, static_cast<int>(strlen(av)));
         out.write("\"", 1);
     }
 
@@ -311,7 +311,7 @@ void XML::Node::write(Stream &out, int level)
         out.write(">\n", 2);
 
         if (contData)
-            out.write(contData, (int)strlen(contData));
+            out.write(contData, static_cast<int>(strlen(contData)));
 
         if (child)
             child->write(out, level+1);
@@ -320,7 +320,7 @@ void XML::Node::write(Stream &out, int level)
             out.write(tabs, strlen(tabs));
 #endif
         out.write("</", 2);
-        out.write(name, (int)strlen(name));
+        out.write(name, static_cast<int>(strlen(name)));
         out.write(">\n", 2);
     }
 
