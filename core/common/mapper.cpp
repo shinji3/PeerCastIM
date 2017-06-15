@@ -15,10 +15,20 @@
 using namespace std;
 using namespace str;
 
+#ifdef WIN32
+extern "C" {
+    char *_fullpath(char*, const char*, size_t);
+}
+#  ifndef PATH_MAX
+#    define PATH_MAX 4096
+#  endif
+#  define realpath(N,R) _fullpath((R),(N),PATH_MAX)
+#endif
+
 FileSystemMapper::FileSystemMapper(const string& aVirtualPath, const string& aDocumentRoot)
     : virtualPath(aVirtualPath)
 {
-    char *dr = _fullpath(NULL, aDocumentRoot.c_str(), _MAX_PATH);
+    char *dr = realpath(aDocumentRoot.c_str(), NULL);
     if (!dr)
     {
         throw GeneralException(String::format("Document root `%s` inaccessible", aDocumentRoot.c_str()));
@@ -56,8 +66,8 @@ pair<string,string> FileSystemMapper::resolvePath(const string& rawPath, const v
 
 string FileSystemMapper::realPath(const string& path)
 {
-    char resolvedPath[_MAX_PATH];
-    char *p = _fullpath(resolvedPath, path.c_str(), _MAX_PATH);
+    char resolvedPath[PATH_MAX];
+    char *p = realpath(path.c_str(), resolvedPath);
 
     if (!p)
         return "";
