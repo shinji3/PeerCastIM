@@ -27,7 +27,6 @@
 #include "gnutella.h"
 #include "channel.h"
 #include "http.h"
-#include "rtsp.h"
 #include "pcp.h"
 #include "addrCont.h"
 #ifdef _WIN32
@@ -183,8 +182,6 @@ public:
 
 	void	handshakeICY(Channel::SRC_TYPE,bool);
 	void	handshakeIncoming();
-	void	handshakePOST();
-	void	handshakeRTSP(RTSP &);
 	void	handshakeHTTP(HTTP &,bool);
 
 	void	handshakeRemoteFile(const char *);

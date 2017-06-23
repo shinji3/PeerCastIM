@@ -40,11 +40,7 @@ static const char *HTTP_SC_BADREQUEST	= "HTTP/1.0 400 Bad Request";
 static const char *HTTP_SC_FORBIDDEN	= "HTTP/1.0 403 Forbidden";
 static const char *HTTP_SC_SWITCH		= "HTTP/1.0 101 Switch protocols";
 
-static const char *RTSP_SC_OK			= "RTSP/1.0 200 OK";
-
-
 static const char *HTTP_PROTO1		= "HTTP/1.";
-static const char *RTSP_PROTO1		= "RTSP/1.";
 
 static const char *HTTP_HS_SERVER		= "Server:";
 static const char *HTTP_HS_AGENT		= "User-Agent:"; 
