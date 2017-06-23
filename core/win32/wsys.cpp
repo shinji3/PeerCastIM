@@ -30,7 +30,6 @@
 #include <sys/timeb.h>
 #include <time.h>
 #include "shellapi.h"
-
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
@@ -40,30 +39,30 @@
 // ---------------------------------
 WSys::WSys(HWND w)
 {
-    stats.clear();
+	stats.clear();
+	
+	rndGen.setSeed(getTime());
+	
+	mainWindow = w;
+	WSAClientSocket::init();
 
-    rndGen.setSeed(getTime());
-
-    mainWindow = w;
-    WSAClientSocket::init();
-
-    rndSeed = rnd();
+	rndSeed = rnd();
 }
 // ---------------------------------
 double WSys::getDTime()
 {
-    struct _timeb timebuffer;
+   struct _timeb timebuffer;
 
-    _ftime_s(&timebuffer);
+   _ftime( &timebuffer );
 
-    return (double)timebuffer.time + (((double)timebuffer.millitm) / 1000);
+   return (double)timebuffer.time+(((double)timebuffer.millitm)/1000);
 }
 // ---------------------------------
 unsigned int WSys::getTime()
 {
-    time_t ltime;
-    time(&ltime);
-    return (unsigned)ltime;
+	time_t ltime;
+	time( &ltime );
+	return (unsigned)ltime;
 }
 
 // ---------------------------------
@@ -74,78 +73,78 @@ ClientSocket *WSys::createSocket()
 // ---------------------------------
 void WSys::endThread(ThreadInfo *info)
 {
-}
+}             
 // ---------------------------------
 void WSys::waitThread(ThreadInfo *info, int timeout)
 {
-    switch (WaitForSingleObject((void *)info->handle, timeout))
-    {
-    case WAIT_TIMEOUT:
-        throw TimeoutException();
-        break;
-    }
+	switch(WaitForSingleObject((void *)info->handle, timeout))
+	{
+      case WAIT_TIMEOUT:
+          throw TimeoutException();
+          break;
+	}
 }
-
+  
 
 // ---------------------------------
 bool	WSys::startThread(ThreadInfo *info)
 {
-    info->active = true;
+	info->active = true;
 
-    /*	typedef unsigned ( __stdcall *start_address )( void * );
+/*	typedef unsigned ( __stdcall *start_address )( void * );
 
-        unsigned int threadID;
-        info->handle = (unsigned int)_beginthreadex( NULL, 0, (start_address)info->func, info, 0, &threadID );
+	unsigned int threadID;
+	info->handle = (unsigned int)_beginthreadex( NULL, 0, (start_address)info->func, info, 0, &threadID );
 
-        if(info->handle == 0)
-            return false;*/
+    if(info->handle == 0) 
+		return false;*/
 
-    typedef void(__cdecl *start_address)(void *);
-    info->handle = _beginthread((start_address)info->func, 0, info);
+	typedef void (__cdecl *start_address)( void * );
+	info->handle = _beginthread((start_address)info->func, 0,info);
 
-    if (info->handle == -1)
-        return false;
+    if(info->handle == -1) 
+		return false;
 
-    return true;
+  return true;
 
 }
 // ---------------------------------
 void	WSys::sleep(int ms)
 {
-    Sleep(ms);
+	Sleep(ms);
 }
 
 // ---------------------------------
 void WSys::appMsg(long msg, long arg)
 {
-    //SendMessage(mainWindow,WM_USER,(WPARAM)msg,(LPARAM)arg);
+	//SendMessage(mainWindow,WM_USER,(WPARAM)msg,(LPARAM)arg);
 }
 
 // --------------------------------------------------
-void WSys::callLocalURL(const char *str, int port)
+void WSys::callLocalURL(const char *str,int port)
 {
-    char cmd[512];
-    snprintf(cmd, _countof(cmd), "http://127.0.0.1:%d/%s", port, str);
-    ShellExecute(mainWindow, NULL, cmd, NULL, NULL, SW_SHOWNORMAL);
+	char cmd[512];
+	sprintf(cmd,"http://127.0.0.1:%d/%s",port,str);
+	ShellExecute(mainWindow, NULL, cmd, NULL, NULL, SW_SHOWNORMAL);
 }
 
 // ---------------------------------
 void WSys::getURL(const char *url)
 {
-    if (mainWindow)
-        if (_strnicmp(url, "http://", 7) || _strnicmp(url, "mailto:", 7))
-            ShellExecute(mainWindow, NULL, url, NULL, NULL, SW_SHOWNORMAL);
+	if (mainWindow)
+		if (strnicmp(url,"http://",7) || strnicmp(url,"mailto:",7))
+			ShellExecute(mainWindow, NULL, url, NULL, NULL, SW_SHOWNORMAL);
 }
 // ---------------------------------
 void WSys::exit()
 {
-    if (mainWindow)
-        PostMessage(mainWindow, WM_CLOSE, 0, 0);
-    else
-        ::exit(0);
+	if (mainWindow)
+		PostMessage(mainWindow,WM_CLOSE,0,0);
+	else
+		::exit(0);
 }
 // --------------------------------------------------
 void WSys::executeFile(const char *file)
 {
-    ShellExecute(NULL, "open", file, NULL, NULL, SW_SHOWNORMAL);
+    ShellExecute(NULL,"open",file,NULL,NULL,SW_SHOWNORMAL);  
 }

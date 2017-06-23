@@ -68,6 +68,7 @@ bool showGUI=true;
 bool allowMulti=false;
 bool killMe=false;
 bool allowTrayMenu=true;
+static bool winDistinctionNT=false;
 int		seenNewVersionTime=0;
 HICON icon1,icon2;
 ChanInfo chanInfo;
@@ -80,6 +81,8 @@ extern Stats stats;
 ThreadInfo trafficDlgThread;
 HWND trafficDlg = NULL;
 FileStream fs;
+
+bool jumpListEnabled = false; // jumplist flag (only for win7 or later)
 
 // プロトタイプ宣言
 void createGUI(HWND);
@@ -118,8 +121,8 @@ void	APICALL MyPeercastApp ::getDirectory()
 {
 	char path_buffer[256],drive[32],dir[128];
 	GetModuleFileName(NULL,path_buffer,255);
-    _splitpath_s(path_buffer, drive, _countof(drive), dir, _countof(dir), NULL, 0, NULL, 0);
-	snprintf(servMgr->modulePath, _countof(servMgr->modulePath),"%s%s",drive,dir);
+	_splitpath(path_buffer,drive,dir,NULL,NULL);
+	sprintf(servMgr->modulePath,"%s%s",drive,dir);
 }
 // --------------------------------- JP-EX
 bool	APICALL MyPeercastApp ::clearTemp()
@@ -180,7 +183,7 @@ void LOG2(const char *fmt,...)
 	va_list ap;
 	va_start(ap, fmt);
 	char str[4096];
-	vsnprintf(str, _countof(str),fmt,ap);
+	vsprintf(str,fmt,ap);
 	OutputDebugString(str);
 	va_end(ap);	
 }
@@ -195,6 +198,14 @@ void WINAPI ServiceMain(DWORD argc, LPSTR *argv)
 	WIN32_FIND_DATA fd; //JP-EX
 	HANDLE hFind; //JP-EX
 
+	OSVERSIONINFO osInfo; //JP-EX
+	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO); //JP-EX
+	GetVersionEx(&osInfo);
+	if (osInfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
+		winDistinctionNT = true;
+	else
+		winDistinctionNT = false;
+
 	// off by default now
 	showGUI = false;
 
@@ -208,7 +219,7 @@ void WINAPI ServiceMain(DWORD argc, LPSTR *argv)
 		{
 			exit(-1);
 		}
-		for (int i=(int)_tcslen(buf); i>0; --i)
+		for (int i=_tcslen(buf); i>0; --i)
 		{
 			if (buf[i] == '\\')
 			{
@@ -229,6 +240,8 @@ void WINAPI ServiceMain(DWORD argc, LPSTR *argv)
 	peercastApp = new MyPeercastApp();
 
 	peercastInst->init();
+
+	LOG_DEBUG("Set OS Type: %s",winDistinctionNT?"WinNT":"Win9x");
 
 	if (peercastApp->clearTemp()) //JP-EX
 	{
@@ -272,6 +285,27 @@ int WinMainDummy(HINSTANCE hInstance,
 	WIN32_FIND_DATA fd; //JP-EX
 	HANDLE hFind; //JP-EX
 
+	OSVERSIONINFOEX osInfo; //JP-EX
+	osInfo.dwOSVersionInfoSize = sizeof(osInfo); //JP-EX
+	GetVersionEx(reinterpret_cast<LPOSVERSIONINFO>(&osInfo));
+	if (osInfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
+		winDistinctionNT = true;
+	else
+		winDistinctionNT = false;
+
+	// for Windows7 or later
+	if ((osInfo.wProductType == VER_NT_WORKSTATION
+		&& osInfo.dwMajorVersion == 6
+		&& osInfo.dwMinorVersion == 1)
+		||
+		(osInfo.dwMajorVersion == 6
+		&& osInfo.dwMinorVersion > 1)
+		||
+		osInfo.dwMajorVersion > 6)
+	{
+		jumpListEnabled = true;
+	}
+
 	// off by default now
 	showGUI = false;
 
@@ -305,7 +339,7 @@ int WinMainDummy(HINSTANCE hInstance,
 				p++;
 			}
 			if (*p)
-				strncpy_s(tmpURL, _countof(tmpURL),p, _TRUNCATE);
+				strncpy(tmpURL,p,sizeof(tmpURL)-1);
 		}
 	}
 
@@ -324,9 +358,9 @@ int WinMainDummy(HINSTANCE hInstance,
 	}
 
 
-	if (_strnicmp(tmpURL,"peercast://",11)==0)
+	if (strnicmp(tmpURL,"peercast://",11)==0)
 	{
-		if (_strnicmp(tmpURL+11,"pls/",4)==0)
+		if (strnicmp(tmpURL+11,"pls/",4)==0)
 			chanURL = tmpURL+11+4;
 		else
 			chanURL = tmpURL+11;
@@ -341,9 +375,9 @@ int WinMainDummy(HINSTANCE hInstance,
 	//LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	//LoadString(hInstance, IDC_APP_TITLE, szWindowClass, MAX_LOADSTRING);
 
-	strcpy_s(szTitle, _countof(szTitle),"PeerCast");
-	strcpy_s(szWindowClass, _countof(szWindowClass),"PeerCast");
-	strcpy_s(szWindowClass2, _countof(szWindowClass2),"Main");
+	strcpy(szTitle,"PeerCast");
+	strcpy(szWindowClass,"PeerCast");
+	strcpy(szWindowClass2,"Main");
 
 	if (!allowMulti)
 	{
@@ -365,7 +399,7 @@ int WinMainDummy(HINSTANCE hInstance,
 				{
 					COPYDATASTRUCT copy;
 					copy.dwData = WM_PLAYCHANNEL;
-					copy.cbData = (DWORD)strlen(chanURL)+1;			// plus null term
+					copy.cbData = strlen(chanURL)+1;			// plus null term
 					copy.lpData = chanURL;
 					SendMessage(oldWin,WM_COPYDATA,NULL,(LPARAM)&copy);
 				}else{
@@ -391,6 +425,8 @@ int WinMainDummy(HINSTANCE hInstance,
 	peercastApp = new MyPeercastApp();
 
 	peercastInst->init();
+
+	LOG_DEBUG("Set OS Type: %s",winDistinctionNT?"WinNT":"Win9x");
 
 	if (peercastApp->clearTemp()) //JP-EX
 	{
@@ -448,7 +484,7 @@ int WinMainDummy(HINSTANCE hInstance,
 
 	Gdiplus::GdiplusShutdown(gdiplusToken);
 
-	return (int)msg.wParam;
+	return msg.wParam;
 }
 
 
@@ -602,7 +638,7 @@ void loadIcons(HINSTANCE hInstance, HWND hWnd)
     trayIcon.uFlags = NIF_MESSAGE + NIF_ICON + NIF_TIP;
     trayIcon.uCallbackMessage = WM_TRAYICON;
     trayIcon.hIcon = icon1;
-    strcpy_s(trayIcon.szTip, _countof(trayIcon.szTip), "PeerCast");
+    strcpy(trayIcon.szTip, "PeerCast");
 
     Shell_NotifyIcon(NIM_ADD, (NOTIFYICONDATA*)&trayIcon);
 
@@ -670,12 +706,13 @@ void channelPopup(const char *title, const char *msg, bool isPopup = true)
 	both.append(")");
 
 	trayIcon.uFlags = NIF_ICON|NIF_TIP;
-	strncpy_s(trayIcon.szTip, _countof(trayIcon.szTip), both.cstr(), _TRUNCATE);
+	strncpy(trayIcon.szTip, both.cstr(),sizeof(trayIcon.szTip)-1);
+	trayIcon.szTip[sizeof(trayIcon.szTip)-1]=0;
 
 	if (isPopup) trayIcon.uFlags |= 16;
 	trayIcon.uTimeoutOrVersion = 10000;
-	strncpy_s(trayIcon.szInfo, _countof(trayIcon.szInfo),msg, _TRUNCATE);
-	strncpy_s(trayIcon.szInfoTitle, _countof(trayIcon.szInfoTitle),title, _TRUNCATE);
+	strncpy(trayIcon.szInfo,msg,sizeof(trayIcon.szInfo)-1);
+	strncpy(trayIcon.szInfoTitle,title,sizeof(trayIcon.szInfoTitle)-1);
 		
 	Shell_NotifyIcon(NIM_MODIFY, (NOTIFYICONDATA*)&trayIcon);
 }
@@ -684,8 +721,8 @@ void clearChannelPopup()
 {
 	trayIcon.uFlags = NIF_ICON|16;
 	trayIcon.uTimeoutOrVersion = 10000;
-    strncpy_s(trayIcon.szInfo, _countof(trayIcon.szInfo),"", _TRUNCATE);
-	strncpy_s(trayIcon.szInfoTitle, _countof(trayIcon.szInfoTitle),"", _TRUNCATE);
+    strncpy(trayIcon.szInfo,"",sizeof(trayIcon.szInfo)-1);
+	strncpy(trayIcon.szInfoTitle,"",sizeof(trayIcon.szInfoTitle)-1);
 	Shell_NotifyIcon(NIM_MODIFY, (NOTIFYICONDATA*)&trayIcon);
 }
 
@@ -896,8 +933,8 @@ void	APICALL MyPeercastApp::notifyMessage(ServMgr::NOTIFY_TYPE type, const char 
 	{
 		trayIcon.uFlags |= 16;
         trayIcon.uTimeoutOrVersion = 10000;
-        strncpy_s(trayIcon.szInfo, _countof(trayIcon.szInfo),msg, _TRUNCATE);
-		strncpy_s(trayIcon.szInfoTitle, _countof(trayIcon.szInfoTitle),title, _TRUNCATE);
+        strncpy(trayIcon.szInfo,msg,sizeof(trayIcon.szInfo)-1);
+		strncpy(trayIcon.szInfoTitle,title,sizeof(trayIcon.szInfoTitle)-1);
 	    Shell_NotifyIcon(NIM_MODIFY, (NOTIFYICONDATA*)&trayIcon);
 	}
 }
@@ -946,12 +983,13 @@ void addRelayedChannelsMenu(HMENU cm)
 		if (c->isActive())
 		{
 			char str[128],name[64];
-			strncpy_s(name,32,c->info.name, _TRUNCATE);
+			strncpy(name,c->info.name,32);
+			name[32]=0;
 			if (strlen(c->info.name) > 32)
-				strcat_s(name, _countof(name),"...");
+				strcat(name,"...");
 
 
-			snprintf(str, _countof(str),"%s  (%d kb/s %s)",name,c->info.bitrate,ChanInfo::getTypeStr(c->info.contentType));
+			sprintf(str,"%s  (%d kb/s %s)",name,c->info.bitrate,ChanInfo::getTypeStr(c->info.contentType));
 			//InsertMenu(cm,0,MF_BYPOSITION,RELAY_CMD+i,str);
 		}
 		c=c->next;
@@ -962,12 +1000,12 @@ typedef int (*COMPARE_FUNC)(const void *,const void *);
 
 static int compareHitLists(ChanHitList **c2, ChanHitList **c1)
 {
-	return _stricmp(c1[0]->info.name.cstr(),c2[0]->info.name.cstr());
+	return stricmp(c1[0]->info.name.cstr(),c2[0]->info.name.cstr());
 }
 
 static int compareChannels(Channel **c2, Channel **c1)
 {
-	return _stricmp(c1[0]->info.name.cstr(),c2[0]->info.name.cstr());
+	return stricmp(c1[0]->info.name.cstr(),c2[0]->info.name.cstr());
 }
 
 // 
@@ -991,7 +1029,7 @@ void addAllChannelsMenu(HMENU cm)
 		InsertMenu(yMenu,0,MF_BYPOSITION,ID_POPUP_YELLOWPAGES1,servMgr->rootHost);
 	}
 
-	InsertMenu(cm,0,MF_BYPOSITION|MF_POPUP,(UINT_PTR)yMenu,"イエローページ");
+	InsertMenu(cm,0,MF_BYPOSITION|MF_POPUP,(UINT)yMenu,"イエローページ");
 	InsertMenu(cm,0,MF_BYPOSITION|MF_SEPARATOR,NULL,NULL);
 	// add channels to menu
 	int numActive=0;
@@ -1002,13 +1040,14 @@ void addAllChannelsMenu(HMENU cm)
 		String sjis; //JP-Patch
 		sjis = ch->info.name; //JP-Patch
 		sjis.convertTo(String::T_SJIS); //JP-Patch
-		strncpy_s(name,32,sjis.cstr(), _TRUNCATE);
-		//strncpy_s(name,32,ch->info.name, _TRUNCATE);
+		strncpy(name,sjis.cstr(),32);
+		//strncpy(name,ch->info.name,32);
+		name[32]=0;
 		//if (strlen(ch->info.name) > 32)
 		if (strlen(sjis.cstr()) > 32) //JP-Patch
-			strcat_s(name, _countof(name),"...");
+			strcat(name,"...");
 
-		snprintf(str, _countof(str),"%s  (%d kb/s %s)",name,ch->info.bitrate,ChanInfo::getTypeStr(ch->info.contentType));
+		sprintf(str,"%s  (%d kb/s %s)",name,ch->info.bitrate,ChanInfo::getTypeStr(ch->info.contentType));
 
 		HMENU opMenu = CreatePopupMenu();
 		InsertMenu(opMenu,0,MF_BYPOSITION,INFO_CMD+numActive,"Info");
@@ -1020,7 +1059,7 @@ void addAllChannelsMenu(HMENU cm)
 		if (ch)
 			fl |= (ch->isPlaying()?MF_CHECKED:0);
 
-		InsertMenu(cm,0,fl,(UINT_PTR)opMenu,str);
+		InsertMenu(cm,0,fl,(UINT)opMenu,str);
 		
 		numActive++;
 
@@ -1057,7 +1096,7 @@ void flipNotifyPopup(int id, ServMgr::NOTIFY_TYPE nt)
 static void showHTML(const char *file)
 {
 	char url[256];
-	snprintf(url, _countof(url),"%s/%s",servMgr->htmlPath,file);					
+	sprintf(url,"%s/%s",servMgr->htmlPath,file);					
 
 //	sys->callLocalURL(url,servMgr->serverHost.port);
 	sys->callLocalURL(url,	// for PCRaw (url)
@@ -1271,7 +1310,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				int c = wmId - INFO_CMD;
 				chanInfo = getChannelInfo(c);
 				chanInfoIsRelayed = false;
-				DialogBox(hInst, (LPCTSTR)IDD_CHANINFO, hWnd, (DLGPROC)ChanInfoProc);
+				if (winDistinctionNT)
+					DialogBox(hInst, (LPCTSTR)IDD_CHANINFO, hWnd, (DLGPROC)ChanInfoProc);
+				else
+				{
+					HWND WKDLG; //JP-Patch
+					WKDLG = CreateDialog(hInst, (LPCTSTR)IDD_CHANINFO, hWnd, (DLGPROC)ChanInfoProc); //JP-Patch
+					ShowWindow(WKDLG,SW_SHOWNORMAL); //JP-Patch
+				}
 				return 0;
 			}
 			if ((wmId >= URL_CMD) && (wmId < URL_CMD+MAX_CHANNELS))
@@ -1325,11 +1371,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					sys->getURL("http://yp.peercast.org/");
 					break;
 				case ID_POPUP_YELLOWPAGES1:
-					snprintf(buf, _countof(buf), "http://%s",servMgr->rootHost.cstr());
+					sprintf(buf, "http://%s",servMgr->rootHost.cstr());
 					sys->getURL(buf);
 					break;
 				case ID_POPUP_YELLOWPAGES2:
-					snprintf(buf, _countof(buf), "http://%s",servMgr->rootHost2.cstr());
+					sprintf(buf, "http://%s",servMgr->rootHost2.cstr());
 					sys->getURL(buf);
 					break;
 
@@ -1416,7 +1462,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				case ID_POPUP_TRAFFIC:
 					// トラフィックモニタ起動
-					DialogBox(hInst, (LPCTSTR)IDD_TRAFFIC, hWnd, (DLGPROC)TrafficDlgProc);
+					if (winDistinctionNT)
+						DialogBox(hInst, (LPCTSTR)IDD_TRAFFIC, hWnd, (DLGPROC)TrafficDlgProc);
+					else
+					{
+						HWND WKDLG; //JP-Patch
+						WKDLG = CreateDialog(hInst, (LPCTSTR)IDD_TRAFFIC, hWnd, (DLGPROC)TrafficDlgProc); //JP-Patch
+						ShowWindow(WKDLG,SW_SHOWNORMAL); //JP-Patch
+					}
 					break;
 
 				case ID_POPUP_PREVENT_SS:
@@ -1478,8 +1531,18 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 		case WM_INITDIALOG:
-			SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENT);
+			//SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LONG)PCX_AGENT);
+//			SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LONG)PCX_AGENTJP);
+			if (version_ex)
+			{
+				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENTEX); // x64対応
+			} else
+			{
+				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LONG)PCX_AGENTVP);
+			}
+
 			return TRUE;
+
 		case WM_COMMAND:
 			switch (LOWORD(wParam))
 			{
@@ -1508,11 +1571,11 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 		case WM_INITDIALOG:
 			{
 				char str[1024];
-				//strcpy_s(str, _countof(str),chanInfo.track.artist.cstr());
-				strcpy_s(str, _countof(str),chanInfo.track.artist); //JP-Patch
-				strcat_s(str, _countof(str)," - ");
-				//strcat_s(str, _countof(str),chanInfo.track.title.cstr());
-				strcat_s(str, _countof(str),chanInfo.track.title);
+				//strcpy(str,chanInfo.track.artist.cstr());
+				strcpy(str,chanInfo.track.artist); //JP-Patch
+				strcat(str," - ");
+				//strcat(str,chanInfo.track.title.cstr());
+				strcat(str,chanInfo.track.title);
 				String name,track,comment,desc,genre; //JP-Patch
 				name = chanInfo.name; //JP-Patch
 				track = str; //JP-Patch
@@ -1541,7 +1604,7 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 				SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LPARAM)genre.cstr()); // x64対応
 				//SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LONG)genre.cstr()); //JP-Patch
 
-				snprintf(str, _countof(str),"%d kb/s %s",chanInfo.bitrate,ChanInfo::getTypeStr(chanInfo.contentType));
+				sprintf(str,"%d kb/s %s",chanInfo.bitrate,ChanInfo::getTypeStr(chanInfo.contentType));
 				SendDlgItemMessage(hDlg,IDC_FORMAT,WM_SETTEXT,0,(LPARAM)str); // x64対応
 				//SendDlgItemMessage(hDlg,IDC_FORMAT,WM_SETTEXT,0,(LONG)str);
 
@@ -1613,7 +1676,7 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 					}
 				case IDC_DETAILS:
 					{
-						snprintf(str, _countof(str),"admin?page=chaninfo&id=%s&relay=%d",idstr,chanInfoIsRelayed);
+						sprintf(str,"admin?page=chaninfo&id=%s&relay=%d",idstr,chanInfoIsRelayed);
 						sys->callLocalURL(str,servMgr->serverHost.port);
 						return TRUE;
 					}
@@ -1661,12 +1724,18 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 			break;
 
 		case WM_CLOSE:
-			EndDialog(hDlg, 0);
+			if (winDistinctionNT)
+				EndDialog(hDlg, 0);
+			else
+				DestroyWindow(hDlg); //JP-Patch
 			break;
 
 		case WM_ACTIVATE:
 			if (LOWORD(wParam) == WA_INACTIVE)
-				EndDialog(hDlg, 0);
+				if (winDistinctionNT)
+					EndDialog(hDlg, 0);
+				else
+					DestroyWindow(hDlg); //JP-Patch
 			break;
 		case WM_DESTROY:
 			chWnd = NULL;
@@ -1702,7 +1771,10 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		// 既に開いてる
 		if (trafficDlg || trafficDlgThread.active)
 		{
-			EndDialog(hDlg, 0);
+			if (winDistinctionNT)
+				EndDialog(hDlg, 0);
+			else
+				DestroyWindow(hDlg);
 			return FALSE;
 		}
 
@@ -1722,8 +1794,8 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 			char suffix[][3] = { "B", "KB", "MB", "GB" };
 			const int bufsize = 60;
 			char szUp[bufsize], szDown[bufsize];
-			unsigned int totalDown = stats.getCurrent(Stats::BYTESIN) - stats.getCurrent(Stats::LOCALBYTESIN);
-			unsigned int totalUp = stats.getCurrent(Stats::BYTESOUT) - stats.getCurrent(Stats::LOCALBYTESOUT);
+			unsigned long long int totalDown = stats.getCurrent(Stats::BYTESIN) - stats.getCurrent(Stats::LOCALBYTESIN);
+			unsigned long long int totalUp = stats.getCurrent(Stats::BYTESOUT) - stats.getCurrent(Stats::LOCALBYTESOUT);
 
 			// up
 			for (int i=GB; i>0; --i)
@@ -1735,7 +1807,7 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 				}
 
 				if (i == 1)
-					sprintf_s<bufsize>(szUp, "%u%s", totalUp, suffix[0]);
+					sprintf_s<bufsize>(szUp, "%d%s", totalUp, suffix[0]);
 			}
 
 			// down
@@ -1748,7 +1820,7 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 				}
 
 				if (i == 1)
-					sprintf_s<bufsize>(szDown, "%u%s", totalDown, suffix[0]);
+					sprintf_s<bufsize>(szDown, "%d%s", totalDown, suffix[0]);
 			}
 
 			SetDlgItemText(hDlg, IDC_STATIC_UP, szUp);
@@ -1759,7 +1831,11 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 	case WM_CLOSE:
 		trafficDlg = NULL;
 		trafficDlgThread.active = false;
-		EndDialog(hDlg, 0);
+		if (winDistinctionNT)
+			EndDialog(hDlg, 0);
+		else
+			DestroyWindow(hDlg);
+
 		break;
 
 	case WM_DESTROY:

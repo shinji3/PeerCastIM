@@ -2,7 +2,7 @@
 // File : stats.h
 // Date: 4-apr-2002
 // Author: giles
-// Desc:
+// Desc: 
 //
 // (c) 2002 peercast.org
 // ------------------------------------------------
@@ -20,68 +20,69 @@
 #ifndef _STATS_H
 #define _STATS_H
 
-#include "varwriter.h"
-
 // ------------------------------------------------------
-class Stats : public VariableWriter
+class Stats
 {
 public:
 
-    void    clear();
-    void    update();
+	void	clear();
+	void	update();
 
-    enum STAT
-    {
-        NONE,
+	enum STAT
+	{
+		NONE,
 
-        PACKETSSTART,
-        NUMQUERYIN, NUMQUERYOUT,
-        NUMPINGIN, NUMPINGOUT,
-        NUMPONGIN, NUMPONGOUT,
-        NUMPUSHIN, NUMPUSHOUT,
-        NUMHITIN, NUMHITOUT,
-        NUMOTHERIN, NUMOTHEROUT,
-        NUMDROPPED,
-        NUMDUP,
-        NUMACCEPTED,
-        NUMOLD,
-        NUMBAD,
-        NUMHOPS1, NUMHOPS2, NUMHOPS3, NUMHOPS4, NUMHOPS5, NUMHOPS6, NUMHOPS7, NUMHOPS8, NUMHOPS9, NUMHOPS10,
-        NUMPACKETSIN,
-        NUMPACKETSOUT,
-        NUMROUTED,
-        NUMBROADCASTED,
-        NUMDISCARDED,
-        NUMDEAD,
-        PACKETDATAIN,
-        PACKETDATAOUT,
-        PACKETSEND,
+		PACKETSSTART,
+		NUMQUERYIN,NUMQUERYOUT,
+		NUMPINGIN,NUMPINGOUT,
+		NUMPONGIN,NUMPONGOUT,
+		NUMPUSHIN,NUMPUSHOUT,
+		NUMHITIN,NUMHITOUT,
+		NUMOTHERIN,NUMOTHEROUT,
+		NUMDROPPED,
+		NUMDUP,
+		NUMACCEPTED,
+		NUMOLD,
+		NUMBAD,
+		NUMHOPS1,NUMHOPS2,NUMHOPS3,NUMHOPS4,NUMHOPS5,NUMHOPS6,NUMHOPS7,NUMHOPS8,NUMHOPS9,NUMHOPS10,
+		NUMPACKETSIN,
+		NUMPACKETSOUT,
+		NUMROUTED,
+		NUMBROADCASTED,
+		NUMDISCARDED,
+		NUMDEAD,
+		PACKETDATAIN,
+		PACKETDATAOUT,
+		PACKETSEND,		
+		
 
-        BYTESIN,
-        BYTESOUT,
-        LOCALBYTESIN,
-        LOCALBYTESOUT,
+		BYTESIN,
+		BYTESOUT,
+		LOCALBYTESIN,
+		LOCALBYTESOUT,
 
-        MAX
-    };
+		MAX
+	};
 
-    bool    writeVariable(class Stream &, const class String &) override;
+	bool	writeVariable(class Stream &,const class String &);
 
-    void    clearRange(STAT s, STAT e)
-    {
-        for (int i=s; i<=e; i++)
-            current[i] = 0;
-    }
-    void    clear(STAT s) { current[s]=0; }
-    void    add(STAT s, int n=1) { current[s]+=n; }
-    unsigned int getPerSecond(STAT s) { return perSec[s]; }
-    unsigned int getCurrent(STAT s) { return current[s]; }
+	void	clearRange(STAT s, STAT e)
+	{
+		for(int i=s; i<=e; i++)
+			current[i] = 0;
+	}
+	void	clear(STAT s) {current[s]=0;}
+	void	add(STAT s,int n=1) {current[s]+=n;}
+	unsigned int getPerSecond(STAT s) {return perSec[s];}
+	unsigned long long int getCurrent(STAT s) {return current[s];}
 
-    unsigned int    current[Stats::MAX], last[Stats::MAX], perSec[Stats::MAX];
-    unsigned int    lastUpdate;
+	unsigned long long int	current[Stats::MAX],last[Stats::MAX];
+	unsigned int perSec[Stats::MAX];
+	unsigned int	lastUpdate;
 };
 
 extern Stats stats;
+
 
 #endif
 

@@ -19,15 +19,17 @@
 #ifndef _MP3_H
 #define _MP3_H
 
+
 #include "channel.h"
 
 // ----------------------------------------------
 class MP3Stream : public ChannelStream
 {
 public:
-    void    readHeader(Stream &, Channel *) override;
-    int     readPacket(Stream &, Channel *) override;
-    void    readEnd(Stream &, Channel *) override;
+	virtual void readHeader(Stream &,Channel *);
+	virtual int	 readPacket(Stream &,Channel *);
+	virtual void readEnd(Stream &,Channel *);
 };
 
-#endif
+
+#endif 

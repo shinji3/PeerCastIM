@@ -20,6 +20,8 @@
 // GNU General Public License for more details.
 // ------------------------------------------------
 
+#define _WIN32_WINNT 0x0500
+
 #include "ws2tcpip.h" // getnameinfo
 #include "wspiapi.h" // compatibility for Win2k and earlier
 
@@ -53,6 +55,8 @@ ThreadInfo guiThread;
 bool shownChannels=false;
 WINDOWPLACEMENT winPlace;
 bool guiFlg = false;
+
+extern bool jumpListEnabled;
 
 using namespace Gdiplus;
 
@@ -116,7 +120,7 @@ THREAD_PROC GetHostName(ThreadInfo *thread){
 	u_long ip;
 	struct sockaddr_in sa;
 	char host[256];
-    char tmp[INET_ADDRSTRLEN];
+	char *tmp;
 	bool flg = TRUE;
 	bool findFlg;
 	int error;
@@ -138,13 +142,13 @@ THREAD_PROC GetHostName(ThreadInfo *thread){
 
 		case WSAHOST_NOT_FOUND:
 			LOG_ERROR("cannot resolve host for %s",
-				(inet_ntop(AF_INET, &sa.sin_addr, tmp, INET_ADDRSTRLEN) != NULL ? tmp : ""));
+				((tmp = inet_ntoa(sa.sin_addr)) ? tmp : ""));
 			flg = TRUE;
 			break;
 
 		default:
 			LOG_ERROR("an error occurred while resolving hostname of %s (%ld)",
-				(inet_ntop(AF_INET, &sa.sin_addr, tmp, INET_ADDRSTRLEN) != NULL ? tmp : ""), error);
+				((tmp = inet_ntoa(sa.sin_addr)) ? tmp : ""), error);
 		}
 	}
 
@@ -212,7 +216,7 @@ int drawSpeed(Graphics *gra, int posX, int posY){
 	SolidBrush strBrush(Color::Black);
 	// 文字列作成
 	char tmp[256];
-	snprintf(tmp, _countof(tmp), "R:%.1fkbps S:%.1fkbps", 
+	sprintf(tmp, "R:%.1fkbps S:%.1fkbps", 
 		BYTES_TO_KBPS(stats.getPerSecond(Stats::BYTESIN)-stats.getPerSecond(Stats::LOCALBYTESIN)),
 		BYTES_TO_KBPS(stats.getPerSecond(Stats::BYTESOUT)-stats.getPerSecond(Stats::LOCALBYTESOUT)));
 	_bstr_t bstr(tmp);
@@ -295,7 +299,8 @@ void ChannelData::setData(Channel *c){
 	sjis = c->getName();
 	sjis.convertTo(String::T_SJIS);
 
-	strncpy_s(name, _countof(name), sjis, _TRUNCATE);
+	strncpy(name, sjis, 256);
+	name[256] = '\0';
 	channel_id = c->channel_id;
 	bitRate = c->info.bitrate;
 	lastPlayStart = c->info.lastPlayStart;
@@ -459,7 +464,7 @@ int ChannelData::drawChannel(Graphics *g, int x, int y){
 		//char tmp[512]; // 表示用バッファ
 		//char hostip[256]; // IPアドレスバッファ
 		//chDisp.uphost.toStr(hostip); // 上流IP
-		//snprintf(tmp, _countof(tmp), "%d/%d - [%d/%d] - %s",
+		//sprintf(tmp, "%d/%d - [%d/%d] - %s",
 		//	getTotalListeners(),
 		//	getTotalRelays(),
 		//	getLocalListeners(),
@@ -469,7 +474,7 @@ int ChannelData::drawChannel(Graphics *g, int x, int y){
 
 		// リスナー数/リレー数表示
 		char tmp[256];
-		snprintf(tmp, _countof(tmp), "%d/%d - [%d/%d]", getTotalListeners(), getTotalRelays(), getLocalListeners(), getLocalRelays());
+		sprintf(tmp, "%d/%d - [%d/%d]", getTotalListeners(), getTotalRelays(), getLocalListeners(), getLocalRelays());
 		_bstr_t bstr2(tmp);
 		// 文字表示範囲指定
 		RectF r2(origin.X, origin.Y, 100.0f, 13.0f);
@@ -485,7 +490,7 @@ int ChannelData::drawChannel(Graphics *g, int x, int y){
 		} else {
 			f = ::new Font(L"Arial", 9.0f);
 		}
-		snprintf(tmp, _countof(tmp), "%dkbps", getBitRate());
+		sprintf(tmp, "%dkbps", getBitRate());
 		_bstr_t bstr3(tmp);
 		format.SetAlignment(StringAlignmentFar);
 		// 文字表示範囲指定
@@ -664,10 +669,10 @@ void ServentData::setData(Servent *s, ChanHit *hit, unsigned int listeners, unsi
 	chanHit.relay = hit->relay;
 	chanHit.firewalled = hit->firewalled;
 	chanHit.version = hit->version;
-	chanHit.versionVP = hit->versionVP;
-	chanHit.versionExNumber = hit->versionExNumber;
-	chanHit.versionExPrefix[0] = hit->versionExPrefix[0];
-	chanHit.versionExPrefix[1] = hit->versionExPrefix[1];
+	chanHit.version_vp = hit->version_vp;
+	chanHit.version_ex_number = hit->version_ex_number;
+	chanHit.version_ex_prefix[0] = hit->version_ex_prefix[0];
+	chanHit.version_ex_prefix[1] = hit->version_ex_prefix[1];
 
 	totalListeners = listeners;
 	totalRelays = relays;
@@ -721,27 +726,27 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y){
 	host.toStr(host1);
 
 	if (infoFlg){
-		if (chanHit.versionExNumber){
+		if (chanHit.version_ex_number){
 			// 拡張バージョン
-			snprintf(tmp, _countof(tmp), "%c%c%04d - %d/%d - %s(%s)", 
-				chanHit.versionExPrefix[0],
-				chanHit.versionExPrefix[1],
-				chanHit.versionExNumber,
+			sprintf(tmp, "%c%c%04d - %d/%d - %s(%s)", 
+				chanHit.version_ex_prefix[0],
+				chanHit.version_ex_prefix[1],
+				chanHit.version_ex_number,
 				totalListeners,
 				totalRelays,
 				host1,
 				hostname.cstr()
 				);
-		} else if (chanHit.versionVP){
-			snprintf(tmp, _countof(tmp), "VP%04d - %d/%d - %s(%s)", 
-				chanHit.versionVP,
+		} else if (chanHit.version_vp){
+			sprintf(tmp, "VP%04d - %d/%d - %s(%s)", 
+				chanHit.version_vp,
 				totalListeners,
 				totalRelays,
 				host1,
 				hostname.cstr()
 				);
 		} else {
-			snprintf(tmp, _countof(tmp), "(-----) - %d/%d - %s(%s)",
+			sprintf(tmp, "(-----) - %d/%d - %s(%s)",
 				totalListeners,
 				totalRelays,
 				host1,
@@ -749,7 +754,7 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y){
 				);
 		}
 	} else {
-			snprintf(tmp, _countof(tmp), "(-----) - %d/%d - %s(%s)",
+			sprintf(tmp, "(-----) - %d/%d - %s(%s)",
 				totalListeners,
 				totalRelays,
 				host1,
@@ -1056,10 +1061,10 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread){
 								hitData.relay = hit->relay;
 								hitData.firewalled = hit->firewalled;
 								hitData.numRelays = hit->numRelays;
-								hitData.versionVP = hit->versionVP;
-								hitData.versionExPrefix[0] = hit->versionExPrefix[0];
-								hitData.versionExPrefix[1] = hit->versionExPrefix[1];
-								hitData.versionExNumber = hit->versionExNumber;
+								hitData.version_vp = hit->version_vp;
+								hitData.version_ex_prefix[0] = hit->version_ex_prefix[0];
+								hitData.version_ex_prefix[1] = hit->version_ex_prefix[1];
+								hitData.version_ex_number = hit->version_ex_number;
 							}
 						}
 						// 次をチェック
@@ -1559,6 +1564,11 @@ void WmCreateProc(HWND hwnd){
 	img_broad_ok = ::new Image(bstr);
 	bstr = L"ST_BROAD_FULL.bmp";
 	img_broad_full = ::new Image(bstr);
+
+	// jumplist
+	if (jumpListEnabled)
+	{
+	}
 }
 
 void WmPaintProc(HWND hwnd){

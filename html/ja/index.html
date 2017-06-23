@@ -1,247 +1,201 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html><!-- InstanceBegin template="/Templates/peercast-jp.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
-<title>情報 - PeerCast - 
-{@if servMgr.serverName}
-{$servMgr.serverName}
-{@else}
-{$servMgr.serverIP}:{$servMgr.serverPort}
-{@end}
-</title>
+<!-- InstanceBeginEditable name="title" --> 
+<title>PeerCast on {$servMgr.serverIP}:{$servMgr.serverPort}</title>
+<!-- InstanceEndEditable --> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link href="peercast.css" rel="stylesheet" type="text/css">
-<script src="/assets/js/jquery-3.2.1.min.js"></script>
-<script src="js/reloader.js"></script>
+<!-- InstanceBeginEditable name="head" -->
+<meta http-equiv="refresh" content="{$servMgr.refreshHTML}">
+<!-- InstanceEndEditable -->
 </head>
+
 <body bgcolor="#DDDDDD">
-<div class="reloader" data-url="?fragment=notifications" data-interval="{$servMgr.refreshHTML}">
-{@fragment notifications}
-<script>
-var notifications = [];
-var t = {!sys.time};
-var r = {!servMgr.refreshHTML};
-{@loop notificationBuffer.numNotifications}
-{@if !loop.notification.isRead}
-if (t - {$loop.notification.unixTime} <= (2*r))
-notifications.push({ time: "{\loop.notification.time}", type: "{\loop.notification.type}", message: "{\loop.notification.message}" });
-{@end}
-{@end}
-// {$notificationBuffer.markAsRead}
-function notifyMe() {
-if (!("Notification" in window)) {
-alert("This browser does not support system notifications");
-}
-else if (Notification.permission === "granted") {
-for (var i = 0; i < notifications.length; i++) {
-spawnNotification(notifications[i].message, "/assets/images/small-logo.png", notifications[i].type);
-}
-}
-else if (Notification.permission !== 'denied') {
-Notification.requestPermission(function (permission) {
-if (permission === "granted") {
-for (var i = 0; i < notifications.length; i++) {
-spawnNotification(notifications[i].message, "/assets/images/small-logo.png", notifications[i].type);
-}
-}
-});
-}
-}
-function spawnNotification(theBody,theIcon,theTitle) {
-var options = {
-body: theBody,
-icon: theIcon
-}
-var n = new Notification(theTitle,options);
-setTimeout(n.close.bind(n), 5000);
-}
-notifyMe();
-</script>
-{@end}
-</div>
 <div align="center">
-<table width="100%" height="100%" border="1" align="center" cellpadding="5" cellspacing="0" bordercolor="#999999" bgcolor="#FFFFFF">
-<tr>
-<td class="container" align="center" valign="top">
+  <table width="100%" height="100%" border="1" align="center" cellpadding="5" cellspacing="0" bordercolor="#999999" bgcolor="#FFFFFF">
+    <tr> 
+      <td align="center" valign="top">
 <div align="center">
 <div align="center">
-<table width="100%" border="0">
-<tr>
-<td nowrap>
+            <table width="100%" border="0">
+              <tr> 
+                <td nowrap>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td valign="middle" nowrap>
-<table border="0" align="center" cellpadding="1" cellspacing="0">
-<tr>
-<td rowspan="2" valign="middle"><img src="/assets/images/small-logo.png" alt="www.peercast.org" border="0"></td>
-<td valign="bottom" style="padding: 0; padding-left: 2px">
-<span class="titlelinksBig">Peercast</span>
-</td>
-</tr>
-<tr>
-<td valign="top" style="line-height: 0.8em; padding: 0; text-align: center">
-<a href="https://github.com/plonk/peercast-yt">
-<span class="normal-small" style="font-size: 11px">{$servMgr.version}</span>
-</a>
-</td>
-</tr>
-</table>
-<div align="center"><span class="titlelinksBig"> </span>
-</div></td>
-<td style="padding: 0" align="right">
-{@if servMgr.upgradeURL}
-<div align="center" class="normal">
-<a href="{$servMgr.upgradeURL}" target="_blank">
-<strong>
-<font color="#FF0000">
-クライアントをアップグレードしてください。ここをクリックで最新バージョンをダウンロード。
-</font>
-</strong>
-</a>
-</div>
-{@else}
-{@if servMgr.rootMsg}
-<span title="ルートサーバーからのメッセージ" class="root-message normal-small" align="center">
-{$servMgr.rootMsg}
-</span>
-{@end}
-{@end}
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</div>
-<table class="navbar" width="100%" border="1" cellpadding="1" cellspacing="0">
-<tr class="normal">
-<td width="14.286%"><div align="center"><a href="index.html">情報</a></div></td>
-<td width="14.286%"><div align="center"><a href="channels.html">チャンネル</a></div></td>
-<td width="14.286%"><div align="center"><a href="notifications.html">通知</a></div></td>
-<td width="14.286%"><div align="center"><a href="connections.html">接続</a></div></td>
-<td width="14.286%"><div align="center"><a href="settings.html">設定</a></div></td>
-<td width="14.286%"><div align="center"><a href="viewlog.html">ログ表示</a></div></td>
-<td width="14.286%"><div align="center"><a href="logout.html">ログアウト</a></div></td>
-</tr>
-</table>
-{@if servMgr.disabled}
-<div align="center" class="normal">
-<p><strong><font color="#FF0000">Broadcasting has been disabled</font></strong></p>
-<p><strong><font color="#FF0000">Please contact peercast.org</font></strong></p>
-</div>
-{@end}
-<DIV align=center class="reloader" data-url="index.html?fragment=content" data-interval="{$servMgr.refreshHTML}">
-{@fragment content}
+                    <tr> 
+                      <td valign="middle" nowrap> <table border="0" align="center" cellpadding="1" cellspacing="0">
+                          <tr> 
+                            <td rowspan="2" valign="middle"><a href="http://www.peercast.org"><img src="images/small-logo.png" alt="www.peercast.org" border="0"></a></td>
+                            <td valign="bottom"><div align="left"><span class="titlelinksBig">peercast</span></div></td>
+                          </tr>
+                          <tr> 
+                            <td valign="top"><div align="center"><span class="normal-small">{$servMgr.version}</span> 
+                              </div></td>
+                          </tr>
+                        </table>
+                        <div align="center"><span class="titlelinksBig"> </span> 
+                        </div></td>
+                      <td>
+					  {@if servMgr.upgradeURL} 
+	  				    <div align="center" class="normal">
+                        <a href="{$servMgr.upgradeURL}" target="_blank"><strong><font color="#FF0000"> 新バージョンがダウンロードできるようになりました。!!!  </font></strong></a>
+						</div>
+					  {@else}
+	  				    <div align="center" class="normal-small">
+					  	{$servMgr.rootMsg}
+						</div>						
+                      {@end} 
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div align="center"></div>
+          <table width="100%" border="1" cellpadding="1" cellspacing="0">
+            <tr class="normal"> 
+              <td><div align="center"><a href="index.html">情報</a></div></td>
+              <td><div align="center"><a href="http://yp.peercast.org/?host={$servMgr.serverLocalIP}:{$servMgr.serverPort1}" target="_blank">Yellow 
+                  Pages</a></div></td>
+              <td><div align="center"><a href="relays.html">リレー</a></div></td>
+              <td><div align="center"><a href="broadcast.html">配信</a></div></td>
+              <td><div align="center"><a href="connections.html">コネクション</a></div></td>
+              <td><div align="center"><a href="settings.html">設定</a></div></td>
+              <td><div align="center"><a href="viewlog.html">ログ表示</a></div></td>
+              <td><div align="center"><a href="logout.html">ログアウト</a></div></td>
+            </tr>
+          </table>
+          <br>
+          <!-- InstanceBeginEditable name="content" -->
+<p>
+{@if servMgr.disabled} 
+          <div align="center" class="normal"> 
+            <p><strong><font color="#FF0000">Broadcasting has been disabled</font></strong></p>
+            <p><strong><font color="#FF0000">Please contact peercast.org</font></strong></p>
+          </div>
+{@end} 
+</p>
+<DIV align=center>
 <TABLE align=center border=0>
-<TBODY>
-<TR align=middle>
-<TD vAlign=top> <TABLE width="100%" align=center border=0>
-<TBODY>
-<TR align=middle bgColor=#ccc>
-<TD colSpan=2 class="normal"><B>情報</B></TD>
-</TR>
-<TR align=left bgColor=#eee class="normal">
-<TD>サーバーIP</TD>
-<TD bgcolor="#eee">{$servMgr.serverIP}</TD>
-</TR>
-<TR align=left bgColor=#ddd class="normal">
-<TD>稼働時間</TD>
-<TD>{$servMgr.uptime}</TD>
-</TR>
-<TR align=left bgColor=#eee class="normal">
-<TD>チャンネルキャッシュ</TD>
-<TD>{$chanMgr.numHitLists} - <a href="/admin?cmd=clear&amp;hitlists=1">消去</a></TD>
-</TR>
-<TR align=left bgColor=#ddd class="normal">
-<TD>ファイアウォール有り</TD>
-<TD>{@if servMgr.firewallKnown} {@if servMgr.isFirewalled}
-はい {@else} いいえ {@end} {@else} 不明 {@end} </TD>
-</TR>
-<TR align=left bgColor=#eee class="normal">
-<TD>統計XML</TD>
-<TD bgcolor="#eee"><A href="/admin?cmd=viewxml">表示</A></TD>
-</TR>
-<tr align=left bgColor=#ddd class="normal">
-<td>YPアドレス</td>
-<td>{$servMgr.ypAddress}</td>
-</tr>
-<TR align=left bgColor=#eee class="normal">
-<TD>ホストオプション</TD>
-<TD>{@if servMgr.isRoot}ルート{@end} {@if servMgr.isPrivate}ライセンス済み{@end} {@if servMgr.forceYP}強制YP{@end}</TD>
-</TR>
-</TBODY>
-</TABLE>
-<table width="100%" class="normal">
-<tr bgcolor="#ccc">
-<th colspan="2">チャンネルフィード</th>
-</tr>
-{@loop servMgr.numChannelFeeds}
-<tr bgcolor="{@if loop.indexEven}#ddd{@else}#eee{@end}">
-<td>{$loop.channelFeed.url}</td>
-<td align="center">{$loop.channelFeed.status}</td>
-</tr>
-{@end}
-</table>
-</TD>
-<TD vAlign=top> <TABLE width="100%" align=center border=0>
-<TBODY>
-<TR align=middle bgcolor="#ccc">
-<TD colSpan=4 class="normal"><B>帯域</B></TD>
-</TR>
-<TR align=left class="normal">
-<TD bgcolor="#eee"></TD>
-<TH bgcolor="#eee" style="text-align: center; width: 2.5em">受信</TH>
-<TH bgcolor="#eee" style="text-align: center; width: 2.5em">送信</TH>
-</TR>
-<TR align=left class="normal">
-<TD bgcolor="#eee">インターネット (Kbps)</TD>
-<TD bgcolor="#eee" class="numeric">{$stats.wanInPerSec}</TD>
-<TD bgcolor="#eee" class="numeric">{$stats.wanOutPerSec}</TD>
-</TR>
-<TR align=left class="normal">
-<TD bgcolor="#ddd">総計 (Kbps)</TD>
-<TD bgcolor="#ddd" class="numeric">{$stats.totalInPerSec}</TD>
-<TD bgcolor="#ddd" class="numeric">{$stats.totalOutPerSec}</TD>
-</TR>
-</TBODY>
-</TABLE>
-<table width="100%" border="0">
-<tr bgcolor="#ccc">
-<td colspan="2"><div align="center" class="normal"><strong>接続数</strong></div></td>
-</tr>
-<tr bgcolor="#ddd">
-<td width="66%" bgcolor="#ddd" class="normal">ダイレクト
-</td>
-<td width="34%" class="normal">{$servMgr.numDirect}</td>
-</tr>
-<tr bgcolor="#eee">
-<td bgcolor="#eee" class="normal">リレー</td>
-<td class="normal">{$servMgr.numRelays}</td>
-</tr>
-<tr bgcolor="#ddd">
-<td class="normal">CIN / COUT</td>
-<td bgcolor="#ddd" class="normal">{$servMgr.numCIN} / {$servMgr.numCOUT}</td>
-</tr>
-<tr bgcolor="#eee">
-<td class="normal">着信</td>
-<td bgcolor="#ddd" class="normal">{$servMgr.numIncoming}</td>
-</tr>
-<tr bgcolor="#ddd">
-<td class="normal">ポート {$servMgr.serverPort1} / {$servMgr.serverPort2}</td>
-<td class="normal">{$servMgr.numActive1} / {$servMgr.numActive2}</td>
-</tr>
-</table>
-</TD>
-</TR>
-</TBODY>
-</TABLE>
-{@end}
-</DIV>
-<hr size="1">
-<div align="center" class="normal-small"> &copy; 2005 peercast.org</div>
-</div>
-</td>
-</tr>
-</table>
+              <TBODY>
+                <TR align=middle> 
+                  <TD vAlign=top> <TABLE width="100%" align=center border=0>
+                      <TBODY>
+                        <TR align=middle bgColor=#cccccc> 
+                          <TD colSpan=2 class="normal"><B>情報</B></TD>
+                        </TR>
+                        <TR align=left bgColor=#eeeeee class="normal"> 
+                          <TD>サーバー IP</TD>
+                          <TD>{$servMgr.serverIP}</TD>
+                        </TR>
+                        <TR align=left bgColor=#dddddd class="normal"> 
+                          <TD>ポート</TD>
+                          <TD bgcolor="#dddddd">{@if servMgr.firewallKnown} {@if servMgr.isFirewalled} 
+                            <strong><font color="Red">開いてない</font></strong> {@else} <font color="Green">開いてる(OK!)</font> {@end} {@else} 不明 {@end} </TD>
+                        </TR>
+                        <TR align=left bgColor=#eeeeee class="normal"> 
+                          <TD>Uptime</TD>
+                          <TD>{$servMgr.uptime}</TD>
+                        </TR>
+                        <TR align=left bgColor=#dddddd class="normal"> 
+                          <TD>チャンネルキャッシュ</TD>
+                          <TD>{$chanMgr.numHitLists} - <a href="/admin?cmd=clear&hitlists=1">クリア</a></TD>
+                        </TR>
+                        <TR align=left bgColor=#eeeeee class="normal"> 
+                          <TD>XML ステータス</TD>
+                          <TD bgcolor="#eeeeee"><A href="/admin?cmd=viewxml">見る</A></TD>
+                        </TR>
+                        <TR align=left bgColor=#dddddd class="normal"> 
+                          <TD>GNet ホストキャッシュ</TD>
+                          <TD>{$servMgr.numServHosts} - <A 
+            href="/admin?cmd=clear&hostcache=1">クリア</A></TD>
+                        </TR>
+                        <TR align=left bgColor=#eeeeee class="normal"> 
+                          <TD>ホストオプション</TD>
+                          <TD>{@if servMgr.isRoot}Root{@end} {@if servMgr.isPrivate}Licensed{@end} {@if servMgr.forceYP}ForceYP{@end}</TD>
+                        </TR>
+                      </TBODY>
+                    </TABLE></TD>
+                  <TD vAlign=top> <TABLE width="100%" align=center border=0>
+                      <TBODY>
+                        <TR align=middle> 
+                          <TD colSpan=4 bgcolor="#cccccc" class="normal"><B>帯域</B></TD>
+                        </TR>
+                        <TR align=left class="normal"> 
+                          <TD bgcolor="#eeeeee"></TD>
+                          <TD bgcolor="#eeeeee"><B>下り</B></TD>
+                          <TD bgcolor="#eeeeee"><B>上り</B></TD>
+                          <TD bgcolor="#eeeeee"><B>合計</B></TD>
+                        </TR>
+                        <TR align=left class="normal"> 
+                          <TD bgcolor="#dddddd">合計 (Kbits/s)</TD>
+                          <TD bgcolor="#dddddd">{$stats.totalInPerSec}</TD>
+                          <TD bgcolor="#dddddd">{$stats.totalOutPerSec}</TD>
+                          <TD bgcolor="#dddddd">{$stats.totalPerSec}</TD>
+                        </TR>
+                        <TR align=left class="normal"> 
+                          <TD bgcolor="#eeeeee">インターネット (Kbits/s)</TD>
+                          <TD bgcolor="#eeeeee">{$stats.wanInPerSec}</TD>
+                          <TD bgcolor="#eeeeee">{$stats.wanOutPerSec}</TD>
+                          <TD bgcolor="#eeeeee">{$stats.wanTotalPerSec}</TD>
+                        </TR>
+                        <TR align=left class="normal"> 
+                          <TD bgcolor="#dddddd">GNet (Kbits/s)</TD>
+                          <TD bgcolor="#dddddd">{$stats.netInPerSec}</TD>
+                          <TD bgcolor="#dddddd">{$stats.netOutPerSec}</TD>
+                          <TD bgcolor="#dddddd">{$stats.netTotalPerSec}</TD>
+                        </TR>
+                        <TR align=left class="normal"> 
+                          <TD bgcolor="#eeeeee">GNet packets/sec</TD>
+                          <TD bgcolor="#eeeeee">{$stats.packInPerSec}</TD>
+                          <TD bgcolor="#eeeeee">{$stats.packOutPerSec}</TD>
+                          <TD bgcolor="#eeeeee">{$stats.packTotalPerSec}</TD>
+                        </TR>
+                      </TBODY>
+                    </TABLE>
+                    <table width="100%" border="0">
+                      <tr bgcolor="#cccccc"> 
+                        <td colspan="2"><div align="center" class="normal"><strong>コネクション</strong></div></td>
+                      </tr>
+                      <tr bgcolor="#dddddd"> 
+                        <td width="66%" bgcolor="#dddddd" class="normal">ダイレクト
+                        </td>
+                        <td width="34%" class="normal">{$servMgr.numDirect}</td>
+                      </tr>
+                      <tr bgcolor="#eeeeee"> 
+                        <td bgcolor="#eeeeee" class="normal">リレー</td>
+                        <td class="normal">{$servMgr.numRelays}</td>
+                      </tr>
+                      <tr bgcolor="#dddddd"> 
+                        <td class="normal">CIN / COUT</td>
+                        <td bgcolor="#dddddd" class="normal">{$servMgr.numCIN} 
+                          / {$servMgr.numCOUT}</td>
+                      </tr>
+                      <tr bgcolor="#eeeeee"> 
+                        <td class="normal">PGNU</td>
+                        <td class="normal">{$servMgr.numPGNU}</td>
+                      </tr>
+                      <tr bgcolor="#dddddd"> 
+                        <td class="normal">要求</td>
+                        <td bgcolor="#dddddd" class="normal">{$servMgr.numIncoming}</td>
+                      </tr>
+                      <tr bgcolor="#eeeeee"> 
+                        <td class="normal">ポート {$servMgr.serverPort1} / {$servMgr.serverPort2}</td>
+                        <td class="normal">{$servMgr.numActive1} / {$servMgr.numActive2}</td>
+                      </tr>
+                    </table></TD>
+                </TR>
+              </TBODY>
+            </TABLE>
+          </DIV>
+          <!-- InstanceEndEditable --> 
+          <hr size="1">
+          <div align="center" class="normal-small"> &copy; 2005 <a href="http://www.peercast.org" target="_blank">peercast.org</a> 
+          </div>
+        </div></td>
+    </tr>
+  </table>
 </div>
 </body>
-</html>
+<!-- InstanceEnd --></html>

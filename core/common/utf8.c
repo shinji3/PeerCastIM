@@ -145,7 +145,7 @@ int utf8_encode(const char *from, char **to)
 
 
 	wchars = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, from,
-			(int)strlen(from), NULL, 0);
+			strlen(from), NULL, 0);
 
 	if(wchars == 0)
 	{
@@ -160,7 +160,7 @@ int utf8_encode(const char *from, char **to)
 		return -1;
 	}
 
-	err = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, from, (int)strlen(from), unicode, wchars);
+	err = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, from, strlen(from), unicode, wchars);
 	if (err != wchars)
 	{
 		free(unicode);
@@ -264,7 +264,7 @@ void convert_set_charset(const char *charset)
 	free(current_charset);
 	current_charset = 0;
 	if (charset && *charset)
-		current_charset = _strdup(charset);
+		current_charset = strdup(charset);
 }
 
 static int convert_buffer(const char *fromcode, const char *tocode,
@@ -305,7 +305,7 @@ static int convert_string(const char *fromcode, const char *tocode,
 	s = malloc(fromlen + 1);
 	if (!s)
 		return -1;
-	strcpy_s(s, _countof(s), from);
+	strcpy(s, from);
 	*to = s;
 	for (; *s; s++)
 		if (*s & ~0x7f)

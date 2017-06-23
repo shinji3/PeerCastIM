@@ -2,8 +2,8 @@
 // File : html.cpp
 // Date: 4-apr-2002
 // Author: giles
-// Desc:
-//      HTML protocol handling
+// Desc: 
+//		HTML protocol handling
 //
 // (c) 2002 peercast.org
 // ------------------------------------------------
@@ -18,266 +18,551 @@
 // GNU General Public License for more details.
 // ------------------------------------------------
 
+
 #include <stdarg.h>
 #include <stdlib.h>
-#include "cgi.h"
-#include "channel.h"
-#include "gnutella.h"
 #include "html.h"
 #include "http.h"
 #include "stream.h"
+#include "gnutella.h"
+#include "servmgr.h"
+#include "channel.h"
+#include "stats.h"
 #include "version2.h"
-#include "template.h"
-#include "sstream.h"
-
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
 
+
 // --------------------------------------
 HTML::HTML(const char *t, Stream &o)
 {
-    out = &o;
-    out->writeCRLF = false;
+	o.writeCRLF = false;
+	out = new WriteBufferStream(8192, &o);
+	out->writeCRLF = false;
 
-    title.set(t);
-    tagLevel = 0;
-    refresh = 0;
+	title.set(t);
+	tagLevel = 0;
+	refresh = 0;
+}
+
+HTML::~HTML()
+{
+	try {
+		out->flush();
+	} catch (StreamException &) {}
+	delete out;
 }
 
 // --------------------------------------
-void HTML::writeOK(const char *content, const std::map<std::string,std::string>& additionalHeaders)
+void HTML::writeOK(const char *content)
 {
-    bool crlf = out->writeCRLF;
+	out->writeLine(HTTP_SC_OK);
+	out->writeLineF("%s %s",HTTP_HS_SERVER,PCX_AGENT);
+	//out->writeLine("%s %s",HTTP_HS_CACHE,"no-cache");
+	out->writeLineF("%s %s",HTTP_HS_CONNECTION,"close");
+    out->writeLineF("%s %s",HTTP_HS_CONTENT,content);
+	out->writeLine("");
+}
+// --------------------------------------
+void HTML::writeVariable(Stream &s,const String &varName, int loop)
+{
+	bool r=false;
+	if (varName.startsWith("servMgr."))
+		r=servMgr->writeVariable(s,varName+8);
+	else if (varName.startsWith("chanMgr."))
+		r=chanMgr->writeVariable(s,varName+8,loop);
+	else if (varName.startsWith("stats."))
+		r=stats.writeVariable(s,varName+6);
+	else if (varName.startsWith("sys."))
+	{
+		if (varName == "sys.log.dumpHTML")
+		{
+			sys->logBuf->dumpHTML(s);
+			r=true;
+		}
+	}
+	else if (varName.startsWith("loop."))
+	{
+		if (varName.startsWith("loop.channel."))
+		{
+			Channel *ch = chanMgr->findChannelByIndex(loop);
+			if (ch)
+				r = ch->writeVariable(s,varName+13,loop);
+		}else if (varName.startsWith("loop.servent."))
+		{
+			Servent *sv = servMgr->findServentByIndex(loop);
+			if (sv)
+				r = sv->writeVariable(s,varName+13);
+		}else if (varName.startsWith("loop.filter."))
+		{
+			ServFilter *sf = &servMgr->filters[loop];
+			r = sf->writeVariable(s,varName+12);
 
-    out->writeCRLF = true;
-    out->writeLine(HTTP_SC_OK);
-    out->writeLineF("%s %s", HTTP_HS_SERVER, PCX_AGENT);
-    //out->writeLine("%s %s", HTTP_HS_CACHE, "no-cache");
-    out->writeLineF("%s %s", HTTP_HS_CONNECTION, "close");
-    out->writeLineF("%s %s", HTTP_HS_CONTENT, content);
-    out->writeLineF("Date: %s", cgi::rfc1123Time(sys->getTime()).c_str());
+		}else if (varName.startsWith("loop.bcid."))
+		{
+			BCID *bcid = servMgr->findValidBCID(loop);
+			if (bcid)
+				r = bcid->writeVariable(s,varName+10);
+		
+		}else if (varName == "loop.indexEven")
+		{
+			s.writeStringF("%d",(loop&1)==0);
+			r = true;
+		}else if (varName == "loop.index")
+		{
+			s.writeStringF("%d",loop);
+			r = true;
+		}else if (varName.startsWith("loop.hit."))
+		{
+			char *idstr = getCGIarg(tmplArgs,"id=");
+			if (idstr)
+			{
+				GnuID id;
+				id.fromStr(idstr);
+				ChanHitList *chl = chanMgr->findHitListByID(id);
+				if (chl)
+				{
+					int cnt=0;
+					ChanHit *ch = chl->hit;
+					while (ch)
+					{
+						if (ch->host.ip && !ch->dead)
+						{
+							if (cnt == loop)
+							{
+								r = ch->writeVariable(s,varName+9);
+								break;
+							}
+							cnt++;
+						}
+						ch=ch->next;
+					}
 
-    for (auto& pair : additionalHeaders)
-        out->writeLineF("%s: %s", pair.first.c_str(), pair.second.c_str());
+				}
+			}
+		}
 
-    out->writeLine("");
-    out->writeCRLF = crlf;
+	}
+	else if (varName.startsWith("page."))
+	{
+		if (varName.startsWith("page.channel."))
+		{
+			char *idstr = getCGIarg(tmplArgs,"id=");
+			if (idstr)
+			{
+				GnuID id;
+				id.fromStr(idstr);
+				Channel *ch = chanMgr->findChannelByID(id);
+				if (ch)
+					r = ch->writeVariable(s,varName+13,loop);
+			}
+		}else
+		{
+
+			String v = varName+5;
+			v.append('=');
+			char *a = getCGIarg(tmplArgs,v);
+			if (a)
+			{
+				s.writeString(a);		
+				r=true;
+			}
+		}
+	}
+
+
+	if (!r)
+		s.writeString(varName);
+}
+// --------------------------------------
+int HTML::getIntVariable(const String &varName,int loop)
+{
+	String val;
+	LOG_DEBUG("AAA %d %d %d %d", val[0], val[1], val[2], val[3]);
+	MemoryStream mem(val.cstr(),String::MAX_LEN);
+
+	writeVariable(mem,varName,loop);
+
+	LOG_DEBUG("AAA %d %d %d %d", val[0], val[1], val[2], val[3]);
+	return atoi(val.cstr());
+}
+// --------------------------------------
+bool HTML::getBoolVariable(const String &varName,int loop)
+{
+	String val;
+	MemoryStream mem(val.cstr(),String::MAX_LEN);
+
+	writeVariable(mem,varName,loop);
+
+	String tmp;
+	tmp = varName;
+	LOG_DEBUG("*** %s : %c", tmp.cstr(), val[0]);
+
+	// integer
+	if ((val[0] >= '0') && (val[0] <= '9'))
+		return atoi(val.cstr()) != 0;	
+
+	// string
+	if (val[0]!=0)
+		return true;	
+
+	return false;
+}
+
+// --------------------------------------
+void	HTML::readIf(Stream &in,Stream *outp,int loop)
+{
+	String var;
+	bool varCond=true;
+
+	while (!in.eof())
+	{
+		char c = in.readChar();
+
+		if (c == '}')
+		{
+			if (getBoolVariable(var,loop)==varCond)
+			{
+				LOG_DEBUG("==varCond, loop = %d", loop);
+				if (readTemplate(in,outp,loop))
+					readTemplate(in,NULL,loop);
+			}else{
+				LOG_DEBUG("!=varCond, loop = %d", loop);
+				if (readTemplate(in,NULL,loop))
+					readTemplate(in,outp,loop);
+			}
+			return;
+		}else if (c == '!')
+		{
+			varCond = !varCond;
+		}else
+		{
+			var.append(c);
+		}
+	}
+
+}
+
+// --------------------------------------
+void	HTML::readLoop(Stream &in,Stream *outp,int loop)
+{
+	String var;
+	while (!in.eof())
+	{
+		char c = in.readChar();
+
+		if (c == '}')
+		{
+			int cnt = getIntVariable(var,loop);
+
+			LOG_DEBUG("loop_cnt : %s = %d", var.cstr(), cnt);
+
+			if (cnt)
+			{
+				int spos = in.getPosition();
+				for(int i=0; i<cnt; i++)
+				{
+					in.seekTo(spos);
+					readTemplate(in,outp,i);
+				}
+			}else
+			{
+				readTemplate(in,NULL,0);
+			}
+			return;
+
+		}else
+		{
+			var.append(c);
+		}
+	}
+
+}
+
+// --------------------------------------
+int HTML::readCmd(Stream &in,Stream *outp,int loop)
+{
+	String cmd;
+
+	int tmpl = TMPL_UNKNOWN;
+
+	while (!in.eof())
+	{
+		char c = in.readChar();
+
+		if (String::isWhitespace(c) || (c=='}'))
+		{
+			if (cmd == "loop")
+			{
+				readLoop(in,outp,loop);
+				tmpl = TMPL_LOOP;
+			}else if (cmd == "if")
+			{
+				readIf(in,outp,loop);
+				tmpl = TMPL_IF;
+			}else if (cmd == "end")
+			{
+				tmpl = TMPL_END;
+			}
+			else if (cmd == "else")
+			{
+				tmpl = TMPL_ELSE;
+			}
+			break;
+		}else
+		{
+			cmd.append(c);
+		}
+	}
+	return tmpl;
+}
+
+// --------------------------------------
+void	HTML::readVariable(Stream &in,Stream *outp,int loop)
+{
+	String var;
+	while (!in.eof())
+	{
+		char c = in.readChar();
+		if (c == '}')
+		{
+			if (outp)
+				writeVariable(*outp,var,loop);
+			return;
+		}else
+		{
+			var.append(c);
+		}
+	}
+
+}
+// --------------------------------------
+bool HTML::readTemplate(Stream &in,Stream *outp,int loop)
+{
+	while (!in.eof())
+	{
+		char c = in.readChar();
+
+		if (c == '{')
+		{
+			c = in.readChar();
+			if (c == '$')
+			{
+				readVariable(in,outp,loop);
+			}
+			else if (c == '@')
+			{
+				int t = readCmd(in,outp,loop);
+				if (t == TMPL_END)
+					return false;
+				else if (t == TMPL_ELSE)
+					return true;
+			}
+			else if (c == '{')
+			{
+				if (outp)
+					outp->writeChar(c);
+			}
+			else
+				throw StreamException("Unknown template escape");
+		}else
+		{
+			if (outp)
+				outp->writeChar(c);
+		}
+	}
+	return false;
 }
 
 // --------------------------------------
 void HTML::writeTemplate(const char *fileName, const char *args)
 {
-    FileStream file;
-    try
-    {
-        StringStream mem;
-        file.openReadOnly(fileName);
-        file.writeTo(mem, file.length());
-        mem.rewind();
+	FileStream file;
+	MemoryStream mm;
+	try
+	{
+		file.openReadOnly(fileName);
+		mm.readFromFile(file);
 
-        WriteBufferedStream bufferedOut(out);
-        Template temp(args);
-        if (args)
-        {
-            cgi::Query query(args);
-            temp.selectedFragment = query.get("fragment");
-        }
-        temp.readTemplate(mem, &bufferedOut, 0);
-    }catch (StreamException &e)
-    {
-        out->writeString(e.msg);
-        out->writeString(" : ");
-        out->writeString(fileName);
-    }
-    file.close();
+		tmplArgs = args;
+		readTemplate(mm,out,0);
+
+	}catch(StreamException &e)
+	{
+		out->writeString(e.msg);
+		out->writeString(" : ");
+		out->writeString(fileName);
+	}
+
+	mm.free2();
+	file.close();
 }
-
 // --------------------------------------
-#include <sys/types.h>
-#include <sys/stat.h>
-
-static time_t mtime(const char *path)
+void HTML::writeRawFile(const char *fileName)
 {
-    struct stat st;
-    if (stat(path, &st) == -1)
-        return -1;
-    else
-        return st.st_mtime;
-}
+	FileStream file;
+	try
+	{
+		file.openReadOnly(fileName);
 
-// --------------------------------------
-void HTML::writeRawFile(const char *fileName, const char *mimeType)
-{
-    FileStream file;
-    std::map<std::string,std::string> additionalHeaders;
+		file.writeTo(*out,file.length());
 
-    try
-    {
-        file.openReadOnly(fileName);
-        time_t t = mtime(fileName);
+	}catch(StreamException &)
+	{
+	}
 
-        if (t != -1)
-            additionalHeaders["Last-Modified"] = cgi::rfc1123Time(t);
-
-        writeOK(mimeType, additionalHeaders);
-        file.writeTo(*out, file.length());
-    }catch (StreamException &)
-    {
-    }
-
-    file.close();
+	file.close();
 }
 
 // --------------------------------------
 void HTML::locateTo(const char *url)
 {
-    bool prev = out->writeCRLF;
-    out->writeCRLF = true;
-    out->writeLine(HTTP_SC_FOUND);
-    out->writeLineF("Location: %s", url);
-    out->writeLine("");
-    out->writeCRLF = prev;
+	out->writeLine(HTTP_SC_FOUND);
+	out->writeLineF("Location: %s",url);
+	out->writeLine("");
 }
-
 // --------------------------------------
 void HTML::startHTML()
 {
-    startNode("html");
+	startNode("html");
 }
-
 // --------------------------------------
 void HTML::startBody()
 {
-    startNode("body");
+	startNode("body");
 }
-
 // --------------------------------------
 void HTML::addHead()
 {
-    char buf[512];
-    startNode("head");
-        startTagEnd("title", "%s", title.cstr());
-        startTagEnd("meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"");
-        if (!refreshURL.isEmpty())
-        {
-            snprintf(buf, _countof(buf), "meta http-equiv=\"refresh\" content=\"%d;URL=%s\"", refresh, refreshURL.cstr());
-            startTagEnd(buf);
-        }else if (refresh)
-        {
-            snprintf(buf, _countof(buf), "meta http-equiv=\"refresh\" content=\"%d\"", refresh);
-            startTagEnd(buf);
-        }
-    end();
-}
+	char buf[512];
+		startNode("head");
+			startTagEnd("title",title.cstr());
+			startTagEnd("meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"");
 
+			if (!refreshURL.isEmpty())
+			{
+				sprintf(buf,"meta http-equiv=\"refresh\" content=\"%d;URL=%s\"",refresh,refreshURL.cstr());
+				startTagEnd(buf);
+			}else if (refresh)
+			{
+				sprintf(buf,"meta http-equiv=\"refresh\" content=\"%d\"",refresh);
+				startTagEnd(buf);
+			}
+
+
+		end();
+}
+// --------------------------------------
+void HTML::addContent(const char *s)
+{
+	out->writeString(s);
+}
 // --------------------------------------
 void HTML::startNode(const char *tag, const char *data)
 {
-    const char *p = tag;
-    char *o = &currTag[tagLevel][0];
+	const char *p = tag;
+	char *o = &currTag[tagLevel][0];
 
-    for (int i=0; i<MAX_TAGLEN-1; i++)
-    {
-        char c = *p++;
-        if ((c==0) || (c==' '))
-            break;
-        else
-            *o++ = c;
-    }
-    *o = 0;
+	int i;
+	for(i=0; i<MAX_TAGLEN-1; i++)
+	{
+		char c = *p++;
+		if ((c==0) || (c==' '))
+			break;
+		else
+			*o++ = c;
+	}
+	*o = 0;
 
-    out->writeString("<");
-    out->writeString(tag);
-    out->writeString(">");
-    if (data)
-        out->writeString(data);
+	out->writeString("<");
+	out->writeString(tag);
+	out->writeString(">");
+	if (data)
+		out->writeString(data);
 
-    tagLevel++;
-    if (tagLevel >= MAX_TAGLEVEL)
-        throw StreamException("HTML too deep!");
+	tagLevel++;
+	if (tagLevel >= MAX_TAGLEVEL)
+		throw StreamException("HTML too deep!");
 }
-
 // --------------------------------------
 void HTML::end()
 {
-    tagLevel--;
-    if (tagLevel < 0)
-        throw StreamException("HTML premature end!");
+	tagLevel--;
+	if (tagLevel < 0)
+		throw StreamException("HTML premature end!");
 
-    out->writeString("</");
-    out->writeString(&currTag[tagLevel][0]);
-    out->writeString(">");
+	out->writeString("</");
+	out->writeString(&currTag[tagLevel][0]);
+	out->writeString(">");
 }
-
 // --------------------------------------
 void HTML::addLink(const char *url, const char *text, bool toblank)
 {
-    char buf[1024];
+	char buf[1024];
 
-    snprintf(buf, _countof(buf), "a href=\"%s\" %s", url, toblank?"target=\"_blank\"":"");
-    startNode(buf, text);
-    end();
+	sprintf(buf,"a href=\"%s\" %s",url,toblank?"target=\"_blank\"":"");
+	startNode(buf,text);
+	end();
 }
-
 // --------------------------------------
-void HTML::startTag(const char *tag, const char *fmt, ...)
+void HTML::startTag(const char *tag, const char *fmt,...)
 {
-    if (fmt)
-    {
-        va_list ap;
-        va_start(ap, fmt);
+	if (fmt)
+	{
 
-        char tmp[512];
-        vsnprintf(tmp, _countof(tmp), fmt, ap);
-        startNode(tag, tmp);
+		va_list ap;
+  		va_start(ap, fmt);
 
-        va_end(ap);
-    }else{
-        startNode(tag, NULL);
-    }
+		char tmp[512];
+		vsprintf(tmp,fmt,ap);
+		startNode(tag,tmp);
+
+	   	va_end(ap);	
+	}else{
+		startNode(tag,NULL);
+	}
 }
-
 // --------------------------------------
-void HTML::startTagEnd(const char *tag, const char *fmt, ...)
+void HTML::startTagEnd(const char *tag, const char *fmt,...)
 {
-    if (fmt)
-    {
-        va_list ap;
-        va_start(ap, fmt);
+	if (fmt)
+	{
 
-        char tmp[512];
-        vsnprintf(tmp, _countof(tmp), fmt, ap);
-        startNode(tag, tmp);
+		va_list ap;
+  		va_start(ap, fmt);
 
-        va_end(ap);
-    }else{
-        startNode(tag, NULL);
-    }
-    end();
+		char tmp[512];
+		vsprintf(tmp,fmt,ap);
+		startNode(tag,tmp);
+
+	   	va_end(ap);	
+	}else{
+		startNode(tag,NULL);
+	}
+	end();
 }
-
 // --------------------------------------
-void HTML::startSingleTagEnd(const char *fmt, ...)
+void HTML::startSingleTagEnd(const char *fmt,...)
 {
-    va_list ap;
-    va_start(ap, fmt);
+	va_list ap;
+	va_start(ap, fmt);
 
-    char tmp[512];
-    vsnprintf(tmp, _countof(tmp), fmt, ap);
-    startNode(tmp);
+	char tmp[512];
+	vsprintf(tmp,fmt,ap);
+	startNode(tmp);
 
-    va_end(ap);
-    end();
+	va_end(ap);	
+	end();
 }
 
 // --------------------------------------
 void HTML::startTableRow(int i)
 {
-    if (i & 1)
-        startTag("tr bgcolor=\"#dddddd\" align=\"left\"");
-    else
-        startTag("tr bgcolor=\"#eeeeee\" align=\"left\"");
+	if (i & 1)
+		startTag("tr bgcolor=\"#dddddd\" align=\"left\"");
+	else
+		startTag("tr bgcolor=\"#eeeeee\" align=\"left\"");
 }

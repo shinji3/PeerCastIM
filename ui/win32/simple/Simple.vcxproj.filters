@@ -21,6 +21,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="chkMemoryLeak.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="gui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,9 +39,6 @@
     <ClCompile Include="..\..\..\core\common\utf8.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\core\common\chkMemoryLeak.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Simple.rc">
@@ -46,6 +46,9 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="chkMemoryLeak.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="gui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -62,9 +65,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\core\common\utf8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\core\common\chkMemoryLeak.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

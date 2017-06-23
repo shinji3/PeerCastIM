@@ -46,6 +46,7 @@ public:
     unsigned char data[13];
 };
 
+
 // -----------------------------------
 class FLVTag
 {
@@ -143,10 +144,10 @@ public:
         if (packetSize < 8)
             throw std::runtime_error("no timestamp data");
 
-        packet[7] = (timestamp >> 24) & 0xff;
-        packet[4] = (timestamp >> 16) & 0xff;
-        packet[5] = (timestamp >> 8) & 0xff;
-        packet[6] = (timestamp >> 0) & 0xff;
+        packet[7] = (timestamp >> 24) && 0xff;
+        packet[4] = (timestamp >> 16) && 0xff;
+        packet[5] = (timestamp >> 8) && 0xff;
+        packet[6] = (timestamp >> 0) && 0xff;
     }
 
     const char *getTagType()
@@ -163,15 +164,6 @@ public:
         return "Unknown";
     }
 
-    bool isKeyFrame()
-    {
-        if (!data) return false;
-        if (type != T_VIDEO) return false;
-
-        uint8_t frameType = data[0] >> 4;
-        return frameType == 1 || frameType == 4;  // key frame or generated key frame
-    }
-
     int size;
     int packetSize;
     TYPE type;
@@ -186,23 +178,15 @@ public:
     static const int MAX_OUTGOING_PACKET_SIZE = 15 * 1024;
     static const int FLUSH_THRESHOLD          =  4 * 1024;
 
-    FLVTagBuffer()
-        : m_mem(ChanPacket::MAX_DATALEN)
-        , m_streamHasKeyFrames(false)
-        , startTime(0)
-    {}
-
+    FLVTagBuffer() : m_mem(ChanPacket::MAX_DATALEN) {}
     ~FLVTagBuffer()
     {
     }
 
     bool put(FLVTag& tag, Channel* ch);
     void flush(Channel* ch);
-    void rateLimit(uint32_t timestamp);
 
     MemoryStream m_mem;
-    bool m_streamHasKeyFrames;
-    unsigned int startTime;
 
 private:
     void sendImmediately(FLVTag& tag, Channel* ch);
@@ -291,11 +275,11 @@ public:
             else {
                 if (strcmp(key, "audiodatarate") == 0) {
                     in.readChar();
-                    bitrate += static_cast<int>(readDouble(in));
+                    bitrate += readDouble(in);
                 }
                 else if (strcmp(key, "videodatarate") == 0) {
                     in.readChar();
-                    bitrate += static_cast<int>(readDouble(in));
+                    bitrate += readDouble(in);
                 }
                 else {
                     read(in);

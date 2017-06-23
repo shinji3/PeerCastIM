@@ -2,7 +2,7 @@
 // File : inifile.h
 // Date: 4-apr-2002
 // Author: giles
-// Desc:
+// Desc: 
 //
 // (c) 2002 peercast.org
 // ------------------------------------------------
@@ -23,51 +23,31 @@
 #include "stream.h"
 
 // -----------------------------------------
-class IniFileBase
+class IniFile 
 {
 public:
-    IniFileBase(Stream& aStream)
-        : stream(aStream)
-        , currLine("")
-        , nameStr(NULL)
-        , valueStr(NULL)
-    {
-    }
+	bool	openReadOnly(const char *);
+	bool	openWriteReplace(const char *);
+	void	close();
 
-    bool        readNext();
+	bool	readNext();
 
-    bool        isName(const char *);
-    char        *getName();
-    int         getIntValue();
-    const char  *getStrValue();
-    bool        getBoolValue();
+	bool	isName(const char *);
+	char *	getName();
+	int		getIntValue();
+	char *	getStrValue();
+	bool	getBoolValue();
 
-    void        writeSection(const char *);
-    void        writeIntValue(const char *, int);
-    void        writeStrValue(const char *, const char *);
-    void        writeBoolValue(const char *, int);
-    void        writeLine(const char *);
+	void	writeSection(const char *);
+	void	writeIntValue(const char *, int);
+	void	writeStrValue(const char *, const char *);
+	void	writeBoolValue(const char *, int);
+	void	writeLine(const char *);
 
-    Stream&     stream;
-    char        currLine[256];
-    char        *nameStr, *valueStr;
-};
 
-// -----------------------------------------
-class IniFile : public IniFileBase
-{
-public:
-    IniFile()
-        : IniFileBase(fStream)
-    {
-    }
-    ~IniFile() { close(); }
-
-    bool        openReadOnly(const char *);
-    bool        openWriteReplace(const char *);
-    void        close();
-
-    FileStream  fStream;
+	FileStream	fStream;
+	char	currLine[256];
+	char	*nameStr,*valueStr;
 };
 
 #endif

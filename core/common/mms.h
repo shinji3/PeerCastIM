@@ -19,6 +19,7 @@
 #ifndef _MMS_H
 #define _MMS_H
 
+
 #include "channel.h"
 
 // ----------------------------------------------
@@ -26,12 +27,11 @@ class MMSStream : public ChannelStream
 {
 public:
 
-    void    readHeader(Stream &, Channel *) override;
-    int     readPacket(Stream &, Channel *) override;
-    void    readEnd(Stream &, Channel *) override;
-
-    static void processChunk(Stream &in, Channel *ch, ASFChunk& chunk);
+	virtual void readHeader(Stream &,Channel *);
+	virtual int readPacket(Stream &,Channel *);
+	virtual void readEnd(Stream &,Channel *);
 };
 
-#endif
+
+#endif 
 

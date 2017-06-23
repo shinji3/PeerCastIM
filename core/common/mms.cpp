@@ -19,7 +19,6 @@
 #include "channel.h"
 #include "mms.h"
 #include "asf.h"
-
 #ifdef _DEBUG
 #include "chkMemoryLeak.h"
 #define DEBUG_NEW new(__FILE__, __LINE__)
@@ -29,158 +28,167 @@
 // ------------------------------------------
 ASFInfo parseASFHeader(Stream &in);
 
+
 // ------------------------------------------
-void MMSStream::readEnd(Stream &, Channel *)
+void MMSStream::readEnd(Stream &,Channel *)
 {
 }
 
 // ------------------------------------------
-void MMSStream::readHeader(Stream &, Channel *)
+void MMSStream::readHeader(Stream &,Channel *)
 {
 }
-
 // ------------------------------------------
-void MMSStream::processChunk(Stream &in, Channel *ch, ASFChunk& chunk)
+int MMSStream::readPacket(Stream &in,Channel *ch)
 {
-    switch (chunk.type)
-    {
-        case 0x4824:        // asf header
-        {
-            MemoryStream mem(ch->headPack.data, sizeof(ch->headPack.data));
+	{
+		ASFChunk chunk;
 
-            chunk.write(mem);
+		chunk.read(in);
 
-            MemoryStream asfm(chunk.data, chunk.dataLen);
-            ASFObject asfHead;
-            asfHead.readHead(asfm);
+		switch (chunk.type)
+		{
+			case 0x4824:		// asf header
+			{
+				MemoryStream mem(ch->headPack.data,sizeof(ch->headPack.data));
 
-            ASFInfo asf = parseASFHeader(asfm);
-            LOG_DEBUG("ASF Info: pnum=%d, psize=%d, br=%d", asf.numPackets, asf.packetSize, asf.bitrate);
-            for (int i=0; i<ASFInfo::MAX_STREAMS; i++)
-            {
-                ASFStream *s = &asf.streams[i];
-                if (s->id)
-                    LOG_DEBUG("ASF Stream %d : %s, br=%d", s->id, s->getTypeName(), s->bitrate);
-            }
+				chunk.write(mem);
 
-            ch->info.bitrate = asf.bitrate/1000;
 
-            ch->headPack.type = ChanPacket::T_HEAD;
-            ch->headPack.len = mem.pos;
-            ch->headPack.pos = ch->streamPos;
-            ch->newPacket(ch->headPack);
 
-            ch->streamPos += ch->headPack.len;
 
-            break;
-        }
-        case 0x4424:        // asf data
-        {
-            ChanPacket pack;
+				MemoryStream asfm(chunk.data,chunk.dataLen);
+				ASFObject asfHead;
+				asfHead.readHead(asfm);
 
-            MemoryStream mem(pack.data, sizeof(pack.data));
+				ASFInfo asf = parseASFHeader(asfm);
+				LOG_DEBUG("ASF Info: pnum=%d, psize=%d, br=%d",asf.numPackets,asf.packetSize,asf.bitrate);
+				for(int i=0; i<ASFInfo::MAX_STREAMS; i++)
+				{
+					ASFStream *s = &asf.streams[i];
+					if (s->id)
+						LOG_DEBUG("ASF Stream %d : %s, br=%d",s->id,s->getTypeName(),s->bitrate);
+				}
 
-            chunk.write(mem);
+				ch->info.bitrate = asf.bitrate/1000;
 
-            pack.type = ChanPacket::T_DATA;
-            pack.len = mem.pos;
-            pack.pos = ch->streamPos;
+				ch->headPack.type = ChanPacket::T_HEAD;
+				ch->headPack.len = mem.pos;
+				ch->headPack.pos = ch->streamPos;
+				ch->newPacket(ch->headPack);
 
-            ch->newPacket(pack);
-            ch->streamPos += pack.len;
+				ch->streamPos += ch->headPack.len;
 
-            break;
-        }
-        default:
-            throw StreamException("Unknown ASF chunk");
-    }
+				break;
+			}
+			case 0x4424:		// asf data
+			{
+
+				ChanPacket pack;
+
+				MemoryStream mem(pack.data,sizeof(pack.data));
+
+				chunk.write(mem);
+
+				pack.type = ChanPacket::T_DATA;
+				pack.len = mem.pos;
+				pack.pos = ch->streamPos;
+
+				ch->newPacket(pack);
+				ch->streamPos += pack.len;
+
+				break;
+			}
+			default:
+				throw StreamException("Unknown ASF chunk");
+
+		}
+
+	}
+	return 0;
 }
 
-// ------------------------------------------
-int MMSStream::readPacket(Stream &in, Channel *ch)
-{
-    ASFChunk chunk;
-
-    chunk.read(in);
-
-    processChunk(in, ch, chunk);
-    return 0;
-}
 
 // -----------------------------------
 ASFInfo parseASFHeader(Stream &in)
 {
-    ASFInfo asf;
+	ASFInfo asf;
 
-    try
-    {
-        int numHeaders = in.readLong();
+	try
+	{
+		int numHeaders = in.readLong();
 
-        in.readChar();
-        in.readChar();
+		in.readChar();
+		in.readChar();
 
-        LOG_CHANNEL("ASF Headers: %d", numHeaders);
-        for (int i=0; i<numHeaders; i++)
-        {
-            ASFObject obj;
+		LOG_CHANNEL("ASF Headers: %d",numHeaders);
+		for(int i=0; i<numHeaders; i++)
+		{
 
-            unsigned int l = obj.readHead(in);
-            obj.readData(in, l);
+			ASFObject obj;
 
-            MemoryStream data(obj.data, obj.lenLo);
+			unsigned int l = obj.readHead(in);
+			obj.readData(in,l);
 
-            switch (obj.type)
-            {
-                case ASFObject::T_FILE_PROP:
-                {
-                    data.skip(32);
 
-                    unsigned int dpLo = data.readLong();
-                    unsigned int dpHi = data.readLong();
+			MemoryStream data(obj.data,obj.lenLo);
 
-                    data.skip(24);
 
-                    data.readLong();
-                    //data.writeLong(1);    // flags = broadcast, not seekable
+			switch (obj.type)
+			{
+				case ASFObject::T_FILE_PROP:
+				{
+					data.skip(32);
 
-                    int min = data.readLong();
-                    int max = data.readLong();
-                    int br = data.readLong();
+					unsigned int dpLo = data.readLong();
+					unsigned int dpHi = data.readLong();
 
-                    if (min != max)
-                        throw StreamException("ASF packetsizes (min/max) must match");
+					data.skip(24);
 
-                    asf.packetSize = max;
-                    asf.bitrate = br;
-                    asf.numPackets = dpLo;
-                    break;
-                }
-                case ASFObject::T_STREAM_BITRATE:
-                {
-                    int cnt = data.readShort();
-                    for (int i=0; i<cnt; i++)
-                    {
-                        unsigned int id = data.readShort();
-                        int bitrate = data.readLong();
-                        if (id < ASFInfo::MAX_STREAMS)
-                            asf.streams[id].bitrate = bitrate;
-                    }
-                    break;
-                }
-                case ASFObject::T_STREAM_PROP:
-                {
-                    ASFStream s;
-                    s.read(data);
-                    asf.streams[s.id].id = s.id;
-                    asf.streams[s.id].type = s.type;
-                    break;
-                }
-            }
-        }
-    }catch (StreamException &e)
-    {
-        LOG_ERROR("ASF: %s", e.msg);
-    }
+					data.readLong();
+					//data.writeLong(1);	// flags = broadcast, not seekable
 
-    return asf;
+					int min = data.readLong();
+					int max = data.readLong();
+					int br = data.readLong();
+
+					if (min != max)
+						throw StreamException("ASF packetsizes (min/max) must match");
+
+					asf.packetSize = max;
+					asf.bitrate = br;
+					asf.numPackets = dpLo;
+					break;
+				}
+				case ASFObject::T_STREAM_BITRATE:
+				{
+					int cnt = data.readShort();
+					for(int i=0; i<cnt; i++)
+					{
+						unsigned int id = data.readShort();
+						int bitrate = data.readLong();
+						if (id < ASFInfo::MAX_STREAMS)
+							asf.streams[id].bitrate = bitrate;
+					}
+					break;
+				}
+				case ASFObject::T_STREAM_PROP:
+				{
+					ASFStream s;
+					s.read(data);
+					asf.streams[s.id].id = s.id;
+					asf.streams[s.id].type = s.type;
+					break;
+				}
+			}
+
+		}
+	}catch(StreamException &e)
+	{
+		LOG_ERROR("ASF: %s",e.msg);
+	}
+
+	return asf;
 }
+
+

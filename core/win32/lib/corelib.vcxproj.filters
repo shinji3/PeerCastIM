@@ -63,6 +63,9 @@
     <ClCompile Include="..\..\common\peercast.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\common\rtsp.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\common\servent.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
@@ -70,6 +73,9 @@
       <Filter>Core Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\common\servmgr.cpp">
+      <Filter>Core Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\socket.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\common\stats.cpp">
@@ -96,84 +102,6 @@
     <ClCompile Include="..\wsys.cpp">
       <Filter>Win32 Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\chanhit.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\chaninfo.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\chanmgr.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\cstream.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\gnuid.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\host.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\playlist.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\_string.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\cgi.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\str.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\LUrlParser.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\uri.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\dechunker.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\md5.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\notif.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\wmhttp.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\mapper.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\httppush.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\chandir.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\mkv.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\jrpc.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\template.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\public.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\sstream.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\regexp.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\env.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\addrCont.h">
@@ -198,6 +126,9 @@
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\gnutella.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\html-xml.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\html.h">
@@ -234,6 +165,9 @@
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\peercast.h">
+      <Filter>Core Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\rtsp.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\servent.h">
@@ -277,102 +211,6 @@
     </ClInclude>
     <ClInclude Include="..\wsys.h">
       <Filter>Win32 Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\chanhit.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\chaninfo.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\chanmgr.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\gnuid.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\host.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\_string.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\playlist.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\cgi.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\str.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\LUrlParser.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\uri.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\critsec.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\dechunker.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\md5.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\notif.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\wmhttp.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\mapper.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\json.hpp">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\matroska.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\httppush.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\chandir.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\mkv.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\jrpc.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\template.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\public.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\config.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\defer.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\sstream.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\varwriter.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\regexp.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\env.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\onigmo.h">
-      <Filter>Core Includes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
