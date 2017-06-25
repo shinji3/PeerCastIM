@@ -255,7 +255,7 @@ int	Stream::readLine(char *in, int max)
 void Stream::write(const char *fmt,va_list ap)
 {
 	char tmp[4096];
-	vsprintf(tmp,fmt,ap);
+	vsnprintf(tmp, _countof(tmp),fmt,ap);
     write(tmp,strlen(tmp));
 }
 // -------------------------------------

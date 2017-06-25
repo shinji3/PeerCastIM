@@ -2481,17 +2481,17 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
 		str.convertTo(String::T_HTML);
 		strcpy(buf,str.cstr());
 	}else if (var == "numRelays")
-		sprintf(buf,"%d",numStreams(Servent::T_RELAY,true));
+		snprintf(buf, _countof(buf),"%d",numStreams(Servent::T_RELAY,true));
 	else if (var == "numDirect")
-		sprintf(buf,"%d",numStreams(Servent::T_DIRECT,true));
+		snprintf(buf, _countof(buf),"%d",numStreams(Servent::T_DIRECT,true));
 	else if (var == "totalConnected")
-		sprintf(buf,"%d",totalConnected());
+		snprintf(buf, _countof(buf),"%d",totalConnected());
 	else if (var == "numServHosts")
-		sprintf(buf,"%d",numHosts(ServHost::T_SERVENT));		
+		snprintf(buf, _countof(buf),"%d",numHosts(ServHost::T_SERVENT));		
 	else if (var == "numServents")
-		sprintf(buf,"%d",numServents());		
+		snprintf(buf, _countof(buf),"%d",numServents());		
 	else if (var == "serverPort")
-		sprintf(buf,"%d",serverHost.port);		
+		snprintf(buf, _countof(buf),"%d",serverHost.port);		
 	else if (var == "serverIP")
 		serverHost.IPtoStr(buf);
 	else if (var == "ypAddress")
@@ -2499,51 +2499,51 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
 	else if (var == "password")
 		strcpy(buf,password);
 	else if (var == "isFirewalled")
-		sprintf(buf,"%d",getFirewall()==FW_ON?1:0);
+		snprintf(buf, _countof(buf),"%d",getFirewall()==FW_ON?1:0);
 	else if (var == "firewallKnown")
-		sprintf(buf,"%d",getFirewall()==FW_UNKNOWN?0:1);
+		snprintf(buf, _countof(buf),"%d",getFirewall()==FW_UNKNOWN?0:1);
 	else if (var == "rootMsg")
 		strcpy(buf,rootMsg);
 	else if (var == "isRoot"){
 		LOG_DEBUG("isRoot = %d", isRoot);
-		sprintf(buf,"%d",isRoot?1:0);
+		snprintf(buf, _countof(buf),"%d",isRoot?1:0);
 	}
 	else if (var == "isPrivate")
-		sprintf(buf,"%d",(PCP_BROADCAST_FLAGS&1)?1:0);
+		snprintf(buf, _countof(buf),"%d",(PCP_BROADCAST_FLAGS&1)?1:0);
 	else if (var == "forceYP")
-		sprintf(buf,"%d",PCP_FORCE_YP?1:0);
+		snprintf(buf, _countof(buf),"%d",PCP_FORCE_YP?1:0);
 	else if (var == "refreshHTML")
-		sprintf(buf,"%d",refreshHTML?refreshHTML:0x0fffffff);
+		snprintf(buf, _countof(buf),"%d",refreshHTML?refreshHTML:0x0fffffff);
 	else if (var == "maxRelays")
-		sprintf(buf,"%d",maxRelays);
+		snprintf(buf, _countof(buf),"%d",maxRelays);
 	else if (var == "maxDirect")
-		sprintf(buf,"%d",maxDirect);
+		snprintf(buf, _countof(buf),"%d",maxDirect);
 	else if (var == "maxBitrateOut")
-		sprintf(buf,"%d",maxBitrateOut);
+		snprintf(buf, _countof(buf),"%d",maxBitrateOut);
 	else if (var == "maxControlsIn")
-		sprintf(buf,"%d",maxControl);
+		snprintf(buf, _countof(buf),"%d",maxControl);
 	else if (var == "maxServIn")
-		sprintf(buf,"%d",maxServIn);
+		snprintf(buf, _countof(buf),"%d",maxServIn);
 	else if (var == "numFilters") {
 		LOG_DEBUG("*-* numFilters = %d", numFilters);
-		sprintf(buf,"%d",numFilters+1);
+		snprintf(buf, _countof(buf),"%d",numFilters+1);
 	}
 	else if (var == "maxPGNUIn")
-		sprintf(buf,"%d",maxGnuIncoming);
+		snprintf(buf, _countof(buf),"%d",maxGnuIncoming);
 	else if (var == "minPGNUIn")
-		sprintf(buf,"%d",minGnuIncoming);
+		snprintf(buf, _countof(buf),"%d",minGnuIncoming);
 	else if (var == "numActive1")
-		sprintf(buf,"%d",numActiveOnPort(serverHost.port));
+		snprintf(buf, _countof(buf),"%d",numActiveOnPort(serverHost.port));
 	else if (var == "numActive2")
-		sprintf(buf,"%d",numActiveOnPort(serverHost.port+1));
+		snprintf(buf, _countof(buf),"%d",numActiveOnPort(serverHost.port+1));
 	else if (var == "numPGNU")
-		sprintf(buf,"%d",numConnected(Servent::T_PGNU));
+		snprintf(buf, _countof(buf),"%d",numConnected(Servent::T_PGNU));
 	else if (var == "numCIN")
-		sprintf(buf,"%d",numConnected(Servent::T_CIN));
+		snprintf(buf, _countof(buf),"%d",numConnected(Servent::T_CIN));
 	else if (var == "numCOUT")
-		sprintf(buf,"%d",numConnected(Servent::T_COUT));
+		snprintf(buf, _countof(buf),"%d",numConnected(Servent::T_COUT));
 	else if (var == "numIncoming")
-		sprintf(buf,"%d",numActive(Servent::T_INCOMING));
+		snprintf(buf, _countof(buf),"%d",numActive(Servent::T_INCOMING));
 	else if (var == "numValidBCID")
 	{
 		int cnt = 0;
@@ -2553,11 +2553,11 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
 			cnt++;
 			bcid=bcid->next;
 		}
-		sprintf(buf,"%d",cnt);
+		snprintf(buf, _countof(buf),"%d",cnt);
 	}
 
 	else if (var == "disabled")
-		sprintf(buf,"%d",isDisabled);
+		snprintf(buf, _countof(buf),"%d",isDisabled);
 
 	// JP-EX
 	else if (var.startsWith("autoRelayKeep")) {
@@ -2568,13 +2568,13 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
 		else if (var == "autoRelayKeep.2")
 			strcpy(buf, (autoRelayKeep == 2) ? "1":"0");
 	} else if (var == "autoMaxRelaySetting")
-		sprintf(buf,"%d",autoMaxRelaySetting);
+		snprintf(buf, _countof(buf),"%d",autoMaxRelaySetting);
 	else if (var == "autoBumpSkipCount")
-		sprintf(buf,"%d",autoBumpSkipCount);
+		snprintf(buf, _countof(buf),"%d",autoBumpSkipCount);
 	else if (var == "kickPushStartRelays")
-		sprintf(buf,"%d",kickPushStartRelays);
+		snprintf(buf, _countof(buf),"%d",kickPushStartRelays);
 	else if (var == "kickPushInterval")
-		sprintf(buf,"%d",kickPushInterval);
+		snprintf(buf, _countof(buf),"%d",kickPushInterval);
 	else if (var == "allowConnectPCST")
 		strcpy(buf, (allowConnectPCST == 1) ? "1":"0");
 	else if (var == "enableGetName")
@@ -2609,10 +2609,10 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
 			strcpy(buf, (allowOnlyVP == 1) ? "1":"0");
 	}
 	else if (var == "kickKeepTime")
-		sprintf(buf, "%d",kickKeepTime);
+		snprintf(buf, _countof(buf), "%d",kickKeepTime);
 
 	else if (var == "serverPort1")
-		sprintf(buf,"%d",serverHost.port);
+		snprintf(buf, _countof(buf),"%d",serverHost.port);
 	else if (var == "serverLocalIP")
 	{
 		Host lh(ClientSocket::getIP(NULL),0);
@@ -2622,7 +2622,7 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
 	}else if (var == "upgradeURL")
 		strcpy(buf,servMgr->downloadURL);
 	else if (var == "serverPort2")
-		sprintf(buf,"%d",serverHost.port+1);
+		snprintf(buf, _countof(buf),"%d",serverHost.port+1);
 	else if (var.startsWith("allow."))
 	{
 		if (var == "allow.HTML1")
@@ -2678,7 +2678,7 @@ bool ServMgr::writeVariable(Stream &out, const String &var)
 		return true;
 
 	}else if (var == "maxRelaysIndexTxt")		// for PCRaw (relay)
-		sprintf(buf, "%d", maxRelaysIndexTxt);
+		snprintf(buf, _countof(buf), "%d", maxRelaysIndexTxt);
 	else
 		return false;
 

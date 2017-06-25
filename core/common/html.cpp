@@ -444,11 +444,11 @@ void HTML::addHead()
 
 			if (!refreshURL.isEmpty())
 			{
-				sprintf(buf,"meta http-equiv=\"refresh\" content=\"%d;URL=%s\"",refresh,refreshURL.cstr());
+				snprintf(buf, _countof(buf),"meta http-equiv=\"refresh\" content=\"%d;URL=%s\"",refresh,refreshURL.cstr());
 				startTagEnd(buf);
 			}else if (refresh)
 			{
-				sprintf(buf,"meta http-equiv=\"refresh\" content=\"%d\"",refresh);
+				snprintf(buf, _countof(buf),"meta http-equiv=\"refresh\" content=\"%d\"",refresh);
 				startTagEnd(buf);
 			}
 
@@ -503,7 +503,7 @@ void HTML::addLink(const char *url, const char *text, bool toblank)
 {
 	char buf[1024];
 
-	sprintf(buf,"a href=\"%s\" %s",url,toblank?"target=\"_blank\"":"");
+	snprintf(buf, _countof(buf),"a href=\"%s\" %s",url,toblank?"target=\"_blank\"":"");
 	startNode(buf,text);
 	end();
 }
@@ -517,7 +517,7 @@ void HTML::startTag(const char *tag, const char *fmt,...)
   		va_start(ap, fmt);
 
 		char tmp[512];
-		vsprintf(tmp,fmt,ap);
+		vsnprintf(tmp, _countof(tmp),fmt,ap);
 		startNode(tag,tmp);
 
 	   	va_end(ap);	
@@ -535,7 +535,7 @@ void HTML::startTagEnd(const char *tag, const char *fmt,...)
   		va_start(ap, fmt);
 
 		char tmp[512];
-		vsprintf(tmp,fmt,ap);
+		vsnprintf(tmp, _countof(tmp),fmt,ap);
 		startNode(tag,tmp);
 
 	   	va_end(ap);	
@@ -551,7 +551,7 @@ void HTML::startSingleTagEnd(const char *fmt,...)
 	va_start(ap, fmt);
 
 	char tmp[512];
-	vsprintf(tmp,fmt,ap);
+	vsnprintf(tmp, _countof(tmp),fmt,ap);
 	startNode(tmp);
 
 	va_end(ap);	

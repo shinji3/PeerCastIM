@@ -2106,7 +2106,7 @@ void Channel::getStreamPath(char *str)
 
 	getIDStr(idStr);
 
-	sprintf(str,"/stream/%s%s",idStr,info.getTypeExt());
+	snprintf(str, 288,"/stream/%s%s",idStr,info.getTypeExt());
 }
 
 
@@ -2427,10 +2427,10 @@ bool ChanMgr::writeVariable(Stream &out, const String &var, int index)
 {
 	char buf[1024];
 	if (var == "numHitLists")
-		sprintf(buf,"%d",numHitLists());
+		snprintf(buf, _countof(buf),"%d",numHitLists());
 	
 	else if (var == "numChannels")
-		sprintf(buf,"%d",numChannels());
+		snprintf(buf, _countof(buf),"%d",numChannels());
 	else if (var == "djMessage")
 	{
 		String utf8 = broadcastMsg;
@@ -2438,11 +2438,11 @@ bool ChanMgr::writeVariable(Stream &out, const String &var, int index)
 		strcpy(buf,utf8.cstr());
 	}
 	else if (var == "icyMetaInterval")
-		sprintf(buf,"%d",icyMetaInterval);
+		snprintf(buf, _countof(buf),"%d",icyMetaInterval);
 	else if (var == "maxRelaysPerChannel")
-		sprintf(buf,"%d",maxRelaysPerChannel);
+		snprintf(buf, _countof(buf),"%d",maxRelaysPerChannel);
 	else if (var == "hostUpdateInterval")
-		sprintf(buf,"%d",hostUpdateInterval);
+		snprintf(buf, _countof(buf),"%d",hostUpdateInterval);
 	else if (var == "broadcastID")
 		broadcastID.toStr(buf);
 	else
@@ -2471,14 +2471,14 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
 
 	}else if (var == "bitrate")
 	{
-		sprintf(buf,"%d",info.bitrate);
+		snprintf(buf, _countof(buf),"%d",info.bitrate);
 
 	}else if (var == "srcrate")
 	{
 		if (sourceData)
 		{
 			unsigned int tot = sourceData->getSourceRate();
-			sprintf(buf,"%.1f",BYTES_TO_KBPS(tot));
+			snprintf(buf, _countof(buf),"%.1f",BYTES_TO_KBPS(tot));
 		}else
 			strcpy(buf,"0");
 
@@ -2510,34 +2510,34 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
 		strcpy(buf,uptime.cstr());
 	}
 	else if (var == "type")
-		sprintf(buf,"%s",info.getTypeStr());
+		snprintf(buf, _countof(buf),"%s",info.getTypeStr());
 	else if (var == "ext")
-		sprintf(buf,"%s",info.getTypeExt());
+		snprintf(buf, _countof(buf),"%s",info.getTypeExt());
 	else if (var == "proto") {
 		switch(info.contentType) {
 		case ChanInfo::T_WMA:
 		case ChanInfo::T_WMV:
-			sprintf(buf, "mms://");
+			snprintf(buf, _countof(buf), "mms://");
 			break;
 		default:
-			sprintf(buf, "http://");
+			snprintf(buf, _countof(buf), "http://");
 		}
 	}
 	else if (var == "localRelays")
-		sprintf(buf,"%d",localRelays());
+		snprintf(buf, _countof(buf),"%d",localRelays());
 	else if (var == "localListeners")
-		sprintf(buf,"%d",localListeners());
+		snprintf(buf, _countof(buf),"%d",localListeners());
 
 	else if (var == "totalRelays")
-		sprintf(buf,"%d",totalRelays());
+		snprintf(buf, _countof(buf),"%d",totalRelays());
 	else if (var == "totalListeners")
-		sprintf(buf,"%d",totalListeners());
+		snprintf(buf, _countof(buf),"%d",totalListeners());
 	else if (var == "totalClaps") //JP-MOD
-		sprintf(buf,"%d",totalClaps());
+		snprintf(buf, _countof(buf),"%d",totalClaps());
 	else if (var == "status")
-		sprintf(buf,"%s",getStatusStr());
+		snprintf(buf, _countof(buf),"%s",getStatusStr());
 	else if (var == "keep")
-		sprintf(buf,"%s",stayConnected?"Yes":"No");
+		snprintf(buf, _countof(buf),"%s",stayConnected?"Yes":"No");
 	else if (var == "id")
 		info.id.toStr(buf);
 	else if (var.startsWith("track."))
@@ -2558,9 +2558,9 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
 		strcpy(buf,utf8.cstr());
 
 	}else if (var == "contactURL")
-		sprintf(buf,"%s",info.url.cstr());
+		snprintf(buf, _countof(buf),"%s",info.url.cstr());
 	else if (var == "streamPos")
-		sprintf(buf,"%d",streamPos);
+		snprintf(buf, _countof(buf),"%d",streamPos);
 	else if (var == "sourceType")
 		strcpy(buf,getSrcTypeStr());
 	else if (var == "sourceProtocol")
@@ -2573,9 +2573,9 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
 			strcpy(buf,sourceURL.cstr());
 	}
 	else if (var == "headPos")
-		sprintf(buf,"%d",headPack.pos);
+		snprintf(buf, _countof(buf),"%d",headPack.pos);
 	else if (var == "headLen")
-		sprintf(buf,"%d",headPack.len);
+		snprintf(buf, _countof(buf),"%d",headPack.len);
 	else if (var == "numHits")
 	{
 		ChanHitList *chl = chanMgr->findHitListByID(info.id);
@@ -2589,7 +2589,7 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
 				hit = hit->next;
 			}
 		}
-		sprintf(buf,"%d",numHits);
+		snprintf(buf, _countof(buf),"%d",numHits);
 	} else if (var == "isBroadcast")
 		strcpy(buf, (type == T_BROADCAST) ? "1":"0");
 	else
@@ -3112,7 +3112,7 @@ void ChanMgr::playChannel(ChanInfo &info)
 
 	char str[128],fname[256],idStr[128];
 
-	sprintf(str,"http://127.0.0.1:%d",servMgr->serverHost.port);
+	snprintf(str, _countof(str),"http://127.0.0.1:%d",servMgr->serverHost.port);
 	info.id.toStr(idStr);
 
 	PlayList::TYPE type;
@@ -3126,18 +3126,18 @@ void ChanMgr::playChannel(ChanInfo &info)
 		if (servMgr->getModulePath) //JP-EX
 		{
 			peercastApp->getDirectory();
-			sprintf(fname,"%s/%s.asx",servMgr->modulePath,idStr);	
+			snprintf(fname, _countof(fname),"%s/%s.asx",servMgr->modulePath,idStr);	
 		}else
-			sprintf(fname,"%s/%s.asx",peercastApp->getPath(),idStr);
+			snprintf(fname, _countof(fname),"%s/%s.asx",peercastApp->getPath(),idStr);
 	}else if (info.contentType == ChanInfo::T_OGM)
 	{
 		type = PlayList::T_RAM;
 		if (servMgr->getModulePath) //JP-EX
 		{
 			peercastApp->getDirectory();
-			sprintf(fname,"%s/play.ram",servMgr->modulePath);
+			snprintf(fname, _countof(fname),"%s/play.ram",servMgr->modulePath);
 		}else
-			sprintf(fname,"%s/play.ram",peercastApp->getPath());
+			snprintf(fname, _countof(fname),"%s/play.ram",peercastApp->getPath());
 
 	}else
 	{
@@ -3145,9 +3145,9 @@ void ChanMgr::playChannel(ChanInfo &info)
 		if (servMgr->getModulePath) //JP-EX
 		{
 			peercastApp->getDirectory();
-			sprintf(fname,"%s/play.pls",servMgr->modulePath);
+			snprintf(fname, _countof(fname),"%s/play.pls",servMgr->modulePath);
 		}else
-			sprintf(fname,"%s/play.pls",peercastApp->getPath());
+			snprintf(fname, _countof(fname),"%s/play.pls",peercastApp->getPath());
 	}
 
 
@@ -3430,11 +3430,11 @@ bool	ChanHit::writeVariable(Stream &out, const String &var)
 	else if (var == "rhost1")
 		rhost[1].toStr(buf);
 	else if (var == "numHops")
-		sprintf(buf,"%d",numHops);
+		snprintf(buf, _countof(buf),"%d",numHops);
 	else if (var == "numListeners")
-		sprintf(buf,"%d",numListeners);
+		snprintf(buf, _countof(buf),"%d",numListeners);
 	else if (var == "numRelays")
-		sprintf(buf,"%d",numRelays);
+		snprintf(buf, _countof(buf),"%d",numRelays);
 	else if (var == "uptime")
 	{
 		String timeStr;
@@ -3449,17 +3449,17 @@ bool	ChanHit::writeVariable(Stream &out, const String &var)
 			timeStr.set("-");
 		strcpy(buf,timeStr.cstr());
 	}else if (var == "isFirewalled"){
-		sprintf(buf,"%d",firewalled?1:0);
+		snprintf(buf, _countof(buf),"%d",firewalled?1:0);
 	}else if (var == "version"){
-		sprintf(buf,"%d",version);
+		snprintf(buf, _countof(buf),"%d",version);
 	}else if (var == "agent"){
 		if (version){
 			if (version_ex_number){
-				sprintf(buf, "v0.%d(%c%c%04d)", version, version_ex_prefix[0], version_ex_prefix[1], version_ex_number);
+				snprintf(buf, _countof(buf), "v0.%d(%c%c%04d)", version, version_ex_prefix[0], version_ex_prefix[1], version_ex_number);
 			} else if (version_vp){
-				sprintf(buf,"v0.%d(VP%04d)", version, version_vp);
+				snprintf(buf, _countof(buf),"v0.%d(VP%04d)", version, version_vp);
 			} else {
-				sprintf(buf,"v0.%d", version);
+				snprintf(buf, _countof(buf),"v0.%d", version);
 			}
 		} else {
 			strcpy(buf, "0");
@@ -3476,9 +3476,9 @@ bool	ChanHit::writeVariable(Stream &out, const String &var)
 	else if (var == "uphost")		// tree
 		uphost.toStr(buf);
 	else if (var == "uphostHops")	// tree
-		sprintf(buf,"%d",uphostHops);
+		snprintf(buf, _countof(buf),"%d",uphostHops);
 	else if (var == "canRelay")		// tree
-		sprintf(buf, "%d",relay);
+		snprintf(buf, _countof(buf), "%d",relay);
 	else
 		return false;
 
@@ -4856,7 +4856,7 @@ void PlayList::addChannel(const char *path, ChanInfo &info)
 	info.id.toStr(idStr);
 	char *nid = info.id.isSet()?idStr:info.name.cstr();
 
-	sprintf(url.cstr(),"%s/stream/%s%s",path,nid,info.getTypeExt());
+	snprintf(url.cstr(), String::MAX_LEN,"%s/stream/%s%s",path,nid,info.getTypeExt());
 	addURL(url.cstr(),info.name,info.url);
 }
 

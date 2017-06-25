@@ -139,26 +139,26 @@ bool	IniFile::getBoolValue()
 // -----------------------------------------
 void	IniFile::writeIntValue(const char *name, int iv)
 {
-	sprintf(currLine,"%s = %d",name,iv);
+	snprintf(currLine, _countof(currLine),"%s = %d",name,iv);
 	fStream.writeLine(currLine);
 }
 // -----------------------------------------
 void	IniFile::writeStrValue(const char *name, const char *sv)
 {
-	sprintf(currLine,"%s = %s",name,sv);
+	snprintf(currLine, _countof(currLine),"%s = %s",name,sv);
 	fStream.writeLine(currLine);
 }
 // -----------------------------------------
 void	IniFile::writeSection(const char *name)
 {
 	fStream.writeLine("");
-	sprintf(currLine,"[%s]",name);
+	snprintf(currLine, _countof(currLine),"[%s]",name);
 	fStream.writeLine(currLine);
 }
 // -----------------------------------------
 void	IniFile::writeBoolValue(const char *name, int v)
 {
-	sprintf(currLine,"%s = %s",name,(v!=0)?"Yes":"No");
+	snprintf(currLine, _countof(currLine),"%s = %s",name,(v!=0)?"Yes":"No");
 	fStream.writeLine(currLine);
 }
 // -----------------------------------------
