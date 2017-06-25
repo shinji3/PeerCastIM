@@ -3108,9 +3108,9 @@ bool	Servent::writeVariable(Stream &s, const String &var)
 	char buf[1024];
 
 	if (var == "type")
-		strcpy(buf,getTypeStr());
+		strcpy_s(buf, _countof(buf),getTypeStr());
 	else if (var == "status")
-		strcpy(buf,getStatusStr());
+		strcpy_s(buf, _countof(buf),getStatusStr());
 	else if (var == "address")
 	{
 		if (servMgr->enableGetName) //JP-EX s
@@ -3152,30 +3152,30 @@ bool	Servent::writeVariable(Stream &s, const String &var)
 					}
 				}
 			}
-			strcpy(buf,"");
+			strcpy_s(buf, _countof(buf),"");
 			if (ishit == true)
 			{
 				if (isfw == true)
 				{
 					if (numRelay== 0)
-						strcat(buf,"<font color=red>");
+						strcat_s(buf, _countof(buf),"<font color=red>");
 					else 
-						strcat(buf,"<font color=orange>");
+						strcat_s(buf, _countof(buf),"<font color=orange>");
 				}
 				else
-					strcat(buf,"<font color=green>");
+					strcat_s(buf, _countof(buf),"<font color=green>");
 			}
-			strcat(buf,h_ip);
+			strcat_s(buf, _countof(buf),h_ip);
 			char h_name[128];
 			if (ClientSocket::getHostname(h_name,h.ip))
 			{
-				strcat(buf,"[");
-				strcat(buf,h_name);
-				strcat(buf,"]");
+				strcat_s(buf, _countof(buf),"[");
+				strcat_s(buf, _countof(buf),h_name);
+				strcat_s(buf, _countof(buf),"]");
 			}
 			if (ishit == true) 
 			{
-				strcat(buf,"</font>");
+				strcat_s(buf, _countof(buf),"</font>");
 			}
 		} //JP-EX e*/
 
@@ -3196,39 +3196,39 @@ bool	Servent::writeVariable(Stream &s, const String &var)
 					hit = hit->next;
 				}
 			}
-			strcpy(buf, "");
+			strcpy_s(buf, _countof(buf), "");
 			if (isfw){
 				if (numRelay == 0){
-					strcat(buf,"<font color=red>");
+					strcat_s(buf, _countof(buf),"<font color=red>");
 				} else {
-					strcat(buf,"<font color=orange>");
+					strcat_s(buf, _countof(buf),"<font color=orange>");
 				}
 			} else {
 				if (!isRelay){
 					if (numRelay==0){
-						strcpy(buf,"<font color=purple>");
+						strcpy_s(buf, _countof(buf),"<font color=purple>");
 					} else {
-						strcpy(buf,"<font color=blue>");
+						strcpy_s(buf, _countof(buf),"<font color=blue>");
 					}
 				} else {
-					strcpy(buf,"<font color=green>");
+					strcpy_s(buf, _countof(buf),"<font color=green>");
 				}
 			}
-			strcat(buf,h_ip);
+			strcat_s(buf, _countof(buf),h_ip);
 			char h_name[128];
 			if (ClientSocket::getHostname(h_name,sizeof(h_name),h.ip)) //JP-MOD(BOFëŒçÙ)
 			{
-				strcat(buf,"[");
-				strcat(buf,h_name);
-				strcat(buf,"]");
+				strcat_s(buf, _countof(buf),"[");
+				strcat_s(buf, _countof(buf),h_name);
+				strcat_s(buf, _countof(buf),"]");
 			}
-			strcat(buf,"</font>");
+			strcat_s(buf, _countof(buf),"</font>");
 		}
 		else 
 			getHost().toStr(buf);
 	}
 	else if (var == "agent")
-		strcpy(buf,agent.cstr());
+		strcpy_s(buf, _countof(buf),agent.cstr());
 	else if (var == "bitrate")
 	{
 		if (sock)
@@ -3236,7 +3236,7 @@ bool	Servent::writeVariable(Stream &s, const String &var)
 			unsigned int tot = sock->bytesInPerSec+sock->bytesOutPerSec;
 			snprintf(buf, _countof(buf),"%.1f",BYTES_TO_KBPS(tot));
 		}else
-			strcpy(buf,"0");
+			strcpy_s(buf, _countof(buf),"0");
 	}else if (var == "uptime")
 	{
 		String uptime;
@@ -3244,7 +3244,7 @@ bool	Servent::writeVariable(Stream &s, const String &var)
 			uptime.setFromStopwatch(sys->getTime()-lastConnect);
 		else
 			uptime.set("-");
-		strcpy(buf,uptime.cstr());
+		strcpy_s(buf, _countof(buf),uptime.cstr());
 	}else if (var.startsWith("gnet."))
 	{
 
@@ -3272,9 +3272,9 @@ bool	Servent::writeVariable(Stream &s, const String &var)
 			tstr.setFromStopwatch(tim);
 
 			if (nr)
-				strcpy(buf,tstr.cstr());
+				strcpy_s(buf, _countof(buf),tstr.cstr());
 			else
-				strcpy(buf,"-");
+				strcpy_s(buf, _countof(buf),"-");
 		}
 		else
 			return false;

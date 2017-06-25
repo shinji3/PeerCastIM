@@ -824,7 +824,7 @@ void Servent::handshakeCMD(char *cmd)
 	char	jumpStr[128];
 	char	*jumpArg=NULL;
 	bool	retHTML=true;
-	strcpy(result,"OK");
+	strcpy_s(result, _countof(result),"OK");
 
 	HTTP http(*sock);
 	HTML html("",*sock);
@@ -979,7 +979,7 @@ void Servent::handshakeCMD(char *cmd)
 						chanMgr->icyMetaInterval = iv;
 
 					}else if (strcmp(curr,"passnew")==0)
-						strcpy(servMgr->password,arg);
+						strcpy_s(servMgr->password, _countof(servMgr->password),arg);
 					else if (strcmp(curr,"root")==0)
 						servMgr->isRoot = getCGIargBOOL(arg);
 					else if (strcmp(curr,"brroot")==0)
@@ -992,8 +992,8 @@ void Servent::handshakeCMD(char *cmd)
 						servMgr->forceIP = arg;
 					else if (strcmp(curr,"htmlPath")==0)
 					{
-						strcpy(servMgr->htmlPath,"html/");
-						strcat(servMgr->htmlPath,arg);
+						strcpy_s(servMgr->htmlPath, _countof(servMgr->htmlPath),"html/");
+						strcat_s(servMgr->htmlPath, _countof(servMgr->htmlPath),arg);
 					}else if (strcmp(curr,"djmsg")==0)
 					{
 						String msg;
@@ -1780,7 +1780,7 @@ void Servent::readICYHeader(HTTP &http, ChanInfo &info, char *pwd, size_t szPwd)
 	{
 		if (pwd)
 			if (strlen(arg) < 64)
-				strcpy(pwd,arg);
+				strcpy_s(pwd, 64,arg);
 	}else if (http.isHeader("content-type"))
 	{
 		if (stristr(arg,MIME_OGG))

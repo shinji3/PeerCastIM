@@ -22,6 +22,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <string>
+
 #ifndef NULL
 #define NULL 0
 #endif
@@ -32,7 +34,7 @@ class GeneralException
 public:
     GeneralException(const char *m, int e = 0) 
 	{
-		strcpy(msg,m);
+		strcpy_s(msg, _countof(msg),m);
 		err=e;
 	}
     char msg[128];

@@ -164,7 +164,7 @@ public:
 
 	void	initRequest(const char *r)
 	{
-		strcpy(cmdLine,r);
+		strcpy_s(cmdLine, _countof(cmdLine),r);
 	}
 	void	readRequest();
 	bool	isRequest(const char *);

@@ -375,9 +375,9 @@ int WinMainDummy(HINSTANCE hInstance,
 	//LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	//LoadString(hInstance, IDC_APP_TITLE, szWindowClass, MAX_LOADSTRING);
 
-	strcpy(szTitle,"PeerCast");
-	strcpy(szWindowClass,"PeerCast");
-	strcpy(szWindowClass2,"Main");
+	strcpy_s(szTitle, _countof(szTitle),"PeerCast");
+	strcpy_s(szWindowClass, _countof(szWindowClass),"PeerCast");
+	strcpy_s(szWindowClass2, _countof(szWindowClass2),"Main");
 
 	if (!allowMulti)
 	{
@@ -638,7 +638,7 @@ void loadIcons(HINSTANCE hInstance, HWND hWnd)
     trayIcon.uFlags = NIF_MESSAGE + NIF_ICON + NIF_TIP;
     trayIcon.uCallbackMessage = WM_TRAYICON;
     trayIcon.hIcon = icon1;
-    strcpy(trayIcon.szTip, "PeerCast");
+    strcpy_s(trayIcon.szTip, _countof(trayIcon.szTip), "PeerCast");
 
     Shell_NotifyIcon(NIM_ADD, (NOTIFYICONDATA*)&trayIcon);
 
@@ -986,7 +986,7 @@ void addRelayedChannelsMenu(HMENU cm)
 			strncpy(name,c->info.name,32);
 			name[32]=0;
 			if (strlen(c->info.name) > 32)
-				strcat(name,"...");
+				strcat_s(name, _countof(name),"...");
 
 
 			snprintf(str, _countof(str),"%s  (%d kb/s %s)",name,c->info.bitrate,ChanInfo::getTypeStr(c->info.contentType));
@@ -1045,7 +1045,7 @@ void addAllChannelsMenu(HMENU cm)
 		name[32]=0;
 		//if (strlen(ch->info.name) > 32)
 		if (strlen(sjis.cstr()) > 32) //JP-Patch
-			strcat(name,"...");
+			strcat_s(name, _countof(name),"...");
 
 		snprintf(str, _countof(str),"%s  (%d kb/s %s)",name,ch->info.bitrate,ChanInfo::getTypeStr(ch->info.contentType));
 
@@ -1571,11 +1571,11 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 		case WM_INITDIALOG:
 			{
 				char str[1024];
-				//strcpy(str,chanInfo.track.artist.cstr());
-				strcpy(str,chanInfo.track.artist); //JP-Patch
-				strcat(str," - ");
-				//strcat(str,chanInfo.track.title.cstr());
-				strcat(str,chanInfo.track.title);
+				//strcpy_s(str, _countof(str),chanInfo.track.artist.cstr());
+				strcpy_s(str, _countof(str),chanInfo.track.artist); //JP-Patch
+				strcat_s(str, _countof(str)," - ");
+				//strcat_s(str, _countof(str),chanInfo.track.title.cstr());
+				strcat_s(str, _countof(str),chanInfo.track.title);
 				String name,track,comment,desc,genre; //JP-Patch
 				name = chanInfo.name; //JP-Patch
 				track = str; //JP-Patch

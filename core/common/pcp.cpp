@@ -276,7 +276,7 @@ void PCPStream::readRootAtoms(AtomStream &atom, int numc,BroadcastState &bcs)
 			unsigned int newVer = atom.readInt();
 			if (newVer > PCP_CLIENT_VERSION)
 			{
-				strcpy(servMgr->downloadURL,url.cstr());
+				strcpy_s(servMgr->downloadURL, _countof(servMgr->downloadURL),url.cstr());
 				peercastApp->notifyMessage(ServMgr::NT_UPGRADE,"There is a new version available, please click here to upgrade your client.");
 			}
 			LOG_DEBUG("PCP got version check: %d / %d",newVer,PCP_CLIENT_VERSION);
@@ -739,7 +739,7 @@ int PCPStream::readBroadcastAtoms(AtomStream &atom,int numc,BroadcastState &bcs)
 			// version check (force)
 			if (servMgr->versionDNS > PCP_CLIENT_VERSION_EX_NUMBER)
 			{
-				strcpy(servMgr->downloadURL, PCP_CLIENT_DIST_URL);
+				strcpy_s(servMgr->downloadURL, _countof(servMgr->downloadURL), PCP_CLIENT_DIST_URL);
 				peercastApp->notifyMessage(ServMgr::NT_UPGRADE,"新しいバージョンのPeercastがリリースされました。");
 				
 				LOG_DEBUG("PCP triggered version check (force): %d / %d", servMgr->versionDNS, PCP_CLIENT_VERSION_EX_NUMBER);
@@ -754,7 +754,7 @@ int PCPStream::readBroadcastAtoms(AtomStream &atom,int numc,BroadcastState &bcs)
 				&& !strncmp(ver_ex_prefix, PCP_CLIENT_VERSION_EX_PREFIX, 2)
 				&& ver_ex_number > PCP_CLIENT_VERSION_EX_NUMBER)
 			{
-				strcpy(servMgr->downloadURL, PCP_CLIENT_DIST_URL);
+				strcpy_s(servMgr->downloadURL, _countof(servMgr->downloadURL), PCP_CLIENT_DIST_URL);
 				peercastApp->notifyMessage(ServMgr::NT_UPGRADE,"新しいバージョンのPeercastが検出されました。更新を確認してください。");
 				
 				LOG_DEBUG("PCP got version check: %d / %d", ver_ex_number, PCP_CLIENT_VERSION_EX_NUMBER);

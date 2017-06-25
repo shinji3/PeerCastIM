@@ -294,9 +294,9 @@ void String::setFromTime(unsigned int t)
 	time_t tmp = t;
 	char *p = ctime(&tmp);
 	if (p)
-		strcpy(data,p);
+		strcpy_s(data, _countof(data),p);
 	else
-		strcpy(data,"-");
+		strcpy_s(data, _countof(data),"-");
 	type = T_ASCII;
 }
 // -----------------------------------
@@ -671,10 +671,10 @@ void String::ASCII2SJIS(const char *in) //JP-EX
 	char *p;
 	if (utf8_decode(in,&p)<0)
 	{
-		strcpy(op,in);
+		strcpy_s(op, MAX_LEN,in);
 		return;
 	}
-	strcpy(op,p);
+	strcpy_s(op, MAX_LEN,p);
 	free(p);
 }
 #endif
@@ -711,7 +711,7 @@ void String::convertTo(TYPE t)
 		{
 			case T_UNKNOWN:
 			case T_ASCII:
-				strcpy(data,tmp.data);
+				strcpy_s(data, _countof(data),tmp.data);
 				break;
 			case T_UNICODE:
 				UNKNOWN2UNICODE(tmp.data,false);
@@ -875,7 +875,7 @@ void GnuID::toStr(char *str)
 		unsigned char ipb = id[i];
 
 		snprintf(tmp, _countof(tmp),"%02X",ipb);
-		strcat(str,tmp);
+		strcat_s(str, 33,tmp);
 	}
 
 }

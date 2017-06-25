@@ -20,6 +20,8 @@
 #ifndef _SYS_H
 #define _SYS_H
 
+#include <string>
+
 #include <string.h>
 #include "common.h"
 
@@ -139,7 +141,7 @@ public:
 	void append(const char *s)
 	{
 		if ((strlen(s)+strlen(data) < (MAX_LEN-1)))
-			strcat(data,s);
+			strcat_s(data, _countof(data),s);
 	}
 	void append(char c)
 	{

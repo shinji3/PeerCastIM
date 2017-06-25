@@ -2435,7 +2435,7 @@ bool ChanMgr::writeVariable(Stream &out, const String &var, int index)
 	{
 		String utf8 = broadcastMsg;
 		utf8.convertTo(String::T_UNICODESAFE);
-		strcpy(buf,utf8.cstr());
+		strcpy_s(buf, _countof(buf),utf8.cstr());
 	}
 	else if (var == "icyMetaInterval")
 		snprintf(buf, _countof(buf),"%d",icyMetaInterval);
@@ -2467,7 +2467,7 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
 	{
 		utf8 = info.name;
 		utf8.convertTo(String::T_UNICODESAFE);
-		strcpy(buf,utf8.cstr());
+		strcpy_s(buf, _countof(buf),utf8.cstr());
 
 	}else if (var == "bitrate")
 	{
@@ -2480,26 +2480,26 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
 			unsigned int tot = sourceData->getSourceRate();
 			snprintf(buf, _countof(buf),"%.1f",BYTES_TO_KBPS(tot));
 		}else
-			strcpy(buf,"0");
+			strcpy_s(buf, _countof(buf),"0");
 
 	}else if (var == "genre")
 	{
 		utf8 = info.genre;
 		utf8.convertTo(String::T_UNICODESAFE);
-		strcpy(buf,utf8.cstr());
+		strcpy_s(buf, _countof(buf),utf8.cstr());
 	}else if (var == "desc")
 	{
 		utf8 = info.desc;
 		utf8.convertTo(String::T_UNICODESAFE);
-		strcpy(buf,utf8.cstr());
+		strcpy_s(buf, _countof(buf),utf8.cstr());
 	}else if (var == "comment")
 	{
 		utf8 = info.comment;
 		utf8.convertTo(String::T_UNICODESAFE);
-		strcpy(buf,utf8.cstr());
+		strcpy_s(buf, _countof(buf),utf8.cstr());
 	}else if (var == "bcstClap") //JP-MOD
 	{
-		strcpy(buf,info.ppFlags & ServMgr::bcstClap ? "1":"0");
+		strcpy_s(buf, _countof(buf),info.ppFlags & ServMgr::bcstClap ? "1":"0");
 	}else if (var == "uptime")
 	{
 		String uptime;
@@ -2507,7 +2507,7 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
 			uptime.setFromStopwatch(sys->getTime()-info.lastPlayStart);
 		else
 			uptime.set("-");
-		strcpy(buf,uptime.cstr());
+		strcpy_s(buf, _countof(buf),uptime.cstr());
 	}
 	else if (var == "type")
 		snprintf(buf, _countof(buf),"%s",info.getTypeStr());
@@ -2555,22 +2555,22 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
 			utf8 = info.track.contact;
 
 		utf8.convertTo(String::T_UNICODESAFE);
-		strcpy(buf,utf8.cstr());
+		strcpy_s(buf, _countof(buf),utf8.cstr());
 
 	}else if (var == "contactURL")
 		snprintf(buf, _countof(buf),"%s",info.url.cstr());
 	else if (var == "streamPos")
 		snprintf(buf, _countof(buf),"%d",streamPos);
 	else if (var == "sourceType")
-		strcpy(buf,getSrcTypeStr());
+		strcpy_s(buf, _countof(buf),getSrcTypeStr());
 	else if (var == "sourceProtocol")
-		strcpy(buf,ChanInfo::getProtocolStr(info.srcProtocol));
+		strcpy_s(buf, _countof(buf),ChanInfo::getProtocolStr(info.srcProtocol));
 	else if (var == "sourceURL")
 	{
 		if (sourceURL.isEmpty())
 			sourceHost.host.toStr(buf);
 		else
-			strcpy(buf,sourceURL.cstr());
+			strcpy_s(buf, _countof(buf),sourceURL.cstr());
 	}
 	else if (var == "headPos")
 		snprintf(buf, _countof(buf),"%d",headPack.pos);
@@ -2591,7 +2591,7 @@ bool Channel::writeVariable(Stream &out, const String &var, int index)
 		}
 		snprintf(buf, _countof(buf),"%d",numHits);
 	} else if (var == "isBroadcast")
-		strcpy(buf, (type == T_BROADCAST) ? "1":"0");
+		strcpy_s(buf, _countof(buf), (type == T_BROADCAST) ? "1":"0");
 	else
 		return false;
 
@@ -3396,33 +3396,33 @@ bool	ChanHit::writeVariable(Stream &out, const String &var)
 			if (firewalled) 
 			{
 				if (numRelays==0) 
-					strcpy(buf,"<font color=red>");
+					strcpy_s(buf, _countof(buf),"<font color=red>");
 				else 
-					strcpy(buf,"<font color=orange>");
+					strcpy_s(buf, _countof(buf),"<font color=orange>");
 			}
 			else {
 				if (!relay){
 					if (numRelays==0){
-						strcpy(buf,"<font color=purple>");
+						strcpy_s(buf, _countof(buf),"<font color=purple>");
 					} else {
-						strcpy(buf,"<font color=blue>");
+						strcpy_s(buf, _countof(buf),"<font color=blue>");
 					}
 				} else {
-					strcpy(buf,"<font color=green>");
+					strcpy_s(buf, _countof(buf),"<font color=green>");
 				}
 			}
 
 			rhost[0].toStr(buf2);
-			strcat(buf,buf2);
+			strcat_s(buf, _countof(buf),buf2);
 
 			char h_name[128];
 			if (ClientSocket::getHostname(h_name,sizeof(h_name),rhost[0].ip)) // BOFëŒçÙÇ¡Ç€Ç¢
 			{
-				strcat(buf,"[");
-				strcat(buf,h_name);
-				strcat(buf,"]");
+				strcat_s(buf, _countof(buf),"[");
+				strcat_s(buf, _countof(buf),h_name);
+				strcat_s(buf, _countof(buf),"]");
 			}
-			strcat(buf,"</font>");
+			strcat_s(buf, _countof(buf),"</font>");
 		} //JP-EX e
 		else
 			rhost[0].toStr(buf);
@@ -3439,7 +3439,7 @@ bool	ChanHit::writeVariable(Stream &out, const String &var)
 	{
 		String timeStr;
 		timeStr.setFromStopwatch(upTime);
-		strcpy(buf,timeStr.cstr());
+		strcpy_s(buf, _countof(buf),timeStr.cstr());
 	}else if (var == "update")
 	{
 		String timeStr;
@@ -3447,7 +3447,7 @@ bool	ChanHit::writeVariable(Stream &out, const String &var)
 			timeStr.setFromStopwatch(sys->getTime()-time);
 		else
 			timeStr.set("-");
-		strcpy(buf,timeStr.cstr());
+		strcpy_s(buf, _countof(buf),timeStr.cstr());
 	}else if (var == "isFirewalled"){
 		snprintf(buf, _countof(buf),"%d",firewalled?1:0);
 	}else if (var == "version"){
@@ -3462,16 +3462,16 @@ bool	ChanHit::writeVariable(Stream &out, const String &var)
 				snprintf(buf, _countof(buf),"v0.%d", version);
 			}
 		} else {
-			strcpy(buf, "0");
+			strcpy_s(buf, _countof(buf), "0");
 		}
 	}
 	else if (var == "check")
 	{
 		char buf2[256];
-		strcpy(buf, "<a href=\"#\" onclick=\"checkip('");
+		strcpy_s(buf, _countof(buf), "<a href=\"#\" onclick=\"checkip('");
 		rhost[0].IPtoStr(buf2);
-		strcat(buf, buf2);
-		strcat(buf, "')\">_</a>");
+		strcat_s(buf, _countof(buf), buf2);
+		strcat_s(buf, _countof(buf), "')\">_</a>");
 	}
 	else if (var == "uphost")		// tree
 		uphost.toStr(buf);
@@ -4562,24 +4562,24 @@ XML::Node *ChanInfo::createQueryXML()
 	buf[0]=0;
 	if (!nameHTML.isEmpty())
 	{
-		strcat(buf," name=\"");
-		strcat(buf,nameHTML.cstr());
-		strcat(buf,"\"");
+		strcat_s(buf, _countof(buf)," name=\"");
+		strcat_s(buf, _countof(buf),nameHTML.cstr());
+		strcat_s(buf, _countof(buf),"\"");
 	}
 
 	if (!genreHTML.isEmpty())
 	{
-		strcat(buf," genre=\"");
-		strcat(buf,genreHTML.cstr());
-		strcat(buf,"\"");
+		strcat_s(buf, _countof(buf)," genre=\"");
+		strcat_s(buf, _countof(buf),genreHTML.cstr());
+		strcat_s(buf, _countof(buf),"\"");
 	}
 
 	if (id.isSet())
 	{
 		id.toStr(idStr);
-		strcat(buf," id=\"");
-		strcat(buf,idStr);
-		strcat(buf,"\"");
+		strcat_s(buf, _countof(buf)," id=\"");
+		strcat_s(buf, _countof(buf),idStr);
+		strcat_s(buf, _countof(buf),"\"");
 	}
 		
 

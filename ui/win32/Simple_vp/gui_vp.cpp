@@ -1479,7 +1479,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 							_DrawItem->rcItem.top,
 							buf,
 							strlen(buf));
-					strcpy(buf, ld->stayConnected?"YES":"NO");
+					strcpy_s(buf, _countof(buf), ld->stayConnected?"YES":"NO");
 					TextOut(_DrawItem->hDC,
 							_DrawItem->rcItem.left + 12 + 118 + 80 + 80 + 130,
 							_DrawItem->rcItem.top,
