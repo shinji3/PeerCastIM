@@ -19,8 +19,6 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
-#pragma warning (disable: 4996)
-
 #include <stdio.h>
 #include <string.h>
 
