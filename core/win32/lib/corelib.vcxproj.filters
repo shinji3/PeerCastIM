@@ -63,9 +63,6 @@
     <ClCompile Include="..\..\common\peercast.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\rtsp.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\common\servent.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
@@ -73,9 +70,6 @@
       <Filter>Core Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\common\servmgr.cpp">
-      <Filter>Core Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\socket.cpp">
       <Filter>Core Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\common\stats.cpp">
@@ -165,9 +159,6 @@
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\peercast.h">
-      <Filter>Core Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\rtsp.h">
       <Filter>Core Includes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\servent.h">
