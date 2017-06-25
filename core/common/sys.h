@@ -295,10 +295,13 @@ public:
 
 
 // ------------------------------------
-typedef int (WINAPI *THREAD_FUNC)(ThreadInfo *);
 typedef uintptr_t THREAD_HANDLE;
 #define THREAD_PROC int WINAPI
-#define vsnprintf _vsnprintf
+
+#define fdopen _fdopen
+#define strdup _strdup
+#define stricmp _stricmp
+#define strnicmp _strnicmp
 
 // ------------------------------------
 class WLock
@@ -337,7 +340,6 @@ public:
 
 typedef long long int64_t;
 
-typedef int (*THREAD_FUNC)(ThreadInfo *);
 #define THREAD_PROC int 
 typedef pthread_t THREAD_HANDLE;
 
@@ -438,7 +440,12 @@ public:
 class ThreadInfo
 {
 public:
-	//typedef int  (__stdcall *THREAD_FUNC)(ThreadInfo *);
+
+#ifdef WIN32
+	typedef int (WINAPI *THREAD_FUNC)(ThreadInfo *);
+#else
+	typedef int (*THREAD_FUNC)(ThreadInfo *);
+#endif
 
 	ThreadInfo()
 	{
