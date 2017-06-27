@@ -84,11 +84,11 @@ bool Stats::writeVariable(Stream &out,const String &var)
 	else if (var == "netTotalPerSec")		
 		snprintf(buf, _countof(buf),"%.1f",BYTES_TO_KBPS(getPerSecond(Stats::PACKETDATAOUT)+getPerSecond(Stats::PACKETDATAIN)));
 	else if (var == "packInPerSec")		
-		snprintf(buf, _countof(buf),"%.1f",getPerSecond(Stats::NUMPACKETSIN));
+		snprintf(buf, _countof(buf),"%u",getPerSecond(Stats::NUMPACKETSIN));
 	else if (var == "packOutPerSec")		
-		snprintf(buf, _countof(buf),"%.1f",getPerSecond(Stats::NUMPACKETSOUT));
+		snprintf(buf, _countof(buf),"%u",getPerSecond(Stats::NUMPACKETSOUT));
 	else if (var == "packTotalPerSec")		
-		snprintf(buf, _countof(buf),"%.1f",getPerSecond(Stats::NUMPACKETSOUT)+getPerSecond(Stats::NUMPACKETSIN));
+		snprintf(buf, _countof(buf),"%u",getPerSecond(Stats::NUMPACKETSOUT)+getPerSecond(Stats::NUMPACKETSIN));
 
 	else
 		return false;

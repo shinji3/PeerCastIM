@@ -180,7 +180,7 @@ void Host::fromStrIP(const char *str, int p)
 
 	if (strstr(str,":"))
 	{
-		if (sscanf(str,"%03d.%03d.%03d.%03d:%d",&ipb[0],&ipb[1],&ipb[2],&ipb[3],&ipp) == 5)
+		if (sscanf_s(str,"%03d.%03d.%03d.%03d:%d",&ipb[0],&ipb[1],&ipb[2],&ipb[3],&ipp) == 5)
 		{
 			ip = ((ipb[0]&0xff) << 24) | ((ipb[1]&0xff) << 16) | ((ipb[2]&0xff) << 8) | ((ipb[3]&0xff));
 			port = ipp;
@@ -191,7 +191,7 @@ void Host::fromStrIP(const char *str, int p)
 		}
 	}else{
 		port = p;
-		if (sscanf(str,"%03d.%03d.%03d.%03d",&ipb[0],&ipb[1],&ipb[2],&ipb[3]) == 4)
+		if (sscanf_s(str,"%03d.%03d.%03d.%03d",&ipb[0],&ipb[1],&ipb[2],&ipb[3]) == 4)
 			ip = ((ipb[0]&0xff) << 24) | ((ipb[1]&0xff) << 16) | ((ipb[2]&0xff) << 8) | ((ipb[3]&0xff));
 		else
 			ip = 0;
@@ -289,9 +289,9 @@ bool String::isValidURL()
 // -----------------------------------
 void String::setFromTime(unsigned int t)
 {
-//	char *p = ctime((time_t*)&t);
-	time_t tmp = t;
-	char *p = ctime(&tmp);
+	time_t t2 = t;
+    char p[26];
+    ctime_s(p, _countof(p), &t2);
 	if (p)
 		strcpy_s(data, _countof(data),p);
 	else
@@ -384,14 +384,14 @@ int String::base64WordToChars(char *out,const char *input)
     else
         *out++ = 0;
 
-	return out-start;
+	return static_cast<int>(out-start);
 }
 
 // -----------------------------------
 void String::BASE642ASCII(const char *input)
 {
 	char *out = data;
-    int len = strlen(input);
+    size_t len = strlen(input);
 
     while(len >= 4) 
 	{

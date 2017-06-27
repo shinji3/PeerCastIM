@@ -43,12 +43,12 @@ void MemoryStream::convertFromBase64()
         rl -= 4;
     }
     *out = 0;
-	len = out-buf;
+	len = static_cast<int>(out-buf);
 }
 // -------------------------------------
 void FileStream::openReadOnly(const char *fn)
 {
-	file = fopen(fn,"rb");
+	fopen_s(&file, fn,"rb");
 
     if (!file)
     	throw StreamException("Unable to open file");
@@ -56,7 +56,7 @@ void FileStream::openReadOnly(const char *fn)
 // -------------------------------------
 void FileStream::openWriteReplace(const char *fn)
 {
-	file = fopen(fn,"wb");
+	fopen_s(&file, fn,"wb");
 
 	if (!file)
     	throw StreamException("Unable to open file");
@@ -64,7 +64,7 @@ void FileStream::openWriteReplace(const char *fn)
 // -------------------------------------
 void FileStream::openWriteAppend(const char *fn)
 {
-        file = fopen(fn,"ab");
+        fopen_s(&file, fn,"ab");
 
         if (!file)
         	throw StreamException("Unable to open file");
@@ -256,7 +256,7 @@ void Stream::write(const char *fmt,va_list ap)
 {
 	char tmp[4096];
 	vsnprintf(tmp, _countof(tmp),fmt,ap);
-    write(tmp,strlen(tmp));
+    write(tmp,static_cast<int>(strlen(tmp)));
 }
 // -------------------------------------
 void Stream::writeStringF(const char *fmt,...)
@@ -269,7 +269,7 @@ void Stream::writeStringF(const char *fmt,...)
 // -------------------------------------
 void Stream::writeString(const char *str)
 {
-	write(str,strlen(str));
+	write(str,static_cast<int>(strlen(str)));
 }
 // -------------------------------------
 void Stream::writeLineF(const char *fmt,...)
