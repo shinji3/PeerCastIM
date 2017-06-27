@@ -160,8 +160,7 @@ void Host::fromStrName(const char *str, int p)
 	}
 
 	char name[128];
-	strncpy(name,str,sizeof(name)-1);
-	name[127] = '\0';
+	strncpy_s(name, _countof(name),str, _TRUNCATE);
 	port = p;
 	char *pp = strstr(name,":");
 	if (pp)
@@ -759,7 +758,7 @@ void LogBuffer::write(const char *str, TYPE t)
 
 		int i = currLine % maxLines;
 		int bp = i*lineLen;
-		strncpy(&buf[bp],str,rlen);
+		strncpy_s(&buf[bp],rlen,str,_TRUNCATE);
 		buf[bp+rlen] = 0;
 		if (cnt==0)
 		{

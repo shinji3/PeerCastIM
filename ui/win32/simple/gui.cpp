@@ -299,7 +299,7 @@ void ChannelData::setData(Channel *c){
 	sjis = c->getName();
 	sjis.convertTo(String::T_SJIS);
 
-	strncpy(name, sjis, 256);
+	strncpy_s(name, _countof(name), sjis, 256);
 	name[256] = '\0';
 	channel_id = c->channel_id;
 	bitRate = c->info.bitrate;

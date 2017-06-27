@@ -218,7 +218,7 @@ public:
 	Host uphost;
 	unsigned int		uphostHops;
 
-	char				version_ex_prefix[2];
+	char				version_ex_prefix[3];
 	unsigned int		version_ex_number;
 
 	unsigned int lastSendSeq;

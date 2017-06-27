@@ -126,15 +126,13 @@ void HTTP::getAuthUserPass(char *user, char *pass, size_t szUser, size_t szPass)
 				*s = 0;
 				if (user)
 				{
-					strncpy(user, str.cstr(), szUser);
-					user[szUser-1] = '\0';
+					strncpy_s(user, szUser, str.cstr(), _TRUNCATE);
 				}
 				if (pass)
 				{
-					strncpy(pass, s+1, szPass);
-					pass[szPass-1] = '\0';
+					strncpy_s(pass, szPass, s+1, _TRUNCATE);
 				}
-			}			
+			}
 		}
 	}
 }

@@ -3307,7 +3307,7 @@ void ChanHit::initLocal(int numl,int numr,int,int uptm,bool connected,bool isFul
 	version_vp = PCP_CLIENT_VERSION_VP;
 	if (version_ex)
 	{
-		strncpy(version_ex_prefix, PCP_CLIENT_VERSION_EX_PREFIX,2);
+		strncpy_s(version_ex_prefix, _countof(version_ex_prefix), PCP_CLIENT_VERSION_EX_PREFIX, _TRUNCATE);
 		version_ex_number = PCP_CLIENT_VERSION_EX_NUMBER;
 	} else
 	{

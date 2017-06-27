@@ -718,8 +718,7 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 						foundFlg = true;
 						if (c->thread.finish) break;
 						ld->flg = true;
-						strncpy(ld->name, sjis, 20);
-						ld->name[20] = '\0';
+						strncpy_s(ld->name, _countof(ld->name), sjis, 20);
 						ld->bitRate = c->info.bitrate;
 						ld->status = c->status;
 						ld->statusStr = c->getStatusStr();
@@ -740,8 +739,7 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 					list_top = newData;
 					newData->flg = true;
 					newData->channel_id = c->channel_id;
-					strncpy(newData->name, sjis, 20);
-					newData->name[20] = '\0';
+					strncpy_s(newData->name, _countof(newData->name), sjis, 20);
 					newData->bitRate = c->info.bitrate;
 					newData->status = c->status;
 					newData->statusStr = c->getStatusStr();
@@ -786,9 +784,8 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 /*					String sjis; //JP-Patch
 					sjis = c->getName(); //JP-Patch
 					sjis.convertTo(String::T_SJIS); //JP-Patch
-					strncpy(cname,sjis.cstr(),16); //JP-Patch
-					//strncpy(cname,c->getName(),16);
-					cname[16] = 0;
+					strncpy_s(cname, _countof(cname),sjis.cstr(),16); //JP-Patch
+					//strncpy_s(cname, _countof(cname),c->getName(),16);
 					//int sec = ((c->currSPacket*c->bitrate*SPacket::DATA_LEN)/8)/(c->bitrate*1024);
 					//int k = ((c->currSPacket*SPacket::DATA_LEN))/(1024);
 					//ADDCHAN(c,"%d. %s - %d KB/s - %du - %dk",num,cname,c->bitrate,c->listeners,k);
@@ -826,8 +823,7 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 					{
 						if (chl->info.match(chanMgr->searchInfo))
 						{
-							strncpy(cname,chl->info.name.cstr(),16);
-							cname[16] = 0;
+							strncpy_s(cname, _countof(cname),chl->info.name.cstr(),16);
 							ADDHIT(chl,"%s - %d kb/s - %d/%d",cname,chl->info.bitrate,chl->numListeners(),chl->numHits());
 						}
 					}

@@ -66,8 +66,7 @@ public:
 	// set from straight null terminated string
 	void set(const char *p, TYPE t=T_ASCII) 
 	{
-		strncpy(data,p,MAX_LEN-1);
-		data[MAX_LEN-1] = 0;
+		strncpy_s(data, _countof(data),p,_TRUNCATE);
 		type = t;
 	}
 
@@ -102,8 +101,7 @@ public:
 		if (slen > 2)
 		{
 			if (slen >= MAX_LEN) slen = MAX_LEN;
-			strncpy(data,p+1,slen-2);
-			data[slen-2]=0;
+			strncpy_s(data, _countof(data),p+1,slen-2);
 		}else
 			clear();
 		type = t;

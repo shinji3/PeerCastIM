@@ -112,7 +112,7 @@ public:
 
 	void	set(const char *i, unsigned int nip)
 	{
-		strncpy(id,i,sizeof(id)-1);
+		strncpy_s(id, _countof(id),i,sizeof(id)-1);
 		id[sizeof(id)-1]=0;
 		ip = nip;
 	}
