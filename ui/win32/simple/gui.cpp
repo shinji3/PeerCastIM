@@ -54,8 +54,6 @@ bool shownChannels=false;
 WINDOWPLACEMENT winPlace;
 bool guiFlg = false;
 
-extern bool jumpListEnabled;
-
 using namespace Gdiplus;
 
 #include <comdef.h>
@@ -1562,11 +1560,6 @@ void WmCreateProc(HWND hwnd){
 	img_broad_ok = ::new Image(bstr);
 	bstr = L"ST_BROAD_FULL.bmp";
 	img_broad_full = ::new Image(bstr);
-
-	// jumplist
-	if (jumpListEnabled)
-	{
-	}
 }
 
 void WmPaintProc(HWND hwnd){
