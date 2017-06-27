@@ -121,7 +121,7 @@ void	APICALL MyPeercastApp ::getDirectory()
 {
 	char path_buffer[256],drive[32],dir[128];
 	GetModuleFileName(NULL,path_buffer,255);
-	_splitpath(path_buffer,drive,dir,NULL,NULL);
+    _splitpath_s(path_buffer, drive, _countof(drive), dir, _countof(dir), NULL, 0, NULL, 0);
 	snprintf(servMgr->modulePath, _countof(servMgr->modulePath),"%s%s",drive,dir);
 }
 // --------------------------------- JP-EX
@@ -198,14 +198,6 @@ void WINAPI ServiceMain(DWORD argc, LPSTR *argv)
 	WIN32_FIND_DATA fd; //JP-EX
 	HANDLE hFind; //JP-EX
 
-	OSVERSIONINFO osInfo; //JP-EX
-	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO); //JP-EX
-	GetVersionEx(&osInfo);
-	if (osInfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
-		winDistinctionNT = true;
-	else
-		winDistinctionNT = false;
-
 	// off by default now
 	showGUI = false;
 
@@ -219,7 +211,7 @@ void WINAPI ServiceMain(DWORD argc, LPSTR *argv)
 		{
 			exit(-1);
 		}
-		for (int i=_tcslen(buf); i>0; --i)
+		for (size_t i=_tcslen(buf); i>0; --i)
 		{
 			if (buf[i] == '\\')
 			{
@@ -240,8 +232,6 @@ void WINAPI ServiceMain(DWORD argc, LPSTR *argv)
 	peercastApp = new MyPeercastApp();
 
 	peercastInst->init();
-
-	LOG_DEBUG("Set OS Type: %s",winDistinctionNT?"WinNT":"Win9x");
 
 	if (peercastApp->clearTemp()) //JP-EX
 	{
@@ -284,27 +274,6 @@ int WinMainDummy(HINSTANCE hInstance,
 
 	WIN32_FIND_DATA fd; //JP-EX
 	HANDLE hFind; //JP-EX
-
-	OSVERSIONINFOEX osInfo; //JP-EX
-	osInfo.dwOSVersionInfoSize = sizeof(osInfo); //JP-EX
-	GetVersionEx(reinterpret_cast<LPOSVERSIONINFO>(&osInfo));
-	if (osInfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
-		winDistinctionNT = true;
-	else
-		winDistinctionNT = false;
-
-	// for Windows7 or later
-	if ((osInfo.wProductType == VER_NT_WORKSTATION
-		&& osInfo.dwMajorVersion == 6
-		&& osInfo.dwMinorVersion == 1)
-		||
-		(osInfo.dwMajorVersion == 6
-		&& osInfo.dwMinorVersion > 1)
-		||
-		osInfo.dwMajorVersion > 6)
-	{
-		jumpListEnabled = true;
-	}
 
 	// off by default now
 	showGUI = false;
@@ -399,7 +368,7 @@ int WinMainDummy(HINSTANCE hInstance,
 				{
 					COPYDATASTRUCT copy;
 					copy.dwData = WM_PLAYCHANNEL;
-					copy.cbData = strlen(chanURL)+1;			// plus null term
+					copy.cbData = static_cast<DWORD>(strlen(chanURL))+1;			// plus null term
 					copy.lpData = chanURL;
 					SendMessage(oldWin,WM_COPYDATA,NULL,(LPARAM)&copy);
 				}else{
@@ -425,8 +394,6 @@ int WinMainDummy(HINSTANCE hInstance,
 	peercastApp = new MyPeercastApp();
 
 	peercastInst->init();
-
-	LOG_DEBUG("Set OS Type: %s",winDistinctionNT?"WinNT":"Win9x");
 
 	if (peercastApp->clearTemp()) //JP-EX
 	{
@@ -484,7 +451,7 @@ int WinMainDummy(HINSTANCE hInstance,
 
 	Gdiplus::GdiplusShutdown(gdiplusToken);
 
-	return msg.wParam;
+	return static_cast<int>(msg.wParam);
 }
 
 
@@ -1027,7 +994,7 @@ void addAllChannelsMenu(HMENU cm)
 		InsertMenu(yMenu,0,MF_BYPOSITION,ID_POPUP_YELLOWPAGES1,servMgr->rootHost);
 	}
 
-	InsertMenu(cm,0,MF_BYPOSITION|MF_POPUP,(UINT)yMenu,"イエローページ");
+	InsertMenu(cm,0,MF_BYPOSITION|MF_POPUP,(UINT_PTR)yMenu,"イエローページ");
 	InsertMenu(cm,0,MF_BYPOSITION|MF_SEPARATOR,NULL,NULL);
 	// add channels to menu
 	int numActive=0;
@@ -1056,7 +1023,7 @@ void addAllChannelsMenu(HMENU cm)
 		if (ch)
 			fl |= (ch->isPlaying()?MF_CHECKED:0);
 
-		InsertMenu(cm,0,fl,(UINT)opMenu,str);
+		InsertMenu(cm,0,fl,(UINT_PTR)opMenu,str);
 		
 		numActive++;
 
@@ -1307,14 +1274,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				int c = wmId - INFO_CMD;
 				chanInfo = getChannelInfo(c);
 				chanInfoIsRelayed = false;
-				if (winDistinctionNT)
-					DialogBox(hInst, (LPCTSTR)IDD_CHANINFO, hWnd, (DLGPROC)ChanInfoProc);
-				else
-				{
-					HWND WKDLG; //JP-Patch
-					WKDLG = CreateDialog(hInst, (LPCTSTR)IDD_CHANINFO, hWnd, (DLGPROC)ChanInfoProc); //JP-Patch
-					ShowWindow(WKDLG,SW_SHOWNORMAL); //JP-Patch
-				}
+				DialogBox(hInst, (LPCTSTR)IDD_CHANINFO, hWnd, (DLGPROC)ChanInfoProc);
 				return 0;
 			}
 			if ((wmId >= URL_CMD) && (wmId < URL_CMD+MAX_CHANNELS))
@@ -1459,14 +1419,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				case ID_POPUP_TRAFFIC:
 					// トラフィックモニタ起動
-					if (winDistinctionNT)
-						DialogBox(hInst, (LPCTSTR)IDD_TRAFFIC, hWnd, (DLGPROC)TrafficDlgProc);
-					else
-					{
-						HWND WKDLG; //JP-Patch
-						WKDLG = CreateDialog(hInst, (LPCTSTR)IDD_TRAFFIC, hWnd, (DLGPROC)TrafficDlgProc); //JP-Patch
-						ShowWindow(WKDLG,SW_SHOWNORMAL); //JP-Patch
-					}
+					DialogBox(hInst, (LPCTSTR)IDD_TRAFFIC, hWnd, (DLGPROC)TrafficDlgProc);
 					break;
 
 				case ID_POPUP_PREVENT_SS:
@@ -1535,7 +1488,7 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENTEX); // x64対応
 			} else
 			{
-				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LONG)PCX_AGENTVP);
+				SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LPARAM)PCX_AGENTVP);
 			}
 
 			return TRUE;
@@ -1721,18 +1674,12 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 			break;
 
 		case WM_CLOSE:
-			if (winDistinctionNT)
-				EndDialog(hDlg, 0);
-			else
-				DestroyWindow(hDlg); //JP-Patch
+			EndDialog(hDlg, 0);
 			break;
 
 		case WM_ACTIVATE:
 			if (LOWORD(wParam) == WA_INACTIVE)
-				if (winDistinctionNT)
-					EndDialog(hDlg, 0);
-				else
-					DestroyWindow(hDlg); //JP-Patch
+				EndDialog(hDlg, 0);
 			break;
 		case WM_DESTROY:
 			chWnd = NULL;
@@ -1768,10 +1715,7 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		// 既に開いてる
 		if (trafficDlg || trafficDlgThread.active)
 		{
-			if (winDistinctionNT)
-				EndDialog(hDlg, 0);
-			else
-				DestroyWindow(hDlg);
+			EndDialog(hDlg, 0);
 			return FALSE;
 		}
 
@@ -1804,7 +1748,7 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 				}
 
 				if (i == 1)
-					sprintf_s<bufsize>(szUp, "%d%s", totalUp, suffix[0]);
+					sprintf_s<bufsize>(szUp, "%llu%s", totalUp, suffix[0]);
 			}
 
 			// down
@@ -1817,7 +1761,7 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 				}
 
 				if (i == 1)
-					sprintf_s<bufsize>(szDown, "%d%s", totalDown, suffix[0]);
+					sprintf_s<bufsize>(szDown, "%llu%s", totalDown, suffix[0]);
 			}
 
 			SetDlgItemText(hDlg, IDC_STATIC_UP, szUp);
@@ -1828,10 +1772,7 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 	case WM_CLOSE:
 		trafficDlg = NULL;
 		trafficDlgThread.active = false;
-		if (winDistinctionNT)
-			EndDialog(hDlg, 0);
-		else
-			DestroyWindow(hDlg);
+		EndDialog(hDlg, 0);
 
 		break;
 
