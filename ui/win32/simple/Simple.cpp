@@ -68,7 +68,6 @@ bool showGUI=true;
 bool allowMulti=false;
 bool killMe=false;
 bool allowTrayMenu=true;
-static bool winDistinctionNT=false;
 int		seenNewVersionTime=0;
 HICON icon1,icon2;
 ChanInfo chanInfo;
@@ -81,8 +80,6 @@ extern Stats stats;
 ThreadInfo trafficDlgThread;
 HWND trafficDlg = NULL;
 FileStream fs;
-
-bool jumpListEnabled = false; // jumplist flag (only for win7 or later)
 
 // プロトタイプ宣言
 void createGUI(HWND);
