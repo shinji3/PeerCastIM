@@ -104,7 +104,7 @@ LRESULT CALLBACK ListBoxProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 	{
 		case WM_LBUTTONDOWN:
 		{
-			int index = SendMessage(hwnd, LB_ITEMFROMPOINT, 0, lParam);
+            LRESULT index = SendMessage(hwnd, LB_ITEMFROMPOINT, 0, lParam);
 			if(index >= 0x10000)
 			{
 				SendMessage(hwnd, LB_SETCURSEL, (DWORD)-1, 0L);
@@ -115,7 +115,7 @@ LRESULT CALLBACK ListBoxProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 
 		case WM_LBUTTONDBLCLK:
 		{
-			int index = SendMessage(hwnd, LB_ITEMFROMPOINT, 0, lParam);
+            LRESULT index = SendMessage(hwnd, LB_ITEMFROMPOINT, 0, lParam);
 			if(index < 0x10000)
 			{
 				SendMessage(guiWnd, WM_COMMAND, IDC_BUTTON8, NULL);
@@ -130,7 +130,7 @@ LRESULT CALLBACK ListBoxProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 			HMENU hMenu;
 			DWORD dwID;
 
-			int index = SendMessage(hwnd, LB_ITEMFROMPOINT, 0, lParam);
+            LRESULT index = SendMessage(hwnd, LB_ITEMFROMPOINT, 0, lParam);
 			if(index < 0x10000)
 			{
 				SendMessage(hwnd, LB_SETCURSEL, (DWORD)index, 1L);
@@ -227,7 +227,7 @@ LRESULT CALLBACK ConnListBoxProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 	{
 		case WM_LBUTTONDOWN:
 		{
-			int index = SendMessage(hwnd, LB_ITEMFROMPOINT, 0, lParam);
+            LRESULT index = SendMessage(hwnd, LB_ITEMFROMPOINT, 0, lParam);
 			if(index >= 0x10000)
 			{
 				SendMessage(hwnd, LB_SETCURSEL, (DWORD)-1, 0L);
@@ -242,7 +242,7 @@ LRESULT CALLBACK ConnListBoxProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			HMENU hMenu;
 			DWORD dwID;
 
-			int index = SendMessage(hwnd, LB_ITEMFROMPOINT, 0, lParam);
+            LRESULT index = SendMessage(hwnd, LB_ITEMFROMPOINT, 0, lParam);
 			if(index < 0x10000)
 			{
 				SendMessage(hwnd, LB_SETCURSEL, (DWORD)index, 1L);
@@ -308,40 +308,40 @@ void enableEdit(int id, bool on)
 int getEditInt(int id)
 {
 	char str[128];
-	SendDlgItemMessage(guiWnd, id,WM_GETTEXT, 128, (LONG)str);
+	SendDlgItemMessage(guiWnd, id,WM_GETTEXT, 128, (LPARAM)str);
 	return atoi(str);
 }
 // --------------------------------------------------
 char * getEditStr(int id)
 {
 	static char str[128];
-	SendDlgItemMessage(guiWnd, id,WM_GETTEXT, 128, (LONG)str);
+	SendDlgItemMessage(guiWnd, id,WM_GETTEXT, 128, (LPARAM)str);
 	return str;
 }
 // --------------------------------------------------
 void setEditStr(int id, char *str)
 {
-	SendDlgItemMessage(guiWnd, id,WM_SETTEXT, 0, (LONG)str);
+	SendDlgItemMessage(guiWnd, id,WM_SETTEXT, 0, (LPARAM)str);
 }
 // --------------------------------------------------
 void setEditInt(int id, int v)
 {
 	char str[128];
 	snprintf(str, _countof(str),"%d",v);
-	SendDlgItemMessage(guiWnd, id,WM_SETTEXT, 0, (LONG)str);
+	SendDlgItemMessage(guiWnd, id,WM_SETTEXT, 0, (LPARAM)str);
 }
 
 // --------------------------------------------------
 void *getListBoxSelData(int id)
 {
-	int sel = SendDlgItemMessage(guiWnd, id,LB_GETCURSEL, 0, 0);
+    LRESULT sel = SendDlgItemMessage(guiWnd, id,LB_GETCURSEL, 0, 0);
 	if (sel >= 0)
 		return (void *)SendDlgItemMessage(guiWnd, id,LB_GETITEMDATA, sel, 0);
 	return NULL;
 }
 
 Channel *getListBoxChannel(){
-	int sel = SendDlgItemMessage(guiWnd, chanID ,LB_GETCURSEL, 0, 0);
+    LRESULT sel = SendDlgItemMessage(guiWnd, chanID ,LB_GETCURSEL, 0, 0);
 	if (sel >= 0){
 		ListData *ld = list_top;
 		int idx = 0;
@@ -358,7 +358,7 @@ Channel *getListBoxChannel(){
 }
 
 Servent *getListBoxServent(){
-	int sel = SendDlgItemMessage(guiWnd, statusID ,LB_GETCURSEL, 0, 0);
+    LRESULT sel = SendDlgItemMessage(guiWnd, statusID ,LB_GETCURSEL, 0, 0);
 	if (sel >= 0){
 		ServentData *sd = servent_top;
 		int idx = 0;
@@ -387,7 +387,7 @@ void ADDLOG(const char *str,int id,bool sel,void *data, LogBuffer::TYPE type)
 	{
 
 		String sjis; //JP-EX
-		int num = SendDlgItemMessage(guiWnd, id,LB_GETCOUNT, 0, 0);
+        LRESULT num = SendDlgItemMessage(guiWnd, id,LB_GETCOUNT, 0, 0);
 		if (num > 100)
 		{
 			SendDlgItemMessage(guiWnd, id, LB_DELETESTRING, 0, 0);
@@ -396,8 +396,8 @@ void ADDLOG(const char *str,int id,bool sel,void *data, LogBuffer::TYPE type)
 		sjis = str; //JP-Patch
 		sjis.convertTo(String::T_SJIS); //JP-Patch
 		//int idx = SendDlgItemMessage(guiWnd, id, LB_ADDSTRING, 0, (LONG)(LPSTR)str);
-		int idx = SendDlgItemMessage(guiWnd, id, LB_ADDSTRING, 0, (LONG)(LPSTR)sjis.cstr());
-		SendDlgItemMessage(guiWnd, id, LB_SETITEMDATA, idx, (LONG)data);
+        LRESULT idx = SendDlgItemMessage(guiWnd, id, LB_ADDSTRING, 0, (LPARAM)(LPSTR)sjis.cstr());
+		SendDlgItemMessage(guiWnd, id, LB_SETITEMDATA, idx, (LPARAM)data);
 
 		if (sel)
 			SendDlgItemMessage(guiWnd, id, LB_SETCURSEL, num, 0);
@@ -458,7 +458,8 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 //	thread->lock();
 	while (thread->active)
 	{
-		int sel,top,i;
+        LRESULT sel, top;
+        int i;
 /*		sel = SendDlgItemMessage(guiWnd, statusID,LB_GETCURSEL, 0, 0);
 		top = SendDlgItemMessage(guiWnd, statusID,LB_GETTOPINDEX, 0, 0);
 
@@ -641,8 +642,8 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 				newData->ver_ex_prefix[1] = ver_ex_prefix[1];
 				newData->ver_ex_number = ver_ex_number;
 
-				int idx = SendDlgItemMessage(guiWnd, statusID, LB_ADDSTRING, 0, (LONG)"");
-				SendDlgItemMessage(guiWnd, statusID, LB_SETITEMDATA, idx, (LONG)(newData->servent_id));
+                LRESULT idx = SendDlgItemMessage(guiWnd, statusID, LB_ADDSTRING, 0, (LPARAM)"");
+				SendDlgItemMessage(guiWnd, statusID, LB_SETITEMDATA, idx, (LPARAM)(newData->servent_id));
 				diff++;
 			}
 			s = next;
@@ -751,8 +752,8 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 					newData->chDisp = c->chDisp;
 					newData->bTracker = c->sourceHost.tracker;
 
-					int idx = SendDlgItemMessage(guiWnd, chanID, LB_ADDSTRING, 0, (LONG)"");
-					SendDlgItemMessage(guiWnd, chanID, LB_SETITEMDATA, idx, (LONG)(newData->channel_id));
+                    LRESULT idx = SendDlgItemMessage(guiWnd, chanID, LB_ADDSTRING, 0, (LPARAM)"");
+					SendDlgItemMessage(guiWnd, chanID, LB_SETITEMDATA, idx, (LPARAM)(newData->channel_id));
 				}
 				c = next;
 			}
@@ -845,13 +846,13 @@ THREAD_PROC showConnections(ThreadInfo *thread)
 			switch (servMgr->getFirewall())
 			{
 				case ServMgr::FW_ON:
-					SendDlgItemMessage(guiWnd, IDC_EDIT4,WM_SETTEXT, 0, (LONG)"Firewalled");
+					SendDlgItemMessage(guiWnd, IDC_EDIT4,WM_SETTEXT, 0, (LPARAM)"Firewalled");
 					break;
 				case ServMgr::FW_UNKNOWN:
-					SendDlgItemMessage(guiWnd, IDC_EDIT4,WM_SETTEXT, 0, (LONG)"Unknown");
+					SendDlgItemMessage(guiWnd, IDC_EDIT4,WM_SETTEXT, 0, (LPARAM)"Unknown");
 					break;
 				case ServMgr::FW_OFF:
-					SendDlgItemMessage(guiWnd, IDC_EDIT4,WM_SETTEXT, 0, (LONG)"Normal");
+					SendDlgItemMessage(guiWnd, IDC_EDIT4,WM_SETTEXT, 0, (LPARAM)"Normal");
 					break;
 			}
 		}
@@ -1132,11 +1133,11 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 				SetWindowLong(hwndList, GWL_WNDPROC, (DWORD)ConnListBoxProc);
 #else
 				wndOldListBox = (WNDPROC)GetWindowLongPtr(hwndList, GWLP_WNDPROC);
-				SetWindowLongPtr(hwndList, GWLP_WNDPROC, (DWORD)ListBoxProc);
+				SetWindowLongPtr(hwndList, GWLP_WNDPROC, (LRESULT)ListBoxProc);
 
 				hwndList = GetDlgItem(guiWnd, statusID);
 				wndOldConnListBox = (WNDPROC)GetWindowLongPtr(hwndList, GWLP_WNDPROC);
-				SetWindowLongPtr(hwndList, GWLP_WNDPROC, (DWORD)ConnListBoxProc);
+				SetWindowLongPtr(hwndList, GWLP_WNDPROC, (LRESULT)ConnListBoxProc);
 #endif
 			}
 
@@ -1150,7 +1151,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 						{
 							//SendDlgItemMessage(hwnd, IDC_CHECK1,WM_SETTEXT, 0, (LPARAM)"Deactivate");
 
-							SendDlgItemMessage(hwnd, IDC_EDIT3,WM_GETTEXT, 64, (LONG)servMgr->password);
+							SendDlgItemMessage(hwnd, IDC_EDIT3,WM_GETTEXT, 64, (LPARAM)servMgr->password);
 
 							servMgr->serverHost.port = (unsigned short)getEditInt(IDC_EDIT1);
 							servMgr->setMaxRelays(getEditInt(IDC_MAXRELAYS));
@@ -1191,33 +1192,33 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 					if (getButtonState(IDC_CHECK11))
 					{
 						enableControl(IDC_EDIT9,false);
-						SendDlgItemMessage(hwnd, IDC_EDIT9,WM_GETTEXT, 128, (LONG)chanMgr->broadcastMsg.cstr());
+						SendDlgItemMessage(hwnd, IDC_EDIT9,WM_GETTEXT, 128, (LPARAM)chanMgr->broadcastMsg.cstr());
 					}else{
 						enableControl(IDC_EDIT9,true);
 						chanMgr->broadcastMsg.clear();
 					}
 					break;
 				case IDC_LOGDEBUG:		// log debug
-					servMgr->showLog = getButtonState(wParam) ? servMgr->showLog|(1<<LogBuffer::T_DEBUG) : servMgr->showLog&~(1<<LogBuffer::T_DEBUG);
+					servMgr->showLog = getButtonState(static_cast<int>(wParam)) ? servMgr->showLog|(1<<LogBuffer::T_DEBUG) : servMgr->showLog&~(1<<LogBuffer::T_DEBUG);
 					break;
 				case IDC_LOGERRORS:		// log errors
-					servMgr->showLog = getButtonState(wParam) ? servMgr->showLog|(1<<LogBuffer::T_ERROR) : servMgr->showLog&~(1<<LogBuffer::T_ERROR);
+					servMgr->showLog = getButtonState(static_cast<int>(wParam)) ? servMgr->showLog|(1<<LogBuffer::T_ERROR) : servMgr->showLog&~(1<<LogBuffer::T_ERROR);
 					break;
 				case IDC_LOGNETWORK:		// log network
-					servMgr->showLog = getButtonState(wParam) ? servMgr->showLog|(1<<LogBuffer::T_NETWORK) : servMgr->showLog&~(1<<LogBuffer::T_NETWORK);
+					servMgr->showLog = getButtonState(static_cast<int>(wParam)) ? servMgr->showLog|(1<<LogBuffer::T_NETWORK) : servMgr->showLog&~(1<<LogBuffer::T_NETWORK);
 					break;
 				case IDC_LOGCHANNELS:		// log channels
-					servMgr->showLog = getButtonState(wParam) ? servMgr->showLog|(1<<LogBuffer::T_CHANNEL) : servMgr->showLog&~(1<<LogBuffer::T_CHANNEL);
+					servMgr->showLog = getButtonState(static_cast<int>(wParam)) ? servMgr->showLog|(1<<LogBuffer::T_CHANNEL) : servMgr->showLog&~(1<<LogBuffer::T_CHANNEL);
 					break;
 				case IDC_CHECK9:		// pause log
-					servMgr->pauseLog = getButtonState(wParam);
+					servMgr->pauseLog = getButtonState(static_cast<int>(wParam));
 					break;
 				case IDC_CHECK2:		// start outgoing
 
 					if (getButtonState(IDC_CHECK2))
 					{
 
-						SendDlgItemMessage(hwnd, IDC_COMBO1,WM_GETTEXT, 128, (LONG)servMgr->connectHost);
+						SendDlgItemMessage(hwnd, IDC_COMBO1,WM_GETTEXT, 128, (LPARAM)servMgr->connectHost);
 						servMgr->autoConnect = true;
 						//SendDlgItemMessage(hwnd, IDC_CHECK2,WM_SETTEXT, 0, (LPARAM)"Disconnect");
 						enableControl(IDC_COMBO1,false);
@@ -1345,7 +1346,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 				case IDC_BUTTON2:		// find
 					{
 						char str[64];
-						SendDlgItemMessage(hwnd, IDC_EDIT2,WM_GETTEXT, 64, (LONG)str);
+						SendDlgItemMessage(hwnd, IDC_EDIT2,WM_GETTEXT, 64, (LPARAM)str);
 						SendDlgItemMessage(hwnd, hitID, LB_RESETCONTENT, 0, 0);
 						ChanInfo info;
 						info.init();
@@ -1457,7 +1458,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 							_DrawItem->rcItem.left + 12,
 							_DrawItem->rcItem.top,
 							ld->name,
-							strlen(ld->name));
+							static_cast<int>(strlen(ld->name)));
 /*					snprintf(buf, _countof(buf), "- %4dkbps -", ld->bitRate);
 					TextOut(_DrawItem->hDC,
 							_DrawItem->rcItem.left + 12 + 118,
@@ -1493,7 +1494,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 							_DrawItem->rcItem.left + 12 + 118,
 							_DrawItem->rcItem.top,
 							buf,
-							strlen(buf));
+							static_cast<int>(strlen(buf)));
 				}
 			} else if  ((UINT) wParam==IDC_LIST2) {
 				LPDRAWITEMSTRUCT _DrawItem=(LPDRAWITEMSTRUCT)lParam;
@@ -1560,7 +1561,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 							_DrawItem->rcItem.left,
 							_DrawItem->rcItem.top,
 							buf,
-							strlen(buf));
+							static_cast<int>(strlen(buf)));
 						} else {
 							SetTextColor(_DrawItem->hDC,RGB(0,0,0));
 							snprintf(buf, _countof(buf), "¤(%d)",sd->lastSkipCount);
@@ -1568,7 +1569,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 									_DrawItem->rcItem.left,
 									_DrawItem->rcItem.top,
 									buf,
-									strlen(buf));
+									static_cast<int>(strlen(buf)));
 						}
 					} else {
 						SetBkColor(_DrawItem->hDC,RGB(255,255,255));
@@ -1638,7 +1639,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 							);
 					} else {
 						if (sd->status == Servent::S_CONNECTED){
-							snprintf(buf, _countof(buf), "%s-%s-%ds  -  %s  -  %d/%d",
+							snprintf(buf, _countof(buf), "%s-%s-%ds  -  %s  -  %d/%s",
 								sd->typeStr, sd->statusStr, sd->tnum,
 								hostName,
 								sd->syncpos, sd->agent.cstr()
@@ -1654,7 +1655,7 @@ LRESULT CALLBACK GUIProc (HWND hwnd, UINT message,
 							_DrawItem->rcItem.left + 12,
 							_DrawItem->rcItem.top,
 							buf,
-							strlen(buf));
+							static_cast<int>(strlen(buf)));
 				}
 				sd_lock.off();
 			}
