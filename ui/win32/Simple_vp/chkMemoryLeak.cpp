@@ -1,5 +1,5 @@
 #ifdef _DEBUG
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "chkMemoryLeak.h"
 
 #ifdef	__AFXWIN_H__            // MFCのウィンドウを使う場合に限定しています

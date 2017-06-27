@@ -18,7 +18,8 @@
   #define  CLEAR_CRT_DEBUG_FIELD(a) ((void) 0)
 #endif
 
-#include <malloc.h>
 #include <crtdbg.h>
+
+#include <malloc.h>
 
 #endif
