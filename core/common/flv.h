@@ -54,9 +54,9 @@ public:
     enum TYPE
     {
         T_UNKNOWN,
-        T_SCRIPT    = 18,
-        T_AUDIO     = 8,
-        T_VIDEO     = 9
+        T_SCRIPT = 18,
+        T_AUDIO = 8,
+        T_VIDEO = 9
     };
 
     FLVTag()
@@ -71,7 +71,7 @@ public:
     ~FLVTag()
     {
         if (packet)
-            delete [] packet;
+            delete[] packet;
     }
 
     FLVTag& operator=(const FLVTag& other)
@@ -81,11 +81,12 @@ public:
         type = other.type;
 
         if (packet)
-            delete [] packet;
+            delete[] packet;
         if (other.packet) {
             packet = new unsigned char[other.packetSize];
             memcpy(packet, other.packet, other.packetSize);
-        } else
+        }
+        else
             packet = NULL;
 
         if (packet)
@@ -103,7 +104,8 @@ public:
         if (other.packet) {
             packet = new unsigned char[other.packetSize];
             memcpy(packet, other.packet, other.packetSize);
-        } else
+        }
+        else
             packet = NULL;
 
         if (packet)
@@ -113,7 +115,7 @@ public:
     void read(Stream &in)
     {
         if (packet != NULL)
-            delete [] packet;
+            delete[] packet;
 
         unsigned char binary[11];
         in.read(binary, 11);
@@ -176,7 +178,7 @@ class FLVTagBuffer
 {
 public:
     static const int MAX_OUTGOING_PACKET_SIZE = 15 * 1024;
-    static const int FLUSH_THRESHOLD          =  4 * 1024;
+    static const int FLUSH_THRESHOLD = 4 * 1024;
 
     FLVTagBuffer() : m_mem(ChanPacket::MAX_DATALEN) {}
     ~FLVTagBuffer()
@@ -214,18 +216,18 @@ public:
 class AMFObject
 {
 public:
-    static const int AMF_NUMBER      = 0x00;
-    static const int AMF_BOOL        = 0x01;
-    static const int AMF_STRING      = 0x02;
-    static const int AMF_OBJECT      = 0x03;
-    static const int AMF_MOVIECLIP   = 0x04;
-    static const int AMF_NULL        = 0x05;
-    static const int AMF_UNDEFINED   = 0x06;
-    static const int AMF_REFERENCE   = 0x07;
-    static const int AMF_ARRAY       = 0x08;
-    static const int AMF_OBJECT_END  = 0x09;
+    static const int AMF_NUMBER = 0x00;
+    static const int AMF_BOOL = 0x01;
+    static const int AMF_STRING = 0x02;
+    static const int AMF_OBJECT = 0x03;
+    static const int AMF_MOVIECLIP = 0x04;
+    static const int AMF_NULL = 0x05;
+    static const int AMF_UNDEFINED = 0x06;
+    static const int AMF_REFERENCE = 0x07;
+    static const int AMF_ARRAY = 0x08;
+    static const int AMF_OBJECT_END = 0x09;
     static const int AMF_STRICTARRAY = 0x0a;
-    static const int AMF_DATE        = 0x0b;
+    static const int AMF_DATE = 0x0b;
     static const int AMF_LONG_STRING = 0x0c;
 
     AMFObject() : bitrate(0) {}
@@ -247,8 +249,8 @@ public:
             return NULL;
         }
         else {
-            char* data = new char[len+1];
-            *(data+len) = '\0';
+            char* data = new char[len + 1];
+            *(data + len) = '\0';
             in.read(data, len);
             return data;
         }
@@ -285,7 +287,7 @@ public:
                     read(in);
                 }
             }
-            delete [] key;
+            delete[] key;
         }
         in.readChar();
     }
@@ -299,7 +301,7 @@ public:
                 bitrate = 0;
                 read(in);
             }
-            delete [] name;
+            delete[] name;
         }
         return bitrate > 0;
     }
@@ -314,7 +316,7 @@ public:
             readBool(in);
         }
         else if (type == AMF_STRING) {
-            delete [] readString(in);
+            delete[] readString(in);
         }
         else if (type == AMF_OBJECT) {
             readObject(in);

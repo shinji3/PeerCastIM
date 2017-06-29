@@ -49,17 +49,17 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
     switch (flvTag.type)
     {
     case FLVTag::T_SCRIPT:
-        {
-            AMFObject amf;
-            MemoryStream flvmem(flvTag.data, flvTag.size);
-            if (amf.readMetaData(flvmem)) {
-                flvmem.close();
-                metaBitrate = amf.bitrate;
-                metaData = flvTag;
-                headerUpdate = true;
-            }
+    {
+        AMFObject amf;
+        MemoryStream flvmem(flvTag.data, flvTag.size);
+        if (amf.readMetaData(flvmem)) {
+            flvmem.close();
+            metaBitrate = amf.bitrate;
+            metaData = flvTag;
+            headerUpdate = true;
         }
-        break;
+    }
+    break;
     case FLVTag::T_VIDEO:
         // AVC Header
         if (flvTag.data[0] == 0x17 && flvTag.data[1] == 0x00 &&
@@ -89,7 +89,7 @@ int FLVStream::readPacket(Stream &in, Channel *ch)
         LOG_ERROR("Invalid FLV tag!");
     }
 
-    if (headerUpdate && fileHeader.size>0) {
+    if (headerUpdate && fileHeader.size > 0) {
         int len = fileHeader.size;
         if (metaData.type == FLVTag::T_SCRIPT) len += metaData.packetSize;
         if (avcHeader.type == FLVTag::T_VIDEO) len += avcHeader.packetSize;
@@ -133,7 +133,8 @@ bool FLVTagBuffer::put(FLVTag& tag, Channel* ch)
         }
         sendImmediately(tag, ch);
         return true;
-    } else if (m_mem.pos + tag.packetSize > FLUSH_THRESHOLD)
+    }
+    else if (m_mem.pos + tag.packetSize > FLUSH_THRESHOLD)
     {
         flush(ch);
 
@@ -142,7 +143,8 @@ bool FLVTagBuffer::put(FLVTag& tag, Channel* ch)
         if (m_mem.pos > FLUSH_THRESHOLD)
             flush(ch);
         return true;
-    } else
+    }
+    else
     {
         m_mem.write(tag.packet, tag.packetSize);
         return false;
