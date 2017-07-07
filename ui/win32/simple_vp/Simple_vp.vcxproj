@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{1E6B4E83-37AC-494C-B7C1-B373E802EA7A}</ProjectGuid>
-    <RootNamespace>corelib</RootNamespace>
+    <ProjectGuid>{210C9D1A-E242-4B51-8446-9F2E9A5B1FD7}</ProjectGuid>
+    <RootNamespace>simple_vp</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
