@@ -968,7 +968,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (!skipMenu)
         {
             RECT rcWnd;
-            HMENU menu;
+            HMENU menu = NULL;
             UINT flg = 0;
 
             SystemParametersInfo(SPI_GETWORKAREA, 0, &rcWnd, 0);
