@@ -2,7 +2,7 @@
 // File : html.h
 // Date: 4-apr-2002
 // Author: giles
-// Desc: 
+// Desc:
 //
 // (c) 2002 peercast.org
 // ------------------------------------------------
@@ -49,43 +49,45 @@ public:
     HTML(const char *, Stream &);
     ~HTML();
 
-    void	startNode(const char *, const char * = NULL);
-    void	addLink(const char *, const char *, bool = false);
-    void	startTag(const char *, const char * = NULL, ...);
-    void	startTagEnd(const char *, const char * = NULL, ...);
-    void	startSingleTagEnd(const char *, ...);
-    void	startTableRow(int);
-    void	end();
-    void	setRefresh(int sec) { refresh = sec; }
-    void	setRefreshURL(const char *u) { refreshURL.set(u); }
-    void	addHead();
-    void	startHTML();
-    void	startBody();
+    // HTML ヘルパー
+    void    startNode(const char *, const char * = NULL);
+    void    addLink(const char *, const char *, bool = false);
+    void    startTag(const char *, const char * = NULL, ...) __attribute__ ((format (printf, 3, 4)));
+    void    startTagEnd(const char *, const char * = NULL, ...) __attribute__ ((format (printf, 3, 4)));
+    void    startSingleTagEnd(const char *, ...) __attribute__ ((format (printf, 2, 3)));
+    void    startTableRow(int);
+    void    end();
+    void    setRefresh(int sec) { refresh = sec; }
+    void    setRefreshURL(const char *u) { refreshURL.set(u); }
+    void    addHead();
+    void    startHTML();
+    void    startBody();
 
-    void	locateTo(const char *);
-    void	addContent(const char *);
+    // HTTP レスポンス
+    void    writeOK(const char *);
+    void    locateTo(const char *);
+    void    writeRawFile(const char *);
 
-    void	writeOK(const char *);
-    void	writeTemplate(const char *, const char *);
-    void	writeRawFile(const char *);
-    void	writeVariable(Stream &, const String &, int);
-    int		getIntVariable(const String &, int);
-    bool	getBoolVariable(const String &, int);
+    void    writeTemplate(const char *, const char *);
 
+    void    addContent(const char *);
+    void    writeVariable(Stream &, const String &, int);
+    int     getIntVariable(const String &, int);
+    bool    getBoolVariable(const String &, int);
 
-    void	readIf(Stream &, Stream *, int);
-    void	readLoop(Stream &, Stream *, int);
-    void	readVariable(Stream &, Stream *, int);
-    bool	readTemplate(Stream &, Stream *, int);
-    int		readCmd(Stream &, Stream *, int);
-
+    void    readIf(Stream &, Stream *, int);
+    void    readLoop(Stream &, Stream *, int);
+    void    readVariable(Stream &, Stream *, int);
+    bool    readTemplate(Stream &, Stream *, int);
+    int     readCmd(Stream &, Stream *, int);
 
     const char *tmplArgs;
-    String	title, refreshURL;
-    char	currTag[MAX_TAGLEVEL][MAX_TAGLEN];
-    int		tagLevel;
-    int		refresh;
-    WriteBufferStream *out;
+
+    String  title, refreshURL;
+    char    currTag[MAX_TAGLEVEL][MAX_TAGLEN];
+    int     tagLevel;
+    int     refresh;
+    WriteBufferStream  *out;
 };
 
 #endif
