@@ -118,7 +118,7 @@ int		IniFile::getIntValue()
         return 0;
 }
 // -----------------------------------------
-char *	IniFile::getStrValue()
+const char *	IniFile::getStrValue()
 {
     if (valueStr)
         return valueStr;
