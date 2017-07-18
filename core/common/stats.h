@@ -2,7 +2,7 @@
 // File : stats.h
 // Date: 4-apr-2002
 // Author: giles
-// Desc: 
+// Desc:
 //
 // (c) 2002 peercast.org
 // ------------------------------------------------
@@ -25,8 +25,8 @@ class Stats
 {
 public:
 
-    void	clear();
-    void	update();
+    void    clear();
+    void    update();
 
     enum STAT
     {
@@ -55,7 +55,6 @@ public:
         PACKETDATAOUT,
         PACKETSEND,
 
-
         BYTESIN,
         BYTESOUT,
         LOCALBYTESIN,
@@ -64,25 +63,24 @@ public:
         MAX
     };
 
-    bool	writeVariable(class Stream &, const class String &);
+    bool    writeVariable(class Stream &, const class String &);
 
-    void	clearRange(STAT s, STAT e)
+    void    clearRange(STAT s, STAT e)
     {
-        for (int i = s; i <= e; i++)
+        for (int i=s; i<=e; i++)
             current[i] = 0;
     }
-    void	clear(STAT s) { current[s] = 0; }
-    void	add(STAT s, int n = 1) { current[s] += n; }
+    void    clear(STAT s) { current[s]=0; }
+    void    add(STAT s, int n=1) { current[s]+=n; }
     unsigned int getPerSecond(STAT s) { return perSec[s]; }
     unsigned long long int getCurrent(STAT s) { return current[s]; }
 
-    unsigned long long int	current[Stats::MAX], last[Stats::MAX];
-    unsigned int perSec[Stats::MAX];
-    unsigned int	lastUpdate;
+    unsigned long long int current[Stats::MAX], last[Stats::MAX];
+    unsigned int           perSec[Stats::MAX];
+    unsigned int           lastUpdate;
 };
 
 extern Stats stats;
-
 
 #endif
 
