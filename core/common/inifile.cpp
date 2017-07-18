@@ -2,8 +2,8 @@
 // File : inifile.cpp
 // Date: 4-apr-2002
 // Author: giles
-// Desc: 
-//		.INI file reading/writing class
+// Desc:
+//      .INI file reading/writing class
 //
 // (c) 2002 peercast.org
 // ------------------------------------------------
@@ -21,28 +21,22 @@
 #include <stdlib.h>
 #include "inifile.h"
 #include "sys.h"
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
 
-
-void	openReadOnly(const char *);
-void	openWriteReplace(const char *);
+void    openReadOnly(const char *);
+void    openWriteReplace(const char *);
 // -----------------------------------------
 bool IniFile::openReadOnly(const char *fn)
 {
     try
     {
         fStream.openReadOnly(fn);
-    }
-    catch (StreamException &)
+    }catch (StreamException &)
     {
         return false;
     }
     return true;
 }
+
 // -----------------------------------------
 bool IniFile::openWriteReplace(const char *fn)
 {
@@ -52,23 +46,21 @@ bool IniFile::openWriteReplace(const char *fn)
 #if defined(_LINUX) || defined(__APPLE__)
         fStream.writeCRLF = false;
 #endif
-
-    }
-    catch (StreamException &)
+    }catch (StreamException &)
     {
         return false;
     }
     return true;
 }
+
 // -----------------------------------------
 void IniFile::close()
 {
     fStream.close();
 }
 
-
 // -----------------------------------------
-bool	IniFile::readNext()
+bool    IniFile::readNext()
 {
     if (fStream.eof())
         return false;
@@ -76,12 +68,10 @@ bool	IniFile::readNext()
     try
     {
         fStream.readLine(currLine, 256);
-    }
-    catch (StreamException &)
+    }catch (StreamException &)
     {
         return false;
     }
-
 
     // find end of value name and null terminate
     char *nend = strstr(currLine, "=");
@@ -89,84 +79,90 @@ bool	IniFile::readNext()
     if (nend)
     {
         *nend = 0;
-        valueStr = trimstr(nend + 1);
-    }
-    else
+        valueStr = trimstr(nend+1);
+    }else
         valueStr = NULL;
 
     nameStr = trimstr(currLine);
 
     return true;
 }
+
 // -----------------------------------------
 bool IniFile::isName(const char *str)
 {
-    return stricmp(getName(), str) == 0;
+    return stricmp(getName(), str)==0;
 }
 
 // -----------------------------------------
-char *	IniFile::getName()
+char *  IniFile::getName()
 {
     return nameStr;
 }
+
 // -----------------------------------------
-int		IniFile::getIntValue()
+int     IniFile::getIntValue()
 {
     if (valueStr)
         return atoi(valueStr);
     else
         return 0;
 }
+
 // -----------------------------------------
-const char *	IniFile::getStrValue()
+const char *    IniFile::getStrValue()
 {
     if (valueStr)
         return valueStr;
     else
         return "";
 }
+
 // -----------------------------------------
-bool	IniFile::getBoolValue()
+bool    IniFile::getBoolValue()
 {
     if (!valueStr)
         return false;
 
-
-    if ((stricmp(valueStr, "yes") == 0) ||
-        (stricmp(valueStr, "y") == 0) ||
-        (stricmp(valueStr, "1") == 0))
+    if ( (stricmp(valueStr, "yes")==0) ||
+         (stricmp(valueStr, "y")==0) ||
+         (stricmp(valueStr, "1")==0) )
         return true;
 
     return false;
 }
 
 // -----------------------------------------
-void	IniFile::writeIntValue(const char *name, int iv)
+void    IniFile::writeIntValue(const char *name, int iv)
 {
     snprintf(currLine, _countof(currLine), "%s = %d", name, iv);
     fStream.writeLine(currLine);
 }
+
 // -----------------------------------------
-void	IniFile::writeStrValue(const char *name, const char *sv)
+void    IniFile::writeStrValue(const char *name, const char *sv)
 {
     snprintf(currLine, _countof(currLine), "%s = %s", name, sv);
     fStream.writeLine(currLine);
 }
+
 // -----------------------------------------
-void	IniFile::writeSection(const char *name)
+void    IniFile::writeSection(const char *name)
 {
     fStream.writeLine("");
     snprintf(currLine, _countof(currLine), "[%s]", name);
     fStream.writeLine(currLine);
 }
+
 // -----------------------------------------
-void	IniFile::writeBoolValue(const char *name, int v)
+void    IniFile::writeBoolValue(const char *name, int v)
 {
-    snprintf(currLine, _countof(currLine), "%s = %s", name, (v != 0) ? "Yes" : "No");
+    snprintf(currLine, _countof(currLine), "%s = %s", name, (v!=0)?"Yes":"No");
     fStream.writeLine(currLine);
 }
+
 // -----------------------------------------
-void	IniFile::writeLine(const char *str)
+void    IniFile::writeLine(const char *str)
 {
     fStream.writeLine(str);
 }
