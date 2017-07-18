@@ -17,11 +17,6 @@
 // ------------------------------------------------
 
 #include "nsv.h"
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
 
 // ------------------------------------------
 void NSVStream::readEnd(Stream &, Channel *)
@@ -32,6 +27,7 @@ void NSVStream::readEnd(Stream &, Channel *)
 void NSVStream::readHeader(Stream &, Channel *)
 {
 }
+
 // ------------------------------------------
 int NSVStream::readPacket(Stream &in, Channel *ch)
 {
@@ -39,7 +35,6 @@ int NSVStream::readPacket(Stream &in, Channel *ch)
 
     if (ch->icyMetaInterval)
     {
-
         int rlen = ch->icyMetaInterval;
 
         while (rlen)
@@ -52,24 +47,22 @@ int NSVStream::readPacket(Stream &in, Channel *ch)
             in.read(pack.data, pack.len);
             ch->newPacket(pack);
             ch->checkReadDelay(pack.len);
-            ch->streamPos += pack.len;
+            ch->streamPos+=pack.len;
 
-            rlen -= rl;
+            rlen-=rl;
         }
 
         unsigned char len;
         in.read(&len, 1);
         if (len)
         {
-            if (len * 16 > 1024) len = 1024 / 16;
+            if (len*16 > 1024) len = 1024/16;
             char buf[1024];
-            in.read(buf, len * 16);
+            in.read(buf, len*16);
             ch->processMp3Metadata(buf);
         }
 
-    }
-    else {
-
+    }else{
         pack.init(ChanPacket::T_DATA, pack.data, ChanMgr::MAX_METAINT, ch->streamPos);
         in.read(pack.data, pack.len);
         ch->newPacket(pack);
