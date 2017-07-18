@@ -2,8 +2,8 @@
 // File : http.cpp
 // Date: 4-apr-2002
 // Author: giles
-// Desc: 
-//		HTTP protocol handling
+// Desc:
+//      HTTP protocol handling
 //
 // (c) 2002 peercast.org
 // ------------------------------------------------
@@ -18,21 +18,16 @@
 // GNU General Public License for more details.
 // ------------------------------------------------
 
-
 #include <stdlib.h>
+
 #include "http.h"
 #include "sys.h"
 #include "common.h"
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
 
 //-----------------------------------------
 bool HTTP::checkResponse(int r)
 {
-    if (readResponse() != r)
+    if (readResponse()!=r)
     {
         LOG_ERROR("Unexpected HTTP: %s", cmdLine);
         throw StreamException("Unexpected HTTP response");
@@ -41,11 +36,13 @@ bool HTTP::checkResponse(int r)
 
     return true;
 }
+
 //-----------------------------------------
 void HTTP::readRequest()
 {
     readLine(cmdLine, sizeof(cmdLine));
 }
+
 //-----------------------------------------
 int HTTP::readResponse()
 {
@@ -53,62 +50,65 @@ int HTTP::readResponse()
 
     char *cp = cmdLine;
 
-    while (*cp)	if (*++cp == ' ') break;
+    while (*cp) if (*++cp == ' ') break;
     while (*cp) if (*++cp != ' ') break;
 
     char *scp = cp;
 
-    while (*cp)	if (*++cp == ' ') break;
+    while (*cp) if (*++cp == ' ') break;
     *cp = 0;
 
     return atoi(scp);
 }
 
 //-----------------------------------------
-bool	HTTP::nextHeader()
+bool    HTTP::nextHeader()
 {
     if (readLine(cmdLine, sizeof(cmdLine)))
     {
         char *ap = strstr(cmdLine, ":");
         if (ap)
             while (*++ap)
-                if (*ap != ' ')
+                if (*ap!=' ')
                     break;
         arg = ap;
         return true;
-    }
-    else
+    }else
     {
         arg = NULL;
         return false;
     }
-
 }
+
 //-----------------------------------------
-bool	HTTP::isHeader(const char *hs)
+bool    HTTP::isHeader(const char *hs)
 {
     return stristr(cmdLine, hs) != NULL;
 }
+
 //-----------------------------------------
-bool	HTTP::isRequest(const char *rq)
+bool    HTTP::isRequest(const char *rq)
 {
     return strncmp(cmdLine, rq, strlen(rq)) == 0;
 }
+
 //-----------------------------------------
 char *HTTP::getArgStr()
 {
     return arg;
 }
+
 //-----------------------------------------
-int	HTTP::getArgInt()
+int HTTP::getArgInt()
 {
     if (arg)
         return atoi(arg);
     else
         return 0;
 }
+
 //-----------------------------------------
-void HTTP::getAuthUserPass(char *user, char *pass, size_t szUser, size_t szPass)
+void HTTP::getAuthUserPass(char *user, char *pass, size_t ulen, size_t plen)
 {
     if (arg)
     {
@@ -125,39 +125,39 @@ void HTTP::getAuthUserPass(char *user, char *pass, size_t szUser, size_t szPass)
             if (s)
             {
                 *s = 0;
-                if (user)
-                {
-                    strncpy_s(user, szUser, str.cstr(), _TRUNCATE);
+                if (user) {
+                    strncpy_s(user, ulen, str.cstr(), _TRUNCATE);
                 }
-                if (pass)
-                {
-                    strncpy_s(pass, szPass, s + 1, _TRUNCATE);
+                if (pass) {
+                    strncpy_s(pass, plen, s+1, _TRUNCATE);
                 }
             }
         }
     }
 }
+
 // -----------------------------------
-void	CookieList::init()
+void    CookieList::init()
 {
-    for (int i = 0; i < MAX_COOKIES; i++)
+    for (int i=0; i<MAX_COOKIES; i++)
         list[i].clear();
 
     neverExpire = false;
 }
 
 // -----------------------------------
-bool	CookieList::contains(Cookie &c)
+bool    CookieList::contains(Cookie &c)
 {
     if ((c.id[0]) && (c.ip))
-        for (int i = 0; i < MAX_COOKIES; i++)
+        for (int i=0; i<MAX_COOKIES; i++)
             if (list[i].compare(c))
                 return true;
 
     return false;
 }
+
 // -----------------------------------
-void	Cookie::logDebug(const char *str, int ind)
+void    Cookie::logDebug(const char *str, int ind)
 {
     char ipstr[64];
     Host h;
@@ -168,15 +168,15 @@ void	Cookie::logDebug(const char *str, int ind)
 }
 
 // -----------------------------------
-bool	CookieList::add(Cookie &c)
+bool    CookieList::add(Cookie &c)
 {
     if (contains(c))
         return false;
 
-    unsigned int oldestTime = (unsigned int)-1;
-    int oldestIndex = 0;
+    unsigned int oldestTime=(unsigned int)-1;
+    int oldestIndex=0;
 
-    for (int i = 0; i < MAX_COOKIES; i++)
+    for (int i=0; i<MAX_COOKIES; i++)
         if (list[i].time <= oldestTime)
         {
             oldestIndex = i;
@@ -185,13 +185,14 @@ bool	CookieList::add(Cookie &c)
 
     c.logDebug("Added cookie", oldestIndex);
     c.time = sys->getTime();
-    list[oldestIndex] = c;
+    list[oldestIndex]=c;
     return true;
 }
+
 // -----------------------------------
-void	CookieList::remove(Cookie &c)
+void    CookieList::remove(Cookie &c)
 {
-    for (int i = 0; i < MAX_COOKIES; i++)
+    for (int i=0; i<MAX_COOKIES; i++)
         if (list[i].compare(c))
             list[i].clear();
 }
