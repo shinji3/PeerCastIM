@@ -2,9 +2,9 @@
 // File : stats.cpp
 // Date: 4-apr-2002
 // Author: giles
-// Desc: 
-//		Statistic logging
-//		
+// Desc:
+//      Statistic logging
+//
 // (c) 2002 peercast.org
 // ------------------------------------------------
 // This program is free software; you can redistribute it and/or modify
@@ -18,22 +18,17 @@
 // GNU General Public License for more details.
 // ------------------------------------------------
 
-
 #include "stats.h"
 #include "common.h"
 #include "sys.h"
 #include "stream.h"
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
 
 Stats stats;
+
 // ------------------------------------
 void Stats::clear()
 {
-    for (int i = 0; i < Stats::MAX; i++)
+    for (int i=0; i<Stats::MAX; i++)
     {
         current[i] = 0;
         last[i] = 0;
@@ -41,25 +36,25 @@ void Stats::clear()
     }
     lastUpdate = 0;
 }
+
 // ------------------------------------
-void	Stats::update()
+void    Stats::update()
 {
     unsigned int ctime = sys->getTime();
 
     unsigned int diff = ctime - lastUpdate;
-    if (diff >= /* 5 */ 1)
+    if (diff >= 1)
     {
-
-        for (int i = 0; i < Stats::MAX; i++)
+        for (int i=0; i<Stats::MAX; i++)
         {
-            perSec[i] = (unsigned)(current[i] - last[i]) / diff;
+            perSec[i] = (unsigned)(current[i]-last[i])/diff;
             last[i] = current[i];
         }
 
         lastUpdate = ctime;
     }
-
 }
+
 // ------------------------------------
 bool Stats::writeVariable(Stream &out, const String &var)
 {
@@ -70,25 +65,25 @@ bool Stats::writeVariable(Stream &out, const String &var)
     else if (var == "totalOutPerSec")
         snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::BYTESOUT)));
     else if (var == "totalPerSec")
-        snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::BYTESIN) + getPerSecond(Stats::BYTESOUT)));
+        snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::BYTESIN)+getPerSecond(Stats::BYTESOUT)));
     else if (var == "wanInPerSec")
-        snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::BYTESIN) - getPerSecond(Stats::LOCALBYTESIN)));
+        snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::BYTESIN)-getPerSecond(Stats::LOCALBYTESIN)));
     else if (var == "wanOutPerSec")
-        snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::BYTESOUT) - getPerSecond(Stats::LOCALBYTESOUT)));
+        snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::BYTESOUT)-getPerSecond(Stats::LOCALBYTESOUT)));
     else if (var == "wanTotalPerSec")
-        snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS((getPerSecond(Stats::BYTESIN) - getPerSecond(Stats::LOCALBYTESIN)) + (getPerSecond(Stats::BYTESOUT) - getPerSecond(Stats::LOCALBYTESOUT))));
+        snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS((getPerSecond(Stats::BYTESIN)-getPerSecond(Stats::LOCALBYTESIN))+(getPerSecond(Stats::BYTESOUT)-getPerSecond(Stats::LOCALBYTESOUT))));
     else if (var == "netInPerSec")
         snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::PACKETDATAIN)));
     else if (var == "netOutPerSec")
         snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::PACKETDATAOUT)));
     else if (var == "netTotalPerSec")
-        snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::PACKETDATAOUT) + getPerSecond(Stats::PACKETDATAIN)));
+        snprintf(buf, _countof(buf), "%.1f", BYTES_TO_KBPS(getPerSecond(Stats::PACKETDATAOUT)+getPerSecond(Stats::PACKETDATAIN)));
     else if (var == "packInPerSec")
         snprintf(buf, _countof(buf), "%u", getPerSecond(Stats::NUMPACKETSIN));
     else if (var == "packOutPerSec")
         snprintf(buf, _countof(buf), "%u", getPerSecond(Stats::NUMPACKETSOUT));
     else if (var == "packTotalPerSec")
-        snprintf(buf, _countof(buf), "%u", getPerSecond(Stats::NUMPACKETSOUT) + getPerSecond(Stats::NUMPACKETSIN));
+        snprintf(buf, _countof(buf), "%u", getPerSecond(Stats::NUMPACKETSOUT)+getPerSecond(Stats::NUMPACKETSIN));
 
     else
         return false;
@@ -97,6 +92,3 @@ bool Stats::writeVariable(Stream &out, const String &var)
 
     return true;
 }
-
-
-
