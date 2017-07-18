@@ -2,7 +2,7 @@
 // File : xml.h
 // Date: 4-apr-2002
 // Author: giles
-// Desc: 
+// Desc:
 //
 // (c) 2002 peercast.org
 // ------------------------------------------------
@@ -36,41 +36,41 @@ public:
     public:
         class Attribute
         {
-        public:
-            int namePos, valuePos;
+            public:
+                int namePos, valuePos;
         };
 
-        Node(const char *, ...);
+        Node(const char *, ...) __attribute__ ((format (printf, 2, 3)));
 
-        void	init();
+        void    init();
 
         ~Node();
 
-        void	add(Node *);
-        void	write(Stream &, int); 	// output, level
-        char 	*getName() { return getAttrName(0); }
+        void    add(Node *);
+        void    write(Stream &, int);   // output, level
+        char    *getName() { return getAttrName(0); }
 
-        char 	*getAttrValue(int i) { return &attrData[attr[i].valuePos]; }
-        char 	*getAttrName(int i) { return &attrData[attr[i].namePos]; }
-        char	*getContent() { return contData; }
-        int		getBinaryContent(void *, int);
+        char    *getAttrValue(int i) { return &attrData[attr[i].valuePos]; }
+        char    *getAttrName(int i) { return &attrData[attr[i].namePos]; }
+        char    *getContent()  { return contData; }
+        int     getBinaryContent(void *, int);
 
-        void	setAttributes(const char *);
-        void	setContent(const char *);
-        void	setBinaryContent(void *, int);
+        void    setAttributes(const char *);
+        void    setContent(const char *);
+        void    setBinaryContent(void *, int);
 
-        Node	*findNode(const char *);
-        char	*findAttr(const char *);
-        int		findAttrInt(const char *);
-        int		findAttrID(const char *);
+        Node    *findNode(const char *);
+        char    *findAttr(const char *);
+        int     findAttrInt(const char *);
+        int     findAttrID(const char *);
 
-        char *contData, *attrData;
+        char        *contData, *attrData;
 
-        Attribute	*attr;
-        int	numAttr;
+        Attribute   *attr;
+        int         numAttr;
 
-        Node *child, *parent, *sibling;
-        void *userPtr;
+        Node        *child, *parent, *sibling;
+        void        *userPtr;
     };
 
     XML()
@@ -80,13 +80,13 @@ public:
 
     ~XML();
 
-    void	setRoot(Node *n);
-    void	write(Stream &);
-    void	writeCompact(Stream &);
-    void	writeHTML(Stream &);
-    void	read(Stream &);
-    Node	*findNode(const char *n);
+    void    setRoot(Node *n);
+    void    write(Stream &);
+    void    writeCompact(Stream &);
+    void    writeHTML(Stream &);
+    void    read(Stream &);
+    Node    *findNode(const char *n);
 
-    Node *root;
+    Node    *root;
 };
 #endif

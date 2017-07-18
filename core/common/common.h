@@ -24,8 +24,8 @@
 
 #include <string>
 
-#ifndef NULL
-#define NULL 0
+#ifndef __GNUC__
+#define __attribute__(x)
 #endif
 
 // ----------------------------------
