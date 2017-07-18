@@ -2,7 +2,7 @@
 // File : socket.h
 // Date: 4-apr-2002
 // Author: giles
-// Desc: 
+// Desc:
 //
 // (c) 2002 peercast.org
 // ------------------------------------------------
@@ -19,7 +19,6 @@
 
 #ifndef _SOCKET_H
 #define _SOCKET_H
-
 
 #include "common.h"
 #include "stream.h"
@@ -73,7 +72,7 @@ public:
             last = tmp;
         }
 
-        //		LOG_DEBUG("tmp = %d, top = %d, last = %d", tmp, top, last);
+        //LOG_DEBUG("tmp = %d, top = %d, last = %d", tmp, top, last);
     }
 
     SocketBuffer *getTop() {
@@ -84,7 +83,7 @@ public:
                 break;
             }
             else {
-                //				LOG_DEBUG("over 10sec(data skip)");
+                //LOG_DEBUG("over 10sec(data skip)");
                 skipCount++;
                 lastSkipTime = sys->getTime();
                 deleteTop();
@@ -94,7 +93,7 @@ public:
     }
 
     void deleteTop() {
-        //		LOG_DEBUG("oldtop = %d", top);
+        //LOG_DEBUG("oldtop = %d", top);
         SocketBuffer *tmp = top;
         top = tmp->next;
         delete tmp;
@@ -102,7 +101,7 @@ public:
             last = NULL;
         }
 
-        //		LOG_DEBUG("newtop = %d",top);
+        //LOG_DEBUG("newtop = %d",top);
     }
 
     void clear() {
@@ -137,51 +136,49 @@ public:
 #endif
     }
 
-    ~ClientSocket() {
+    ~ClientSocket()
+    {
 #ifdef WIN32
         bufList.clear();
 #endif
     }
 
     // required interface
-    virtual void	open(Host &) = 0;
-    virtual void	bind(Host &) = 0;
-    virtual void	connect() = 0;
-    virtual bool	active() = 0;
-    virtual ClientSocket	*accept() = 0;
-    virtual Host	getLocalHost() = 0;
+    virtual void            open(Host &)   = 0;
+    virtual void            bind(Host &)   = 0;
+    virtual void            connect()      = 0;
+    virtual bool            active()       = 0;
+    virtual ClientSocket    *accept()      = 0;
+    virtual Host            getLocalHost() = 0;
 
-    virtual void	setReadTimeout(unsigned int t)
+    void    setReadTimeout(unsigned int t) override
     {
         readTimeout = t;
     }
-    virtual void	setWriteTimeout(unsigned int t)
+    void    setWriteTimeout(unsigned int t) override
     {
         writeTimeout = t;
     }
-    virtual void	setBlocking(bool) {}
+    virtual void    setBlocking(bool) = 0;
 
+    static unsigned int getIP(char *);
+    static bool         getHostname(char *, size_t, unsigned int); //JP-MOD
 
-    static unsigned int    getIP(char *);
-    static bool			getHostname(char *, size_t, unsigned int); //JP-MOD
-
-    virtual bool eof()
+    bool eof() override
     {
-        return active() == false;
+        return active()==false;
     }
 
-    Host    host;
+    Host            host;
 
 #ifdef WIN32
-    SocketBufferList	bufList;
-    virtual void bufferingWrite(const void *, int) = 0;
-    unsigned int skipCount;
-    unsigned int lastSkipTime;
+    SocketBufferList    bufList;
+    virtual void        bufferingWrite(const void *, int) = 0;
+    unsigned int        skipCount;
+    unsigned int        lastSkipTime;
 #endif
 
-    unsigned int readTimeout, writeTimeout;
-
+    unsigned int    readTimeout, writeTimeout;
 };
-
 
 #endif
