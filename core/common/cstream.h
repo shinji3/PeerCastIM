@@ -26,7 +26,6 @@ class ChanPacket;
 class ChanPacketv;
 class Stream;
 
-
 // ----------------------------------
 class ChanPacket
 {
@@ -38,12 +37,12 @@ public:
 
     enum TYPE
     {
-        T_UNKNOWN = 0,
-        T_HEAD = 1,
-        T_DATA = 2,
-        T_META = 4,
-        T_PCP = 16,
-        T_ALL = 0xff
+        T_UNKNOWN   = 0,
+        T_HEAD      = 1,
+        T_DATA      = 2,
+        T_META      = 4,
+        T_PCP       = 16,
+        T_ALL       = 0xff
     };
 
     ChanPacket()
@@ -51,41 +50,42 @@ public:
         init();
     }
 
-    void	init()
+    void    init()
     {
         type = T_UNKNOWN;
-        len = 0;
-        pos = 0;
+        len  = 0;
+        pos  = 0;
         sync = 0;
         skip = false;
         priority = 0;
     }
-    void	init(ChanPacketv &p);
-    void	init(TYPE t, const void *, unsigned int, unsigned int);
 
-    void	writeRaw(Stream &);
-    void	writePeercast(Stream &);
-    void	readPeercast(Stream &);
+    void    init(ChanPacketv &p);
+    void    init(TYPE type, const void *data, unsigned int length, unsigned int position);
 
+    void    writeRaw(Stream &);
+    void    writePeercast(Stream &);
+    void    readPeercast(Stream &);
 
-    unsigned int sync;
-    unsigned int pos;
-    TYPE type;
-    unsigned int len;
-    char data[MAX_DATALEN];
-    bool skip;
-
-    int priority;
+    TYPE            type;
+    unsigned int    len;
+    unsigned int    pos;
+    unsigned int    sync;
+    char            data[MAX_DATALEN];
+    bool            skip;
+    int             priority;
 };
+
 // ----------------------------------
 class ChanPacketv
 {
 public:
-    enum { BSIZE = 0x100 };
+    enum {BSIZE = 0x100};
     ChanPacketv()
     {
         init();
     }
+
     ~ChanPacketv()
     {
         free();
@@ -94,25 +94,27 @@ public:
     void free()
     {
         if (data) {
-            delete[] data;
+            delete [] data;
             data = NULL;
             datasize = 0;
         }
     }
+
     void reset()
     {
         free();
         init();
     }
-    void	init()
+
+    void    init()
     {
-        type = ChanPacket::T_UNKNOWN;
-        len = 0;
-        pos = 0;
-        sync = 0;
-        skip = false;
-        data = NULL;
+        type     = ChanPacket::T_UNKNOWN;
+        len      = 0;
+        pos      = 0;
+        sync     = 0;
+        data     = NULL;
         datasize = 0;
+        skip     = false;
         priority = 0;
     }
     void init(ChanPacket &p)
@@ -123,8 +125,8 @@ public:
             datasize = 0;
         }
         type = p.type;
-        len = p.len;
-        pos = p.pos;
+        len  = p.len;
+        pos  = p.pos;
         sync = p.sync;
         skip = p.skip;
         priority = p.priority;
@@ -134,6 +136,7 @@ public:
         }
         memcpy(data, p.data, len);
     }
+
     void init(ChanPacketv &p)
     {
         ChanPacket tp;
@@ -141,20 +144,16 @@ public:
         init(tp);
     }
 
-    void	writeRaw(Stream &);
-    void	writePeercast(Stream &);
-    void	readPeercast(Stream &);
-
-    unsigned int sync;
-    unsigned int pos;
     ChanPacket::TYPE type;
-    unsigned int len;
-    char *data;
-    unsigned int datasize;
-    bool skip;
-
-    int priority;
+    unsigned int     len;
+    unsigned int     pos;
+    unsigned int     sync;
+    char             *data;
+    unsigned int     datasize;
+    bool             skip;
+    int              priority;
 };
+
 // ----------------------------------
 class ChanPacketBuffer
 {
