@@ -81,6 +81,7 @@ class ChanPacketv
 {
 public:
     enum {BSIZE = 0x100};
+
     ChanPacketv()
     {
         init();
@@ -117,6 +118,7 @@ public:
         skip     = false;
         priority = 0;
     }
+
     void init(ChanPacket &p)
     {
         if (data && (datasize < p.len || datasize > p.len + BSIZE * 4)) {
@@ -163,7 +165,7 @@ public:
         NUM_SAFEPACKETS = 60
     };
 
-    void	init()
+    void    init()
     {
         lock.on();
         lastPos = firstPos = safePos = 0;
@@ -176,34 +178,33 @@ public:
         lastSkipTime = 0;
     }
 
-    int copyFrom(ChanPacketBuffer &, unsigned in);
+    int     copyFrom(ChanPacketBuffer &, unsigned in);
 
-    bool	writePacket(ChanPacket &, bool = false);
-    void	readPacket(ChanPacket &);
-    void readPacketPri(ChanPacket &);
+    bool    writePacket(ChanPacket &, bool = false);
+    void    readPacket(ChanPacket &);
+    void    readPacketPri(ChanPacket &);
 
-    bool	willSkip();
+    bool    willSkip();
 
-    int		numPending() { return writePos - readPos; }
+    int     numPending() { return writePos - readPos; }
 
-    unsigned int getFirstDataPos();
-    unsigned int	getLatestPos();
-    unsigned int	getOldestPos();
-    unsigned int	findOldestPos(unsigned int);
-    bool	findPacket(unsigned int, ChanPacket &);
-    unsigned int	getStreamPos(unsigned int);
-    unsigned int	getStreamPosEnd(unsigned int);
-    unsigned int	getLastSync();
+    unsigned int    getFirstDataPos();
+    unsigned int    getLatestPos();
+    unsigned int    getOldestPos();
+    unsigned int    findOldestPos(unsigned int);
+    bool            findPacket(unsigned int, ChanPacket &);
+    unsigned int    getStreamPos(unsigned int);
+    unsigned int    getStreamPosEnd(unsigned int);
+    unsigned int    getLastSync();
 
-    //ChanPacket	packets[MAX_PACKETS];
-    ChanPacketv	packets[MAX_PACKETS];
-    volatile unsigned int lastPos, firstPos, safePos;
-    volatile unsigned int readPos, writePos;
-    unsigned int accept;
-    unsigned int lastWriteTime;
-    WLock lock;
+    ChanPacketv             packets[MAX_PACKETS];
+    volatile unsigned int   lastPos, firstPos, safePos;
+    volatile unsigned int   readPos, writePos;
+    unsigned int            accept;
+    unsigned int            lastWriteTime;
+    WLock                   lock;
 
-    unsigned int lastSkipTime;
+    unsigned int            lastSkipTime;
 };
 
 // ----------------------------------
@@ -211,15 +212,16 @@ class ChannelStream
 {
 public:
     ChannelStream()
-        :numListeners(0)
-        , numRelays(0)
-        , isPlaying(false)
-        , fwState(0)
-        , lastUpdate(0)
-        , lastCheckTime(0)
-        , lastClapped(0) //JP-MOD
-        , parent(NULL)
+    : numListeners(0)
+    , numRelays(0)
+    , isPlaying(false)
+    , fwState(0)
+    , lastUpdate(0)
+    , lastCheckTime(0)
+    , lastClapped(0) //JP-MOD
+    , parent(NULL)
     {}
+
     virtual ~ChannelStream() {}
 
     void updateStatus(Channel *);
@@ -233,18 +235,18 @@ public:
     virtual int  readPacket(Stream &, Channel *) = 0;
     virtual void readEnd(Stream &, Channel *) = 0;
 
-    void	readRaw(Stream &, Channel *);
+    void    readRaw(Stream &, Channel *);
 
-    int		numRelays;
-    int		numListeners;
-    bool	isPlaying;
-    int	fwState;
-    unsigned int lastUpdate;
-    unsigned int lastCheckTime;
-    unsigned int lastClapped; //JP-MOD
+    int             numRelays;
+    int             numListeners;
+    bool            isPlaying;
+    int             fwState;
+    unsigned int    lastUpdate;
+    unsigned int    lastCheckTime;
+    unsigned int    lastClapped; //JP-MOD
 
-    Channel *parent;
+    Channel         *parent;
 };
 
-#endif 
+#endif
 
