@@ -2,23 +2,18 @@
 #include "peercast.h"
 #include "channel.h"
 #include "servmgr.h"
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
 
 #include "version2.h"
 
 // ---------------------------------
 // globals
 
-Sys *sys = NULL;
+Sys *sys=NULL;
 ChanMgr *chanMgr;
 ServMgr *servMgr;
 
-PeercastInstance *peercastInst = NULL;
-PeercastApplication *peercastApp = NULL;
+PeercastInstance *peercastInst=NULL;
+PeercastApplication *peercastApp=NULL;
 
 int version_ex = 1; // VERSION_EX—LŒø‰»
 
@@ -34,14 +29,16 @@ void APICALL PeercastInstance::init()
 
     servMgr->start();
 }
+
 // --------------------------------------------------
-void	APICALL PeercastInstance::setNotifyMask(int mask)
+void    APICALL PeercastInstance::setNotifyMask(int mask)
 {
     if (servMgr)
         servMgr->notifyMask = mask;
 }
+
 // --------------------------------------------------
-int		APICALL PeercastInstance::getNotifyMask()
+int     APICALL PeercastInstance::getNotifyMask()
 {
     if (servMgr)
         return servMgr->notifyMask;
@@ -50,49 +47,54 @@ int		APICALL PeercastInstance::getNotifyMask()
 }
 
 // --------------------------------------------------
-void	APICALL PeercastInstance::setAutoConnect(bool on)
+void    APICALL PeercastInstance::setAutoConnect(bool on)
 {
     if (servMgr)
         servMgr->autoConnect = on;
 }
+
 // --------------------------------------------------
-bool	APICALL PeercastInstance::getAutoConnect()
+bool    APICALL PeercastInstance::getAutoConnect()
 {
     if (servMgr)
         return servMgr->autoConnect;
     else
         return false;
 }
+
 // --------------------------------------------------
-void	APICALL PeercastInstance::setMaxOutput(int kbps)
+void    APICALL PeercastInstance::setMaxOutput(int kbps)
 {
     if (servMgr)
         servMgr->maxBitrateOut = kbps;
 }
 // --------------------------------------------------
-int		APICALL PeercastInstance::getMaxOutput()
+int     APICALL PeercastInstance::getMaxOutput()
 {
     if (servMgr)
         return servMgr->maxBitrateOut;
     else
         return 0;
 }
+
 // --------------------------------------------------
-void	APICALL PeercastInstance::setMaxRelays(int max)
+void    APICALL PeercastInstance::setMaxRelays(int max)
 {
     if (servMgr)
         servMgr->setMaxRelays(max);
 }
+
 // --------------------------------------------------
-int		APICALL PeercastInstance::getMaxRelays()
+int     APICALL PeercastInstance::getMaxRelays()
 {
     if (servMgr)
         return servMgr->maxRelays;
     else
         return 0;
 }
+
 // --------------------------------------------------
-void	APICALL PeercastInstance::setActive(bool on)
+void    APICALL PeercastInstance::setActive(bool on)
 {
     if (servMgr)
     {
@@ -100,22 +102,25 @@ void	APICALL PeercastInstance::setActive(bool on)
         servMgr->autoServe = on;
     }
 }
+
 // --------------------------------------------------
-bool	APICALL PeercastInstance::getActive()
+bool    APICALL PeercastInstance::getActive()
 {
     if (servMgr)
         return servMgr->autoConnect&&servMgr->autoServe;
     else
         return false;
 }
+
 // --------------------------------------------------
-void	APICALL PeercastInstance::saveSettings()
+void    APICALL PeercastInstance::saveSettings()
 {
     if (servMgr)
         servMgr->saveSettings(peercastApp->getIniFilename());
 }
+
 // --------------------------------------------------
-void	APICALL PeercastInstance::quit()
+void    APICALL PeercastInstance::quit()
 {
     isQuitting = true;
     if (chanMgr)
@@ -123,8 +128,9 @@ void	APICALL PeercastInstance::quit()
     if (servMgr)
         servMgr->quit();
 }
+
 // --------------------------------------------------
-void	APICALL	PeercastInstance::setServerPort(int port)
+void    APICALL PeercastInstance::setServerPort(int port)
 {
     if (servMgr)
     {
@@ -132,32 +138,35 @@ void	APICALL	PeercastInstance::setServerPort(int port)
         servMgr->restartServer = true;
     }
 }
+
 // --------------------------------------------------
-int		APICALL	PeercastInstance::getServerPort()
+int     APICALL PeercastInstance::getServerPort()
 {
     if (servMgr)
         return servMgr->serverHost.port;
     else
         return 0;
 }
+
 // --------------------------------------------------
-void	APICALL	PeercastInstance::setServerPassword(const char *pwd)
+void    APICALL PeercastInstance::setServerPassword(const char *pwd)
 {
     if (servMgr)
         strcpy_s(servMgr->password, _countof(servMgr->password), pwd);
 }
+
 // --------------------------------------------------
-const char *APICALL	PeercastInstance::getServerPassword()
+const char *APICALL PeercastInstance::getServerPassword()
 {
     return servMgr->password;
 }
+
 // --------------------------------------------------
-void	APICALL PeercastInstance::callLocalURL(const char *url)
+void    APICALL PeercastInstance::callLocalURL(const char *url)
 {
     if (sys && servMgr)
         sys->callLocalURL(url, servMgr->serverHost.port);
 }
-
 
 // --------------------------------------------------
 void ADDLOG(const char *fmt, va_list ap, LogBuffer::TYPE type)
@@ -166,9 +175,9 @@ void ADDLOG(const char *fmt, va_list ap, LogBuffer::TYPE type)
     {
         const int MAX_LINELEN = 1024;
 
-        char str[MAX_LINELEN + 1];
-        vsnprintf(str, MAX_LINELEN - 1, fmt, ap);
-        str[MAX_LINELEN - 1] = 0;
+        char str[MAX_LINELEN+1];
+        vsnprintf(str, MAX_LINELEN-1, fmt, ap);
+        str[MAX_LINELEN-1]=0;
 
         if (type != LogBuffer::T_NONE)
             sys->logBuf->write(str, type);
@@ -176,6 +185,7 @@ void ADDLOG(const char *fmt, va_list ap, LogBuffer::TYPE type)
         peercastApp->printLog(type, str);
     }
 }
+
 // --------------------------------------------------
 void LOG(const char *fmt, ...)
 {
@@ -190,7 +200,7 @@ void LOG_ERROR(const char *fmt, ...)
 {
     if (servMgr)
     {
-        if ((servMgr->showLog & (1 << LogBuffer::T_ERROR)) && (!servMgr->pauseLog))
+        if ((servMgr->showLog & (1<<LogBuffer::T_ERROR)) && (!servMgr->pauseLog))
         {
             va_list ap;
             va_start(ap, fmt);
@@ -199,12 +209,13 @@ void LOG_ERROR(const char *fmt, ...)
         }
     }
 }
+
 // --------------------------------------------------
 void LOG_DEBUG(const char *fmt, ...)
 {
     if (servMgr)
     {
-        if ((servMgr->showLog & (1 << LogBuffer::T_DEBUG)) && (!servMgr->pauseLog))
+        if ((servMgr->showLog & (1<<LogBuffer::T_DEBUG)) && (!servMgr->pauseLog))
         {
             va_list ap;
             va_start(ap, fmt);
@@ -213,12 +224,13 @@ void LOG_DEBUG(const char *fmt, ...)
         }
     }
 }
+
 // --------------------------------------------------
 void LOG_NETWORK(const char *fmt, ...)
 {
     if (servMgr)
     {
-        if ((servMgr->showLog & (1 << LogBuffer::T_NETWORK)) && (!servMgr->pauseLog))
+        if ((servMgr->showLog & (1<<LogBuffer::T_NETWORK)) && (!servMgr->pauseLog))
         {
             va_list ap;
             va_start(ap, fmt);
@@ -227,12 +239,13 @@ void LOG_NETWORK(const char *fmt, ...)
         }
     }
 }
+
 // --------------------------------------------------
 void LOG_CHANNEL(const char *fmt, ...)
 {
     if (servMgr)
     {
-        if ((servMgr->showLog & (1 << LogBuffer::T_CHANNEL)) && (!servMgr->pauseLog))
+        if ((servMgr->showLog & (1<<LogBuffer::T_CHANNEL)) && (!servMgr->pauseLog))
         {
             va_list ap;
             va_start(ap, fmt);
