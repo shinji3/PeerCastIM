@@ -37,8 +37,9 @@ public:
         strcpy_s(msg, _countof(msg), m);
         err = e;
     }
+
     char msg[128];
-    int err;
+    int  err;
 };
 
 // -------------------------------------
@@ -53,14 +54,15 @@ public:
 class SockException : public StreamException
 {
 public:
-    SockException(const char *m = "Socket") : StreamException(m) {}
+    SockException(const char *m="Socket") : StreamException(m) {}
     SockException(const char *m, int e) : StreamException(m, e) {}
 };
+
 // ----------------------------------
 class EOFException : public StreamException
 {
 public:
-    EOFException(const char *m = "EOF") : StreamException(m) {}
+    EOFException(const char *m="EOF") : StreamException(m) {}
     EOFException(const char *m, int e) : StreamException(m, e) {}
 };
 
@@ -68,17 +70,17 @@ public:
 class CryptException : public StreamException
 {
 public:
-    CryptException(const char *m = "Crypt") : StreamException(m) {}
+    CryptException(const char *m="Crypt") : StreamException(m) {}
     CryptException(const char *m, int e) : StreamException(m, e) {}
 };
-
 
 // ----------------------------------
 class TimeoutException : public StreamException
 {
 public:
-    TimeoutException(const char *m = "Timeout") : StreamException(m) {}
+    TimeoutException(const char *m="Timeout") : StreamException(m) {}
 };
+
 // --------------------------------
 class GnuID
 {
@@ -276,18 +278,16 @@ inline int strToID(char *str)
 }
 
 // -----------------------------------
-char *getCGIarg(const char *str, const char *arg);
-bool cmpCGIarg(char *str, char *arg, char *value);
-bool hasCGIarg(char *str, char *arg);
+const char  *getCGIarg(const char *str, const char *arg);
+bool        cmpCGIarg(const char *str, const char *arg, const char *value);
+bool        hasCGIarg(const char *str, const char *arg);
 
 // ----------------------------------
-extern void LOG(const char *fmt, ...);
-
-extern void LOG_ERROR(const char *fmt, ...);
-extern void LOG_DEBUG(const char *fmt, ...);
-extern void LOG_NETWORK(const char *fmt, ...);
-extern void LOG_CHANNEL(const char *fmt, ...);
-
+extern void LOG(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+extern void LOG_ERROR(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+extern void LOG_DEBUG(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+extern void LOG_NETWORK(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+extern void LOG_CHANNEL(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
 
 #endif
 

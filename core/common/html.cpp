@@ -124,7 +124,7 @@ void HTML::writeVariable(Stream &s, const String &varName, int loop)
         }
         else if (varName.startsWith("loop.hit."))
         {
-            char *idstr = getCGIarg(tmplArgs, "id=");
+            const char *idstr = getCGIarg(tmplArgs, "id=");
             if (idstr)
             {
                 GnuID id;
@@ -157,7 +157,7 @@ void HTML::writeVariable(Stream &s, const String &varName, int loop)
     {
         if (varName.startsWith("page.channel."))
         {
-            char *idstr = getCGIarg(tmplArgs, "id=");
+            const char *idstr = getCGIarg(tmplArgs, "id=");
             if (idstr)
             {
                 GnuID id;
@@ -172,7 +172,7 @@ void HTML::writeVariable(Stream &s, const String &varName, int loop)
 
             String v = varName + 5;
             v.append('=');
-            char *a = getCGIarg(tmplArgs, v);
+            const char *a = getCGIarg(tmplArgs, v);
             if (a)
             {
                 s.writeString(a);
