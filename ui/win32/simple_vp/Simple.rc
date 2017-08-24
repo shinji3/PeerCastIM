@@ -21,12 +21,12 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// ∆≠∞ƒ◊Ÿ (ºΩ√—ïWèÄ) resources
+// ÔæÜÔΩ≠ÔΩ∞ÔæÑÔæóÔæô (ÔΩºÔΩΩÔæÉÔæëÊ®ôÊ∫ñ) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUSD)
 #ifdef _WIN32
 LANGUAGE LANG_NEUTRAL, SUBLANG_SYS_DEFAULT
-#pragma code_page(932)
+#pragma code_page(65001)
 #endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
@@ -38,47 +38,47 @@ IDR_TRAYMENU MENU DISCARDABLE
 BEGIN
     POPUP "popup"
     BEGIN
-        MENUITEM "èÓïÒ",                        ID_POPUP_ABOUT
-        MENUITEM "ÉwÉãÉv",                      ID_POPUP_HELP
+        MENUITEM "ÊÉÖÂ†±",                        ID_POPUP_ABOUT
+        MENUITEM "„Éò„É´„Éó",                      ID_POPUP_HELP
         MENUITEM SEPARATOR
-        POPUP "É|ÉbÉvÉAÉbÉvÉÅÉbÉZÅ[ÉW"
+        POPUP "„Éù„ÉÉ„Éó„Ç¢„ÉÉ„Éó„É°„ÉÉ„Çª„Éº„Ç∏"
         BEGIN
             MENUITEM "PeerCast",                    ID_POPUP_SHOWMESSAGES_PEERCAST
 
-            MENUITEM "îzêMé“",                      ID_POPUP_SHOWMESSAGES_BROADCASTERS
+            MENUITEM "ÈÖç‰ø°ËÄÖ",                      ID_POPUP_SHOWMESSAGES_BROADCASTERS
 
-            MENUITEM "ÉgÉâÉbÉNèÓïÒ",                ID_POPUP_SHOWMESSAGES_TRACKINFO
+            MENUITEM "„Éà„É©„ÉÉ„ÇØÊÉÖÂ†±",                ID_POPUP_SHOWMESSAGES_TRACKINFO
 
-            MENUITEM "ÉAÉbÉvÉfÅ[ÉgèÓïÒ",            ID_POPUP_POPUPMESSAGES_UPGRADEALERTS
+            MENUITEM "„Ç¢„ÉÉ„Éó„Éá„Éº„ÉàÊÉÖÂ†±",            ID_POPUP_POPUPMESSAGES_UPGRADEALERTS
             , CHECKED, GRAYED
         END
-        POPUP "çÇìx"
+        POPUP "È´òÂ∫¶"
         BEGIN
-            MENUITEM "èÓïÒ",                        ID_POPUP_ADVANCED_INFORMATION
+            MENUITEM "ÊÉÖÂ†±",                        ID_POPUP_ADVANCED_INFORMATION
 
-            MENUITEM "ÉäÉåÅ[É`ÉÉÉìÉlÉã",            ID_POPUP_ADVANCED_RELAYEDCHANNELS
+            MENUITEM "„É™„É¨„Éº„ÉÅ„É£„É≥„Éç„É´",            ID_POPUP_ADVANCED_RELAYEDCHANNELS
 
-            MENUITEM "îzêM",                        ID_POPUP_ADVANCED_BROADCAST
+            MENUITEM "ÈÖç‰ø°",                        ID_POPUP_ADVANCED_BROADCAST
 
-            MENUITEM "ÉRÉlÉNÉVÉáÉì",                ID_POPUP_CONNECTIONS
-            MENUITEM "ÉçÉO",                        ID_POPUP_ADVANCED_VIEWLOG
+            MENUITEM "„Ç≥„Éç„ÇØ„Ç∑„Éß„É≥",                ID_POPUP_CONNECTIONS
+            MENUITEM "„É≠„Ç∞",                        ID_POPUP_ADVANCED_VIEWLOG
 
-            MENUITEM "ê›íË",                        ID_POPUP_SETTINGS
-            MENUITEM "GUIÇäJÇ≠",                   ID_POPUP_ADVANCED_SHOWGUI
+            MENUITEM "Ë®≠ÂÆö",                        ID_POPUP_SETTINGS
+            MENUITEM "GUI„ÇíÈñã„Åè",                   ID_POPUP_ADVANCED_SHOWGUI
 
         END
-        POPUP "í«â¡ê›íË"
+        POPUP "ËøΩÂä†Ë®≠ÂÆö"
         BEGIN
-            MENUITEM "èIóπéûÅAï\é¶à íuÇï€ë∂",      ID_POPUP_SAVE_GUI_POS
+            MENUITEM "ÁµÇ‰∫ÜÊôÇ„ÄÅË°®Á§∫‰ΩçÁΩÆ„Çí‰øùÂ≠ò",      ID_POPUP_SAVE_GUI_POS
             , CHECKED
-            MENUITEM "çƒê⁄ë±éûâ∫ó¨à€éù",            ID_POPUP_KEEP_DOWNSTREAMS
+            MENUITEM "ÂÜçÊé•Á∂öÊôÇ‰∏ãÊµÅÁ∂≠ÊåÅ",            ID_POPUP_KEEP_DOWNSTREAMS
             , CHECKED
         END
         MENUITEM SEPARATOR
-        POPUP "èIóπ"
+        POPUP "ÁµÇ‰∫Ü"
         BEGIN
-            MENUITEM "ÇÕÇ¢",                        ID_POPUP_EXIT_CONFIRM
-            MENUITEM "Ç¢Ç¢Ç¶",                      ID_POPUP_EXIT_NO
+            MENUITEM "„ÅØ„ÅÑ",                        ID_POPUP_EXIT_CONFIRM
+            MENUITEM "„ÅÑ„ÅÑ„Åà",                      ID_POPUP_EXIT_NO
         END
     END
 END
@@ -88,8 +88,8 @@ BEGIN
     POPUP "popup"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "ÉCÉGÉçÅ[ÉyÅ[ÉW",              ID_POPUP_YELLOWPAGES
-        POPUP "ÉCÉGÉçÅ[ÉyÅ[ÉW"
+        MENUITEM "„Ç§„Ç®„É≠„Éº„Éö„Éº„Ç∏",              ID_POPUP_YELLOWPAGES
+        POPUP "„Ç§„Ç®„É≠„Éº„Éö„Éº„Ç∏"
         BEGIN
             MENUITEM "AAA",                         ID_POPUP_YELLOWPAGES1
             MENUITEM "BBB",                         ID_POPUP_YELLOWPAGES2
@@ -111,41 +111,41 @@ FONT 9, "MS UI Gothic", 0, 0, 0x1
 BEGIN
     LISTBOX         IDC_LIST1,3,291,291,43,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
                     WS_TABSTOP
-    CONTROL         "óLå¯",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | 
+    CONTROL         "ÊúâÂäπ",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | 
                     WS_TABSTOP,9,29,60,20,WS_EX_TRANSPARENT
     EDITTEXT        IDC_EDIT1,127,18,47,12,ES_AUTOHSCROLL
-    RTEXT           "É|Å[Ég :",IDC_STATIC,107,20,18,8
+    RTEXT           "„Éù„Éº„Éà :",IDC_STATIC,107,20,18,8
     LISTBOX         IDC_LIST2,3,206,291,71,LBS_OWNERDRAWFIXED | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "ÉçÉO",IDC_STATIC_LOG,3,282,13,8
-    LTEXT           "ÉRÉlÉNÉVÉáÉì",IDC_STATIC_CONNECTION,3,184,40,8
+    LTEXT           "„É≠„Ç∞",IDC_STATIC_LOG,3,282,13,8
+    LTEXT           "„Ç≥„Éç„ÇØ„Ç∑„Éß„É≥",IDC_STATIC_CONNECTION,3,184,40,8
     GROUPBOX        "",IDC_STATIC,3,4,291,49
-    PUSHBUTTON      "ÉNÉäÉA",IDC_BUTTON1,35,279,25,11
+    PUSHBUTTON      "„ÇØ„É™„Ç¢",IDC_BUTTON1,35,279,25,11
     LISTBOX         IDC_LIST3,3,81,291,67,LBS_OWNERDRAWFIXED | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "êÿíf",IDC_BUTTON5,67,65,43,13
-    GROUPBOX        "ÉäÉåÅ[",IDC_GROUPBOX_RELAY,3,54,291,96
+    PUSHBUTTON      "ÂàáÊñ≠",IDC_BUTTON5,67,65,43,13
+    GROUPBOX        "„É™„É¨„Éº",IDC_GROUPBOX_RELAY,3,54,291,96
     EDITTEXT        IDC_EDIT3,127,34,47,12,ES_PASSWORD | ES_AUTOHSCROLL
-    RTEXT           "ÉpÉXÉèÅ[Éh :",IDC_STATIC,89,36,36,8
-    CONTROL         "ÉfÉoÉbÉO",IDC_LOGDEBUG,"Button",BS_AUTOCHECKBOX | 
+    RTEXT           "„Éë„Çπ„ÉØ„Éº„Éâ :",IDC_STATIC,89,36,36,8
+    CONTROL         "„Éá„Éê„ÉÉ„Ç∞",IDC_LOGDEBUG,"Button",BS_AUTOCHECKBOX | 
                     BS_PUSHLIKE | WS_TABSTOP,127,279,32,11
-    CONTROL         "ÉlÉbÉgÉèÅ[ÉN",IDC_LOGNETWORK,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "„Éç„ÉÉ„Éà„ÉØ„Éº„ÇØ",IDC_LOGNETWORK,"Button",BS_AUTOCHECKBOX | 
                     BS_PUSHLIKE | WS_TABSTOP,185,279,35,11
-    CONTROL         "ÉGÉâÅ[",IDC_LOGERRORS,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "„Ç®„É©„Éº",IDC_LOGERRORS,"Button",BS_AUTOCHECKBOX | 
                     BS_PUSHLIKE | WS_TABSTOP,159,279,25,11
-    CONTROL         "í‚é~",IDC_CHECK9,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | 
+    CONTROL         "ÂÅúÊ≠¢",IDC_CHECK9,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | 
                     WS_TABSTOP,60,279,30,11
-    PUSHBUTTON      "çƒê∂",IDC_BUTTON8,10,65,22,13
-    CONTROL         "É`ÉÉÉìÉlÉã",IDC_LOGCHANNELS,"Button",BS_AUTOCHECKBOX | 
+    PUSHBUTTON      "ÂÜçÁîü",IDC_BUTTON8,10,65,22,13
+    CONTROL         "„ÉÅ„É£„É≥„Éç„É´",IDC_LOGCHANNELS,"Button",BS_AUTOCHECKBOX | 
                     BS_PUSHLIKE | WS_TABSTOP,221,279,35,11
-    PUSHBUTTON      "çƒê⁄ë±",IDC_BUTTON3,41,65,24,13
+    PUSHBUTTON      "ÂÜçÊé•Á∂ö",IDC_BUTTON3,41,65,24,13
     EDITTEXT        IDC_EDIT9,33,159,261,14,ES_AUTOHSCROLL
     CONTROL         "DJ",IDC_CHECK11,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | 
                     WS_TABSTOP,5,160,23,12
-    RTEXT           "ç≈ëÂÉäÉåÅ[êî :",IDC_STATIC,194,36,40,8
+    RTEXT           "ÊúÄÂ§ß„É™„É¨„ÉºÊï∞ :",IDC_STATIC,194,36,40,8
     EDITTEXT        IDC_MAXRELAYS,241,33,40,14,ES_AUTOHSCROLL | ES_NUMBER
-    PUSHBUTTON      "ÉLÅ[Év",IDC_BUTTON9,112,65,24,13
-    PUSHBUTTON      "êÿíf",IDC_BUTTON6,47,179,43,13
+    PUSHBUTTON      "„Ç≠„Éº„Éó",IDC_BUTTON9,112,65,24,13
+    PUSHBUTTON      "ÂàáÊñ≠",IDC_BUTTON6,47,179,43,13
     LTEXT           "Peercast-VP",IDC_STATIC,21,14,39,8
 END
 
@@ -155,29 +155,29 @@ EXSTYLE WS_EX_TOOLWINDOW
 CAPTION "Channel Information"
 FONT 9, "MS UI Gothic", 400, 0, 0x80
 BEGIN
-    LTEXT           "ñºëO:",IDC_STATIC,7,8,24,9
+    LTEXT           "ÂêçÂâç:",IDC_STATIC,7,8,24,9
     EDITTEXT        IDC_EDIT_NAME,7,18,170,21,ES_MULTILINE | ES_READONLY | 
                     NOT WS_BORDER | NOT WS_TABSTOP,WS_EX_STATICEDGE
-    LTEXT           "ì‡óe:",IDC_STATIC,7,79,93,9
+    LTEXT           "ÂÜÖÂÆπ:",IDC_STATIC,7,79,93,9
     EDITTEXT        IDC_EDIT_PLAYING,8,90,170,21,ES_MULTILINE | ES_READONLY | 
                     NOT WS_BORDER | NOT WS_TABSTOP,WS_EX_STATICEDGE
-    LTEXT           "DJ ÉÅÉbÉZÅ[ÉW:",IDC_STATIC,7,117,41,9
+    LTEXT           "DJ „É°„ÉÉ„Çª„Éº„Ç∏:",IDC_STATIC,7,117,41,9
     EDITTEXT        IDC_EDIT_MESSAGE,8,128,170,21,ES_MULTILINE | ES_READONLY | 
                     NOT WS_BORDER | NOT WS_TABSTOP,WS_EX_STATICEDGE
     PUSHBUTTON      "URL",IDC_CONTACT,7,185,34,15,0,0,HIDC_CONTACT
-    LTEXT           "è⁄ç◊:",IDC_STATIC,7,43,67,8
+    LTEXT           "Ë©≥Á¥∞:",IDC_STATIC,7,43,67,8
     EDITTEXT        IDC_EDIT_DESC,8,53,170,21,ES_MULTILINE | ES_READONLY | 
                     NOT WS_BORDER | NOT WS_TABSTOP,WS_EX_STATICEDGE
-    RTEXT           "å`éÆ",IDC_FORMAT,69,80,107,8
-    LTEXT           "ÉWÉÉÉìÉã:",IDC_STATIC,63,5,22,8
+    RTEXT           "ÂΩ¢Âºè",IDC_FORMAT,69,80,107,8
+    LTEXT           "„Ç∏„É£„É≥„É´:",IDC_STATIC,63,5,22,8
     EDITTEXT        IDC_EDIT_GENRE,87,3,90,12,ES_AUTOHSCROLL | ES_READONLY | 
                     NOT WS_BORDER | NOT WS_TABSTOP,WS_EX_STATICEDGE
-    CONTROL         "ÉLÅ[Év",IDC_KEEP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+    CONTROL         "„Ç≠„Éº„Éó",IDC_KEEP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
                     144,188,33,10
-    LTEXT           "ÉXÉeÅ[É^ÉX:",IDC_STATIC,7,153,41,9
+    LTEXT           "„Çπ„ÉÜ„Éº„Çø„Çπ:",IDC_STATIC,7,153,41,9
     EDITTEXT        IDC_EDIT_STATUS,8,163,82,12,ES_READONLY | NOT WS_BORDER | 
                     NOT WS_TABSTOP,WS_EX_STATICEDGE
-    PUSHBUTTON      "çƒê∂",IDC_PLAY,56,185,34,15
+    PUSHBUTTON      "ÂÜçÁîü",IDC_PLAY,56,185,34,15
 END
 
 
@@ -207,17 +207,17 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
-#endif    // ∆≠∞ƒ◊Ÿ (ºΩ√—ïWèÄ) resources
+#endif    // ÔæÜÔΩ≠ÔΩ∞ÔæÑÔæóÔæô (ÔΩºÔΩΩÔæÉÔæëÊ®ôÊ∫ñ) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// âpåÍ (±“ÿ∂) resources
+// Ëã±Ë™û (ÔΩ±ÔæíÔæòÔΩ∂) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
+#pragma code_page(65001)
 #endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
@@ -347,7 +347,7 @@ BEGIN
     IDS_APP_TITLE           "PeerCast"
 END
 
-#endif    // âpåÍ (±“ÿ∂) resources
+#endif    // Ëã±Ë™û (ÔΩ±ÔæíÔæòÔΩ∂) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
