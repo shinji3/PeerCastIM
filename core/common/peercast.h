@@ -1,4 +1,4 @@
-#ifndef _PEERCAST_H
+﻿#ifndef _PEERCAST_H
 #define _PEERCAST_H
 
 //#define APICALL _stdcall

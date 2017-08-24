@@ -1,4 +1,4 @@
-// ------------------------------------------------
+ï»¿// ------------------------------------------------
 // File : channel.cpp
 // Date: 4-apr-2002
 // Author: giles
@@ -118,7 +118,7 @@ int canStreamIndexTxt(Channel *ch)
 {
     int ret;
 
-    // ©•ª‚ª”zM‚µ‚Ä‚¢‚éê‡‚ÍŠÖŒW‚È‚¢
+    // è‡ªåˆ†ãŒé…ä¿¡ã—ã¦ã„ã‚‹å ´åˆã¯é–¢ä¿‚ãªã„
     if (!ch || ch->isBroadcasting())
         return -1;
 
@@ -313,7 +313,7 @@ bool	Channel::isFull()
     }
     // for PCRaw (relay) end.
 
-    // ƒ`ƒƒƒ“ƒlƒ‹ŒÅ—L‚ÌƒŠƒŒ[ãŒÀİ’è‚ª‚ ‚é‚©
+    // ãƒãƒ£ãƒ³ãƒãƒ«å›ºæœ‰ã®ãƒªãƒ¬ãƒ¼ä¸Šé™è¨­å®šãŒã‚ã‚‹ã‹
     if (maxRelays > 0)
     {
         return localRelays() >= maxRelays;
@@ -1214,8 +1214,8 @@ void Channel::broadcastTrackerUpdate(GnuID &svID, bool force)
         if (!chl)
             throw StreamException("Broadcast channel has no hitlist");
 
-        int numListeners = stealth ? -1 : totalListeners(); //JP-MOD ƒŠƒXƒi[”‰B•Á‹@”\
-        int numRelays = stealth ? -1 : totalRelays(); //JP-MOD ƒŠƒŒ[”‰B•Á‹@”\
+        int numListeners = stealth ? -1 : totalListeners(); //JP-MOD ãƒªã‚¹ãƒŠãƒ¼æ•°éš è”½æ©Ÿèƒ½
+        int numRelays = stealth ? -1 : totalRelays(); //JP-MOD ãƒªãƒ¬ãƒ¼æ•°éš è”½æ©Ÿèƒ½
 
         unsigned int oldp = rawData.getOldestPos();
         unsigned int newp = rawData.getLatestPos();
@@ -3457,7 +3457,7 @@ bool	ChanHit::writeVariable(Stream &out, const String &var)
             strcat_s(buf, _countof(buf), buf2);
 
             char h_name[128];
-            if (ClientSocket::getHostname(h_name, sizeof(h_name), rhost[0].ip)) // BOF‘Îô‚Á‚Û‚¢
+            if (ClientSocket::getHostname(h_name, sizeof(h_name), rhost[0].ip)) // BOFå¯¾ç­–ã£ã½ã„
             {
                 strcat_s(buf, _countof(buf), "[");
                 strcat_s(buf, _countof(buf), h_name);

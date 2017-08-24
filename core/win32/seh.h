@@ -1,4 +1,4 @@
-#ifndef _SEH_H_
+﻿#ifndef _SEH_H_
 #define _SEH_H_
 
 #include "stream.h"

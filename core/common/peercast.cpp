@@ -1,4 +1,4 @@
-#include "sys.h"
+ï»¿#include "sys.h"
 #include "peercast.h"
 #include "channel.h"
 #include "servmgr.h"
@@ -15,7 +15,7 @@ ServMgr *servMgr;
 PeercastInstance *peercastInst=NULL;
 PeercastApplication *peercastApp=NULL;
 
-int version_ex = 1; // VERSION_EX—LŒø‰»
+int version_ex = 1; // VERSION_EXæœ‰åŠ¹åŒ–
 
 // ---------------------------------
 void APICALL PeercastInstance::init()

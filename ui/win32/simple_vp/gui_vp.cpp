@@ -1,4 +1,4 @@
-// ------------------------------------------------
+ï»¿// ------------------------------------------------
 // File : gui.cpp
 // Date: 4-apr-2002
 // Author: giles
@@ -156,29 +156,29 @@ LRESULT CALLBACK ListBoxProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         info.fType = MFT_STRING;
 
         info.wID = 1001;
-        info.dwTypeData = "Ø’f(&X)";
+        info.dwTypeData = "åˆ‡æ–­(&X)";
         InsertMenuItem(hMenu, -1, true, &info);
 
         InsertMenuItem(hMenu, -1, true, &separator);
 
         info.wID = 1000;
-        info.dwTypeData = "Ä¶(&P)";
+        info.dwTypeData = "å†ç”Ÿ(&P)";
         InsertMenuItem(hMenu, -1, true, &info);
 
         InsertMenuItem(hMenu, -1, true, &separator);
 
         info.wID = 1002;
-        info.dwTypeData = "ÄÚ‘±(&R)";
+        info.dwTypeData = "å†æ¥ç¶š(&R)";
         InsertMenuItem(hMenu, -1, true, &info);
 
         info.wID = 1003;
-        info.dwTypeData = "ƒL[ƒv(&K)";
+        info.dwTypeData = "ã‚­ãƒ¼ãƒ—(&K)";
         InsertMenuItem(hMenu, -1, true, &info);
 
         InsertMenuItem(hMenu, -1, true, &separator);
 
         info.wID = 2000;
-        info.dwTypeData = "‘I‘ğ‰ğœ(&D)";
+        info.dwTypeData = "é¸æŠè§£é™¤(&D)";
         InsertMenuItem(hMenu, -1, true, &info);
 
         GetCursorPos(&pos);
@@ -261,7 +261,7 @@ LRESULT CALLBACK ConnListBoxProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         info.fType = MFT_STRING;
 
         info.wID = 1001;
-        info.dwTypeData = "Ø’f(&X)";
+        info.dwTypeData = "åˆ‡æ–­(&X)";
         InsertMenuItem(hMenu, -1, true, &info);
 
         GetCursorPos(&pos);
@@ -998,43 +998,43 @@ void MoveControl2(HWND hWnd, int cx, int cy, int y, HDWP& hDwp) {
 void MoveControls(LPARAM lParam) {
     HDWP hDwp;
     //IDC_LIST1 3,291,291,43
-/*        CONTROL         "—LŒø",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE |
+/*        CONTROL         "æœ‰åŠ¹",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE |
                     WS_TABSTOP,9,29,60,20,WS_EX_TRANSPARENT
     EDITTEXT        IDC_EDIT1,127,18,47,12,ES_AUTOHSCROLL
-    RTEXT           "ƒ|[ƒg :",IDC_STATIC,107,20,18,8
+    RTEXT           "ãƒãƒ¼ãƒˆ :",IDC_STATIC,107,20,18,8
     GROUPBOX        "",IDC_STATIC,3,4,291,49
-    PUSHBUTTON      "Ø’f",IDC_BUTTON5,67,65,43,13
+    PUSHBUTTON      "åˆ‡æ–­",IDC_BUTTON5,67,65,43,13
     EDITTEXT        IDC_EDIT3,127,34,47,12,ES_PASSWORD | ES_AUTOHSCROLL
-    RTEXT           "ƒpƒXƒ[ƒh :",IDC_STATIC,89,36,36,8
-    PUSHBUTTON      "Ä¶",IDC_BUTTON8,10,65,22,13
-    PUSHBUTTON      "ÄÚ‘±",IDC_BUTTON3,41,65,24,13
-    RTEXT           "Å‘åƒŠƒŒ[” :",IDC_STATIC,203,20,40,8
+    RTEXT           "ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ :",IDC_STATIC,89,36,36,8
+    PUSHBUTTON      "å†ç”Ÿ",IDC_BUTTON8,10,65,22,13
+    PUSHBUTTON      "å†æ¥ç¶š",IDC_BUTTON3,41,65,24,13
+    RTEXT           "æœ€å¤§ãƒªãƒ¬ãƒ¼æ•° :",IDC_STATIC,203,20,40,8
     EDITTEXT        IDC_MAXRELAYS,248,18,40,14,ES_AUTOHSCROLL | ES_NUMBER
-    PUSHBUTTON      "ƒL[ƒv",IDC_BUTTON9,112,65,24,13
+    PUSHBUTTON      "ã‚­ãƒ¼ãƒ—",IDC_BUTTON9,112,65,24,13
     LTEXT           "Peercast-VP",IDC_STATIC,21,14,39,8*/
 
     /*
-        GROUPBOX        "ƒŠƒŒ[",IDC_GROUPBOX_RELAY,3,54,291,132
+        GROUPBOX        "ãƒªãƒ¬ãƒ¼",IDC_GROUPBOX_RELAY,3,54,291,132
         LISTBOX         IDC_LIST3,3,81,291,102,LBS_OWNERDRAWFIXED |
                         LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
         CONTROL         "DJ",IDC_CHECK11,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE |
                         WS_TABSTOP,5,190,23,12
         EDITTEXT        IDC_EDIT9,33,189,261,14,ES_AUTOHSCROLL
-        LTEXT           "ƒRƒlƒNƒVƒ‡ƒ“",IDC_STATIC_CONNECTION,3,214,40,8
-        PUSHBUTTON      "Ø’f",IDC_BUTTON6,47,209,43,13
+        LTEXT           "ã‚³ãƒã‚¯ã‚·ãƒ§ãƒ³",IDC_STATIC_CONNECTION,3,214,40,8
+        PUSHBUTTON      "åˆ‡æ–­",IDC_BUTTON6,47,209,43,13
         LISTBOX         IDC_LIST2,3,224,291,53,LBS_NOINTEGRALHEIGHT | WS_VSCROLL |
                         WS_TABSTOP
-        LTEXT           "ƒƒO",IDC_STATIC_LOG,3,282,13,8
-        PUSHBUTTON      "ƒNƒŠƒA",IDC_BUTTON1,35,279,25,11
-        CONTROL         "’â~",IDC_CHECK9,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE |
+        LTEXT           "ãƒ­ã‚°",IDC_STATIC_LOG,3,282,13,8
+        PUSHBUTTON      "ã‚¯ãƒªã‚¢",IDC_BUTTON1,35,279,25,11
+        CONTROL         "åœæ­¢",IDC_CHECK9,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE |
                         WS_TABSTOP,60,279,30,11
-        CONTROL         "ƒfƒoƒbƒO",IDC_LOGDEBUG,"Button",BS_AUTOCHECKBOX |
+        CONTROL         "ãƒ‡ãƒãƒƒã‚°",IDC_LOGDEBUG,"Button",BS_AUTOCHECKBOX |
                         BS_PUSHLIKE | WS_TABSTOP,127,279,32,11
-        CONTROL         "ƒGƒ‰[",IDC_LOGERRORS,"Button",BS_AUTOCHECKBOX |
+        CONTROL         "ã‚¨ãƒ©ãƒ¼",IDC_LOGERRORS,"Button",BS_AUTOCHECKBOX |
                         BS_PUSHLIKE | WS_TABSTOP,159,279,25,11
-        CONTROL         "ƒlƒbƒgƒ[ƒN",IDC_LOGNETWORK,"Button",BS_AUTOCHECKBOX |
+        CONTROL         "ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯",IDC_LOGNETWORK,"Button",BS_AUTOCHECKBOX |
                         BS_PUSHLIKE | WS_TABSTOP,185,279,35,11
-        CONTROL         "ƒ`ƒƒƒ“ƒlƒ‹",IDC_LOGCHANNELS,"Button",BS_AUTOCHECKBOX |
+        CONTROL         "ãƒãƒ£ãƒ³ãƒãƒ«",IDC_LOGCHANNELS,"Button",BS_AUTOCHECKBOX |
                         BS_PUSHLIKE | WS_TABSTOP,221,279,35,11
         LISTBOX         IDC_LIST1,3,291,291,43,LBS_NOINTEGRALHEIGHT | WS_VSCROLL |
                         WS_TABSTOP*/
@@ -1073,17 +1073,17 @@ LRESULT CALLBACK GUIProc(HWND hwnd, UINT message,
 
     static const struct
     {
-        LRESULT from; // •ÏŠ·Œ³
-        LRESULT to;   // •ÏŠ·æ
+        LRESULT from; // å¤‰æ›å…ƒ
+        LRESULT to;   // å¤‰æ›å…ˆ
     }
     trans[] =
     {
-        { HTLEFT,        HTBORDER }, // ¶’[‚Ì¶‰E–îˆó ¨ –îˆó‚È‚µ
-        { HTRIGHT,       HTBORDER }, // ‰E’[‚Ì¶‰E–îˆó ¨ –îˆó‚È‚µ
-        { HTTOPLEFT,     HTTOP    }, // ¶ã‹÷‚ÌÎ‚ß–îˆó ¨ c–îˆó
-        { HTTOPRIGHT,    HTTOP    }, // ‰Eã‹÷‚ÌÎ‚ß–îˆó ¨ c–îˆó
-        { HTBOTTOMLEFT,  HTBOTTOM }, // ¶‰º‹÷‚ÌÎ‚ß–îˆó ¨ c–îˆó
-        { HTBOTTOMRIGHT, HTBOTTOM }, // ‰E‰º‹÷‚ÌÎ‚ß–îˆó ¨ c–îˆó
+        { HTLEFT,        HTBORDER }, // å·¦ç«¯ã®å·¦å³çŸ¢å° â†’ çŸ¢å°ãªã—
+        { HTRIGHT,       HTBORDER }, // å³ç«¯ã®å·¦å³çŸ¢å° â†’ çŸ¢å°ãªã—
+        { HTTOPLEFT,     HTTOP    }, // å·¦ä¸Šéš…ã®æ–œã‚çŸ¢å° â†’ ç¸¦çŸ¢å°
+        { HTTOPRIGHT,    HTTOP    }, // å³ä¸Šéš…ã®æ–œã‚çŸ¢å° â†’ ç¸¦çŸ¢å°
+        { HTBOTTOMLEFT,  HTBOTTOM }, // å·¦ä¸‹éš…ã®æ–œã‚çŸ¢å° â†’ ç¸¦çŸ¢å°
+        { HTBOTTOMRIGHT, HTBOTTOM }, // å³ä¸‹éš…ã®æ–œã‚çŸ¢å° â†’ ç¸¦çŸ¢å°
         { HTTOP,         HTTOP    },
         { HTBOTTOM,      HTBOTTOM }
     };
@@ -1430,7 +1430,7 @@ LRESULT CALLBACK GUIProc(HWND hwnd, UINT message,
                     TextOut(_DrawItem->hDC,
                         _DrawItem->rcItem.left,
                         _DrawItem->rcItem.top,
-                        "¡",
+                        "â– ",
                         2);
                 }
                 else {
@@ -1439,7 +1439,7 @@ LRESULT CALLBACK GUIProc(HWND hwnd, UINT message,
                     TextOut(_DrawItem->hDC,
                         _DrawItem->rcItem.left,
                         _DrawItem->rcItem.top,
-                        " ",
+                        "â–¡",
                         2);
                 }
                 if ((_DrawItem->itemState) & (ODS_SELECTED))
@@ -1571,7 +1571,7 @@ LRESULT CALLBACK GUIProc(HWND hwnd, UINT message,
                 if (sd->lastSkipTime + 120 > sys->getTime()) {
                     SetBkColor(_DrawItem->hDC, RGB(128, 128, 128));
                     if (sd->type == Servent::T_RELAY) {
-                        snprintf(buf, _countof(buf), "¥(%d)", sd->lastSkipCount);
+                        snprintf(buf, _countof(buf), "â–¼(%d)", sd->lastSkipCount);
                         TextOut(_DrawItem->hDC,
                             _DrawItem->rcItem.left,
                             _DrawItem->rcItem.top,
@@ -1580,7 +1580,7 @@ LRESULT CALLBACK GUIProc(HWND hwnd, UINT message,
                     }
                     else {
                         SetTextColor(_DrawItem->hDC, RGB(0, 0, 0));
-                        snprintf(buf, _countof(buf), "¤(%d)", sd->lastSkipCount);
+                        snprintf(buf, _countof(buf), "â–½(%d)", sd->lastSkipCount);
                         TextOut(_DrawItem->hDC,
                             _DrawItem->rcItem.left,
                             _DrawItem->rcItem.top,
@@ -1594,7 +1594,7 @@ LRESULT CALLBACK GUIProc(HWND hwnd, UINT message,
                         TextOut(_DrawItem->hDC,
                             _DrawItem->rcItem.left,
                             _DrawItem->rcItem.top,
-                            "¡",
+                            "â– ",
                             2);
                     }
                     else {
@@ -1603,7 +1603,7 @@ LRESULT CALLBACK GUIProc(HWND hwnd, UINT message,
                         TextOut(_DrawItem->hDC,
                             _DrawItem->rcItem.left,
                             _DrawItem->rcItem.top,
-                            " ",
+                            "â–¡",
                             2);
                     }
                 }
@@ -1696,19 +1696,19 @@ LRESULT CALLBACK GUIProc(HWND hwnd, UINT message,
         MINMAXINFO *pmmi = (MINMAXINFO *)lParam;
         if (pmmi)
         {
-            pmmi->ptMinTrackSize.x = 530;  // Å¬•
-            pmmi->ptMinTrackSize.y = 435;  // Å¬‚
-            pmmi->ptMaxTrackSize.x = 530; // Å‘å•
-            pmmi->ptMaxTrackSize.y = 1200;  // Å‘å‚
+            pmmi->ptMinTrackSize.x = 530;  // æœ€å°å¹…
+            pmmi->ptMinTrackSize.y = 435;  // æœ€å°é«˜
+            pmmi->ptMaxTrackSize.x = 530; // æœ€å¤§å¹…
+            pmmi->ptMaxTrackSize.y = 1200;  // æœ€å¤§é«˜
         }
         return 0;
     }
 
     /*		case WM_NCHITTEST:
             {
-                LRESULT lResult; // ƒJ[ƒ\ƒ‹ˆÊ’u”»’èŒ‹‰Ê
+                LRESULT lResult; // ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®åˆ¤å®šçµæœ
 
-                // •ÏŠ·ˆê——‚É‚ ‚ê‚Î•ÏŠ·‚µ‚½’l‚ğ•Ô‚·B
+                // å¤‰æ›ä¸€è¦§ã«ã‚ã‚Œã°å¤‰æ›ã—ãŸå€¤ã‚’è¿”ã™ã€‚
                 lResult = DefWindowProc( guiWnd, message, wParam, lParam );
                 for( int i = 0; i < 8; i++ )
                 {

@@ -1,4 +1,4 @@
-// ------------------------------------------------
+ï»¿// ------------------------------------------------
 // File : stream.cpp
 // Date: 4-apr-2002
 // Author: giles
@@ -282,7 +282,7 @@ void Stream::writeLineF(const char *fmt, ...)
 
     write(fmt, ap);
 
-    // special thanks: –¼–³‚µ‚Ì’N‚©
+    // special thanks: åç„¡ã—ã®èª°ã‹
     va_end(ap);
 
     if (writeCRLF)

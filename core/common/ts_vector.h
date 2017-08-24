@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Simple vector (Thread safe implementation)
  *
  *                               Impl. by Eru

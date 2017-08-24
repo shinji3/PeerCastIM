@@ -1,8 +1,8 @@
-#ifdef _DEBUG
+ï»¿#ifdef _DEBUG
 //#include "stdafx.h"
 #include "chkMemoryLeak.h"
 
-#ifdef	__AFXWIN_H__            // MFC‚ÌƒEƒBƒ“ƒhƒE‚ğg‚¤ê‡‚ÉŒÀ’è‚µ‚Ä‚¢‚Ü‚·
+#ifdef	__AFXWIN_H__            // MFCã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ä½¿ã†å ´åˆã«é™å®šã—ã¦ã„ã¾ã™
 #else
 #if defined(_DEBUG)
 #define __chkMemoryLeak_H__

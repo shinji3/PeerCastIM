@@ -1,4 +1,4 @@
-// ------------------------------------------------
+Ôªø// ------------------------------------------------
 // File : servent.cpp
 // Date: 4-apr-2002
 // Author: giles
@@ -3089,7 +3089,7 @@ int Servent::serverProcMain(ThreadInfo *thread)
             {
                 ClientSocket *cs = sv->sock->accept();
 
-                // ïsê≥Ç»É\Å[ÉXÉAÉhÉåÉX(IPv4É}ÉãÉ`ÉLÉÉÉXÉg)ÇèúäO
+                // ‰∏çÊ≠£„Å™„ÇΩ„Éº„Çπ„Ç¢„Éâ„É¨„Çπ(IPv4„Éû„É´„ÉÅ„Ç≠„É£„Çπ„Éà)„ÇíÈô§Â§ñ
                 if (cs && (((cs->host.ip >> 24) & 0xF0) == 0xE0))
                 {
                     char ip[64];
@@ -3294,7 +3294,7 @@ bool	Servent::writeVariable(Stream &s, const String &var)
             }
             strcat_s(buf, _countof(buf), h_ip);
             char h_name[128];
-            if (ClientSocket::getHostname(h_name, sizeof(h_name), h.ip)) //JP-MOD(BOFëŒçÙ)
+            if (ClientSocket::getHostname(h_name, sizeof(h_name), h.ip)) //JP-MOD(BOFÂØæÁ≠ñ)
             {
                 strcat_s(buf, _countof(buf), "[");
                 strcat_s(buf, _countof(buf), h_name);

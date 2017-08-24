@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Simple vector (Thread safe implementation)
  *                        for Windows w/ VC++
  *

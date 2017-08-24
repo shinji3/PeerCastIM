@@ -1,4 +1,4 @@
-#ifndef _CHKMEMORYLEAK_H
+﻿#ifndef _CHKMEMORYLEAK_H
 #define _CHKMEMORYLEAK_H
 
 #if _MSC_VER > 1000

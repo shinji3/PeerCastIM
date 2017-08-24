@@ -1,4 +1,4 @@
-// ------------------------------------------------
+ï»¿// ------------------------------------------------
 // File : pcp.cpp
 // Date: 1-mar-2004
 // Author: giles
@@ -772,7 +772,7 @@ int PCPStream::readBroadcastAtoms(AtomStream &atom, int numc, BroadcastState &bc
             if (servMgr->versionDNS > PCP_CLIENT_VERSION_EX_NUMBER)
             {
                 strcpy_s(servMgr->downloadURL, _countof(servMgr->downloadURL), PCP_CLIENT_DIST_URL);
-                peercastApp->notifyMessage(ServMgr::NT_UPGRADE, "V‚µ‚¢ƒo[ƒWƒ‡ƒ“‚ÌPeercast‚ªƒŠƒŠ[ƒX‚³‚ê‚Ü‚µ‚½B");
+                peercastApp->notifyMessage(ServMgr::NT_UPGRADE, "æ–°ã—ã„ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®PeercastãŒãƒªãƒªãƒ¼ã‚¹ã•ã‚Œã¾ã—ãŸã€‚");
 
                 LOG_DEBUG("PCP triggered version check (force): %d / %d", servMgr->versionDNS, PCP_CLIENT_VERSION_EX_NUMBER);
             }
@@ -781,13 +781,13 @@ int PCPStream::readBroadcastAtoms(AtomStream &atom, int numc, BroadcastState &bc
             patom.writeShort(id, ver_ex_number);
 
             // version check
-            if (!servMgr->versionDNS // DNS‚©‚çƒo[ƒWƒ‡ƒ“î•ñ‚ðŽæ“¾‚Å‚«‚È‚©‚Á‚½
+            if (!servMgr->versionDNS // DNSã‹ã‚‰ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±ã‚’å–å¾—ã§ããªã‹ã£ãŸ
                 && !servMgr->noVersionCheck
                 && !strncmp(ver_ex_prefix, PCP_CLIENT_VERSION_EX_PREFIX, 2)
                 && ver_ex_number > PCP_CLIENT_VERSION_EX_NUMBER)
             {
                 strcpy_s(servMgr->downloadURL, _countof(servMgr->downloadURL), PCP_CLIENT_DIST_URL);
-                peercastApp->notifyMessage(ServMgr::NT_UPGRADE, "V‚µ‚¢ƒo[ƒWƒ‡ƒ“‚ÌPeercast‚ªŒŸo‚³‚ê‚Ü‚µ‚½BXV‚ðŠm”F‚µ‚Ä‚­‚¾‚³‚¢B");
+                peercastApp->notifyMessage(ServMgr::NT_UPGRADE, "æ–°ã—ã„ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®PeercastãŒæ¤œå‡ºã•ã‚Œã¾ã—ãŸã€‚æ›´æ–°ã‚’ç¢ºèªã—ã¦ãã ã•ã„ã€‚");
 
                 LOG_DEBUG("PCP got version check: %d / %d", ver_ex_number, PCP_CLIENT_VERSION_EX_NUMBER);
             }

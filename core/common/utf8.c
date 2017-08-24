@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2001 Peter Harris <peter.harris@hummingbird.com>
  * Copyright (C) 2001 Edmund Grimley Evans <edmundo@rano.org>
  *

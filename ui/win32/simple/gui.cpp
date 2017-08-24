@@ -1,4 +1,4 @@
-// ------------------------------------------------
+ï»¿// ------------------------------------------------
 // File : gui.cpp
 // Date: 4-apr-2002
 // Author: giles
@@ -205,24 +205,24 @@ THREAD_PROC GetHostName(ThreadInfo *thread) {
 
 int drawSpeed(Graphics *gra, int posX, int posY) {
 
-    // ‘¬“x•\¦•”‚Ì”wŒi‚ğ”’‚­‚·‚é
+    // é€Ÿåº¦è¡¨ç¤ºéƒ¨ã®èƒŒæ™¯ã‚’ç™½ãã™ã‚‹
     SolidBrush b(Color(180, 255, 255, 255));
     backGra->FillRectangle(&b, posX, posY, 200, 14);
-    // ƒtƒHƒ“ƒgİ’è
-    Font font(L"‚l‚r ‚oƒSƒVƒbƒN", 10);
-    // •¶šF
+    // ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š
+    Font font(L"ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯", 10);
+    // æ–‡å­—è‰²
     SolidBrush strBrush(Color::Black);
-    // •¶š—ñì¬
+    // æ–‡å­—åˆ—ä½œæˆ
     char tmp[256];
     snprintf(tmp, _countof(tmp), "R:%.1fkbps S:%.1fkbps",
         BYTES_TO_KBPS(stats.getPerSecond(Stats::BYTESIN) - stats.getPerSecond(Stats::LOCALBYTESIN)),
         BYTES_TO_KBPS(stats.getPerSecond(Stats::BYTESOUT) - stats.getPerSecond(Stats::LOCALBYTESOUT)));
     _bstr_t bstr(tmp);
-    // •¶š•\¦”ÍˆÍw’è
+    // æ–‡å­—è¡¨ç¤ºç¯„å›²æŒ‡å®š
     StringFormat format;
     format.SetAlignment(StringAlignmentCenter);
     RectF r((REAL)posX, (REAL)posY, (REAL)200, (REAL)14);
-    // •¶š•`‰æ
+    // æ–‡å­—æç”»
     gra->DrawString(bstr, -1, &font, r, &format, &strBrush);
 
 
@@ -244,14 +244,14 @@ void MakeBack(HWND hwnd, UINT x, UINT y) {
     backBmp = ::new Bitmap(x, y);
     backGra = ::new Graphics(backBmp);
 
-    // ‘S‚Ä”’‚Å“h‚è‚Â‚Ô‚µ
+    // å…¨ã¦ç™½ã§å¡—ã‚Šã¤ã¶ã—
     SolidBrush b(Color(255, 255, 255, 255));
     backGra->FillRectangle(&b, 0, 0, x, y);
 
     backWidth = backImage->GetWidth();
     backHeight = backImage->GetHeight();
 
-    // ”wŒi‰æ‘œ‚ğ•`‰æ
+    // èƒŒæ™¯ç”»åƒã‚’æç”»
     for (UINT xx = 0; xx < x / backWidth + 1; xx++) {
         for (UINT yy = 0; yy < y / backHeight + 1; yy++) {
             UINT width, height;
@@ -275,10 +275,10 @@ void MakeBack(HWND hwnd, UINT x, UINT y) {
     INT posX = 20;
     INT posY = 20;
 
-    // ‘¬“x•`‰æ
+    // é€Ÿåº¦æç”»
     drawSpeed(backGra, winWidth - 205, 5);
 
-    // ƒ`ƒƒƒ“ƒlƒ‹î•ñ‚ğ•`‰æ
+    // ãƒãƒ£ãƒ³ãƒãƒ«æƒ…å ±ã‚’æç”»
     ChannelDataLock.on();
     ChannelData *cd = channelDataTop;
     while (cd) {
@@ -324,7 +324,7 @@ int ChannelData::drawChannel(Graphics *g, int x, int y) {
     REAL yy = y * 1.0f;
     ServentData* sd;
 
-    // ˆÊ’u‚ğ•Û‘¶
+    // ä½ç½®ã‚’ä¿å­˜
     posX = x;
     posY = y;
 
@@ -343,24 +343,24 @@ int ChannelData::drawChannel(Graphics *g, int x, int y) {
         gW = w;
     }
 
-    // ƒ`ƒƒƒ“ƒlƒ‹•\¦•”‚Ì”wŒi‚ğ“h‚é
+    // ãƒãƒ£ãƒ³ãƒãƒ«è¡¨ç¤ºéƒ¨ã®èƒŒæ™¯ã‚’å¡—ã‚‹
     if (isSelected()) {
-        // ‘I‘ğ’†
+        // é¸æŠä¸­
         SolidBrush b(Color(160, 49, 106, 197));
         g->FillRectangle(&b, x, y, w, 14);
     }
     else {
-        // ”ñ‘I‘ğ
+        // éé¸æŠ
         SolidBrush b(Color(160, 255, 255, 255));
         g->FillRectangle(&b, x, y, w, 14);
     }
 
-    // ƒXƒe[ƒ^ƒX•\¦
+    // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹è¡¨ç¤º
     Gdiplus::Image *img = NULL;
     unsigned int nowTime = sys->getTime();
     if (this->type != Servent::T_COUT)
     {
-        // COUTˆÈŠO
+        // COUTä»¥å¤–
         Channel *ch = chanMgr->findChannelByChannelID(this->channel_id);
         switch (this->getStatus()) {
         case Channel::S_IDLE:
@@ -402,7 +402,7 @@ int ChannelData::drawChannel(Graphics *g, int x, int y) {
             img = img_broad_ok;
             break;
         case Channel::S_ERROR:
-            // bump‚ÉƒGƒ‰[‚ª•\¦‚³‚ê‚é‚Ì‚ğ–h~
+            // bumpæ™‚ã«ã‚¨ãƒ©ãƒ¼ãŒè¡¨ç¤ºã•ã‚Œã‚‹ã®ã‚’é˜²æ­¢
             if (ch && ch->bumped)
             {
                 img = img_connect;
@@ -419,24 +419,24 @@ int ChannelData::drawChannel(Graphics *g, int x, int y) {
     }
     else
     {
-        // COUT—p
+        // COUTç”¨
         img = img_broad_ok;
     }
 
-    // •`‰æŠî“_
+    // æç”»åŸºç‚¹
     PointF origin(xx, yy);
-    // ƒXƒe[ƒ^ƒX•\¦ˆÊ’u
+    // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹è¡¨ç¤ºä½ç½®
     Rect img_rect((INT)origin.X, (INT)origin.Y + 1, img ? img->GetWidth() : 12, 12);
-    // ƒXƒe[ƒ^ƒX•`‰æ
+    // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æç”»
     ImageAttributes att;
     //	att.SetColorKey(Color::White, Color::White, ColorAdjustTypeBitmap);
     g->DrawImage(img, img_rect, 0, 0, img_rect.Width, 12, UnitPixel, &att);
-    // Ÿ‚ÌŠî“_
+    // æ¬¡ã®åŸºç‚¹
     origin.X += img_rect.Width;
 
-    // ƒtƒHƒ“ƒgİ’è
-    Gdiplus::Font font(L"‚l‚r ‚oƒSƒVƒbƒN", 10);
-    // •¶šF
+    // ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š
+    Gdiplus::Font font(L"ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯", 10);
+    // æ–‡å­—è‰²
     SolidBrush *strBrush;
     if (servMgr->getFirewall() == ServMgr::FW_ON) {
         strBrush = ::new SolidBrush(Color::Red);
@@ -446,37 +446,37 @@ int ChannelData::drawChannel(Graphics *g, int x, int y) {
     }
     else {
         if (isSelected()) {
-            // ‘I‘ğ’†
+            // é¸æŠä¸­
             strBrush = ::new SolidBrush(Color::White);
         }
         else {
-            // ”ñ‘I‘ğ
+            // éé¸æŠ
             strBrush = ::new SolidBrush(Color::Black);
         }
     }
 
     if (this->type != Servent::T_COUT)
     {
-        // COUTˆÈŠO
+        // COUTä»¥å¤–
 
-        // ƒ`ƒƒƒ“ƒlƒ‹–¼•\¦
+        // ãƒãƒ£ãƒ³ãƒãƒ«åè¡¨ç¤º
         g->SetTextRenderingHint(TextRenderingHintAntiAlias);
         _bstr_t bstr1(getName());
-        // •¶š•`‰æ”ÍˆÍw’è
+        // æ–‡å­—æç”»ç¯„å›²æŒ‡å®š
         RectF r1(origin.X, origin.Y, 120.0f, 13.0f);
         StringFormat format;
         format.SetAlignment(StringAlignmentNear);
         g->DrawString(bstr1, -1, &font, r1, &format, strBrush);
-        // Ÿ‚ÌŠî“_
+        // æ¬¡ã®åŸºç‚¹
         origin.X += r1.Width;
 
-        //// ã—¬IP/ƒŠƒXƒi[”/ƒŠƒŒ[”•\¦
+        //// ä¸ŠæµIP/ãƒªã‚¹ãƒŠãƒ¼æ•°/ãƒªãƒ¬ãƒ¼æ•°è¡¨ç¤º
         //// NOTE:
-        ////    ‚Ò‚ ‚©‚·‚Ì“®ì•×‹­—pBƒŠƒŠ[ƒXƒrƒ‹ƒh‚Å‚ÍŒ³‚ÌƒR[ƒh‚ğg—p‚Ì–B
-        ////    •¶š•\¦”ÍˆÍ‚Í•220‚®‚ç‚¢‚Å‚¨‚‹
-        //char tmp[512]; // •\¦—pƒoƒbƒtƒ@
-        //char hostip[256]; // IPƒAƒhƒŒƒXƒoƒbƒtƒ@
-        //chDisp.uphost.toStr(hostip); // ã—¬IP
+        ////    ã´ã‚ã‹ã™ã®å‹•ä½œå‹‰å¼·ç”¨ã€‚ãƒªãƒªãƒ¼ã‚¹ãƒ“ãƒ«ãƒ‰ã§ã¯å…ƒã®ã‚³ãƒ¼ãƒ‰ã‚’ä½¿ç”¨ã®äº‹ã€‚
+        ////    æ–‡å­—è¡¨ç¤ºç¯„å›²ã¯å¹…220ãã‚‰ã„ã§ãŠï½‹
+        //char tmp[512]; // è¡¨ç¤ºç”¨ãƒãƒƒãƒ•ã‚¡
+        //char hostip[256]; // IPã‚¢ãƒ‰ãƒ¬ã‚¹ãƒãƒƒãƒ•ã‚¡
+        //chDisp.uphost.toStr(hostip); // ä¸ŠæµIP
         //snprintf(tmp, _countof(tmp), "%d/%d - [%d/%d] - %s",
         //	getTotalListeners(),
         //	getTotalRelays(),
@@ -485,18 +485,18 @@ int ChannelData::drawChannel(Graphics *g, int x, int y) {
         //	hostip
         //	);
 
-        // ƒŠƒXƒi[”/ƒŠƒŒ[”•\¦
+        // ãƒªã‚¹ãƒŠãƒ¼æ•°/ãƒªãƒ¬ãƒ¼æ•°è¡¨ç¤º
         char tmp[256];
         snprintf(tmp, _countof(tmp), "%d/%d - [%d/%d]", getTotalListeners(), getTotalRelays(), getLocalListeners(), getLocalRelays());
         _bstr_t bstr2(tmp);
-        // •¶š•\¦”ÍˆÍw’è
+        // æ–‡å­—è¡¨ç¤ºç¯„å›²æŒ‡å®š
         RectF r2(origin.X, origin.Y, 100.0f, 13.0f);
         format.SetAlignment(StringAlignmentCenter);
         g->DrawString(bstr2, -1, &font, r2, &format, strBrush);
-        // Ÿ‚ÌŠî“_
+        // æ¬¡ã®åŸºç‚¹
         origin.X += r2.Width;
 
-        // bps•\¦
+        // bpsè¡¨ç¤º
         Font *f;
         if (isStayConnected()) {
             f = ::new Font(L"Arial", 9.0f, FontStyleItalic | FontStyleBold, UnitPoint);
@@ -507,23 +507,23 @@ int ChannelData::drawChannel(Graphics *g, int x, int y) {
         snprintf(tmp, _countof(tmp), "%dkbps", getBitRate());
         _bstr_t bstr3(tmp);
         format.SetAlignment(StringAlignmentFar);
-        // •¶š•\¦”ÍˆÍw’è
+        // æ–‡å­—è¡¨ç¤ºç¯„å›²æŒ‡å®š
         RectF r3(origin.X, origin.Y, 80.0f, 13.0f);
         g->DrawString(bstr3, -1, f, r3, &format, strBrush);
-        // ƒtƒHƒ“ƒgŠJ•ú
+        // ãƒ•ã‚©ãƒ³ãƒˆé–‹æ”¾
         ::delete f;
 
-        // Ÿ‚ÌŠî“_
+        // æ¬¡ã®åŸºç‚¹
         origin.X += r3.Width;
 
-        // ƒuƒ‰ƒVíœ
+        // ãƒ–ãƒ©ã‚·å‰Šé™¤
         ::delete strBrush;
 
 
-        // Servent•\¦
+        // Serventè¡¨ç¤º
         if (!openFlg) {
             int count = getServentCount();
-            // Servent•\¦•”‚Ì”wŒi‚ğ”’‚É‚·‚é
+            // Serventè¡¨ç¤ºéƒ¨ã®èƒŒæ™¯ã‚’ç™½ã«ã™ã‚‹
             SolidBrush b(Color(160, 255, 255, 255));
             g->FillRectangle(&b, (INT)origin.X, (INT)origin.Y, 14 * count, 14);
 
@@ -538,26 +538,26 @@ int ChannelData::drawChannel(Graphics *g, int x, int y) {
                         g->FillRectangle(&bb, (INT)origin.X + 14 * index, (INT)origin.Y, 14, 14);
                     }
                     if (hit->relay) {
-                        // ƒŠƒŒ[‚n‚j
+                        // ãƒªãƒ¬ãƒ¼ï¼¯ï¼«
                         serventBrush = ::new SolidBrush(Color::Green);
                     }
                     else {
-                        // ƒŠƒŒ[•s‰Â
+                        // ãƒªãƒ¬ãƒ¼ä¸å¯
                         if (hit->numRelays) {
-                            // ƒŠƒŒ[ˆê”t
+                            // ãƒªãƒ¬ãƒ¼ä¸€æ¯
                             serventBrush = ::new SolidBrush(Color::Blue);
                         }
                         else {
-                            // ƒŠƒŒ[‚È‚µ
+                            // ãƒªãƒ¬ãƒ¼ãªã—
                             serventBrush = ::new SolidBrush(Color::Purple);
                         }
                     }
                 }
                 else {
-                    // î•ñ‚È‚µ
+                    // æƒ…å ±ãªã—
                     serventBrush = ::new SolidBrush(Color::Black);
                 }
-                // lŠp•`‰æ
+                // å››è§’æç”»
                 backGra->FillRectangle(serventBrush, (INT)origin.X + index * 14 + 1, (INT)origin.Y + 1, 12, 12);
 
                 ::delete serventBrush;
@@ -566,19 +566,19 @@ int ChannelData::drawChannel(Graphics *g, int x, int y) {
             }
         }
 
-        // Ÿ‚ÌŠî“_
+        // æ¬¡ã®åŸºç‚¹
         origin.Y += 15;
 
-        // ƒTƒCƒY‚ğ•Û‘¶
+        // ã‚µã‚¤ã‚ºã‚’ä¿å­˜
         setWidth((int)origin.X - posX);
         setHeight((int)origin.Y - posY);
 
-        // ServentData•\¦
+        // ServentDataè¡¨ç¤º
         sd = serventDataTop;
         while (sd) {
             if (openFlg || sd->getSelected()) {
                 sd->drawServent(g, (INT)x + 12, (INT)origin.Y);
-                // Ÿ‚ÌŠî“_
+                // æ¬¡ã®åŸºç‚¹
                 origin.Y += 15;
             }
             sd = sd->getNextData();
@@ -604,7 +604,7 @@ int ChannelData::drawChannel(Graphics *g, int x, int y) {
 }
 
 bool ChannelData::checkDown(int x, int y) {
-    // ”ÍˆÍ“àƒ`ƒFƒbƒN
+    // ç¯„å›²å†…ãƒã‚§ãƒƒã‚¯
     if (
         (x > posX)
         && (x < posX + getWidth())
@@ -705,7 +705,7 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y) {
     REAL yy = y * 1.0f;
     int w/*,h*/;
 
-    // ˆÊ’u‚ğ•Û‘¶
+    // ä½ç½®ã‚’ä¿å­˜
     posX = x;
     posY = y;
 
@@ -722,36 +722,36 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y) {
         gWS = w;
     }
 
-    // •`‰æŠî“_
+    // æç”»åŸºç‚¹
     PointF origin(xx, yy);
 
-    // ƒtƒHƒ“ƒgİ’è
-    Font font(L"‚l‚r ‚oƒSƒVƒbƒN", 9);
-    // •¶šF
+    // ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š
+    Font font(L"ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯", 9);
+    // æ–‡å­—è‰²
     SolidBrush *strBrush;
     if (chanHit.firewalled) {
         strBrush = ::new SolidBrush(Color::Red);
     }
     else {
         if (getSelected()) {
-            // ‘I‘ğ’†
+            // é¸æŠä¸­
             strBrush = ::new SolidBrush(Color::White);
         }
         else {
-            // ”ñ‘I‘ğ
+            // éé¸æŠ
             strBrush = ::new SolidBrush(Color::Black);
         }
     }
-    // ServantData•\¦
+    // ServantDataè¡¨ç¤º
     g->SetTextRenderingHint(TextRenderingHintAntiAlias);
-    // •¶š—ñì¬
+    // æ–‡å­—åˆ—ä½œæˆ
     char tmp[256];
     char host1[256];
     host.toStr(host1);
 
     if (infoFlg) {
         if (chanHit.version_ex_number) {
-            // Šg’£ƒo[ƒWƒ‡ƒ“
+            // æ‹¡å¼µãƒãƒ¼ã‚¸ãƒ§ãƒ³
             snprintf(tmp, _countof(tmp), "%c%c%04d - %d/%d - %s(%s)",
                 chanHit.version_ex_prefix[0],
                 chanHit.version_ex_prefix[1],
@@ -790,7 +790,7 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y) {
     }
     _bstr_t bstr1(tmp);
 
-    // ƒXƒe[ƒ^ƒX•\¦
+    // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹è¡¨ç¤º
     Gdiplus::Image *img = NULL;
     unsigned int nowTime = sys->getTime();
     switch (getStatus()) {
@@ -829,7 +829,7 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y) {
         break;
     }
 
-    // •¶š•`‰æ”ÍˆÍw’è
+    // æ–‡å­—æç”»ç¯„å›²æŒ‡å®š
     RectF r1(origin.X + img->GetWidth() + 2, origin.Y, 800.0f, 13.0f);
     RectF r2;
     StringFormat format;
@@ -837,29 +837,29 @@ int ServentData::drawServent(Gdiplus::Graphics *g, int x, int y) {
     g->MeasureString(bstr1, -1, &font, r1, &format, &r2);
 
     w = (INT)r2.Width + img->GetWidth() + 2;
-    // ServentData•\¦•”‚Ì”wŒi‚ğ“h‚é
+    // ServentDataè¡¨ç¤ºéƒ¨ã®èƒŒæ™¯ã‚’å¡—ã‚‹
     if (getSelected()) {
-        // ‘I‘ğ’†
+        // é¸æŠä¸­
         SolidBrush b(Color(160, 49, 106, 197));
         g->FillRectangle(&b, x, y, w, 13);
     }
     else {
-        // ”ñ‘I‘ğ
+        // éé¸æŠ
         SolidBrush b(Color(160, 200, 200, 200));
         g->FillRectangle(&b, x, y, w, 13);
     }
 
-    // ƒXƒe[ƒ^ƒX•\¦ˆÊ’u
+    // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹è¡¨ç¤ºä½ç½®
     Rect img_rect((INT)origin.X, (INT)origin.Y + 1, img ? img->GetWidth() : 12, 12);
-    // ƒXƒe[ƒ^ƒX•`‰æ
+    // ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æç”»
     ImageAttributes att;
     //	att.SetColorKey(Color::White, Color::White, ColorAdjustTypeBitmap);
     g->DrawImage(img, img_rect, 0, 0, img_rect.Width, 12, UnitPixel, &att);
-    // Ÿ‚ÌŠî“_
+    // æ¬¡ã®åŸºç‚¹
     origin.X += 12;
 
     g->DrawString(bstr1, -1, &font, r2, &format, strBrush);
-    // Ÿ‚ÌŠî“_
+    // æ¬¡ã®åŸºç‚¹
     origin.X += r2.Width;
     origin.Y += 13;
 
@@ -890,12 +890,12 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
     thread->finish = false;
 
     while (thread->active) {
-        // ƒ`ƒƒƒ“ƒlƒ‹ƒf[ƒ^ƒƒbƒN
+        // ãƒãƒ£ãƒ³ãƒãƒ«ãƒ‡ãƒ¼ã‚¿ãƒ­ãƒƒã‚¯
         ChannelDataLock.on();
-        // ƒ`ƒƒƒ“ƒlƒ‹ƒf[ƒ^‚ÌXVƒtƒ‰ƒO‚ğ‘S‚ÄFALSE‚É‚·‚é
+        // ãƒãƒ£ãƒ³ãƒãƒ«ãƒ‡ãƒ¼ã‚¿ã®æ›´æ–°ãƒ•ãƒ©ã‚°ã‚’å…¨ã¦FALSEã«ã™ã‚‹
         ChannelData *cd = channelDataTop;
         while (cd) {
-            // Servent‚ÌXVƒtƒ‰ƒO‚ğFALSE‚É‚·‚é
+            // Serventã®æ›´æ–°ãƒ•ãƒ©ã‚°ã‚’FALSEã«ã™ã‚‹
             ServentData *sv = cd->getServentDataTop();
             while (sv) {
                 sv->setEnableFlg(FALSE);
@@ -906,46 +906,46 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
         }
 
         Channel *c = chanMgr->channel;
-        // Œ»İ‘¶İ‚·‚éƒ`ƒƒƒ“ƒlƒ‹•ªƒ‹[ƒv
+        // ç¾åœ¨å­˜åœ¨ã™ã‚‹ãƒãƒ£ãƒ³ãƒãƒ«åˆ†ãƒ«ãƒ¼ãƒ—
         while (c) {
-            // Šù‚Éƒ`ƒƒƒ“ƒlƒ‹ƒf[ƒ^‚ğ‚Á‚Ä‚¢‚é‚©
+            // æ—¢ã«ãƒãƒ£ãƒ³ãƒãƒ«ãƒ‡ãƒ¼ã‚¿ã‚’æŒã£ã¦ã„ã‚‹ã‹
             cd = channelDataTop;
-            // ”­Œ©ƒtƒ‰ƒOFALSE
+            // ç™ºè¦‹ãƒ•ãƒ©ã‚°FALSE
             bool bFoundFlg = FALSE;
             while (cd) {
                 if (cd->getChannelId() == c->channel_id) {
-                    //Šù‚Éƒ`ƒƒƒ“ƒlƒ‹ƒf[ƒ^‚ª‚ ‚é‚Ì‚ÅA‚»‚Ì‚Ü‚ÜXV
+                    //æ—¢ã«ãƒãƒ£ãƒ³ãƒãƒ«ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚‹ã®ã§ã€ãã®ã¾ã¾æ›´æ–°
                     cd->setData(c);
-                    // XVƒtƒ‰ƒOTRUE
+                    // æ›´æ–°ãƒ•ãƒ©ã‚°TRUE
                     cd->setEnableFlg(TRUE);
-                    // ”­Œ©ƒtƒ‰ƒOTRUE
+                    // ç™ºè¦‹ãƒ•ãƒ©ã‚°TRUE
                     bFoundFlg = TRUE;
-                    // ƒ‹[ƒv—£’E
+                    // ãƒ«ãƒ¼ãƒ—é›¢è„±
                     break;
                 }
-                // Œ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡AŸ‚Ìƒf[ƒ^‚ğƒ`ƒFƒbƒN
+                // è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã€æ¬¡ã®ãƒ‡ãƒ¼ã‚¿ã‚’ãƒã‚§ãƒƒã‚¯
                 cd = cd->getNextData();
             }
 
-            // V‚µ‚¢ƒ`ƒƒƒ“ƒlƒ‹‚Ìê‡AV‹Kƒf[ƒ^ì¬
+            // æ–°ã—ã„ãƒãƒ£ãƒ³ãƒãƒ«ã®å ´åˆã€æ–°è¦ãƒ‡ãƒ¼ã‚¿ä½œæˆ
             if (!bFoundFlg) {
-                // V‹Kƒf[ƒ^ì¬
+                // æ–°è¦ãƒ‡ãƒ¼ã‚¿ä½œæˆ
                 cd = ::new ChannelData();
-                // ƒf[ƒ^XV
+                // ãƒ‡ãƒ¼ã‚¿æ›´æ–°
                 cd->setData(c);
-                // XVƒtƒ‰ƒOTRUE
+                // æ›´æ–°ãƒ•ãƒ©ã‚°TRUE
                 cd->setEnableFlg(TRUE);
 
-                // V‹Kƒf[ƒ^‚ğƒŠƒXƒg‚Ìæ“ª‚É“ü‚ê‚é
+                // æ–°è¦ãƒ‡ãƒ¼ã‚¿ã‚’ãƒªã‚¹ãƒˆã®å…ˆé ­ã«å…¥ã‚Œã‚‹
                 cd->setNextData(channelDataTop);
                 channelDataTop = cd;
             }
-            // Ÿ‚Ìƒ`ƒƒƒ“ƒlƒ‹‚ğæ“¾
+            // æ¬¡ã®ãƒãƒ£ãƒ³ãƒãƒ«ã‚’å–å¾—
             c = c->next;
         }
 
 #if 1
-        // COUT‚ğŒŸõ
+        // COUTã‚’æ¤œç´¢
         {
             bool foundFlg = false;
             bool foundFlg2 = false;
@@ -956,7 +956,7 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
                 {
                     foundFlg = true;
 
-                    // ChannelData––”ö‚Ü‚Å’Tõ
+                    // ChannelDataæœ«å°¾ã¾ã§æ¢ç´¢
                     ChannelData *prev = NULL;
                     cd = channelDataTop;
                     while (cd)
@@ -975,10 +975,10 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
                     if (foundFlg2)
                         break;
 
-                    // ƒm[ƒh’Ç‰Á
+                    // ãƒãƒ¼ãƒ‰è¿½åŠ 
                     if (channelDataTop)
                     {
-                        // channelData‚ª‹ó‚Å‚È‚¢Bcd‚Í‚±‚±‚ÅƒŠƒXƒg––”ö‚ğw‚µ‚Ä‚éi‚Í‚¸j
+                        // channelDataãŒç©ºã§ãªã„ã€‚cdã¯ã“ã“ã§ãƒªã‚¹ãƒˆæœ«å°¾ã‚’æŒ‡ã—ã¦ã‚‹ï¼ˆã¯ãšï¼‰
                         cd->setNextData(::new ChannelData());
                         cd = cd->getNextData();
                         memset(cd, 0, sizeof(cd));
@@ -986,13 +986,13 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
                     }
                     else
                     {
-                        // channelData‚ª‹ó
+                        // channelDataãŒç©º
                         channelDataTop = ::new ChannelData();
                         channelDataTop->setNextData(NULL);
                         cd = channelDataTop;
                     }
 
-                    // ƒf[ƒ^İ’è
+                    // ãƒ‡ãƒ¼ã‚¿è¨­å®š
                     cd->type = s->type;
                     cd->servent_id = s->servent_id;
                     cd->setEnableFlg(true);
@@ -1001,17 +1001,17 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
                 s = s->next;
             }
 
-            // COUT‚ªØ‚ê‚Ä‚½‚çíœ
+            // COUTãŒåˆ‡ã‚Œã¦ãŸã‚‰å‰Šé™¤
             if (!foundFlg)
             {
                 cd = channelDataTop;
                 ChannelData *prev = NULL;
                 while (cd)
                 {
-                    // COUT‚Ìî•ñ‚ğíœ
+                    // COUTã®æƒ…å ±ã‚’å‰Šé™¤
                     if (cd->type == Servent::T_COUT)
                     {
-                        // æ“ª
+                        // å…ˆé ­
                         if (!prev)
                         {
                             channelDataTop = cd->getNextData();
@@ -1030,29 +1030,29 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
         }
 #endif
 
-        // ƒ`ƒƒƒ“ƒlƒ‹‚ª‚È‚­‚È‚Á‚Ä‚¢‚éê‡‚Ìˆ—
+        // ãƒãƒ£ãƒ³ãƒãƒ«ãŒãªããªã£ã¦ã„ã‚‹å ´åˆã®å‡¦ç†
         cd = channelDataTop;
         ChannelData *prev = NULL;
         while (cd) {
-            // ƒf[ƒ^‚ğXV‚µ‚È‚©‚Á‚½‚©
+            // ãƒ‡ãƒ¼ã‚¿ã‚’æ›´æ–°ã—ãªã‹ã£ãŸã‹
             if (cd->getEnableFlg() == FALSE) {
-                // ƒ`ƒƒƒ“ƒlƒ‹‚ª‚È‚­‚È‚Á‚Ä‚¢‚é‚Ì‚Åíœ
+                // ãƒãƒ£ãƒ³ãƒãƒ«ãŒãªããªã£ã¦ã„ã‚‹ã®ã§å‰Šé™¤
                 ChannelData *next;
                 next = cd->getNextData();
                 if (!prev) {
-                    // æ“ª‚Ìƒf[ƒ^‚ğíœ
-                    // ‚±‚±ƒƒ‚ƒŠƒŠ[ƒN‚µ‚»‚¤ by ‚¦‚é[
+                    // å…ˆé ­ã®ãƒ‡ãƒ¼ã‚¿ã‚’å‰Šé™¤
+                    // ã“ã“ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã—ãã† by ãˆã‚‹ãƒ¼
                     channelDataTop = next;
                 }
                 else {
-                    // “r’†‚Ìƒf[ƒ^‚ğíœ
+                    // é€”ä¸­ã®ãƒ‡ãƒ¼ã‚¿ã‚’å‰Šé™¤
                     prev->setNextData(next);
                 }
-                // Ÿ‚Ìƒf[ƒ^‚Ö
+                // æ¬¡ã®ãƒ‡ãƒ¼ã‚¿ã¸
                 cd = next;
             }
             else {
-                // ƒf[ƒ^XVÏFŸ‚Ìƒf[ƒ^‚Ö
+                // ãƒ‡ãƒ¼ã‚¿æ›´æ–°æ¸ˆï¼šæ¬¡ã®ãƒ‡ãƒ¼ã‚¿ã¸
                 prev = cd;
                 cd = cd->getNextData();
             }
@@ -1060,7 +1060,7 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
 
         Servent *s = servMgr->servents;
         while (s) {
-            // ‰Šú‰»
+            // åˆæœŸåŒ–
             ChanHitList *chl;
             bool infoFlg = false;
             bool relay = true;
@@ -1069,31 +1069,31 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
             int vp_ver = 0;
             char ver_ex_prefix[2] = { ' ', ' ' };
             int ver_ex_number = 0;
-            // ’¼‰ºƒzƒXƒgî•ñƒ`ƒFƒbƒN
+            // ç›´ä¸‹ãƒ›ã‚¹ãƒˆæƒ…å ±ãƒã‚§ãƒƒã‚¯
             unsigned int totalRelays = 0;
             unsigned int totalListeners = 0;
 
             ChanHit hitData;
-            // óM’†‚©
+            // å—ä¿¡ä¸­ã‹
             if ((s->type == Servent::T_RELAY) && (s->status == Servent::S_CONNECTED)) {
-                // ƒzƒXƒgî•ñƒƒbƒN
+                // ãƒ›ã‚¹ãƒˆæƒ…å ±ãƒ­ãƒƒã‚¯
                 chanMgr->hitlistlock.on();
-                // ’¼‰ºƒzƒXƒg‚ªóM‚µ‚Ä‚¢‚éƒ`ƒƒƒ“ƒlƒ‹‚ÌƒzƒXƒgî•ñ‚ğæ“¾
+                // ç›´ä¸‹ãƒ›ã‚¹ãƒˆãŒå—ä¿¡ã—ã¦ã„ã‚‹ãƒãƒ£ãƒ³ãƒãƒ«ã®ãƒ›ã‚¹ãƒˆæƒ…å ±ã‚’å–å¾—
                 chl = chanMgr->findHitListByID(s->chanID);
-                // ƒ`ƒƒƒ“ƒlƒ‹‚ÌƒzƒXƒgî•ñ‚ª‚ ‚é‚©
+                // ãƒãƒ£ãƒ³ãƒãƒ«ã®ãƒ›ã‚¹ãƒˆæƒ…å ±ãŒã‚ã‚‹ã‹
                 if (chl) {
-                    // ƒ`ƒƒƒ“ƒlƒ‹‚ÌƒzƒXƒgî•ñ‚ª‚ ‚éê‡
+                    // ãƒãƒ£ãƒ³ãƒãƒ«ã®ãƒ›ã‚¹ãƒˆæƒ…å ±ãŒã‚ã‚‹å ´åˆ
                     ChanHit *hit = chl->hit;
-                    //@ƒ`ƒƒƒ“ƒlƒ‹‚ÌƒzƒXƒgî•ñ‚ğ‘S‘–¸‚µ‚Ä
+                    //ã€€ãƒãƒ£ãƒ³ãƒãƒ«ã®ãƒ›ã‚¹ãƒˆæƒ…å ±ã‚’å…¨èµ°æŸ»ã—ã¦
                     while (hit) {
-                        // ID‚ª“¯‚¶‚à‚Ì‚Å‚ ‚ê‚Î
+                        // IDãŒåŒã˜ã‚‚ã®ã§ã‚ã‚Œã°
                         if (hit->servent_id == s->servent_id) {
-                            // ƒg[ƒ^ƒ‹ƒŠƒŒ[‚Æƒg[ƒ^ƒ‹ƒŠƒXƒi[‚ğ‰ÁZ
+                            // ãƒˆãƒ¼ã‚¿ãƒ«ãƒªãƒ¬ãƒ¼ã¨ãƒˆãƒ¼ã‚¿ãƒ«ãƒªã‚¹ãƒŠãƒ¼ã‚’åŠ ç®—
                             totalRelays += hit->numRelays;
                             totalListeners += hit->numListeners;
-                            // ’¼‰º‚Å‚ ‚ê‚Î
+                            // ç›´ä¸‹ã§ã‚ã‚Œã°
                             if (hit->numHops == 1) {
-                                // î•ñ‚ğˆê’U•Û‘¶
+                                // æƒ…å ±ã‚’ä¸€æ—¦ä¿å­˜
                                 infoFlg = true;
                                 hitData.relay = hit->relay;
                                 hitData.firewalled = hit->firewalled;
@@ -1104,19 +1104,19 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
                                 hitData.version_ex_number = hit->version_ex_number;
                             }
                         }
-                        // Ÿ‚ğƒ`ƒFƒbƒN
+                        // æ¬¡ã‚’ãƒã‚§ãƒƒã‚¯
                         hit = hit->next;
                     }
                 }
 
-                // ƒ`ƒƒƒ“ƒlƒ‹ƒf[ƒ^‚©‚çServent‚ğŒŸõ
+                // ãƒãƒ£ãƒ³ãƒãƒ«ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰Serventã‚’æ¤œç´¢
                 bool bFoundFlg = FALSE;
                 cd = channelDataTop;
                 while (cd) {
                     ServentData *sv = cd->findServentData(s->servent_id);
-                    // ServentData‚ª‚ ‚ê‚Î
+                    // ServentDataãŒã‚ã‚Œã°
                     if (sv && cd->getChannelId() == s->channel_id) {
-                        // ƒf[ƒ^İ’è
+                        // ãƒ‡ãƒ¼ã‚¿è¨­å®š
                         sv->setData(s, &hitData, totalListeners, totalRelays, infoFlg);
                         sv->setEnableFlg(TRUE);
                         bFoundFlg = TRUE;
@@ -1124,20 +1124,20 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
                     }
                     cd = cd->getNextData();
                 }
-                // ServentData‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½ê‡
+                // ServentDataãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆ
                 if (!bFoundFlg) {
-                    // ƒ`ƒƒƒ“ƒlƒ‹ƒf[ƒ^‚ğ’T‚·
+                    // ãƒãƒ£ãƒ³ãƒãƒ«ãƒ‡ãƒ¼ã‚¿ã‚’æ¢ã™
                     cd = channelDataTop;
                     while (cd) {
-                        // ƒ`ƒƒƒ“ƒlƒ‹ID‚ª“¯‚¶‚©
+                        // ãƒãƒ£ãƒ³ãƒãƒ«IDãŒåŒã˜ã‹
                         if (cd->getChannelId() == s->channel_id) {
-                            // ƒf[ƒ^İ’è
+                            // ãƒ‡ãƒ¼ã‚¿è¨­å®š
                             ServentData *sv = ::new ServentData();
                             sv->setData(s, &hitData, totalListeners, totalRelays, infoFlg);
                             sv->setEnableFlg(TRUE);
-                            // ƒ`ƒƒƒ“ƒlƒ‹ƒf[ƒ^‚ÉServentData’Ç‰Á
+                            // ãƒãƒ£ãƒ³ãƒãƒ«ãƒ‡ãƒ¼ã‚¿ã«ServentDataè¿½åŠ 
                             cd->addServentData(sv);
-                            // ƒzƒXƒg–¼‚ğæ“¾‚·‚é
+                            // ãƒ›ã‚¹ãƒˆåã‚’å–å¾—ã™ã‚‹
                             IdData *id = ::new IdData(cd->getChannelId(), sv->getServentId(), sv->getHost().ip);
                             ThreadInfo *t;
                             t = ::new ThreadInfo();
@@ -1145,35 +1145,35 @@ THREAD_PROC GUIDataUpdate(ThreadInfo *thread) {
                             t->data = (void*)id;
                             sys->startThread(t);
                             LOG_DEBUG("resolving thread was started(%d)", id->getServentId());
-                            // ƒ‹[ƒvI—¹
+                            // ãƒ«ãƒ¼ãƒ—çµ‚äº†
                             break;
                         }
-                        // Ÿ‚Ìƒf[ƒ^‚Ö
+                        // æ¬¡ã®ãƒ‡ãƒ¼ã‚¿ã¸
                         cd = cd->getNextData();
                     }
                 }
-                // ƒzƒXƒgî•ñƒAƒ“ƒƒbƒN
+                // ãƒ›ã‚¹ãƒˆæƒ…å ±ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
                 chanMgr->hitlistlock.off();
             }
             s = s->next;
         }
 
-        // XV‚µ‚Ä‚¢‚È‚¢ServentData‚ğíœ
+        // æ›´æ–°ã—ã¦ã„ãªã„ServentDataã‚’å‰Šé™¤
         cd = channelDataTop;
         while (cd) {
             cd->deleteDisableServents();
             cd = cd->getNextData();
         }
 
-        // ƒ`ƒƒƒ“ƒlƒ‹ƒf[ƒ^ƒAƒ“ƒƒbƒN
+        // ãƒãƒ£ãƒ³ãƒãƒ«ãƒ‡ãƒ¼ã‚¿ã‚¢ãƒ³ãƒ­ãƒƒã‚¯
         ChannelDataLock.off();
 
-        // •`‰æXV
+        // æç”»æ›´æ–°
         if (guiWnd) {
             MakeBack(guiWnd);
         }
 
-        // 0.1•b~10‚Å1•b‘Ò‚¿
+        // 0.1ç§’Ã—10ã§1ç§’å¾…ã¡
         for (i = 0; i < 2; i++)
         {
             if (!thread->active)
@@ -1228,35 +1228,35 @@ void PopupChannelMenu(int channel_id) {
     }
 
     info.wID = 1001;
-    info.dwTypeData = "Ø’f";
+    info.dwTypeData = "åˆ‡æ–­";
     InsertMenuItem(hMenu, -1, true, &info);
 
     InsertMenuItem(hMenu, -1, true, &separator);
 
     info.wID = 1000;
-    info.dwTypeData = "Ä¶";
+    info.dwTypeData = "å†ç”Ÿ";
     InsertMenuItem(hMenu, -1, true, &info);
 
     InsertMenuItem(hMenu, -1, true, &separator);
 
     info.wID = 1002;
-    info.dwTypeData = "ÄÚ‘±";
+    info.dwTypeData = "å†æ¥ç¶š";
     InsertMenuItem(hMenu, -1, true, &info);
 
     info.wID = 1003;
-    info.dwTypeData = "ƒL[ƒv";
+    info.dwTypeData = "ã‚­ãƒ¼ãƒ—";
     InsertMenuItem(hMenu, -1, true, &info);
 
     InsertMenuItem(hMenu, -1, true, &separator);
 
     if (!cd->getOpenFlg()) {
         info.wID = 1004;
-        info.dwTypeData = "’¼‰º•\¦";
+        info.dwTypeData = "ç›´ä¸‹è¡¨ç¤º";
         InsertMenuItem(hMenu, -1, true, &info);
     }
     else {
         info.wID = 1005;
-        info.dwTypeData = "’¼‰º‰B•Á";
+        info.dwTypeData = "ç›´ä¸‹éš è”½";
         InsertMenuItem(hMenu, -1, true, &info);
     }
 
@@ -1278,12 +1278,12 @@ void PopupChannelMenu(int channel_id) {
     }
 
     switch (dwID) {
-    case 1000:	// Ä¶
+    case 1000:	// å†ç”Ÿ
         chanMgr->playChannel(c->info);
         break;
 
-    case 1001:	// Ø’f
-        // bump’†‚ÍØ’f‚µ‚È‚¢
+    case 1001:	// åˆ‡æ–­
+        // bumpä¸­ã¯åˆ‡æ–­ã—ãªã„
         if (!c->bumped)
         {
             c->thread.active = false;
@@ -1291,14 +1291,14 @@ void PopupChannelMenu(int channel_id) {
         }
         break;
 
-    case 1002:	// ÄÚ‘±
-        // ’¼‰º‚©‚ÂóM’†‚Å‚ ‚ê‚ÎŠm”FƒƒbƒZ[ƒW•\¦
+    case 1002:	// å†æ¥ç¶š
+        // ç›´ä¸‹ã‹ã¤å—ä¿¡ä¸­ã§ã‚ã‚Œã°ç¢ºèªãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤º
         if (cd->isTracker() && cd->getStatus() == Channel::S_RECEIVING)
         {
             int id;
             id = MessageBox(guiWnd,
-                "’¼‰º‚Å‚·‚ªÄÚ‘±‚µ‚Ü‚·‚©H",
-                "’¼‰ºŒx",
+                "ç›´ä¸‹ã§ã™ãŒå†æ¥ç¶šã—ã¾ã™ã‹ï¼Ÿ",
+                "ç›´ä¸‹è­¦å‘Š",
                 MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2);
             if (id != IDYES)
                 break;
@@ -1307,7 +1307,7 @@ void PopupChannelMenu(int channel_id) {
         c->bump = true;
         break;
 
-    case 1003:	// ƒL[ƒv
+    case 1003:	// ã‚­ãƒ¼ãƒ—
         if (!c->stayConnected) {
             c->stayConnected = true;
         }
@@ -1316,12 +1316,12 @@ void PopupChannelMenu(int channel_id) {
         }
         break;
 
-    case 1004:	// ’¼‰º•\¦
+    case 1004:	// ç›´ä¸‹è¡¨ç¤º
         cd->setOpenFlg(TRUE);
         MakeBack(guiWnd);
         break;
 
-    case 1005:	// ’¼‰º‰B•Á
+    case 1005:	// ç›´ä¸‹éš è”½
         cd->setOpenFlg(FALSE);
         MakeBack(guiWnd);
         break;
@@ -1369,7 +1369,7 @@ void PopupServentMenu(int servent_id) {
     }
 
     info.wID = 1001;
-    info.dwTypeData = "Ø’f";
+    info.dwTypeData = "åˆ‡æ–­";
     InsertMenuItem(hMenu, -1, true, &info);
 
     //	InsertMenuItem(hMenu, -1, true, &separator);
@@ -1406,10 +1406,10 @@ void PopupServentMenu(int servent_id) {
     }
 
     switch (dwID) {
-    case 1001:	// Ø’f
+    case 1001:	// åˆ‡æ–­
         s->thread.active = false;
 
-        // COUTØ’f
+        // COUTåˆ‡æ–­
         if (s->type == Servent::T_COUT)
             s->thread.finish = true;
 
@@ -1438,19 +1438,19 @@ void PopupOtherMenu() {
     info.fType = MFT_STRING;
 
     info.wID = 1107;
-    info.dwTypeData = "”ñƒŠƒŒ[’†‚Ìƒ`ƒƒƒ“ƒlƒ‹‚ğíœ";
+    info.dwTypeData = "éãƒªãƒ¬ãƒ¼ä¸­ã®ãƒãƒ£ãƒ³ãƒãƒ«ã‚’å‰Šé™¤";
     InsertMenuItem(hMenu, -1, true, &info);
 
     InsertMenuItem(hMenu, -1, true, &separator);
 
     if (!gbDispTop) {
         info.wID = 1101;
-        info.dwTypeData = "Å‘O–Ê•\¦";
+        info.dwTypeData = "æœ€å‰é¢è¡¨ç¤º";
         InsertMenuItem(hMenu, -1, true, &info);
     }
     else {
         info.wID = 1102;
-        info.dwTypeData = "Å‘O–Ê‰ğœ";
+        info.dwTypeData = "æœ€å‰é¢è§£é™¤";
         InsertMenuItem(hMenu, -1, true, &info);
     }
 
@@ -1458,12 +1458,12 @@ void PopupOtherMenu() {
 
     if (!gbAllOpen) {
         info.wID = 1103;
-        info.dwTypeData = "‘S’¼‰º“WŠJ";
+        info.dwTypeData = "å…¨ç›´ä¸‹å±•é–‹";
         InsertMenuItem(hMenu, -1, true, &info);
     }
     else {
         info.wID = 1104;
-        info.dwTypeData = "‘S’¼‰º‰B•Á";
+        info.dwTypeData = "å…¨ç›´ä¸‹éš è”½";
         InsertMenuItem(hMenu, -1, true, &info);
     }
 
@@ -1471,12 +1471,12 @@ void PopupOtherMenu() {
 
     if (!servMgr->autoServe) {
         info.wID = 1105;
-        info.dwTypeData = "—LŒø";
+        info.dwTypeData = "æœ‰åŠ¹";
         InsertMenuItem(hMenu, -1, true, &info);
     }
     else {
         info.wID = 1106;
-        info.dwTypeData = "–³Œø";
+        info.dwTypeData = "ç„¡åŠ¹";
         InsertMenuItem(hMenu, -1, true, &info);
     }
 
@@ -1488,17 +1488,17 @@ void PopupOtherMenu() {
     ChannelData *cd = channelDataTop;
 
     switch (dwID) {
-    case 1101:	// Å‘O–Ê•\¦
+    case 1101:	// æœ€å‰é¢è¡¨ç¤º
         gbDispTop = true;
         ::SetWindowPos(guiWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
         break;
 
-    case 1102:	// Å‘O–Ê‰ğœ
+    case 1102:	// æœ€å‰é¢è§£é™¤
         gbDispTop = false;
         ::SetWindowPos(guiWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
         break;
 
-    case 1103:	// ‘S’¼‰º“WŠJ
+    case 1103:	// å…¨ç›´ä¸‹å±•é–‹
         gbAllOpen = true;
         while (cd) {
             cd->setOpenFlg(true);
@@ -1506,7 +1506,7 @@ void PopupOtherMenu() {
         }
         break;
 
-    case 1104:	// ‘S’¼‰º‰B•Á
+    case 1104:	// å…¨ç›´ä¸‹éš è”½
         gbAllOpen = false;
         while (cd) {
             cd->setOpenFlg(false);
@@ -1514,15 +1514,15 @@ void PopupOtherMenu() {
         }
         break;
 
-    case 1105:	// —LŒø
+    case 1105:	// æœ‰åŠ¹
         servMgr->autoServe = true;
         break;
 
-    case 1106:	// –³Œø
+    case 1106:	// ç„¡åŠ¹
         servMgr->autoServe = false;
         break;
 
-    case 1107:  // ”ñƒŠƒŒ[’†‚Ìƒ`ƒƒƒ“ƒlƒ‹î•ñ‚ğ‘S‚Äíœ
+    case 1107:  // éãƒªãƒ¬ãƒ¼ä¸­ã®ãƒãƒ£ãƒ³ãƒãƒ«æƒ…å ±ã‚’å…¨ã¦å‰Šé™¤
     {
         LOG_DEBUG("Start cleaning up unused channels");
         while (cd)
@@ -1548,7 +1548,7 @@ void PopupOtherMenu() {
 }
 
 void WmCreateProc(HWND hwnd) {
-    // ©“®Å‘O–Ê‹@”\
+    // è‡ªå‹•æœ€å‰é¢æ©Ÿèƒ½
     if (servMgr->topmostGui)
     {
         ::gbDispTop = true;
@@ -1615,7 +1615,7 @@ void WmPaintProc(HWND hwnd) {
     if (backGra) {
         MakeBackLock.on();
         hdc = BeginPaint(hwnd, &paint);
-        RECT *rcRect;	// •`‰æ”ÍˆÍ
+        RECT *rcRect;	// æç”»ç¯„å›²
         rcRect = &(paint.rcPaint);
         LONG width = rcRect->right - rcRect->left + 1;
         LONG height = rcRect->bottom - rcRect->top + 1;
@@ -1771,7 +1771,7 @@ void WmRButtonDownProc(HWND hwnd, LPARAM lParam) {
             channel_id = cd->getChannelId();
             channel_selected = TRUE;
 
-            // COUT¯•Ê
+            // COUTè­˜åˆ¥
             if (cd->type == Servent::T_COUT)
             {
                 channel_selected = FALSE;
@@ -1824,32 +1824,32 @@ LRESULT CALLBACK GUIProc(HWND hwnd, UINT message,
     WPARAM wParam, LPARAM lParam)
 {
     switch (message) {
-    case WM_CREATE:		// ƒEƒBƒ“ƒhƒEì¬
+    case WM_CREATE:		// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ
         WmCreateProc(hwnd);
         break;
 
-    case WM_PAINT:		// •`‰æ
+    case WM_PAINT:		// æç”»
         WmPaintProc(hwnd);
         break;
 
-    case WM_SIZE:		// ƒTƒCƒY•ÏX
+    case WM_SIZE:		// ã‚µã‚¤ã‚ºå¤‰æ›´
         WmSizeProc(hwnd, lParam);
         break;
 
-    case WM_LBUTTONDOWN:	// ¶ƒ{ƒ^ƒ“‰Ÿ‚·
+    case WM_LBUTTONDOWN:	// å·¦ãƒœã‚¿ãƒ³æŠ¼ã™
         WmLButtonDownProc(hwnd, lParam);
         break;
 
-    case WM_RBUTTONDOWN:	// ‰Eƒ{ƒ^ƒ“‰Ÿ‚·
+    case WM_RBUTTONDOWN:	// å³ãƒœã‚¿ãƒ³æŠ¼ã™
         WmRButtonDownProc(hwnd, lParam);
         break;
 
-    case WM_LBUTTONDBLCLK:		// ¶ƒ_ƒuƒ‹ƒNƒŠƒbƒN
+    case WM_LBUTTONDBLCLK:		// å·¦ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯
         WmLButtonDblclkProc(hwnd, lParam);
         break;
 
-    case WM_ERASEBKGND:	// ”wŒiÁ‹
-        return TRUE;	// ”wŒi‚ÍÁ‚³‚È‚¢
+    case WM_ERASEBKGND:	// èƒŒæ™¯æ¶ˆå»
+        return TRUE;	// èƒŒæ™¯ã¯æ¶ˆã•ãªã„
 
     case WM_CLOSE:
         //if (backImage){

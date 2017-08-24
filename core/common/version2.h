@@ -1,4 +1,4 @@
-// ------------------------------------------------
+ï»¿// ------------------------------------------------
 // File : version2.h
 // Date: 17-june-2005
 // Author: giles
@@ -40,7 +40,7 @@ static const char *PCX_AGENTJP = "PeerCast/0.1218-J";
 static const char *PCX_AGENTVP = "PeerCast/0.1218(VP0027)";
 static const char *PCX_VERSTRING = "v0.1218(VP0027)";
 
-extern int version_ex; // VERSION_EX—LŒø‰»ƒtƒ‰ƒO
+extern int version_ex; // VERSION_EXæœ‰åŠ¹åŒ–ãƒ•ãƒ©ã‚°
 
 #if 1 /* for VP extend version */
 //#define VERSION_EX 1

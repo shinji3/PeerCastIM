@@ -1,4 +1,4 @@
-// ------------------------------------------------
+Ôªø// ------------------------------------------------
 // File : simple.cpp
 // Date: 4-apr-2002
 // Author: giles
@@ -785,7 +785,7 @@ void addAllChannelsMenu(HMENU cm)
         InsertMenu(yMenu, 0, MF_BYPOSITION, ID_POPUP_YELLOWPAGES1, servMgr->rootHost);
     }
 
-    InsertMenu(cm, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)yMenu, "ÉCÉGÉçÅ[ÉyÅ[ÉW");
+    InsertMenu(cm, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)yMenu, "„Ç§„Ç®„É≠„Éº„Éö„Éº„Ç∏");
     InsertMenu(cm, 0, MF_BYPOSITION | MF_SEPARATOR, NULL, NULL);
     // add channels to menu
     int numActive = 0;
@@ -1176,7 +1176,7 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
         if (version_ex)
         {
-            SendDlgItemMessage(hDlg, IDC_ABOUTVER, WM_SETTEXT, 0, (LPARAM)PCX_AGENTEX); // x64ëŒâû
+            SendDlgItemMessage(hDlg, IDC_ABOUTVER, WM_SETTEXT, 0, (LPARAM)PCX_AGENTEX); // x64ÂØæÂøú
         }
         else
         {

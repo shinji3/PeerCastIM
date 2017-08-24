@@ -1,4 +1,4 @@
-
+﻿
 /*
  * Convert a string between UTF-8 and the locale's charset.
  * Invalid bytes are replaced by '#', and characters that are

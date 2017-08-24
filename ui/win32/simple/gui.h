@@ -1,4 +1,4 @@
-// ------------------------------------------------
+ï»¿// ------------------------------------------------
 // File : gui.h
 // Date: 4-apr-2002
 // Author: giles
@@ -223,8 +223,8 @@ public:
 
     bool checkDown(int x, int y);
 
-    Servent::TYPE type; // COUT‚ÌƒT[ƒoƒ“ƒgî•ñ•Û—p
-    int servent_id; // “¯ãBchannel_id‚Å‘ã—p‚Å‚«‚½‚¯‚ÇPublic‚É‚µ‚½‚­‚È‚¢
+    Servent::TYPE type; // COUTã®ã‚µãƒ¼ãƒãƒ³ãƒˆæƒ…å ±ä¿æŒç”¨
+    int servent_id; // åŒä¸Šã€‚channel_idã§ä»£ç”¨ã§ããŸã‘ã©Publicã«ã—ãŸããªã„
 };
 
 

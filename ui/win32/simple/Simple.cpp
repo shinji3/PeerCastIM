@@ -1,4 +1,4 @@
-// ------------------------------------------------
+Ôªø// ------------------------------------------------
 // File : simple.cpp
 // Date: 4-apr-2002
 // Author: giles
@@ -81,7 +81,7 @@ ThreadInfo trafficDlgThread;
 HWND trafficDlg = NULL;
 FileStream fs;
 
-// ÉvÉçÉgÉ^ÉCÉvêÈåæ
+// „Éó„É≠„Éà„Çø„Ç§„ÉóÂÆ£Ë®Ä
 void createGUI(HWND);
 LRESULT CALLBACK TrafficDlgProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -521,8 +521,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
         sys->logBuf->dumpHTML(fs);
         fs.close();
 
-        MessageBox(NULL, "àÍî ï€åÏà·îΩÇÃà◊ÅAÉvÉçÉOÉâÉÄÇÕã≠êßèIóπÇ≥ÇÍÇ‹Ç∑ÅB\n"
-            "ñ‚ëËâåàÇÃÇΩÇﬂÇ…É_ÉìÉvÉfÅ[É^(dump.html, dump.txt)ÇíÒãüÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB", "SEH",
+        MessageBox(NULL, "‰∏ÄËà¨‰øùË≠∑ÈÅïÂèç„ÅÆÁÇ∫„ÄÅ„Éó„É≠„Ç∞„É©„É†„ÅØÂº∑Âà∂ÁµÇ‰∫Ü„Åï„Çå„Åæ„Åô„ÄÇ\n"
+            "ÂïèÈ°åËß£Ê±∫„ÅÆ„Åü„ÇÅ„Å´„ÉÄ„É≥„Éó„Éá„Éº„Çø(dump.html, dump.txt)„ÇíÊèê‰æõ„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇ", "SEH",
             MB_OK | MB_ICONWARNING);
 
         return GetExceptionCode();
@@ -927,7 +927,7 @@ void createGUI(HWND hWnd)
     }
     ShowWindow(guiWnd, SW_SHOWNORMAL);
 
-    // é©ìÆÇ≈ç≈ëOñ 
+    // Ëá™Âãï„ÅßÊúÄÂâçÈù¢
     if (servMgr->topmostGui)
     {
         ::SetWindowPos(guiWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
@@ -996,7 +996,7 @@ void addAllChannelsMenu(HMENU cm)
         InsertMenu(yMenu, 0, MF_BYPOSITION, ID_POPUP_YELLOWPAGES1, servMgr->rootHost);
     }
 
-    InsertMenu(cm, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)yMenu, "ÉCÉGÉçÅ[ÉyÅ[ÉW");
+    InsertMenu(cm, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)yMenu, "„Ç§„Ç®„É≠„Éº„Éö„Éº„Ç∏");
     InsertMenu(cm, 0, MF_BYPOSITION | MF_SEPARATOR, NULL, NULL);
     // add channels to menu
     int numActive = 0;
@@ -1154,7 +1154,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             CheckMenuItem(trayMenu, ID_POPUP_SAVE_GUI_POS, MF_UNCHECKED | MF_BYCOMMAND);
         }
 
-        // é©ìÆGUI/ç≈ëOñ ã@î\
+        // Ëá™ÂãïGUI/ÊúÄÂâçÈù¢Ê©üËÉΩ
         if (servMgr->topmostGui)
         {
             CheckMenuItem(trayMenu, ID_POPUP_TOPMOST, MF_CHECKED | MF_BYCOMMAND);
@@ -1173,7 +1173,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             CheckMenuItem(trayMenu, ID_POPUP_START_WITH_GUI, MF_UNCHECKED | MF_BYCOMMAND);
         }
 
-        // ÉXÉNÉäÅ[ÉìÉZÅ[ÉoÅ[ó}é~
+        // „Çπ„ÇØ„É™„Éº„É≥„Çª„Éº„Éê„ÉºÊäëÊ≠¢
         if (servMgr->preventSS)
         {
             CheckMenuItem(trayMenu, ID_POPUP_PREVENT_SS, MF_CHECKED | MF_BYCOMMAND);
@@ -1183,7 +1183,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             CheckMenuItem(trayMenu, ID_POPUP_PREVENT_SS, MF_UNCHECKED | MF_BYCOMMAND);
         }
 
-        // ÉoÅ[ÉWÉáÉìÉ`ÉFÉbÉNÇÃóLñ≥
+        // „Éê„Éº„Ç∏„Éß„É≥„ÉÅ„Çß„ÉÉ„ÇØ„ÅÆÊúâÁÑ°
         if (servMgr->noVersionCheck)
         {
             CheckMenuItem(trayMenu, ID_POPUP_NO_VER_CHECK, MF_CHECKED | MF_BYCOMMAND);
@@ -1399,7 +1399,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
 
         case ID_POPUP_TOPMOST:
-            // ç≈ëOñ ï\é¶
+            // ÊúÄÂâçÈù¢Ë°®Á§∫
             if (servMgr->topmostGui)
             {
                 servMgr->topmostGui = false;
@@ -1414,7 +1414,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
 
         case ID_POPUP_START_WITH_GUI:
-            // ãNìÆéûÇ…GUIï\é¶
+            // Ëµ∑ÂãïÊôÇ„Å´GUIË°®Á§∫
             if (servMgr->startWithGui)
             {
                 servMgr->startWithGui = false;
@@ -1429,12 +1429,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
 
         case ID_POPUP_TRAFFIC:
-            // ÉgÉâÉtÉBÉbÉNÉÇÉjÉ^ãNìÆ
+            // „Éà„É©„Éï„Ç£„ÉÉ„ÇØ„É¢„Éã„ÇøËµ∑Âãï
             DialogBox(hInst, (LPCTSTR)IDD_TRAFFIC, hWnd, (DLGPROC)TrafficDlgProc);
             break;
 
         case ID_POPUP_PREVENT_SS:
-            // ÉXÉNÉäÅ[ÉìÉZÅ[ÉoÅ[ó}é~
+            // „Çπ„ÇØ„É™„Éº„É≥„Çª„Éº„Éê„ÉºÊäëÊ≠¢
             if (servMgr->preventSS)
             {
                 servMgr->preventSS = false;
@@ -1449,7 +1449,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
 
         case ID_POPUP_NO_VER_CHECK:
-            // ÉoÅ[ÉWÉáÉìÉ`ÉFÉbÉNÇÃóLñ≥
+            // „Éê„Éº„Ç∏„Éß„É≥„ÉÅ„Çß„ÉÉ„ÇØ„ÅÆÊúâÁÑ°
             if (servMgr->noVersionCheck)
             {
                 servMgr->noVersionCheck = false;
@@ -1476,7 +1476,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_SYSCOMMAND:
-        // Ç»ÇÒÇ©ÉAÉNÉeÉBÉuÇ∂Ç·Ç»Ç¢Ç∆ëóÇÁÇÍÇƒÇ±Ç»Ç¢ÇÁÇµÇ¢
+        // „Å™„Çì„Åã„Ç¢„ÇØ„ÉÜ„Ç£„Éñ„Åò„ÇÉ„Å™„ÅÑ„Å®ÈÄÅ„Çâ„Çå„Å¶„Åì„Å™„ÅÑ„Çâ„Åó„ÅÑ
         if (servMgr->preventSS && (wParam == SC_SCREENSAVE) && chanMgr->isBroadcasting())
             return 1;
         else
@@ -1498,7 +1498,7 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 //			SendDlgItemMessage(hDlg,IDC_ABOUTVER,WM_SETTEXT,0,(LONG)PCX_AGENTJP);
         if (version_ex)
         {
-            SendDlgItemMessage(hDlg, IDC_ABOUTVER, WM_SETTEXT, 0, (LPARAM)PCX_AGENTEX); // x64ëŒâû
+            SendDlgItemMessage(hDlg, IDC_ABOUTVER, WM_SETTEXT, 0, (LPARAM)PCX_AGENTEX); // x64ÂØæÂøú
         }
         else
         {
@@ -1553,23 +1553,23 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
         genre.convertTo(String::T_SJIS); //JP-Patch
 
         //SendDlgItemMessage(hDlg,IDC_EDIT_NAME,WM_SETTEXT,0,(LONG)chanInfo.name.cstr());
-        SendDlgItemMessage(hDlg, IDC_EDIT_NAME, WM_SETTEXT, 0, (LPARAM)name.cstr()); // x64ëŒâû
+        SendDlgItemMessage(hDlg, IDC_EDIT_NAME, WM_SETTEXT, 0, (LPARAM)name.cstr()); // x64ÂØæÂøú
         //SendDlgItemMessage(hDlg,IDC_EDIT_NAME,WM_SETTEXT,0,(LONG)name.cstr()); //JP-Patch
         //SendDlgItemMessage(hDlg,IDC_EDIT_PLAYING,WM_SETTEXT,0,(LONG)str);
-        SendDlgItemMessage(hDlg, IDC_EDIT_PLAYING, WM_SETTEXT, 0, (LPARAM)track.cstr()); // x64ëŒâû
+        SendDlgItemMessage(hDlg, IDC_EDIT_PLAYING, WM_SETTEXT, 0, (LPARAM)track.cstr()); // x64ÂØæÂøú
         //SendDlgItemMessage(hDlg,IDC_EDIT_PLAYING,WM_SETTEXT,0,(LONG)track.cstr()); //JP-Patch
         //SendDlgItemMessage(hDlg,IDC_EDIT_MESSAGE,WM_SETTEXT,0,(LONG)chanInfo.comment.cstr());
-        SendDlgItemMessage(hDlg, IDC_EDIT_MESSAGE, WM_SETTEXT, 0, (LPARAM)comment.cstr()); // x64ëŒâû
+        SendDlgItemMessage(hDlg, IDC_EDIT_MESSAGE, WM_SETTEXT, 0, (LPARAM)comment.cstr()); // x64ÂØæÂøú
         //SendDlgItemMessage(hDlg,IDC_EDIT_MESSAGE,WM_SETTEXT,0,(LONG)comment.cstr()); //JP-Patch
         //SendDlgItemMessage(hDlg,IDC_EDIT_DESC,WM_SETTEXT,0,(LONG)chanInfo.desc.cstr());
-        SendDlgItemMessage(hDlg, IDC_EDIT_DESC, WM_SETTEXT, 0, (LPARAM)desc.cstr()); // x64ëŒâû
+        SendDlgItemMessage(hDlg, IDC_EDIT_DESC, WM_SETTEXT, 0, (LPARAM)desc.cstr()); // x64ÂØæÂøú
         //SendDlgItemMessage(hDlg,IDC_EDIT_DESC,WM_SETTEXT,0,(LONG)desc.cstr()); //JP-Patch
         //SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LONG)chanInfo.genre.cstr());
-        SendDlgItemMessage(hDlg, IDC_EDIT_GENRE, WM_SETTEXT, 0, (LPARAM)genre.cstr()); // x64ëŒâû
+        SendDlgItemMessage(hDlg, IDC_EDIT_GENRE, WM_SETTEXT, 0, (LPARAM)genre.cstr()); // x64ÂØæÂøú
         //SendDlgItemMessage(hDlg,IDC_EDIT_GENRE,WM_SETTEXT,0,(LONG)genre.cstr()); //JP-Patch
 
         snprintf(str, _countof(str), "%d kb/s %s", chanInfo.bitrate, ChanInfo::getTypeStr(chanInfo.contentType));
-        SendDlgItemMessage(hDlg, IDC_FORMAT, WM_SETTEXT, 0, (LPARAM)str); // x64ëŒâû
+        SendDlgItemMessage(hDlg, IDC_FORMAT, WM_SETTEXT, 0, (LPARAM)str); // x64ÂØæÂøú
         //SendDlgItemMessage(hDlg,IDC_FORMAT,WM_SETTEXT,0,(LONG)str);
 
 
@@ -1579,22 +1579,22 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
         Channel *ch = chanMgr->findChannelByID(chanInfo.id);
         if (ch)
         {
-            SendDlgItemMessage(hDlg, IDC_EDIT_STATUS, WM_SETTEXT, 0, (LPARAM)ch->getStatusStr()); // x64ëŒâû
+            SendDlgItemMessage(hDlg, IDC_EDIT_STATUS, WM_SETTEXT, 0, (LPARAM)ch->getStatusStr()); // x64ÂØæÂøú
             //SendDlgItemMessage(hDlg,IDC_EDIT_STATUS,WM_SETTEXT,0,(LONG)ch->getStatusStr());
             SendDlgItemMessage(hDlg, IDC_KEEP, BM_SETCHECK, ch->stayConnected, 0);
 
-            // åªç›ÇÃå≈óLÉäÉåÅ[è„å¿ê›íËÇï\é¶(0ÇÕñ≥å¯)
+            // ÁèæÂú®„ÅÆÂõ∫Êúâ„É™„É¨„Éº‰∏äÈôêË®≠ÂÆö„ÇíË°®Á§∫(0„ÅØÁÑ°Âäπ)
             ::SetDlgItemInt(hDlg, IDC_EDIT_MAXRELAYS, ch->maxRelays, false);
             if (isIndexTxt(ch))
             {
-                // index.txtÇ»ÇÃÇ≈ñ≥å¯Ç…
+                // index.txt„Å™„ÅÆ„ÅßÁÑ°Âäπ„Å´
                 ::EnableWindow(::GetDlgItem(hDlg, IDC_EDIT_MAXRELAYS), false);
                 ::EnableWindow(::GetDlgItem(hDlg, IDC_APPLY_MAXRELAYS), false);
             }
         }
         else
         {
-            SendDlgItemMessage(hDlg, IDC_EDIT_STATUS, WM_SETTEXT, 0, (LPARAM)"OK"); // x64ëŒâû
+            SendDlgItemMessage(hDlg, IDC_EDIT_STATUS, WM_SETTEXT, 0, (LPARAM)"OK"); // x64ÂØæÂøú
             //SendDlgItemMessage(hDlg,IDC_EDIT_STATUS,WM_SETTEXT,0,(LONG)"OK");
             EnableWindow(GetDlgItem(hDlg, IDC_KEEP), false);
         }
@@ -1662,11 +1662,11 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 
         case IDC_APPLY_MAXRELAYS:
         {
-            // É`ÉÉÉìÉlÉãå≈óLÇÃç≈ëÂÉäÉåÅ[êîÇê›íË
+            // „ÉÅ„É£„É≥„Éç„É´Âõ∫Êúâ„ÅÆÊúÄÂ§ß„É™„É¨„ÉºÊï∞„ÇíË®≠ÂÆö
             BOOL bSucc;
             unsigned int mr;
 
-            // ì¸óÕíléÊìæ
+            // ÂÖ•ÂäõÂÄ§ÂèñÂæó
             mr = ::GetDlgItemInt(hDlg, IDC_EDIT_MAXRELAYS, &bSucc, false);
 
             if (bSucc)
@@ -1679,7 +1679,7 @@ LRESULT CALLBACK ChanInfoProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
             }
             else
             {
-                MessageBox(hDlg, "ì¸óÕílÇ™ïsê≥Ç≈Ç∑ÅB", "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
+                MessageBox(hDlg, "ÂÖ•ÂäõÂÄ§„Åå‰∏çÊ≠£„Åß„Åô„ÄÇ", "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
                 Channel *ch = chanMgr->findChannelByID(chanInfo.id);
                 if (ch)
                     ::SetDlgItemInt(hDlg, IDC_EDIT_MAXRELAYS, ch->maxRelays, false);
@@ -1728,7 +1728,7 @@ LRESULT CALLBACK TrafficDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
     switch (message)
     {
     case WM_INITDIALOG:
-        // ä˘Ç…äJÇ¢ÇƒÇÈ
+        // Êó¢„Å´Èñã„ÅÑ„Å¶„Çã
         if (trafficDlg || trafficDlgThread.active)
         {
             EndDialog(hDlg, 0);

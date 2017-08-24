@@ -1,4 +1,4 @@
-// ------------------------------------------------
+ï»¿// ------------------------------------------------
 // File : servmgr.cpp
 // Date: 4-apr-2002
 // Author: giles
@@ -185,7 +185,7 @@ ServMgr::ServMgr()
         guiConnListDisplays = 10;
 
         guiTitleModify = false;
-        guiTitleModifyNormal = "PeerCast óM:%rx.kbits.1%kbps ‘—M:%tx.kbits.1%kbps";
+        guiTitleModifyNormal = "PeerCast å—ä¿¡:%rx.kbits.1%kbps é€ä¿¡:%tx.kbits.1%kbps";
         guiTitleModifyMinimized = "R:%rx.kbytes%KB/s T:%tx.kbytes%KB/s";
 
         guiAntennaNotifyIcon = false;
@@ -1754,7 +1754,7 @@ unsigned int ServMgr::numStreams(Servent::TYPE tp, bool all)
                     {
                         Channel *ch = chanMgr->findChannelByID(sv->chanID);
 
-                        // index.txt‚ÍƒJƒEƒ“ƒg‚µ‚È‚¢
+                        // index.txtã¯ã‚«ã‚¦ãƒ³ãƒˆã—ãªã„
                         if (!isIndexTxt(ch))
                             cnt++;
                     }
@@ -1818,7 +1818,7 @@ bool ServMgr::getChannel(char *str, ChanInfo &info, bool relay)
             ch = chanMgr->findAndRelay(info);
             if (ch)
             {
-                // «Exception point
+                // â†“Exception point
                 info = ch->info; //get updated channel info 
                 return true;
             }
@@ -1832,7 +1832,7 @@ bool ServMgr::getChannel(char *str, ChanInfo &info, bool relay)
             ch = chanMgr->findAndRelay(info);
             if (ch)
             {
-                // «Exception point
+                // â†“Exception point
                 info = ch->info; //get updated channel info 
                 return true;
             }

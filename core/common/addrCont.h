@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Container type for IP-addr blacklist
  *
  *                        Impl. by Eru
