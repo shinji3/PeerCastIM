@@ -1220,9 +1220,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             RECT rcWnd;
             HMENU menu = NULL;
             UINT flg = 0;
+            HMONITOR hMonitor;
+            MONITORINFO monitorInfo = { sizeof(MONITORINFO) };
 
-            SystemParametersInfo(SPI_GETWORKAREA, 0, &rcWnd, 0);
             GetCursorPos(&point);
+            hMonitor = MonitorFromPoint(point, MONITOR_DEFAULTTOPRIMARY);
+            GetMonitorInfo(hMonitor, &monitorInfo);
+            rcWnd = monitorInfo.rcWork;
 
             if (point.x < rcWnd.left) {
                 point.x = rcWnd.left;
