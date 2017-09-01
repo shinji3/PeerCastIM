@@ -28,11 +28,6 @@
 #include "servmgr.h"
 #include "stats.h"
 #include <stdlib.h>
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
 
 // ---------------------------
 const char *GNU_FUNC_STR(int func)

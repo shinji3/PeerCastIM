@@ -30,11 +30,6 @@
 #include <sys/timeb.h>
 #include <time.h>
 #include "shellapi.h"
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
 
 // ---------------------------------
 WSys::WSys(HWND w)

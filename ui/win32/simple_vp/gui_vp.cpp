@@ -34,11 +34,6 @@
 #include "servmgr.h"
 #include "peercast.h"
 #include "simple.h"
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
 
 ThreadInfo guiThread;
 bool shownChannels = false;

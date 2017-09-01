@@ -20,11 +20,6 @@
 #include "flv.h"
 #include "string.h"
 #include "stdio.h"
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
 
 // ------------------------------------------
 void FLVStream::readEnd(Stream &, Channel *)

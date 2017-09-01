@@ -35,9 +35,6 @@
     <ClInclude Include="..\..\..\core\common\utf8.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="chkMemoryLeak.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="gui.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -56,9 +53,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\core\common\utf8.c">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="chkMemoryLeak.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="gui.cpp">

@@ -27,11 +27,6 @@
 #include "peercast.h"
 #include "pcp.h"
 #include "version2.h"
-#ifdef _DEBUG
-#include "chkMemoryLeak.h"
-#define DEBUG_NEW new(__FILE__, __LINE__)
-#define new DEBUG_NEW
-#endif
 
 // -----------------------------------
 static void termArgs(char *str)
